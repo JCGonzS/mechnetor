@@ -138,7 +138,7 @@ def get_interaction_data(proteins, protein_data, interaction_file,
 
                     if interaction_type == "InterPreTS":
                         try:
-                            z_value = float(t[-2].split("; ")[-1])
+                            z_value = float(t[4].split(";")[2])
                         except ValueError:
                             z_value = -999999
 
