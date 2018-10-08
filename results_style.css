@@ -1,0 +1,164 @@
+  
+#main_container{
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+/* #main_t1{
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  min-height: 0em;
+  width: 98%;
+  background-color: transparent;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+#main_t2{
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 98%;
+} */
+
+#control_panel {
+  position: relative;
+  background-color: #ccc;
+  border:2px solid #ccc;
+  border-radius: 3px;
+  padding-left: 5px;
+  padding-bottom: 10px;
+  text-align: left;
+  color: #555555;
+  font-size: 12px;
+}
+#control_panel_title{
+  margin-top:6px;
+  margin-bottom:6px;
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+#control_panel legend{
+  font-size: 14px;
+  font-weight: bold;
+}
+#control_panel hr{
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.GenButton {
+  background-color: #ccc;
+  border: 1px solid #555555;
+  color: #555555;
+  font-size: 14px;
+  /*font-family: Arial, Helvetica, sans-serif;*/
+  padding: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.GenButton:hover{
+  color: #fff;
+  background-color: #555555;
+}
+#coord:focus, #lock:focus{
+  color: #000;
+  background-color: #fff;
+}
+
+.ptmButton {
+  background-color: #ccc;
+  border: 1px solid #555555;
+  color: #555555;
+  font-size: 14px;
+  /*font-family: Arial, Helvetica, sans-serif;*/
+  padding: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.ptmButton:hover, .ptmButton:focus {
+  color: #fff;
+  background-color: #555555;
+}
+#mutation span {
+  font-weight: bold;
+  color: #FF0000;
+}
+#phospho span {
+  font-weight: bold;
+  color: #FFFF00;
+}
+#acet span {
+  font-weight: bold;
+  color: #008000;
+}
+
+
+#graph_box {
+  height:600px;
+  border:2px solid #ccc;
+  border-radius: 3px;
+  background-color: white;
+}
+#graph_title {
+  background-color: #ccc;
+  border-radius: 6px 6px 0px 0px;
+  position: relative;
+  padding-left: 5px;
+  font-weight: bold;
+  color: #555555;
+}
+
+#cy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  /*z-index: 999;*/
+}
+
+#table_title {
+  border-bottom: 1px solid white;
+}
+#table_title span {
+  position: relative;
+  padding-left: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+#table_title a {
+  position: absolute;
+  right: 1em;
+  font-size: 18px;
+  color: white;
+}
+
+
+#goToTop {
+  display: none;
+  position: fixed;
+  z-index: 99;
+  bottom: 20px;
+  right: 30px;
+  background-color: #ccc;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: #555555;
+  cursor: pointer;
+  padding: 10px;
+}
+#goToTop:hover {
+  color: #fff;
+  background-color: #555555;
+}

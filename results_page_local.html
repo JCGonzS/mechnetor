@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <title>PIV results</title>
+  <!--
+  Loading Icon
+  <script type="text/javascript" charset="utf8" src="https://raw.github.com/HubSpot/pace/v0.5.3/pace.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/pace_atom.css') }}">
+  -->
+
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="results_style.css"/>
+  <link rel="stylesheet" type="text/css" href="jquery.dataTables.night.css">
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400" rel="stylesheet">
+
+  <script type="text/javascript" src="jquery-3.3.1.js"></script>
+  <script type="text/javascript" src="cytoscape.js"></script>
+  <script type="text/javascript" src="additional_features.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+  <script type="text/javascript" src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <div class="header">
+		<div id="header-content">
+      <div id="header-title">Protein Interaction Visualization</div>
+			<div id="navbar">
+				<ul>
+					<li><a href="/" class="home-link">Home</a></li>
+					<li><a href="/help" class="help-link">Help</a></li>
+					<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+  <div id="main_container" class="container-fluid">
+    <div id="main_t1" class ="row" style="margin-top: 1em;">
+      <div class="col-sm-2">
+        <div id="control_panel">
+          <div id="control_panel_title">Toggle</div>
+
+    			<div>
+    				<fieldset>
+    					<div class="form-check" >
+    						<input class="form-check-input" type="checkbox" id="coord">
+    						<label class="form-check-label" for="cord">Position Labels</label>
+    					</div>
+    					<div class="form-check">
+    						<input class="form-check-input" type="checkbox" id="toggle_box" checked>
+    						<label class="form-check-label" for="toggle_box">Protein Boxes</label>
+    					</div>
+    				</fieldset>
+    			</div>
+
+          <hr>
+
+    			<div>
+    				<fieldset>
+    					<legend> Regions </legend>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_doms" checked>
+    						<label class="form-check-label" for="toggle_doms"> Domains</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_elms">
+    						<label class="form-check-label" for="toggle_elms"> Linear Motifs (ELM)</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_newlms">
+    						<label class="form-check-label" for="toggle_newlms"> Linear Motifs (LMD2)</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_iprets">
+    						<label class="form-check-label" for="toggle_iprets"> 3D-homology (InterPreTs)</label>
+    					</div>
+    				</fieldset>
+    			</div>
+
+        	<hr>
+
+    			<div>
+    				<fieldset>
+    					<legend> Interactions </legend>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_pp_int" checked>
+    						<label class="form-check-label" for="toggle_pp_int"> Protein-Protein</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_dom_int">
+    						<label class="form-check-label" for="toggle_dom_int"> Domain-Domain (3did)</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_idom_int">
+    						<label class="form-check-label" for="toggle_idom_int"> Domain-Domain (predicted)</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_elmdom_int">
+    						<label class="form-check-label" for="toggle_elmdom_int"> ELM-Domain</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_lmd2_int">
+    						<label class="form-check-label" for="toggle_lmd2_int"> LM(pred)-Protein (LMD2)</label>
+    					</div>
+              </br>
+    					<div class="form-check form-check-inline">
+    						<input class="form-check-input" type="checkbox" id="toggle_prets_int">
+    						<label class="form-check-label" for="toggle_prets_int"> InterPreTS</label>
+    					</div>
+    				</fieldset>
+    			</div>
+
+    			<hr>
+
+    			<div>
+    				<fieldset>
+    					<legend> Modifications </legend>
+    					<div class="form-check">
+    						<input class="form-check-input" type="checkbox" id="mutation">
+    						<label class="form-check-label" for="mutation"> Mutations</label>
+    					</div>
+    					<div class="form-check">
+    						<input class="form-check-input" type="checkbox" id="phospho">
+    						<label class="form-check-label" for="phospho"> Phosphorylations</label>
+    					</div>
+    					<div class="form-check">
+    						<input class="form-check-input" type="checkbox" id="acet">
+    						<label class="form-check-label" for="acet"> Acetylations</label>
+    					</div>
+    				</fieldset>
+    			</div>
+        </div>
+
+        <div style="padding-top:5px; text-align:center">
+          <button class="btn" id="dl_json"><i class="fa fa-download"></i> JSON </button>
+          <button class="btn" id="dl_jpg"><i class="fa fa-download"></i> JPG </button>
+          <button class="btn" id="dl_png"><i class="fa fa-download"></i> PNG </button>
+        </div>
+
+      </div>
+
+      <div id="graph" class = "col-sm-10" style="background-color: transparent;">
+        <!-- <div id="graph_title" style="margin-top:1em">{{ title }}</div> -->
+        <div id=graph_box style="position:relative; height:600px">
+          <div id="cy" class="cytoscape_container"></div>
+          <script type="text/javascript">
+            var elements_json ="graph_elements.json";
+            var style_json = "cy_style.json";
+          </script>
+          <script type="text/javascript" src="cyto_graph.js"></script>
+
+          <div style="position:relative; padding-top:5px; padding-left:5px;">
+            <button class="btn" id = "center"><i class="fa fa-align-center"></i></button>
+            <button class="btn" id = "lock"><i class="fa fa-unlock"></i></button>
+            <button class="btn" id = "reset"><i class="fa fa-sync"></i></button>
+          </div>
+          <div style="position:relative; padding-top:5px; padding-left:5px;">
+            <button class="btn" id = "zoom_in"><i class="fas fa-search-plus"></i></button>
+          </div>
+          <div style="position:relative; padding-top:5px; padding-left:5px;">
+            <button class="btn" id = "zoom_out"><i class="fas fa-search-minus"></i></button>
+          </div>
+        </div> <!--close graph_box-->
+      </div> <!--close graph-->
+    </div> <!--close main-->
+
+    <br>
+    <br>
+
+    <div id="main_t2" style="width: 98%; margin: auto;">
+      <div id="table_title">
+        <span> List of interactions</span>
+      </div>
+
+      <br>
+
+      <script type="text/javascript">
+          var ints_json ="interaction_table0060.json";
+      </script>
+      <table id="interactionTable" class="display">
+    		<thead>
+    			<tr>
+    				<th>Protein (A)</th>
+            <th>Accession (A)</th>
+    				<th>Protein (B)</th>
+            <th>Accession (B)</th>
+    				<th>Type of <br>Interaction</th>
+    				<th>F (A)</th>
+    				<th>F (B)</th>
+    				<th>Info</th>
+            <th>Source</th>
+    			</tr>
+    		</thead>
+    		<tfoot>
+    			<tr>
+            <th>Protein (A)</th>
+            <th>Accession (A)</th>
+    				<th>Protein (B)</th>
+            <th>Accession (B)</th>
+    				<th>Type of <br>Interaction</th>
+    				<th>F (A)</th>
+    				<th>F (B)</th>
+    				<th>Info</th>
+            <th>Source</th>
+    			</tr>
+    		</tfoot>
+    	</table>
+    </div>
+
+  </div>	<!--close main_container-->
+
+  <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
+  <script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("goToTop").style.display = "block";
+        } else {
+            document.getElementById("goToTop").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+  </script>
+
+  <br><br>
+
+  <div id="footer">
+    <br>
+    <p style="margin:0; padding:0">This tool was developed by JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and
+      Rob Russell at the <a href="http://www.russelllab.org/">Russell Lab</a></p>
+    <p style="margin:0; padding:0">University of Heidelberg, 2017</p>
+  </div>
+
+</body>
+</html>
