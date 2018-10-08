@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Protein Interaction Visualization</title>
+
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400">
+
+	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static',filename='js/index_validation.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static',filename='js/file_uploader.js') }}"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"></script>
+</head>
+
+<body>
+
+	<div class="header">
+		<div id="header-content">
+      <div id="header-title">Protein Interaction Visualization</div>
+			<div id="navbar">
+				<ul>
+					<li><a href="/" class="home-link">Home</a></li>
+					<li><a href="/help" class="help-link">Help</a></li>
+					<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="main_t1" class="container">
+		<div id="intro">
+			<p>
+					This tool will display the interactions between your proteins of interest in a clear way,
+					including general protein-protein interactions or more specific domain-domain or
+					domain-linear motif interactions.
+			</p>
+		</div>
+	</div>
+
+	<br>
+
+	<div id="main_t2" class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="myForm" action="/output" id="form" method="post" target="_blank" novalidate="novalidate">
+
+					<!-- <div class="form-group row">
+						<div class="col-sm">
+							<input id="name" name="query_name" placeholder="Name your query" type="text">
+						</div>
+					</div> -->
+
+					<div class="form-group row align-items-center">
+						<div class="col-sm">
+							<label for="query_prots"><b>Proteins</b></label>
+							<textarea id="query_prots" name="query_prots" aria-required="true" required=""
+								placeholder="Enter a list of interacting proteins"></textarea>
+
+							<label for="upload">Upload a protein file:</label>
+							<input type="file" id="uploadProtFile"/>
+							<button id="protLoadButton" type="button" onclick="prot_file_upload()">Upload</button>
+						</div>
+
+						<div class="col-sm">
+							<label for="query_muts"><b>Mutations (optional)</b><br></label>
+							<textarea id="query_muts" name="query_muts" aria-required="true"
+								placeholder="Enter a list of protein mutations"></textarea>
+
+							<label for="upload">Upload a mutation file:</label>
+							<input type="file" id="uploadMutFile"/>
+							<button id="mutLoadButton" type="button" onclick="mut_file_upload()">Upload</button>
+						</div>
+					</div>
+
+					<div class="form-group row align-items-center">
+						<div class="col-sm">
+							<input type="checkbox" id="show_max_prots"/>
+							<label for="max_prots">Limit the number of proteins:</label>
+							<input type="number" id="max_prots" name="max_prots" hidden />
+						</div>
+
+						<div class="col-sm">
+							<input id="cosmic" name="cosmic" type="checkbox">
+							<label for="cosmic">Use <a href="http://cancer.sanger.ac.uk/cosmic">COSMIC</a> mutations instead</label>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div class="col-sm">
+							<div>
+								Examples:
+								<button class="ex_button" type="button" id="ex1">1</button>
+								<button class="ex_button" type="button" id="ex2">2</button>
+								<button class="ex_button" type="button" id="ex3">3</button>
+								<script type="text/javascript" src="{{ url_for('static',filename='js/index_examples.js') }}"></script>
+							</div>
+							<div>
+								<button class="res_button" type="submit" id="submit-button">Submit</button>
+								<button class="res_button" type="reset" id="reset-button">Reset</button>
+							</div>
+						</div>
+					</div>
+				</form>
+		    </div>
+	    </div>
+	</div>
+
+	<div id="footer">
+		<br>
+		<p style="margin:0; padding:0">This tool was developed by JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and
+		  Rob Russell at the <a href="http://www.russelllab.org/">Russell Lab</a></p>
+		<p style="margin:0; padding:0">University of Heidelberg, 2017</p>
+	</div>
+
+</body>
+</html>
