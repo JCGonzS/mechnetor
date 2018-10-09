@@ -1,0 +1,1525 @@
+[
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "whole", 
+            "id": 0, 
+            "parent": 0, 
+            "label": "HHLA1"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "end": "485", 
+            "parent": 0, 
+            "color": "#CDBE70", 
+            "label": "MOD_CDK_SPK_2", 
+            "start": "480", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 1
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 2, 
+            "parent": 1, 
+            "label": "480"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1016.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 3, 
+            "parent": 1, 
+            "label": "485"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1021.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "15", 
+            "parent": 0, 
+            "color": "#CD8500", 
+            "label": "DOC_MAPK_MEF2A_6", 
+            "start": "7", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 4
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 5, 
+            "parent": 4, 
+            "label": "7"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 543.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 6, 
+            "parent": 4, 
+            "label": "15"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 551.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "253", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "247", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 7
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 8, 
+            "parent": 7, 
+            "label": "247"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 783.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 9, 
+            "parent": 7, 
+            "label": "253"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 789.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "261", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "255", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 10
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 11, 
+            "parent": 10, 
+            "label": "255"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 791.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 12, 
+            "parent": 10, 
+            "label": "261"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 797.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "270", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "264", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 13
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 14, 
+            "parent": 13, 
+            "label": "264"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 800.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 15, 
+            "parent": 13, 
+            "label": "270"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 806.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "356", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "350", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 16
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 17, 
+            "parent": 16, 
+            "label": "350"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 886.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 18, 
+            "parent": 16, 
+            "label": "356"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 892.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "382", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "376", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 19
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 20, 
+            "parent": 19, 
+            "label": "376"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 912.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 21, 
+            "parent": 19, 
+            "label": "382"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 918.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "390", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "384", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 22
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 23, 
+            "parent": 22, 
+            "label": "384"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 920.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 24, 
+            "parent": 22, 
+            "label": "390"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 926.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "402", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "396", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 25
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 26, 
+            "parent": 25, 
+            "label": "396"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 932.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 27, 
+            "parent": 25, 
+            "label": "402"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 938.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "486", 
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "MOD_ProDKin_1", 
+            "start": "480", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 28
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 29, 
+            "parent": 28, 
+            "label": "480"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1016.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 30, 
+            "parent": 28, 
+            "label": "486"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1022.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "42", 
+            "parent": 0, 
+            "color": "#EE7600", 
+            "label": "DOC_MAPK_gen_1", 
+            "start": "35", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 31
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 32, 
+            "parent": 31, 
+            "label": "35"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 571.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 33, 
+            "parent": 31, 
+            "label": "42"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 578.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "62", 
+            "parent": 0, 
+            "color": "#EE7600", 
+            "label": "DOC_MAPK_gen_1", 
+            "start": "55", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 34
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 35, 
+            "parent": 34, 
+            "label": "55"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 591.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 36, 
+            "parent": 34, 
+            "label": "62"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 598.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "104", 
+            "parent": 0, 
+            "color": "#EE7600", 
+            "label": "DOC_MAPK_gen_1", 
+            "start": "96", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 37
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 38, 
+            "parent": 37, 
+            "label": "96"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 632.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 39, 
+            "parent": 37, 
+            "label": "104"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 640.0
+        }
+    }, 
+    {
+        "data": {
+            "end": "342", 
+            "parent": 0, 
+            "color": "#8B4513", 
+            "label": "DOC_MAPK_RevD_3", 
+            "start": "327", 
+            "role": "elms", 
+            "protein": "C9JL84", 
+            "id": 40
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 41, 
+            "parent": 40, 
+            "label": "327"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 863.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "position", 
+            "id": 42, 
+            "parent": 40, 
+            "label": "342"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 878.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 43, 
+            "parent": 0, 
+            "label": "T325"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 861.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 44, 
+            "parent": 0, 
+            "label": "T46"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 582.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 45, 
+            "parent": 0, 
+            "label": "T45"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 581.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 46, 
+            "parent": 0, 
+            "label": "T394"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 930.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 47, 
+            "parent": 0, 
+            "label": "T41"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 577.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 48, 
+            "parent": 0, 
+            "label": "S89"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 625.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 49, 
+            "parent": 0, 
+            "label": "T397"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 933.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 50, 
+            "parent": 0, 
+            "label": "S72"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 608.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "pp_mod", 
+            "id": 51, 
+            "parent": 0, 
+            "label": "S6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 542.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "start-end", 
+            "id": 52, 
+            "parent": 0, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 536.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "C9JL84", 
+            "role": "start-end", 
+            "id": 53, 
+            "parent": 0, 
+            "label": "531"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1066.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "whole", 
+            "id": 54, 
+            "parent": 54, 
+            "label": "MAPK1"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 54, 
+            "color": "#EE4000", 
+            "label": "Pkinase", 
+            "role": "domain", 
+            "protein": "P28482", 
+            "id": 55
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "dom_pos", 
+            "id": 56, 
+            "parent": 55, 
+            "label": "25"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 561.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "dom_pos", 
+            "id": 57, 
+            "parent": 55, 
+            "label": "313"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 849.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 58, 
+            "parent": 54, 
+            "label": "Y25"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 561.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 59, 
+            "parent": 54, 
+            "label": "S202"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 738.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 60, 
+            "parent": 54, 
+            "label": "Y205"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 741.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 61, 
+            "parent": 54, 
+            "label": "S29"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 565.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 62, 
+            "parent": 54, 
+            "label": "T206"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 742.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 63, 
+            "parent": 54, 
+            "label": "T63"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 599.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 64, 
+            "parent": 54, 
+            "label": "S284"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 820.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 65, 
+            "parent": 54, 
+            "label": "Y36"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 572.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 66, 
+            "parent": 54, 
+            "label": "Y193"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 729.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 67, 
+            "parent": 54, 
+            "label": "Y43"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 579.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 68, 
+            "parent": 54, 
+            "label": "Y263"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 799.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 69, 
+            "parent": 54, 
+            "label": "T181"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 717.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 70, 
+            "parent": 54, 
+            "label": "Y187"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 723.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 71, 
+            "parent": 54, 
+            "label": "Y113"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 649.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 72, 
+            "parent": 54, 
+            "label": "T185"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 721.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 73, 
+            "parent": 54, 
+            "label": "S142"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 678.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 74, 
+            "parent": 54, 
+            "label": "T190"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 726.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 75, 
+            "parent": 54, 
+            "label": "T295"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 831.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 76, 
+            "parent": 54, 
+            "label": "S248"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 784.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 77, 
+            "parent": 54, 
+            "label": "S360"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 896.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "pp_mod", 
+            "id": 78, 
+            "parent": 54, 
+            "label": "S246"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 782.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "start-end", 
+            "id": 79, 
+            "parent": 54, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 536.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P28482", 
+            "role": "start-end", 
+            "id": 80, 
+            "parent": 54, 
+            "label": "360"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 896.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "source": 52, 
+            "role": "protein_sequence", 
+            "id": 81, 
+            "target": 5
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 5, 
+            "role": "protein_sequence", 
+            "id": 82, 
+            "target": 6
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 6, 
+            "role": "protein_sequence", 
+            "id": 83, 
+            "target": 32
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 32, 
+            "role": "protein_sequence", 
+            "id": 84, 
+            "target": 33
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 33, 
+            "role": "protein_sequence", 
+            "id": 85, 
+            "target": 35
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 35, 
+            "role": "protein_sequence", 
+            "id": 86, 
+            "target": 36
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 36, 
+            "role": "protein_sequence", 
+            "id": 87, 
+            "target": 38
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 38, 
+            "role": "protein_sequence", 
+            "id": 88, 
+            "target": 39
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 39, 
+            "role": "protein_sequence", 
+            "id": 89, 
+            "target": 8
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 8, 
+            "role": "protein_sequence", 
+            "id": 90, 
+            "target": 9
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 9, 
+            "role": "protein_sequence", 
+            "id": 91, 
+            "target": 11
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 11, 
+            "role": "protein_sequence", 
+            "id": 92, 
+            "target": 12
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 12, 
+            "role": "protein_sequence", 
+            "id": 93, 
+            "target": 14
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 14, 
+            "role": "protein_sequence", 
+            "id": 94, 
+            "target": 15
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 15, 
+            "role": "protein_sequence", 
+            "id": 95, 
+            "target": 41
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 41, 
+            "role": "protein_sequence", 
+            "id": 96, 
+            "target": 42
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 42, 
+            "role": "protein_sequence", 
+            "id": 97, 
+            "target": 17
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 17, 
+            "role": "protein_sequence", 
+            "id": 98, 
+            "target": 18
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 18, 
+            "role": "protein_sequence", 
+            "id": 99, 
+            "target": 20
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 20, 
+            "role": "protein_sequence", 
+            "id": 100, 
+            "target": 21
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 21, 
+            "role": "protein_sequence", 
+            "id": 101, 
+            "target": 23
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 23, 
+            "role": "protein_sequence", 
+            "id": 102, 
+            "target": 24
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 24, 
+            "role": "protein_sequence", 
+            "id": 103, 
+            "target": 26
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 26, 
+            "role": "protein_sequence", 
+            "id": 104, 
+            "target": 27
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 27, 
+            "role": "protein_sequence", 
+            "id": 105, 
+            "target": 2
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 2, 
+            "role": "protein_sequence", 
+            "id": 106, 
+            "target": 29
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 29, 
+            "role": "protein_sequence", 
+            "id": 107, 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 3, 
+            "role": "protein_sequence", 
+            "id": 108, 
+            "target": 30
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 30, 
+            "role": "protein_sequence", 
+            "id": 109, 
+            "target": 53
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 79, 
+            "role": "protein_sequence", 
+            "id": 110, 
+            "target": 56
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 56, 
+            "role": "protein_sequence", 
+            "id": 111, 
+            "target": 57
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 57, 
+            "role": "protein_sequence", 
+            "id": 112, 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 1, 
+            "role": "ELM_interaction", 
+            "id": 113, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 4, 
+            "role": "ELM_interaction", 
+            "id": 114, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 7, 
+            "role": "ELM_interaction", 
+            "id": 115, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 10, 
+            "role": "ELM_interaction", 
+            "id": 116, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 13, 
+            "role": "ELM_interaction", 
+            "id": 117, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 16, 
+            "role": "ELM_interaction", 
+            "id": 118, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 19, 
+            "role": "ELM_interaction", 
+            "id": 119, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 22, 
+            "role": "ELM_interaction", 
+            "id": 120, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 25, 
+            "role": "ELM_interaction", 
+            "id": 121, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 28, 
+            "role": "ELM_interaction", 
+            "id": 122, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 31, 
+            "role": "ELM_interaction", 
+            "id": 123, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 34, 
+            "role": "ELM_interaction", 
+            "id": 124, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 37, 
+            "role": "ELM_interaction", 
+            "id": 125, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 40, 
+            "role": "ELM_interaction", 
+            "id": 126, 
+            "target": 55
+        }, 
+        "group": "edges"
+    }
+]
