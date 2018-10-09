@@ -123,7 +123,7 @@ def parse_mutation_input(input_text, prot_dict, protein_set):
                 mutations[prot][pos].add(mut)
     return mutations
 
-def main(query_prots, query_muts, max_prots="", query_lmd2="",
+def main(query_prots, query_muts, max_prots=20, query_lmd2="",
 		 sps="Hsa", max_pval=999, main_dir=""):
 
     if hasNumbers(max_prots):
