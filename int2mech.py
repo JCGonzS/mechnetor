@@ -100,9 +100,10 @@ def get_biogrid_int_single_prot(biogrid_file, target_prots, ac_dict,
                     if ac_a == target or ac_b == target:
                         biogrid_int[ac_a][ac_b].add(":".join(info))
                         biogrid_int[ac_b][ac_a].add(":".join(info))
-                        if max_prots and len(target_prots) < max_prots:
-                            target_prots.add(ac_a)
-                            target_prots.add(ac_b)
+                        if max_prots:
+                            if len(target_prots) < max_prots:
+                                target_prots.add(ac_a)
+                                target_prots.add(ac_b)
                         else:
                             target_prots.add(ac_a)
                             target_prots.add(ac_b)
