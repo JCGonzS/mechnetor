@@ -1,0 +1,300 @@
+[
+  {
+    "selector": "node[role = \"start-end\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "1",
+      "height": "6px",
+      "background-opacity": "1",
+      "label": "data(label)",
+      "font-size": "5",
+      "text-opacity": "0",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "node[role = \"whole\"]",
+    "style": {
+      "shape": "roundrectangle",
+      "background-opacity": "0",
+      "border-color": "#000",
+      "border-width": "1px",
+      "border-opacity": "1",
+      "label": "data(label)",
+      "font-size": "20",
+      "color": "#FFF",
+      "text-outline-color": "#000",
+      "text-outline-width": "2",
+      "text-valign": "bottom",
+      "text-halign": "center",
+      "text-margin-y": "-8px",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "roundrectangle",
+      "text-background-padding": "0"
+    }
+  },
+  {
+    "selector": "node[role = \"dom_pos\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "1",
+      "height": "6px",
+      "background-color": "#A9A9A9",
+      "background-opacity": "1",
+      "label": "data(label)",
+      "font-size": "5",
+      "color": "#FFF",
+      "text-opacity": "0",
+      "events": "no",
+      "z-index-compare": "manual",
+      "z-index": "99"
+    }
+  },
+  {
+    "selector": "node[role = \"domain\"]",
+    "style": {
+      "shape": "roundrectangle",
+      "background-color": "data(color)",
+      "border-width": "0",
+      "padding": "0",
+      "label": "data(label)",
+      "font-size": "10",
+      "color": "#FFF",
+      "text-outline-color": "data(color)",
+      "text-outline-width": "2",
+      "text-margin-y": "2px",
+      "events": "no",
+      "z-index-compare": "manual",
+      "z-index": "195"
+    }
+  },
+  {
+    "selector": "node[role = \"domain\"]:selected",
+    "style": {
+      "border-style": "dashed",
+      "border-color": "#DC143C",
+      "border-width": "3px",
+      "color": "#FFF",
+      "text-outline-color": "#DC143C",
+      "text-outline-width": "2"
+    }
+  },
+  {
+    "selector": "node[role = \"position\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "1",
+      "height": "6px",
+      "background-opacity": "1",
+      "label": "data(label)",
+      "font-size": "5",
+      "text-opacity": "0",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "node[role = \"elms\"]",
+    "style": {
+      "shape": "roundrectangle",
+      "background-opacity": "0",
+      "border-color": "data(color)",
+      "padding": "0",
+      "label": "data(label)",
+      "font-size": "8",
+      "color": "data(color)",
+      "text-valign": "bottom",
+      "text-margin-y": "2px",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "node[role = \"newLM\"]",
+    "style": {
+      "shape": "roundrectangle",
+      "background-opacity": "0",
+      "border-color": "data(color)",
+      "padding": "0",
+      "label": "data(label)",
+      "font-size": "8",
+      "color": "data(color)",
+      "text-valign": "top",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "node[role = \"iprets\"]",
+    "style": {
+      "shape": "rectangle",
+      "background-opacity": "0",
+      "border-style": "dashed",
+      "border-color": "data(color)",
+      "padding": "0",
+      "label": "data(label)",
+      "font-size": "10",
+      "color": "#000",
+      "text-outline-color": "data(color)",
+      "text-outline-width": "1",
+      "text-valign": "bottom",
+      "text-margin-y": "2px",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "node[role = \"pp_mod\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "2",
+      "height": "8",
+      "background-color": "#FFFF00",
+      "border-width": "0.3",
+      "border-color": "#000000",
+      "label": "data(label)",
+      "font-size": "3",
+      "min-zoomed-font-size": "24",
+      "visibility" : "hidden",
+      "grabbable" : "false",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "node[role = \"ac_mod\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "2",
+      "height": "8",
+      "background-color": "#008000",
+      "border-width": "0.3",
+      "border-color": "#000000",
+      "label": "data(label)",
+      "font-size": "3",
+      "min-zoomed-font-size": "24",
+      "visibility" : "hidden",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "node[role = \"mutation\"]",
+    "style": {
+      "shape": "rectangle",
+      "width": "2",
+      "height": "8",
+      "background-color": "#FF0000",
+      "border-width": "0.3",
+      "border-color": "#000000",
+      "label": "data(label)",
+      "font-size": "3",
+      "min-zoomed-font-size": "24",
+      "visibility" : "hidden",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "node[role = \"whole\"]:selected",
+    "style":{
+      "background-color": "#DC143C",
+      "line-color": "#DC143C",
+      "target-arrow-color": "#DC143C",
+      "source-arrow-color": "#DC143C",
+      "text-outline-color": "#DC143C",
+      "border-color": "#DC143C"
+    }
+  },
+  {
+    "selector": "edge[role = \"protein_sequence\"]",
+    "style": {
+      "width": "6px",
+      "line-color": "#A9A9A9",
+      "events": "no",
+      "z-index-compare": "manual",
+      "z-index": "0"
+    }
+  },
+  {
+    "selector": "edge[role = \"prot_prot_interaction\"]",
+    "style": {
+      "width": "8px",
+      "line-color": "#000",
+      "line-style": "solid",
+      "opacity": "1",
+      "source-arrow-shape": "circle",
+      "source-arrow-color": "#000",
+      "target-arrow-shape": "circle",
+      "target-arrow-color": "#000",
+      "arrow-scale": "0.8",
+      "events": "no"
+    }
+  },
+  {
+    "selector": "edge[role = \"DOM_interaction\"]",
+    "style": {
+      "width": "3px",
+      "curve-style": "bezier",
+      "line-style": "solid",
+      "line-color": "#006400",
+      "opacity": "0.7",
+      "source-arrow-shape": "triangle",
+      "source-arrow-color": "#006400",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#006400",
+      "arrow-scale": "0.5",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "edge[role = \"iDOM_interaction\"]",
+    "style": {
+      "width": "3px",
+      "curve-style": "bezier",
+      "line-style": "solid",
+      "line-color": "#00008B",
+      "opacity": "0.7",
+      "source-arrow-shape": "triangle",
+      "source-arrow-color": "#00008B",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#00008B",
+      "arrow-scale": "0.5",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "edge[role = \"ELM_interaction\"]",
+    "style": {
+      "width": "6px",
+      "line-color": "#800080",
+      "line-style": "dotted",
+      "curve-style": "unbundled-bezier",
+      "opacity": "0.7",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "edge[role = \"LMD2_interaction\"]",
+    "style": {
+      "width": "6px",
+      "line-color": "#A52A2A",
+      "line-style": "dotted",
+      "curve-style": "unbundled-bezier",
+      "opacity": "0.7",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "edge[role = \"INT_interaction\"]",
+    "style": {
+      "width": "4px",
+      "line-color": "data(color)",
+      "line-style": "dashed",
+      "opacity": "0.7",
+      "events": "no",
+      "visibility": "hidden"
+    }
+  }
+]
