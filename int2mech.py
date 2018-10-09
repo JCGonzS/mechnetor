@@ -60,7 +60,7 @@ def count_elms(protein_data, e_val=0.1):
     return elm_sets
 
 def get_biogrid_int_single_prot(biogrid_file, target_prots, ac_dict,
-                                   max_prots=""):
+                                   max_prots=25):
     """Gets protein-protein interactions from BioGRID database
 
        Only for those proteins present in "target_prots"
@@ -281,7 +281,8 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     # Get Interaction Data
     ## BioGrid [protein-protein]
     if len(target_prots) == 1:
-        print ">>>>"
+        # if not max_prots provided, a default value of 25 is used in the function
+        # otherwise, too many proteins 
         biogrid_int, target_prots = get_biogrid_int_single_prot(biogrid_file,
                                     target_prots, protein_ids["AC"], max_prots)
     else:
