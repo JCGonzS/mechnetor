@@ -59,6 +59,53 @@ def count_elms(protein_data, e_val=0.1):
 
     return elm_sets
 
+def get_biogrid_int_single_prot(biogrid_file, target_prots, ac_dict,
+                                   max_prots=""):
+    """Gets protein-protein interactions from BioGRID database
+
+       Only for those proteins present in "target_prots"
+    """
+
+    biogrid_int = defaultdict(lambda: defaultdict(set))
+    target = list(target_prots)[0]
+    with open_file(biogrid_file) as f:
+        flag = 0
+        for line in f:
+            if line.startswith("INTERACTOR_A"):
+                flag = 1
+            elif flag == 1:
+                t = line.rstrip().split("\t")
+                # t[2] = OFFICIAL_SYMBOL: MAP2K4
+                # t[4] = ALIASES: NKK|JNKK1|MAPKK4|MEK4|MKK4
+                gns_a = [t[2]] + t[4].split("|")
+                gns_b = [t[3]] + t[5].split("|")
+                exp_sys, source, pmid = t[6], t[7], t[8]
+                info = [exp_sys, source, pmid]
+
+                found_a, found_b = 0, 0
+                for gn_a in gns_a:
+                    gn_a = gn_a.upper()
+                    if gn_a in ac_dict:
+                        ac_a = ac_dict[gn_a]
+                        found_a = 1
+                        break
+                for gn_b in gns_b:
+                    gn_b = gn_b.upper()
+                    if gn_b in ac_dict:
+                        ac_b = ac_dict[gn_b]
+                        found_b = 1
+                        break
+
+                if found_a == 1 and found_b == 1:
+                    if ac_a == target or ac_b == target:
+                        biogrid_int[ac_a][ac_b].add(":".join(info))
+                        biogrid_int[ac_b][ac_a].add(":".join(info))
+                        if max_prots and len(target_prots) < max_prots:
+                            target_prots.add(ac_a)
+                            target_prots.add(ac_b)
+
+    return biogrid_int, target_prots
+
 def get_biogrid_int(biogrid_file, target_prots, ac_dict):
     """Gets protein-protein interactions from BioGRID database
 
@@ -214,7 +261,7 @@ def calculate_p(na, nb, N):
     return pa, pb, p, pmax
 
 def main(target_prots, protein_ids, protein_data, output_file="",
-        data_dir="data/", species="Hsa"):
+        data_dir="data/", species="Hsa", max_prots=""):
 
     # Parameters
     max_pmax = 1.0
@@ -235,7 +282,12 @@ def main(target_prots, protein_ids, protein_data, output_file="",
 
     # Get Interaction Data
     ## BioGrid [protein-protein]
-    biogrid_int = get_biogrid_int(biogrid_file, target_prots, protein_ids["AC"])
+    if len(target_prots) == 1:
+        biogrid_int, target_prots = get_biogrid_int_single_prot(biogrid_file,
+                                    target_prots, protein_ids["AC"], max_prots)
+    else:
+        biogrid_int = get_biogrid_int(biogrid_file, target_prots,
+                                      protein_ids["AC"])
     ## from 3did [domain-domain]
     dom_3did_int = get_3did_int(db_3did_file)
     ## from interaction propensities [domain-domain]

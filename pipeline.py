@@ -190,7 +190,7 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     	print "[{}] Running int2mech. Using {} as protein data...".format(st,protein_data_file )
         int_file =  main_dir+output_dir+outfile_int
     	int2mech.main(input_proteins, prot_ids, protein_data,
-    	              int_file, data_dir, sps)
+    	              int_file, data_dir, sps, max_prots)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int
     else:
