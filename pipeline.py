@@ -12,7 +12,6 @@ import pandas as pd
 import datetime
 import int2mech
 import make_graph_elements
-import make_html_table
 from collections import defaultdict
 from flask import render_template, url_for
 
