@@ -201,10 +201,8 @@ def get_elm_ints(elm_int_dom_file):
             t = line.rstrip().split("\t")
             elm_id, pfam_ac, pfam_name, pfam_desc = t[:4]
             only_prts = []
-            print t
             if len(t)>4:
                 only_prts = t[4].split(",")
-                print ">", only_prts
             interactions[elm_id][pfam_name] = only_prts
             interactions[pfam_name][elm_id] = only_prts
 
@@ -283,6 +281,7 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     # Get Interaction Data
     ## BioGrid [protein-protein]
     if len(target_prots) == 1:
+        print ">>>>"
         biogrid_int, target_prots = get_biogrid_int_single_prot(biogrid_file,
                                     target_prots, protein_ids["AC"], max_prots)
     else:
@@ -377,7 +376,6 @@ def main(target_prots, protein_ids, protein_data, output_file="",
             for pfam_a in protein_data[ac_a]["pfams"]:
                 for elm_b in protein_data[ac_b]["elms"]:
                     if pfam_a in elm_int and elm_b in elm_int[pfam_a]:
-                        print "works"
                         only_prts = elm_int[pfam_a][elm_b]
                         if len(only_prts) > 0:
                             if gene_a not in only_prts:
