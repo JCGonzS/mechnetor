@@ -272,7 +272,7 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     homo_int = "n"
 
     # General files
-    db_3did_file = data_dir + "general/3did_flat_July2018_edited.gz"
+    db_3did_file = data_dir + "general/3did_flat_July2018_edited.txt.gz"
     elm_int_dom_file = data_dir + "general/elm_interaction_domains_edited_Jan18.tsv"
 
     # Species files
