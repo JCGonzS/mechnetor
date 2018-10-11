@@ -15,6 +15,7 @@ If these are missing, see "prepare_data_for_int2mech.py"
 import sys, re
 import gzip
 from collections import defaultdict
+from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 
 def open_file(input_file, mode="r"):
