@@ -135,6 +135,7 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
 
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
+    gen_dir = data_dir+"general/"
     sps_dir = data_dir+"species/"+sps+"/"
     proteome_file = sps_dir+"uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
     protein_data_file = sps_dir+"swissprot_human_parsed_data.tsv.gz"

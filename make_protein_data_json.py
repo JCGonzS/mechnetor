@@ -18,6 +18,18 @@ from collections import defaultdict
 from Bio import SwissProt
 
 
+## Data Files
+data_dir = "static/data/"
+gen_data_dir = data_dir+"general/"
+species = "Hsa"
+sp_data_dir = data_dir+"species/"+species+"/"
+proteome_file =     sp_data_dir + "uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
+uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
+pfam_hits_file =    sp_data_dir + "pfam_parsed_info.tsv.gz"
+elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
+psp_file =          sp_data_dir + "PSP_ptms_human.tsv.gz"
+
+
 def open_file(input_file, mode="r"):
     """ Open file Zipped or not
     """
@@ -170,14 +182,6 @@ mode = sys.argv[1]
 if mode not in ["mongo", "normal"]:
     sys.exit(error_msg)
 
-## Data Files
-species = "Hsa"
-sp_data_dir = "species/"+species+"/"
-proteome_file =     sp_data_dir + "uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
-uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
-pfam_hits_file =    sp_data_dir + "pfam_parsed_info.tsv.gz"
-elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
-psp_file =          sp_data_dir + "PSP_ptms_human.tsv.gz"
 
 ## 1. Get Uniprot Accession, IDs and Gene names conversions ###
 # prot_id_dict, sequences = parse_fasta(proteome_file)
@@ -193,7 +197,7 @@ ptms = get_ptms(psp_file, prot_dict["AC"])
 
 ## 4. Output
 pp = pprint.PrettyPrinter(indent=4)
-outfile_name = "protein_data_new_"+species+"_"+mode+".json"
+outfile_name = sp_data_dir+"protein_data_new_"+species+"_"+mode+".json"
 if mode == "normal":
     protein_data = {}
     for uni_ac in prot_dict["seq"]:
