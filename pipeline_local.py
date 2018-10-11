@@ -14,7 +14,6 @@ import int2mech
 import make_graph_elements
 from collections import defaultdict
 from flask import render_template, url_for
-from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 
 def open_file(input_file, mode="r"):
@@ -124,7 +123,6 @@ def parse_mutation_input(input_text, prot_dict, protein_set):
                 mutations[prot][pos].add(mut)
     return mutations
 
-@line_profile
 def main(query_prots, query_muts, max_prots="", query_lmd2="",
 		 sps="Hsa", max_pval=999, main_dir=""):
 
@@ -140,9 +138,9 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     protein_data_file = sps_dir+"swissprot_human_parsed_data.tsv.gz"
     protein_data_json_file = sps_dir+"protein_data_new_Hsa_normal.json"
     output_dir = "static/output/"
-    log_file = main_dir+"static/log.txt"
+    # log_file = main_dir+"static/log.txt"
 
-    sys.stdout = open(log_file, 'a')
+    # sys.stdout = open(log_file, 'a')
     st = datetime.datetime.now()
     print "\n[{}] Running \"{}\"".format(st, "PIV pipeline.py")
 
@@ -224,6 +222,12 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     print "[{}] Printing HTML output".format(st)
     sys.stdout = sys.__stdout__
 
-    return render_template("results_page.html",
-                           elements_json = "output/" + outfile_json,
-                           ints_json = "output/" + outfile_table_json)
+    # return render_template("results_page.html",
+    #                        elements_json = "output/" + outfile_json,
+    #                        ints_json = "output/" + outfile_table_json)
+
+if __name__ == "__main__":
+    query_prots = "TCF3\nID3"
+    query_muts = ""
+    main(query_prots, query_muts, max_prots="", query_lmd2="",
+    		 sps="Hsa", max_pval=999, main_dir="")

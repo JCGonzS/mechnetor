@@ -262,6 +262,7 @@ def calculate_p(na, nb, N):
 
     return pa, pb, p, pmax
 
+@line_profile
 def main(target_prots, protein_ids, protein_data, output_file="",
         data_dir="data/", species="Hsa", max_prots=""):
 
