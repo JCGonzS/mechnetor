@@ -2,13 +2,11 @@ document.getElementById("ex1").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 1";
       var text1 = document.getElementById('query_prots');
-      text1.value = `
-TCF3 
+      text1.value = `TCF3
 CBFA2T3
 ID3`;
       var text2 = document.getElementById('query_muts');
-      text2.value = `
-O75081/D105G CBFA2T3
+      text2.value = `O75081/D105G CBFA2T3
 P15923/N554K TCF3
 P15923/N555D TCF3
 P15923/N555T TCF3
@@ -41,8 +39,7 @@ document.getElementById("ex2").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 2"
       var text1 = document.getElementById('query_prots');
-      text1.value = `
-SMARCA4
+      text1.value = `SMARCA4
 SMARCA2
 WWOX
 DPF2
@@ -63,8 +60,7 @@ POLR2A
 SMARCD3
 TAT`;
       var text2 = document.getElementById('query_muts');
-      text2.value = `
-P51532/T308M SMARCA4
+      text2.value = `P51532/T308M SMARCA4
 P51532/V1404I SMARCA4
 P51532/V1552I SMARCA4`;
 });
@@ -73,8 +69,7 @@ document.getElementById("ex3").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 3 with LMD2 data"
       var text1 = document.getElementById('query_prots');
-      text1.value = `
-SORBS3
+      text1.value = `SORBS3
 PAK1
 CBL
 SYP
