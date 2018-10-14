@@ -132,6 +132,13 @@
   /*z-index: 999;*/
 }
 
+#quick-tools {
+  position: relative;
+  padding-top: 5px;
+  padding-left: 5px;
+  /* border:1px solid #ccc; */
+}
+
 #table_title {
   border-bottom: 1px solid white;
 }
