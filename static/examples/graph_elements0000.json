@@ -1,0 +1,118 @@
+[
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "whole", 
+            "id": 0, 
+            "parent": 0, 
+            "label": "TCF3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 0, 
+            "color": "#CDBE70", 
+            "label": "HLH", 
+            "role": "domain", 
+            "protein": "P15923", 
+            "id": 1
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "dom_pos", 
+            "id": 2, 
+            "parent": 1, 
+            "label": "550"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": -35205.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "dom_pos", 
+            "id": 3, 
+            "parent": 1, 
+            "label": "603"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": -35152.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "whole", 
+            "id": 0, 
+            "parent": 0, 
+            "label": "ID3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 0, 
+            "color": "#CDBE70", 
+            "label": "HLH", 
+            "role": "domain", 
+            "protein": "Q02535", 
+            "id": 1
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "dom_pos", 
+            "id": 2, 
+            "parent": 1, 
+            "label": "42"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": -35797.645514145974
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "dom_pos", 
+            "id": 3, 
+            "parent": 1, 
+            "label": "81"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": -35758.645514145974
+        }
+    }, 
+    {
+        "data": {
+            "source": 2, 
+            "role": "protein_sequence", 
+            "id": 0, 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 2, 
+            "role": "protein_sequence", 
+            "id": 1, 
+            "target": 3
+        }, 
+        "group": "edges"
+    }
+]

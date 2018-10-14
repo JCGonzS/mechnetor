@@ -1,0 +1,1564 @@
+[
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "whole", 
+            "id": 0, 
+            "parent": 0, 
+            "label": "CBFA2T3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 0, 
+            "color": "#CDBE70", 
+            "label": "zf-MYND", 
+            "role": "domain", 
+            "protein": "O75081", 
+            "id": 1
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 2, 
+            "parent": 1, 
+            "label": "556"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1031.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 3, 
+            "parent": 1, 
+            "label": "592"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1067.0
+        }
+    }, 
+    {
+        "data": {
+            "parent": 0, 
+            "color": "#CD8500", 
+            "label": "NHR2", 
+            "role": "domain", 
+            "protein": "O75081", 
+            "id": 4
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 5, 
+            "parent": 4, 
+            "label": "379"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 854.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 6, 
+            "parent": 4, 
+            "label": "445"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 920.0
+        }
+    }, 
+    {
+        "data": {
+            "parent": 0, 
+            "color": "#8B7500", 
+            "label": "TAFH", 
+            "role": "domain", 
+            "protein": "O75081", 
+            "id": 7
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 8, 
+            "parent": 7, 
+            "label": "174"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 649.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "dom_pos", 
+            "id": 9, 
+            "parent": 7, 
+            "label": "262"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 737.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "mutation", 
+            "id": 10, 
+            "parent": 0, 
+            "label": "D105G CBFA2T3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 580.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 11, 
+            "parent": 0, 
+            "label": "S458"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 933.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 12, 
+            "parent": 0, 
+            "label": "S459"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 934.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 13, 
+            "parent": 0, 
+            "label": "S578"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1053.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 14, 
+            "parent": 0, 
+            "label": "S15"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 490.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 15, 
+            "parent": 0, 
+            "label": "S637"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1112.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 16, 
+            "parent": 0, 
+            "label": "S629"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1104.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 17, 
+            "parent": 0, 
+            "label": "T521"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 996.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 18, 
+            "parent": 0, 
+            "label": "S36"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 511.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 19, 
+            "parent": 0, 
+            "label": "S457"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 932.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 20, 
+            "parent": 0, 
+            "label": "S641"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1116.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 21, 
+            "parent": 0, 
+            "label": "S643"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1118.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 22, 
+            "parent": 0, 
+            "label": "T479"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 954.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 23, 
+            "parent": 0, 
+            "label": "Y327"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 802.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 24, 
+            "parent": 0, 
+            "label": "T650"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1125.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 25, 
+            "parent": 0, 
+            "label": "S439"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 914.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 26, 
+            "parent": 0, 
+            "label": "S328"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 803.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 27, 
+            "parent": 0, 
+            "label": "T477"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 952.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 28, 
+            "parent": 0, 
+            "label": "T337"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 812.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 29, 
+            "parent": 0, 
+            "label": "S539"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1014.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "pp_mod", 
+            "id": 30, 
+            "parent": 0, 
+            "label": "S65"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 540.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "start-end", 
+            "id": 31, 
+            "parent": 0, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 475.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "start-end", 
+            "id": 32, 
+            "parent": 0, 
+            "label": "653"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 225.0, 
+            "x": 1127.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "whole", 
+            "id": 33, 
+            "parent": 33, 
+            "label": "TCF3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 33, 
+            "color": "#EE7600", 
+            "label": "HLH", 
+            "role": "domain", 
+            "protein": "P15923", 
+            "id": 34
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "dom_pos", 
+            "id": 35, 
+            "parent": 34, 
+            "label": "550"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 939.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "dom_pos", 
+            "id": 36, 
+            "parent": 34, 
+            "label": "603"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 992.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 37, 
+            "parent": 33, 
+            "label": "V560L TCF3;V560E TCF3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 949.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 38, 
+            "parent": 33, 
+            "label": "E624G TCF3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 1013.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 39, 
+            "parent": 33, 
+            "label": "N554K TCF3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 943.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 40, 
+            "parent": 33, 
+            "label": "N555D TCF3;N555T TCF3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 944.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 41, 
+            "parent": 33, 
+            "label": "D564V TCF3;D564E TCF3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 953.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 42, 
+            "parent": 33, 
+            "label": "Y150"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 539.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 43, 
+            "parent": 33, 
+            "label": "Y153"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 542.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 44, 
+            "parent": 33, 
+            "label": "S156"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 545.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 45, 
+            "parent": 33, 
+            "label": "S110"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 499.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 46, 
+            "parent": 33, 
+            "label": "S134"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 523.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 47, 
+            "parent": 33, 
+            "label": "S139"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 528.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 48, 
+            "parent": 33, 
+            "label": "S345"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 734.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 49, 
+            "parent": 33, 
+            "label": "S346"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 735.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 50, 
+            "parent": 33, 
+            "label": "S341"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 730.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 51, 
+            "parent": 33, 
+            "label": "S509"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 898.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 52, 
+            "parent": 33, 
+            "label": "T366"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 755.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 53, 
+            "parent": 33, 
+            "label": "S367"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 756.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 54, 
+            "parent": 33, 
+            "label": "T528"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 917.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 55, 
+            "parent": 33, 
+            "label": "S529"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 918.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 56, 
+            "parent": 33, 
+            "label": "T411"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 800.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 57, 
+            "parent": 33, 
+            "label": "S141"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 530.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 58, 
+            "parent": 33, 
+            "label": "Y149"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 538.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 59, 
+            "parent": 33, 
+            "label": "S245"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 634.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 60, 
+            "parent": 33, 
+            "label": "S381"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 770.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 61, 
+            "parent": 33, 
+            "label": "Y108"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 497.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 62, 
+            "parent": 33, 
+            "label": "S39"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 428.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 63, 
+            "parent": 33, 
+            "label": "T12"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 401.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 64, 
+            "parent": 33, 
+            "label": "Y382"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 771.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 65, 
+            "parent": 33, 
+            "label": "S379"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 768.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 66, 
+            "parent": 33, 
+            "label": "T355"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 744.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 67, 
+            "parent": 33, 
+            "label": "S354"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 743.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 68, 
+            "parent": 33, 
+            "label": "S352"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 741.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 69, 
+            "parent": 33, 
+            "label": "S351"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 740.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 70, 
+            "parent": 33, 
+            "label": "S350"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 739.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 71, 
+            "parent": 33, 
+            "label": "S514"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 903.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "pp_mod", 
+            "id": 72, 
+            "parent": 33, 
+            "label": "S359"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 748.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "start-end", 
+            "id": 73, 
+            "parent": 33, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 389.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "start-end", 
+            "id": 74, 
+            "parent": 33, 
+            "label": "654"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 407.76878279196205, 
+            "x": 1043.3544858540245
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "whole", 
+            "id": 75, 
+            "parent": 75, 
+            "label": "ID3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "parent": 75, 
+            "color": "#EE7600", 
+            "label": "HLH", 
+            "role": "domain", 
+            "protein": "Q02535", 
+            "id": 76
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "dom_pos", 
+            "id": 77, 
+            "parent": 76, 
+            "label": "42"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 520.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "dom_pos", 
+            "id": 78, 
+            "parent": 76, 
+            "label": "81"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 559.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 79, 
+            "parent": 75, 
+            "label": "L64V ID3;L64F ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 542.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 80, 
+            "parent": 75, 
+            "label": "Q100STOP ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 578.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 81, 
+            "parent": 75, 
+            "label": "L70V ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 548.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 82, 
+            "parent": 75, 
+            "label": "Y76D ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 554.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 83, 
+            "parent": 75, 
+            "label": "C10STOP ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 488.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 84, 
+            "parent": 75, 
+            "label": "M44V ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 522.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 85, 
+            "parent": 75, 
+            "label": "C47STOP ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 525.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 86, 
+            "parent": 75, 
+            "label": "Y48STOP ID3;Y48C ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 526.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 87, 
+            "parent": 75, 
+            "label": "Q81STOP ID3;Q81H ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 559.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 88, 
+            "parent": 75, 
+            "label": "V82A ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 560.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 89, 
+            "parent": 75, 
+            "label": "L54M ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 532.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 90, 
+            "parent": 75, 
+            "label": "P56L ID3;P56A ID3;P56H ID3;P56S ID3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 534.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 91, 
+            "parent": 75, 
+            "label": "Y11"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 489.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 92, 
+            "parent": 75, 
+            "label": "S21"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 499.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 93, 
+            "parent": 75, 
+            "label": "Y48"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 526.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 94, 
+            "parent": 75, 
+            "label": "S18"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 496.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 95, 
+            "parent": 75, 
+            "label": "S5"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 483.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "pp_mod", 
+            "id": 96, 
+            "parent": 75, 
+            "label": "S65"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 543.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "ac_mod", 
+            "id": 97, 
+            "parent": 75, 
+            "label": "K2"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 480.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "start-end", 
+            "id": 98, 
+            "parent": 75, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 478.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "start-end", 
+            "id": 99, 
+            "parent": 75, 
+            "label": "119"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -78.4778006184792, 
+            "x": 596.8889080336917
+        }
+    }, 
+    {
+        "data": {
+            "source": 31, 
+            "role": "protein_sequence", 
+            "id": 100, 
+            "target": 8
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 8, 
+            "role": "protein_sequence", 
+            "id": 101, 
+            "target": 9
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 9, 
+            "role": "protein_sequence", 
+            "id": 102, 
+            "target": 5
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 5, 
+            "role": "protein_sequence", 
+            "id": 103, 
+            "target": 6
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 6, 
+            "role": "protein_sequence", 
+            "id": 104, 
+            "target": 2
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 2, 
+            "role": "protein_sequence", 
+            "id": 105, 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 3, 
+            "role": "protein_sequence", 
+            "id": 106, 
+            "target": 32
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 73, 
+            "role": "protein_sequence", 
+            "id": 107, 
+            "target": 35
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 35, 
+            "role": "protein_sequence", 
+            "id": 108, 
+            "target": 36
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 36, 
+            "role": "protein_sequence", 
+            "id": 109, 
+            "target": 74
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 98, 
+            "role": "protein_sequence", 
+            "id": 110, 
+            "target": 77
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 77, 
+            "role": "protein_sequence", 
+            "id": 111, 
+            "target": 78
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 78, 
+            "role": "protein_sequence", 
+            "id": 112, 
+            "target": 99
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 0, 
+            "role": "prot_prot_interaction", 
+            "id": 113, 
+            "target": 33
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 4, 
+            "role": "iDOM_interaction", 
+            "id": 114, 
+            "target": 34
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 7, 
+            "role": "iDOM_interaction", 
+            "id": 115, 
+            "target": 34
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 4, 
+            "role": "iDOM_interaction", 
+            "id": 116, 
+            "target": 76
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 7, 
+            "role": "iDOM_interaction", 
+            "id": 117, 
+            "target": 76
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 33, 
+            "role": "prot_prot_interaction", 
+            "id": 118, 
+            "target": 75
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 34, 
+            "role": "DOM_interaction", 
+            "id": 119, 
+            "target": 76
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 34, 
+            "role": "iDOM_interaction", 
+            "id": 120, 
+            "target": 76
+        }, 
+        "group": "edges"
+    }
+]
