@@ -136,7 +136,7 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     sps_dir = data_dir+"species/"+sps+"/"
     proteome_file = sps_dir+"uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
     protein_data_file = sps_dir+"swissprot_human_parsed_data.tsv.gz"
-    protein_data_json_file = sps_dir+"protein_data_new_Hsa_normal.json"
+    protein_data_json_file = sps_dir+"protein_data_new_Hsa_normal.json.gz"
     output_dir = "static/output/"
     # log_file = main_dir+"static/log.txt"
 
