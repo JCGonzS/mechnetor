@@ -324,13 +324,13 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
     graph_elements.append({
     "group" : "nodes",
     "data" : {
-    "id" : protein_id,
-    "label" : protein_data["gene"],
-    "role" : "whole",
-    "parent" : protein_id,
-    "protein" : prot_acc,
-
-    }
+        "id" : protein_id,
+        "label" : protein_data["gene"],
+        "des": protein_data["description"],
+        "role" : "whole",
+        "parent" : protein_id,
+        "protein" : prot_acc,
+        }
     })
     id_counter += 1
 
