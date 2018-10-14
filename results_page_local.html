@@ -15,11 +15,14 @@
   <link rel="stylesheet" type="text/css" href="static/css/jquery.dataTables.night.css"/>
   <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400">
+  <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400"/>
 
   <script type="text/javascript" src="static/js/jquery-3.3.1.js"></script>
   <script type="text/javascript" src="static/js/cytoscape.js"></script>
-  <script type="text/javascript" src="static/js/additional_features.js"></script>
+  <script type="text/javascript" src="static/js/graph_features.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+  <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.7.0/cytoscape-qtip.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
@@ -165,21 +168,23 @@
         <div id=graph_box style="position:relative; height:600px">
           <div id="cy" class="cytoscape_container"></div>
           <script type="text/javascript">
-            var elements_json ="static/examples/graph_elements.json";
+            var elements_json ="static/examples/graph_elements0003.json";
             var style_json = "static/js/cy_style.json";
           </script>
           <script type="text/javascript" src="static/js/cyto_graph.js"></script>
 
-          <div style="position:relative; padding-top:5px; padding-left:5px;">
-            <button class="btn" id="center"><i class="fa fa-align-center"></i></button>
-            <button class="btn" id="lock"><i class="fa fa-unlock"></i></button>
-            <button class="btn" id="reset"><i class="fa fa-sync"></i></button>
-          </div>
-          <div style="position:relative; padding-top:5px; padding-left:5px;">
-            <button class="btn" id="zoom_in"><i class="fas fa-search-plus"></i></button>
-          </div>
-          <div style="position:relative; padding-top:5px; padding-left:5px;">
-            <button class="btn" id="zoom_out"><i class="fas fa-search-minus"></i></button>
+          <div id="quick-tools" class="col-sm-2">
+            <div>
+              <button class="btn" id="center"><i class="fa fa-align-center"></i></button>
+              <button class="btn" id="lock"><i class="fa fa-unlock"></i></button>
+              <button class="btn" id="reset"><i class="fa fa-sync"></i></button>
+            </div>
+            <div style="position: relative; padding-top: 5px;">
+              <button class="btn" id="zoom_in"><i class="fas fa-search-plus"></i></button>
+            </div>
+            <div style="position: relative; padding-top: 5px;">
+              <button class="btn" id="zoom_out"><i class="fas fa-search-minus"></i></button>
+            </div>
           </div>
         </div> <!--close graph_box-->
       </div> <!--close graph-->
@@ -195,8 +200,9 @@
 
       <br>
 
+      <script type="text/javascript" src="static/js/interaction_table.js"></script>
       <script type="text/javascript">
-        var ints_json ="static/examples/interaction_table0060.json";
+        var ints_json ="static/examples/interaction_table0100.json";
       </script>
       <table id="interactionTable" class="display">
     		<thead>
