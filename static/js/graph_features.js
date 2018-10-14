@@ -2,92 +2,6 @@
 
 $(document).ready(function(){
 
-	//populate datatable
-	var table = $('#interactionTable').DataTable( {
-		dom: "lBfrtip",
-		buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ],
-		"ajax": ints_json,
-		"columnDefs": [
-			  //adds links to columns with UniProt accession
-				{
-					targets: [1, 3],
-					"render": function ( data, type, row, meta ) {
-						return '<a href=http://www.uniprot.org/uniprot/'+data+'  target="_blank">'+data+'</a>';
-						}
-				},
-				{
-					targets: [0, 1, 2, 3],
-					"width": "120px"
-				},
-				//gives text wrap width
-				{
-					targets: [-2],
-					"render": function (data, type, row, meta) {
-						return "<div class='text-wrap width-300'>" + data + "</div>";
-						}
-				},
-				//hides column
-				{
-					targets: [-2],
-					"visible": false,
-					"searchable": false
-				}
-			],
-		"initComplete": function(settings){
-			$('#interactionTable thead th, #interactionTable tfoot th').each(function () {
-			   var td = $(this);
-			   var headerText = td.text();
-			   var headerTitle= "";
-			   if ( headerText == "Protein (A)" ) headerTitle =  "Gene Name of Interacting Protein A";
-				 else if ( headerText == "Accession (A)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
-				 else if ( headerText == "Protein (B)" ) headerTitle =  "Gene Name of Interacting Protein B";
-				 else if ( headerText == "Accession (A)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
-			   else if ( headerText == "Type" ) headerTitle =  "Type of Interaction";
-			   else if ( headerText == "F (A)" ) headerTitle =  "Interacting Element of Protein A";
-				 else if ( headerText == "F (A)" ) headerTitle =  "Interacting Element of Protein B";
-				 else if ( headerText == "Source" ) headerTitle =  "Source of interaction information (DB, tool, etc)";
-			   td.attr('title', headerTitle);
-			});
-
-      /* Apply the tooltips */
-      $('#example thead th[title]').tooltip(
-	      {
-	         "container": 'body',
-	         "delay": 0,
-					 "track": true,
-					 "fade": 250
-      });
-
-      //show only when hovering within Type column
-			$('#interactionTable tr td:nth-child(3)').each(function () {
-         var td = $(this);
-         var headerText = td.text();
-         var headerTitle= "";
-         //console.log( td.text() );
-         if ( headerText == "PROT::PROT" ) headerTitle =  "Protein-Protein interaction; supported by experimental evidence from BioGRID";
-         else if (headerText == "DOM::DOM" ) headerTitle = "Domain-Domain interaction; derived via HiRes 3D structure of interaction domains from 3did";
-         else if (headerText == "iDOM::iDOM" ) headerTitle = "Domain-Domain interaction; predicted from protein signatures";
-         else if (headerText == "DOM::ELM" ) headerTitle = "Domain-Linear Motif interaction; from ELM database";
-				 else if (headerText == "ELM::DOM" ) headerTitle = "Domain-Linear Motif interaction; from ELM database";
-         else if (headerText == "InterPreTS" ) headerTitle = "Region-Region interaction; based on homology with a structure of interacting proteins, predicted with InterPreTS";
-
-         td.attr('title', headerTitle);
-      });
-
-      /* Apply the tooltips */
-      $('#example thead th[title]').tooltip(
-      {
-         "container": 'body',
-         "delay": 0,
-				 "track": true,
-				 "fade": 250
-      });
-    }
-	});
-
-
 	//// CYTOSCAPE.JS FEATURES /////////////////////////////////////////////////
 
 	//set original position
@@ -102,36 +16,79 @@ $(document).ready(function(){
 		//console.log(n);
 	});
 
+	cy.$('node[role="domain"]').ungrabify();
+	cy.$('node[role = "pp_mod"]').grabify();
+	cy.$('node[role = "ac_mod"]').grabify();
+	cy.$('node[role = "mutation"]').grabify();
+	cy.$('node[role = "position"]').grabify();
 
-  // Lock PTM & Mutation nodes
-  cy.nodes().nonorphans()
-    .on('grab', function(){
-      cy.$('node[role = "pp_mod"]').ungrabify();
-      cy.$('node[role = "ac_mod"]').ungrabify();
-      cy.$('node[role = "mutation"]').ungrabify();
-      cy.$('node[role = "position"]').ungrabify();
-    })
-    .on('free', function(){
-      cy.$('node[role = "pp_mod"]').grabify();
-      cy.$('node[role = "ac_mod"]').grabify();
-      cy.$('node[role = "mutation"]').grabify();
-      cy.$('node[role = "position"]').grabify();
-    });
+  // // Lock PTM & Mutation nodes
+  // cy.nodes().nonorphans()
+  //   .on('grab', function(){
+  //     cy.$('node[role = "pp_mod"]').ungrabify();
+  //     cy.$('node[role = "ac_mod"]').ungrabify();
+  //     cy.$('node[role = "mutation"]').ungrabify();
+  //     cy.$('node[role = "position"]').ungrabify();
+  //   })
+  //   .on('free', function(){
+  //     cy.$('node[role = "pp_mod"]').grabify();
+  //     cy.$('node[role = "ac_mod"]').grabify();
+  //     cy.$('node[role = "mutation"]').grabify();
+  //     cy.$('node[role = "position"]').grabify();
+  //   });
 
-  // Mouseover nodes display info
-  cy.on('mouseover','node[role = \"whole\"]', function(event) {
-    var node = event.cyTarget;
-    node.qtip({
-      content: 'hello',
-      show: {
-        event: event.type,
-        ready: true
-      },
-      hide: {
-        event: 'mouseout unfocus'
-      }
-    }, event);
+  // MOUSEOVER
+  cy.on('mouseover','node[role=\"whole\"]', function(event) {
+    var node = event.target;
+		var edges = node.connectedEdges();
+		node.toggleClass("highlight");
+		edges.toggleClass("highlight");
   });
+	cy.on('mouseout','node[role=\"whole\"]', function(event) {
+		var node = event.target;
+		var edges = node.connectedEdges();
+		node.toggleClass("highlight");
+		edges.toggleClass("highlight");
+	});
+
+	cy.on('mouseover','node[role=\"domain\"]', function(event) {
+		var node = event.target;
+		var edges = node.connectedEdges();
+		edges.toggleClass("highlight");
+	});
+	cy.on('mouseout','node[role=\"domain\"]', function(event) {
+		var node = event.target;
+		var edges = node.connectedEdges();
+		edges.toggleClass("highlight");
+	});
+
+	cy.on('click','node[role=\"whole\"]', function(event) {
+		var node = event.target;
+		var gene = node.data("label");
+		var des = node.data("des");
+		var acc = node.data("protein");
+		node.qtip({
+		  content: "<a style=\"color:#17A589;\">Gene</a> | " +
+								"<b>"+gene+"</b>" +
+								"<br><a style=\"color:#17A589;\">Protein</a> | " +
+								"<b>"+des+"</b>" +
+								"<br><a style=\"color:#17A589;\">UniProt</a> | " +
+								"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">"+acc+"</a>",
+		  position: {
+		    my: 'top center',
+		    at: 'bottom center'
+		  },
+		  style: {
+				classes: 'qtip-bootstrap',
+		    tip: {
+		      width: 16,
+		      height: 8
+		    }
+		  }
+		});
+	});
+
+
 
   // BUTTON: Center the graph on the page
   $("#center").click(function(){
@@ -180,14 +137,6 @@ $(document).ready(function(){
 		 cy.zoom( z )
 	 });
 
-  // BUTTON: Remove/Restore selected elements from the graph
-  // $("#remove").click(function(){
-  //   var rem = cy.$(':selected').remove();
-  // });
-  //
-  // $("#restore").click(function(){
-  //   rem.restore();
-  // })
 
   // BUTTON: Toggle position labels
   //var coord_action = 0;
@@ -366,24 +315,18 @@ $(document).ready(function(){
 
   // BUTTON: Download graph as...
   $("#dl_png").click(function(){
-	  console.log("in PNG function..");
+	  // console.log("in PNG function..");
 		var image = cy.png()
 		var iframe = "<iframe src='"+image+`' frameborder='0'
-		style='border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;'
-		allowfullscreen></iframe>`;
+			style='border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;'
+			allowfullscreen></iframe>`;
   	var win = window.open();
 	  win.document.write(iframe);
 
   });
     // BUTTON: Download graph as...
   $("#dl_jpg").click(function(){
-	  console.log("in JPG function..");
-	  // var b64key = 'base64,';
-	  // var b64 = cy.jpg().substring( content.indexOf(b64key) + b64key.length );
-		// var b64toBlob = require('b64-to-blob')
-	  // var imgBlob = base64ToBlob( b64, 'image/png' );
-		// var imgBlob = saveBase64ImagePng( b64,'graph.png')
-	  // saveAs( imgBlob, 'graph.png' );
+	  // console.log("in JPG function..");
 		var image = cy.jpg()
 		var iframe = "<iframe src='"+image+`' frameborder='0'
 			style='border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;'
@@ -393,7 +336,7 @@ $(document).ready(function(){
   });
     // BUTTON: Download graph as...
   $("#dl_json").click(function(){
-	  console.log("in JSON function..");
+	  // console.log("in JSON function..");
 	  var jsonBlob = new Blob([ JSON.stringify( cy.json() ) ], { type: 'application/javascript;charset=utf-8' });
 	  saveAs( jsonBlob, 'graph.json' );
   });

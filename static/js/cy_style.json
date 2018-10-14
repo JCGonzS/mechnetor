@@ -1,6 +1,6 @@
 [
   {
-    "selector": "node[role = \"start-end\"]",
+    "selector": "node[role=\"start-end\"]",
     "style": {
       "shape": "rectangle",
       "width": "1",
@@ -13,17 +13,18 @@
     }
   },
   {
-    "selector": "node[role = \"whole\"]",
+    "selector": "node[role=\"whole\"]",
     "style": {
       "shape": "roundrectangle",
+      "padding": "40px",
       "background-opacity": "0",
-      "border-color": "#000",
+      "border-color": "#424949",
       "border-width": "1px",
       "border-opacity": "1",
       "label": "data(label)",
       "font-size": "20",
       "color": "#FFF",
-      "text-outline-color": "#000",
+      "text-outline-color": "#424949",
       "text-outline-width": "2",
       "text-valign": "bottom",
       "text-halign": "center",
@@ -31,11 +32,23 @@
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
-      "text-background-padding": "0"
+      "text-background-padding": "0",
+      "events": "yes",
+      "text-events": "yes"
     }
   },
   {
-    "selector": "node[role = \"dom_pos\"]",
+    "selector": "node[role=\"whole\"].highlight",
+    "style": {
+      "border-color": "#000",
+      "border-width": "3px",
+      "font-size": "30",
+      "text-outline-color": "#000",
+      "text-outline-width": "3"
+    }
+  },
+  {
+    "selector": "node[role=\"dom_pos\"]",
     "style": {
       "shape": "rectangle",
       "width": "1",
@@ -53,7 +66,7 @@
     }
   },
   {
-    "selector": "node[role = \"domain\"]",
+    "selector": "node[role=\"domain\"]",
     "style": {
       "shape": "roundrectangle",
       "background-color": "data(color)",
@@ -66,13 +79,13 @@
       "text-outline-color": "data(color)",
       "text-outline-width": "2",
       "text-margin-y": "2px",
-      "events": "no",
+      "events": "yes",
       "z-index-compare": "manual",
       "z-index": "195"
     }
   },
   {
-    "selector": "node[role = \"domain\"]:selected",
+    "selector": "node[role=\"domain\"]:selected",
     "style": {
       "border-style": "dashed",
       "border-color": "#DC143C",
@@ -83,7 +96,7 @@
     }
   },
   {
-    "selector": "node[role = \"position\"]",
+    "selector": "node[role=\"position\"]",
     "style": {
       "shape": "rectangle",
       "width": "1",
@@ -97,7 +110,7 @@
     }
   },
   {
-    "selector": "node[role = \"elms\"]",
+    "selector": "node[role=\"elms\"]",
     "style": {
       "shape": "roundrectangle",
       "background-opacity": "0",
@@ -114,7 +127,7 @@
     }
   },
   {
-    "selector": "node[role = \"newLM\"]",
+    "selector": "node[role=\"newLM\"]",
     "style": {
       "shape": "roundrectangle",
       "background-opacity": "0",
@@ -130,7 +143,7 @@
     }
   },
   {
-    "selector": "node[role = \"iprets\"]",
+    "selector": "node[role=\"iprets\"]",
     "style": {
       "shape": "rectangle",
       "background-opacity": "0",
@@ -150,7 +163,7 @@
     }
   },
   {
-    "selector": "node[role = \"pp_mod\"]",
+    "selector": "node[role=\"pp_mod\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",
@@ -167,7 +180,7 @@
     }
   },
   {
-    "selector": "node[role = \"ac_mod\"]",
+    "selector": "node[role=\"ac_mod\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",
@@ -183,7 +196,7 @@
     }
   },
   {
-    "selector": "node[role = \"mutation\"]",
+    "selector": "node[role=\"mutation\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",
@@ -199,18 +212,7 @@
     }
   },
   {
-    "selector": "node[role = \"whole\"]:selected",
-    "style":{
-      "background-color": "#DC143C",
-      "line-color": "#DC143C",
-      "target-arrow-color": "#DC143C",
-      "source-arrow-color": "#DC143C",
-      "text-outline-color": "#DC143C",
-      "border-color": "#DC143C"
-    }
-  },
-  {
-    "selector": "edge[role = \"protein_sequence\"]",
+    "selector": "edge[role=\"protein_sequence\"]",
     "style": {
       "width": "6px",
       "line-color": "#A9A9A9",
@@ -220,56 +222,63 @@
     }
   },
   {
-    "selector": "edge[role = \"prot_prot_interaction\"]",
+    "selector": "edge[role=\"prot_prot_interaction\"]",
     "style": {
       "width": "8px",
-      "line-color": "#000",
+      "line-color": "#424949",
       "line-style": "solid",
       "opacity": "1",
       "source-arrow-shape": "circle",
-      "source-arrow-color": "#000",
+      "source-arrow-color": "#424949",
       "target-arrow-shape": "circle",
-      "target-arrow-color": "#000",
+      "target-arrow-color": "#424949",
       "arrow-scale": "0.8",
-      "events": "no"
+      "events": "yes"
     }
   },
   {
-    "selector": "edge[role = \"DOM_interaction\"]",
+    "selector": "edge[role=\"prot_prot_interaction\"].highlight",
+    "style": {
+      "width": "10px",
+      "line-color": "#000",
+      "source-arrow-color": "#000",
+      "target-arrow-color": "#000"
+    }
+  },
+  {
+    "selector": "edge[role=\"DOM_interaction\"]",
     "style": {
       "width": "3px",
       "curve-style": "bezier",
       "line-style": "solid",
       "line-color": "#006400",
       "opacity": "0.7",
-      "source-arrow-shape": "triangle",
-      "source-arrow-color": "#006400",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#006400",
-      "arrow-scale": "0.5",
-      "events": "no",
-      "visibility": "hidden"
+      "visibility": "hidden",
+      "events": "yes"
     }
   },
   {
-    "selector": "edge[role = \"iDOM_interaction\"]",
+    "selector": "edge[role=\"DOM_interaction\"].highlight",
+    "style": {
+      "line-color": "#1abc9c",
+      "width": "5px"
+    }
+  },
+  {
+    "selector": "edge[role=\"iDOM_interaction\"]",
     "style": {
       "width": "3px",
       "curve-style": "bezier",
       "line-style": "solid",
       "line-color": "#00008B",
       "opacity": "0.7",
-      "source-arrow-shape": "triangle",
-      "source-arrow-color": "#00008B",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#00008B",
-      "arrow-scale": "0.5",
+
       "events": "no",
       "visibility": "hidden"
     }
   },
   {
-    "selector": "edge[role = \"ELM_interaction\"]",
+    "selector": "edge[role=\"ELM_interaction\"]",
     "style": {
       "width": "6px",
       "line-color": "#800080",
@@ -281,7 +290,7 @@
     }
   },
   {
-    "selector": "edge[role = \"LMD2_interaction\"]",
+    "selector": "edge[role=\"LMD2_interaction\"]",
     "style": {
       "width": "6px",
       "line-color": "#A52A2A",
@@ -293,7 +302,7 @@
     }
   },
   {
-    "selector": "edge[role = \"INT_interaction\"]",
+    "selector": "edge[role=\"INT_interaction\"]",
     "style": {
       "width": "4px",
       "line-color": "data(color)",
