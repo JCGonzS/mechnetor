@@ -68,6 +68,7 @@ def get_protein_data_from_uniprot_text(uniprot_file):
         gn = record.gene_name
         if record.gene_name != "":
             gn = re.search("Name[s]?=([^;]+)", record.gene_name ).group(1).split()[0]
+        des = re.search("Name: Full=([^;]+)", record.description).group(1)
         seq = record.sequence
         length = record.sequence_length
 
@@ -77,8 +78,9 @@ def get_protein_data_from_uniprot_text(uniprot_file):
         D["ID"][uni_ac.upper()], D["ID"][uni_id.upper()], D["ID"][gn.upper()] = uni_id.upper(), uni_id.upper(), uni_id.upper()
         D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn.upper(), gn.upper(), gn.upper()
         D["GN"][uni_ac.upper()], D["GN"][uni_id.upper()], D["GN"][gn.upper()] = gn.upper(), gn.upper(), gn.upper()
-        D["seq"][uni_ac] = seq
-        D["dc"][uni_ac] = dc
+        D["seq"][uni_ac.upper()] = seq
+        D["dc"][uni_ac.upper()] = dc
+        D["des"][uni_ac.upper()] = des
 
         for ac in accs:
             D["AC"][ac] = uni_ac.upper()
@@ -197,13 +199,14 @@ ptms = get_ptms(psp_file, prot_dict["AC"])
 
 ## 4. Output
 pp = pprint.PrettyPrinter(indent=4)
-outfile_name = sp_data_dir+"protein_data_new_"+species+"_"+mode+".json"
+outfile_name = sp_data_dir+"protein_data_new_"+species+"_"+mode+".json.gz"
 if mode == "normal":
     protein_data = {}
     for uni_ac in prot_dict["seq"]:
         protein_data[uni_ac] = {
                 "uniprot_id" : prot_dict["ID"][uni_ac],
                 "gene" : prot_dict["GN"][uni_ac],
+                "description" : prot_dict["des"][uni_ac],
                 "data_class" : prot_dict["dc"][uni_ac],
                 "length" : len(prot_dict["seq"][uni_ac]),
                 "pfams" : {},
@@ -252,7 +255,7 @@ if mode == "normal":
                 if pos not in protein_data[uni_ac][ptm_type]:
                     protein_data[uni_ac][ptm_type][int(pos)] = res
 
-    with open(outfile_name, "w") as out:
+    with open_file(outfile_name, "w") as out:
         json.dump(protein_data, out)
 
 elif mode == "mongo":
@@ -263,6 +266,7 @@ elif mode == "mongo":
                     "uniprot_acc" : uni_ac,
                     "uniprot_id" : prot_dict["ID"][uni_ac],
                     "gene" : prot_dict["GN"][uni_ac],
+                    "description" : prot_dict["des"][uni_ac],
                     "data_class" : prot_dict["dc"][uni_ac],
                     "length" : len(prot_dict["seq"][uni_ac]),
                     "pfams" : [],
