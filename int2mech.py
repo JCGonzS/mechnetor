@@ -13,10 +13,10 @@ If these are missing, see "prepare_data_for_int2mech.py"
 
 
 import sys, re
-import gzip
+import gzip, itertools
 from collections import defaultdict
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-
+from pymongo import MongoClient
 
 def open_file(input_file, mode="r"):
     """ Opens file Zipped or not
@@ -110,6 +110,34 @@ def get_biogrid_int_single_prot(biogrid_file, target_prots, ac_dict,
                             target_prots.add(ac_b)
 
     return biogrid_int, target_prots
+
+def get_biogrid_mongo(client, target_prots, ac_dict):
+    db = client['interactions_Hsa']
+    data = db['biogrid_Hsa']
+    biogrid_int = defaultdict(lambda: defaultdict(set))
+    for pair in itertools.combinations(target_prots, 2):
+        ac_a, ac_b = pair
+    # for ac_a in target_prots:
+        if ac_a in ac_dict["GN"]:
+            gn_a = ac_dict["GN"][ac_a]
+        # for ac_b in target_prots:
+            if ac_b in ac_dict["GN"]:
+                gn_b = ac_dict["GN"][ac_b]
+
+                if gn_a != gn_b:
+                    print "yeh"
+                    for p in data.find(
+                            {"Official Symbol Interactor A": { "$in": [gn_a, gn_b] },
+                             "Official Symbol Interactor B": { "$in": [gn_a, gn_b] }
+                            }):
+                        bio_id = p["#BioGRID Interaction ID"]
+                        exp_sys = p["Experimental System"]
+                        throu = p["Throughput"]
+                        info = [str(bio_id), str(exp_sys), str(throu)]
+                        biogrid_int[ac_a][ac_b].add(":".join(info))
+                        biogrid_int[ac_b][ac_a].add(":".join(info))
+
+    return biogrid_int
 
 def get_biogrid_int(biogrid_file, target_prots, ac_dict):
     """Gets protein-protein interactions from BioGRID database
@@ -271,6 +299,9 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     max_pmax = 1.0
     homo_int = "n"
 
+    client = MongoClient('localhost', 27017)
+
+
     # General files
     db_3did_file = data_dir + "general/3did_flat_July2018_edited.txt.gz"
     elm_int_dom_file = data_dir + "general/elm_interaction_domains_edited_Jan18.tsv"
@@ -294,8 +325,9 @@ def main(target_prots, protein_ids, protein_data, output_file="",
         biogrid_int, target_prots = get_biogrid_int_single_prot(biogrid_file,
                                     target_prots, protein_ids["AC"], max_prots)
     else:
-        biogrid_int = get_biogrid_int(biogrid_file, target_prots,
-                                      protein_ids["AC"])
+        biogrid_int = get_biogrid_mongo(client, target_prots, protein_ids)
+        # biogrid_int = get_biogrid_int(biogrid_file, target_prots,
+        #                               protein_ids["AC"])
     ## from 3did [domain-domain]
     dom_3did_int = get_3did_int(db_3did_file)
     ## from interaction propensities [domain-domain]
