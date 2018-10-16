@@ -151,55 +151,87 @@ def parse_linear_motifs(elm_hits_file, prot_dict, masks,
                         #                             masks[uni_ac])
         return lms, lm_sets
 
-def main( data_dir="static/data/",
+def reduce_3did(db_file, out_file):
+    """ Writes a simplified version in TSV format of the 3did flat file db
+    """
+    with open_file(out_file, "w") as out:
+        cols = ["Pfam_Name_A", "Pfam_Acc_A", "Pfam_Name_B", "Pfam_Acc_B", "PDBs"]
+        out.write( "\t".join(cols)+"\n" )
+
+        with open_file(db_file) as f:
+            for line in f:
+    #=ID    1-cysPrx_C      1-cysPrx_C       (PF10417.4@Pfam       PF10417.4@Pfam)
+                if line.startswith("#=ID"):
+                    pfam_name_a, pfam_name_b = line.rstrip().split()[1:3]
+                    pfam_acc_a = line.rstrip().split()[3].split(".")[0].split("(")[1]
+                    pfam_acc_b = line.rstrip().split()[4].split(".")[0]
+                    pdbs = set()
+
+    #=3D    1n8j    E:153-185       O:153-185       0.99    1.35657 0:0
+                elif line.startswith("#=3D"):
+                    pdb = line.rstrip().split()[1]
+                    pdbs.add(pdb)
+
+                elif line.startswith("//"):
+                    row = [pfam_name_a, pfam_acc_a, pfam_name_b, pfam_acc_b,
+                           ";".join(sorted(list(pdbs)))]
+                    out.write( "\t".join(row)+"\n" )
+    return
+
+
+def main( data_dir="",
           species="Hsa",
           max_overlap=0.2,
           no_overlap_between_doms_and_lms="y"
         ):
 
-    # General files:
-    
+    # Common files:
+    gen_dir = data_dir + "common/"
+    db_3did_file = com_dir + "3did_flat-2018_04.gz"
 
-    #: Species Files
-    sp_data_dir = data_dir+"species/"+species+"/"
-    proteome_file = sp_data_dir + "uniprot_sprot_species.fasta.gz"
-    pfam_hits_file = sp_data_dir + "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
-    elm_hits_file = sp_data_dir + "elm_hits.tsv.gz"
+    edited_3did_file = com_dir + "3did_flat_edited-2018_04.tsv.gz"
+    reduce_3did(db_3did_file, edited_3did_file)
 
-    #: Output Files
-    pfam_parsed_file = sp_data_dir + "pfam_parsed_info.tsv.gz"
-    elm_parsed_file = sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
-
-    #: Get protein ID-dictionary, sequences and masks
-    prot_id_dict, sequences, masks = parse_fasta(proteome_file)
-
-    #: Get Pfam domains per protein from hmmsearch result file
-    domains, domain_sets, ms = parse_pfam_doms(pfam_hits_file, prot_id_dict,
-                                       masks, max_overlap=max_overlap)
-
-    #: Print them in TSV file
-    with gzip.open(pfam_parsed_file, "wb") as out:
-        c = ["#UniProt_acc|Gene", "Pfam_ID|Name", "Start", "End", "E-val"]
-        out.write("\t".join(c) + "\n")
-        for uni_ac in sorted(domains):
-            for e_val in sorted(domains[uni_ac]):
-                for dom in domains[uni_ac][e_val]:
-                    out.write(dom + "\n")
-
-    if no_overlap_between_doms_and_lms == "y":
-        masks = ms
-
-    #: Get Linear Motifs per protein from hmmsearch result file
-    lms, lm_sets = parse_linear_motifs(elm_hits_file, prot_id_dict, masks,
-                                    max_overlap=max_overlap)
-    #: Print them in TSV file
-    with gzip.open(elm_parsed_file, "wb") as out:
-        c = ["#UniProt_acc|Gene", "ELM_ID|Name", "Start", "End", "Some_Score"]
-        out.write("\t".join(c) + "\n")
-        for uni_ac in sorted(lms):
-            for lm in sorted(lms[uni_ac]):
-                for instance in lms[uni_ac][lm]:
-                    out.write(instance + "\n")
+    # #: Species Files
+    # sp_data_dir = data_dir+"species/"+species+"/"
+    # proteome_file = sp_data_dir + "uniprot_sprot_species.fasta.gz"
+    # pfam_hits_file = sp_data_dir + "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
+    # elm_hits_file = sp_data_dir + "elm_hits.tsv.gz"
+    #
+    # #: Output Files
+    # pfam_parsed_file = sp_data_dir + "pfam_parsed_info.tsv.gz"
+    # elm_parsed_file = sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
+    #
+    # #: Get protein ID-dictionary, sequences and masks
+    # prot_id_dict, sequences, masks = parse_fasta(proteome_file)
+    #
+    # #: Get Pfam domains per protein from hmmsearch result file
+    # domains, domain_sets, ms = parse_pfam_doms(pfam_hits_file, prot_id_dict,
+    #                                    masks, max_overlap=max_overlap)
+    #
+    # #: Print them in TSV file
+    # with gzip.open(pfam_parsed_file, "wb") as out:
+    #     c = ["#UniProt_acc|Gene", "Pfam_ID|Name", "Start", "End", "E-val"]
+    #     out.write("\t".join(c) + "\n")
+    #     for uni_ac in sorted(domains):
+    #         for e_val in sorted(domains[uni_ac]):
+    #             for dom in domains[uni_ac][e_val]:
+    #                 out.write(dom + "\n")
+    #
+    # if no_overlap_between_doms_and_lms == "y":
+    #     masks = ms
+    #
+    # #: Get Linear Motifs per protein from hmmsearch result file
+    # lms, lm_sets = parse_linear_motifs(elm_hits_file, prot_id_dict, masks,
+    #                                 max_overlap=max_overlap)
+    # #: Print them in TSV file
+    # with gzip.open(elm_parsed_file, "wb") as out:
+    #     c = ["#UniProt_acc|Gene", "ELM_ID|Name", "Start", "End", "Some_Score"]
+    #     out.write("\t".join(c) + "\n")
+    #     for uni_ac in sorted(lms):
+    #         for lm in sorted(lms[uni_ac]):
+    #             for instance in lms[uni_ac][lm]:
+    #                 out.write(instance + "\n")
     return
 
 ##USE dom2dom.py FOR CALCULATING DOM-DOM PROPENSITIES!!!!!!!!!

@@ -65,41 +65,28 @@ def get_biogrid_from_mongo(client, gene_a, gene_b):
     db = client['interactions_Hsa']
     data = db['biogrid_Hsa']
     info = set()
-    for p in data.find( {"$or":
+    for d in data.find( {"$or":
             [{"Official Symbol Interactor A": gene_a,
              "Official Symbol Interactor B": gene_b},
              {"Official Symbol Interactor A": gene_b,
               "Official Symbol Interactor B": gene_a}]},
             {"#BioGRID Interaction ID": 1}):
 
-        bio_id = p["#BioGRID Interaction ID"]
+        bio_id = d["#BioGRID Interaction ID"]
         info.add(str(bio_id))
 
     return info
 
-def get_3did_int(db_3did_file):
-    """Gets domain-domain interactions from 3did database
+def get_3did_from_mongo(client, pfam_a, pfam_b):
+    db = client['interactions_common']
+    data = db['db3did']
 
-        Takes all
-    """
-
-    dom_int = defaultdict(lambda: defaultdict(list) )
-    flag = 0
-    with open_file(db_3did_file) as f:
-        for line in f:
-            if line.startswith("#=ID"):
- #=ID    1-cysPrx_C      1-cysPrx_C       (PF10417.4@Pfam       PF10417.4@Pfam)
-                pfam_a, pfam_b = line.rstrip().split()[1:3]
-                flag = 1
-            elif line.startswith("#=3D"):
- #=3D    1n8j    E:153-185       O:153-185       0.99    1.35657 0:0
-                pdb, r_a, r_b = line.rstrip().split()[1:4]
-                dom_int[pfam_a][pfam_b].append("{}/{}/{}".format(pdb,
-                                                                 r_a, r_b))
-                dom_int[pfam_b][pfam_a].append("{}/{}/{}".format(pdb,
-                                                                 r_b, r_a))
-
-    return dom_int
+    d = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
+                 {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]}, {"PDBs": 1})
+    if d:
+        return d["PDBs"]
+    else:
+        return ""
 
 def get_dd_prop_int(dd_prop_file, obs_min, lo_min, ndom_min):
     """Gets domain-domain interactions from the pre-computed propensities
@@ -138,6 +125,12 @@ def get_elm_ints(elm_int_dom_file):
             interactions[pfam_name][elm_id] = only_prts
 
     return interactions
+
+def get_interprets_from_mongo(client, gene_a, gene_b):
+    db = client['interactions_Hsa']
+    data = db['iprets_Hsa']
+    
+
 
 def get_interprets(interprets_file, target_prots, ac_dict):
     """Get InterPreTS predicted region-region interactions from a previously
@@ -200,9 +193,8 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     client = MongoClient('localhost', 27017)
 
 
-    # General files
-    db_3did_file = data_dir + "general/3did_flat-2018_04.gz"
-    elm_int_dom_file = data_dir + "general/elm_interaction_domains_edited_Jan18.tsv"
+    # Common files
+    elm_int_dom_file = data_dir + "common/elm_interaction_domains_edited_Jan18.tsv"
 
     # Species files
     sp_data_dir = data_dir+"species/"+species+"/"
@@ -214,8 +206,6 @@ def main(target_prots, protein_ids, protein_data, output_file="",
 
     # Get Interaction Data
 
-    ## from 3did [domain-domain]
-    dom_3did_int = get_3did_int(db_3did_file)
     ## from interaction propensities [domain-domain]
         ## needs to be adjusted !!
     dom_prop_int = get_dd_prop_int(dd_prop_file,
@@ -268,39 +258,51 @@ def main(target_prots, protein_ids, protein_data, output_file="",
             score[n] = 1
             n += 1
 
-        for pfam_a in protein_data[ac_a]["pfams"]:
-            for pfam_b in protein_data[ac_b]["pfams"]:
 
-                pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
-                                              len(pfam_sets[pfam_b]),
-                                              len(protein_data))
-                # if pmax <= max_pmax:
+        for pfam_pair in itertools.product(protein_data[ac_a]["pfams"], protein_data[ac_b]["pfams"]):
+            pfam_a, pfam_b = pfam_pair
 
-                ## 3did interactions
-                if (pfam_a in dom_3did_int and
-                    pfam_b in dom_3did_int[pfam_a]):
-                    info = dom_3did_int[pfam_a][pfam_b]
-                    line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                      "DOM::DOM", pfam_a, pfam_b,
-                                      info[0], "3did"
-                                     ])
-                                        # "; ".join(list(info))])
-                    lines.append(line)
-                    score[n] = p
-                    n += 1
+            pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
+                                          len(pfam_sets[pfam_b]),
+                                          len(protein_data))
+            # if pmax <= max_pmax:
 
-                ## domain propensities*
-                if (pfam_a in dom_prop_int and
-                    pfam_b in dom_prop_int[pfam_a]):
-                    info = dom_prop_int[pfam_a][pfam_b]
-                    line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                      "iDOM::iDOM", pfam_a, pfam_b,
-                                      "; ".join(list(info)),
-                                      "Statistical Prediction"
-                                     ])
-                    lines.append(line)
-                    score[n] = p
-                    n += 1
+            ## 3did interactions
+            pdbs = get_3did_from_mongo(client, pfam_a, pfam_b)
+
+            if pdbs != "":
+                line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                  "DOM::DOM", pfam_a, pfam_b,
+                                  pdbs, "3did"
+                                 ])
+                lines.append(line)
+                score[n] = p
+                n += 1
+
+            # if (pfam_a in dom_3did_int and
+            #     pfam_b in dom_3did_int[pfam_a]):
+            #     info = dom_3did_int[pfam_a][pfam_b]
+            #     line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+            #                       "DOM::DOM", pfam_a, pfam_b,
+            #                       info[0], "3did"
+            #                      ])
+            #                         # "; ".join(list(info))])
+            #     lines.append(line)
+            #     score[n] = p
+            #     n += 1
+
+            ## domain propensities*
+            if (pfam_a in dom_prop_int and
+                pfam_b in dom_prop_int[pfam_a]):
+                info = dom_prop_int[pfam_a][pfam_b]
+                line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                  "iDOM::iDOM", pfam_a, pfam_b,
+                                  "; ".join(list(info)),
+                                  "Statistical Prediction"
+                                 ])
+                lines.append(line)
+                score[n] = p
+                n += 1
 
         ## ELM-domain interactions
         for pfam_a in protein_data[ac_a]["pfams"]:
