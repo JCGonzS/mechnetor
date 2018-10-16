@@ -1,6 +1,6 @@
-data/general
+data/common
 data/species
-static/data/general
+static/data/common
 static/data/species
 static/output
 *.pyc

@@ -14,17 +14,20 @@ Short instructions summary
 
 3. Run "create_mongo_dbs.sh" to create Mongo databases and collections
 
+4. make protein data?
+
+CHANGE 'GENERAL' FOR 'COMMON' or 'ALL' !!!!!!!!!
 
 Data Files
 ----------
 Data files are divided into:
-  - general (same for any species) --> static/data/general/
+  - common (same for any species) --> static/data/common/
   - species-specific (eg. Homo sapiens or 'Hsa'): --> static/data/species/Hsa/
 
 Original data files must be obtained from their original sources and put into
 one these two directories.
 Required source files are the following:
-> General
+> Common
   - 3did:
 
 > Species:
@@ -55,7 +58,9 @@ Source_file : "species/sp/BIOGRID-ORGANISM-'SpeciesName'-3.5.165.tab2.txt.gz"
 1. Use 'create_mongo_dbs.sh' to create collection in the Mongo interactions database
 2. Create indexes for this database in mongo shell:
     > use interactions_Hsa
-    > db.biogrid_Hsa.createIndex( {"Official Symbol Interactor A": 1, "Official Symbol Interactor B": 1} )
+    > db.biogrid_Hsa.createIndex( {"Official Symbol Interactor A": 1,
+                                   "Official Symbol Interactor B": 1} )
+
 
 
 II. 3did - Database of three-dimensional interacting domains
@@ -63,15 +68,14 @@ II. 3did - Database of three-dimensional interacting domains
 * 3did.irbbarcelona.org/
 * version 2018_04
 
-Source file: "general/3did_flat_-2018-04.gz"
+Source file: "common/3did_flat-2018-04.gz"
 
-1. File needs to be parsed into a tsv format.
-
-  	Data file:   "3did_flat_July2018_edited.txt.gz"
-
-	Description: considerably reduced number of lines. Only those required by int2mech
-	remain.
-
+1. File needs to be parsed into a tsv format with "prepare_data_files.py"
+   Generates "3did_flat_edited-2018_04.tsv.gz"
+2. Use 'create_mongo_dbs.sh' to create collection in the Mongo interactions database
+3. Create indexes for this database in mongo shell:
+   > use interactions_gen
+   > db.db3did.createIndex( { "Pfam_Name_A": 1, "Pfam_Name_B": 1} )
 
 
 "elm_classes.tsv"

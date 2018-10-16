@@ -22,24 +22,24 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['interactions_Hsa']
+db = client['interactions_common']
 # Get collection #
-data = db['biogrid_Hsa']
-#print data.count()
+data = db['3did']
+print data.count()
 
-data.createIndex( {"Official Symbol Interactor A": 1} )
-b = "ACVR1" 
-a = "FNTA"
+a = "2-Hacid_dh_C"
+b = "ATP-grasp"
 
-for p in data.find( {"Official Symbol Interactor A": a,
-		     "Official Symbol Interactor B": b}):
-	
+p =data.find_one( {"Pfam_Name_A": a,
+		     		 "Pfam_Name_B": b} )
+if p:
+	print ">", p["PDBs"]
 	pprint.pprint(p)
 
 #for p in data.find():
 #	gn_a = p["Official Symbol Interactor A"]
 #	gn_b = p["Official Symbol Interactor B"]
-#	
+#
 #	i=0
 #	for d in data.find(
 #		{"Official Symbol Interactor A": gn_b,
@@ -50,7 +50,7 @@ for p in data.find( {"Official Symbol Interactor A": a,
 
 #	if i==0:
 #		print gn_a, gn_b
-	
+
 	#pprint.pprint(p)
 #	print p["Official Symbol Interactor A"]
 #	print p["Official Symbol Interactor B"],"\n"
