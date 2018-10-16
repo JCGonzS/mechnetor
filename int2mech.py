@@ -60,124 +60,22 @@ def count_elms(protein_data, e_val=0.1):
 
     return elm_sets
 
-def get_biogrid_int_single_prot(biogrid_file, target_prots, ac_dict,
-                                   max_prots):
-    """Gets protein-protein interactions from BioGRID database
-
-       Only for those proteins present in "target_prots"
-    """
-
-    biogrid_int = defaultdict(lambda: defaultdict(set))
-    target = list(target_prots)[0]
-    with open_file(biogrid_file) as f:
-        flag = 0
-        for line in f:
-            if line.startswith("INTERACTOR_A"):
-                flag = 1
-            elif flag == 1:
-                t = line.rstrip().split("\t")
-                # t[2] = OFFICIAL_SYMBOL: MAP2K4
-                # t[4] = ALIASES: NKK|JNKK1|MAPKK4|MEK4|MKK4
-                gns_a = [t[2]] + t[4].split("|")
-                gns_b = [t[3]] + t[5].split("|")
-                exp_sys, source, pmid = t[6], t[7], t[8]
-                info = [exp_sys, source, pmid]
-
-                found_a, found_b = 0, 0
-                for gn_a in gns_a:
-                    gn_a = gn_a.upper()
-                    if gn_a in ac_dict:
-                        ac_a = ac_dict[gn_a]
-                        found_a = 1
-                        break
-                for gn_b in gns_b:
-                    gn_b = gn_b.upper()
-                    if gn_b in ac_dict:
-                        ac_b = ac_dict[gn_b]
-                        found_b = 1
-                        break
-
-                if found_a == 1 and found_b == 1:
-                    if ac_a == target or ac_b == target:
-                        biogrid_int[ac_a][ac_b].add(":".join(info))
-                        biogrid_int[ac_b][ac_a].add(":".join(info))
-                        if max_prots:
-                            if len(target_prots) < max_prots:
-                                target_prots.add(ac_a)
-                                target_prots.add(ac_b)
-                        else:
-                            target_prots.add(ac_a)
-                            target_prots.add(ac_b)
-
-    return biogrid_int, target_prots
-
-def get_biogrid_mongo(client, target_prots, ac_dict):
+def get_biogrid_from_mongo(client, gene_a, gene_b):
+            # modify for single protein_input
     db = client['interactions_Hsa']
     data = db['biogrid_Hsa']
-    biogrid_int = defaultdict(lambda: defaultdict(set))
-    for pair in itertools.combinations(target_prots, 2):
-        ac_a, ac_b = pair
-    # for ac_a in target_prots:
-        if ac_a in ac_dict["GN"]:
-            gn_a = ac_dict["GN"][ac_a]
-        # for ac_b in target_prots:
-            if ac_b in ac_dict["GN"]:
-                gn_b = ac_dict["GN"][ac_b]
+    info = set()
+    for p in data.find( {"$or":
+            [{"Official Symbol Interactor A": gene_a,
+             "Official Symbol Interactor B": gene_b},
+             {"Official Symbol Interactor A": gene_b,
+              "Official Symbol Interactor B": gene_a}]},
+            {"#BioGRID Interaction ID": 1}):
 
-                if gn_a != gn_b:
-                    print "yeh"
-                    for p in data.find(
-                            {"Official Symbol Interactor A": { "$in": [gn_a, gn_b] },
-                             "Official Symbol Interactor B": { "$in": [gn_a, gn_b] }
-                            }):
-                        bio_id = p["#BioGRID Interaction ID"]
-                        exp_sys = p["Experimental System"]
-                        throu = p["Throughput"]
-                        info = [str(bio_id), str(exp_sys), str(throu)]
-                        biogrid_int[ac_a][ac_b].add(":".join(info))
-                        biogrid_int[ac_b][ac_a].add(":".join(info))
+        bio_id = p["#BioGRID Interaction ID"]
+        info.add(str(bio_id))
 
-    return biogrid_int
-
-def get_biogrid_int(biogrid_file, target_prots, ac_dict):
-    """Gets protein-protein interactions from BioGRID database
-
-       Only for those proteins present in "target_prots"
-    """
-
-    biogrid_int = defaultdict(lambda: defaultdict(set))
-    with open_file(biogrid_file) as f:
-        flag = 0
-        for line in f:
-            if line.startswith("INTERACTOR_A"):
-                flag = 1
-            elif flag == 1:
-                t = line.rstrip().split("\t")
-                # t[2] = OFFICIAL_SYMBOL: MAP2K4
-                # t[4] = ALIASES: NKK|JNKK1|MAPKK4|MEK4|MKK4
-                gns_a = [t[2]] + t[4].split("|")
-                gns_b = [t[3]] + t[5].split("|")
-                exp_sys, source, pmid = t[6], t[7], t[8]
-                info = [exp_sys, source, pmid]
-
-                found_a, found_b = 0, 0
-                for gn_a in gns_a:
-                    gn_a = gn_a.upper()
-                    if gn_a in ac_dict:
-                        ac_a = ac_dict[gn_a]
-                        found_a = 1
-                        break
-                for gn_b in gns_b:
-                    gn_b = gn_b.upper()
-                    if gn_b in ac_dict:
-                        ac_b = ac_dict[gn_b]
-                        found_b = 1
-                        break
-                if found_a == 1 and found_b ==1:
-                    if ac_a in target_prots and ac_b in target_prots:
-                        biogrid_int[ac_a][ac_b].add(":".join(info))
-                        biogrid_int[ac_b][ac_a].add(":".join(info))
-    return biogrid_int
+    return info
 
 def get_3did_int(db_3did_file):
     """Gets domain-domain interactions from 3did database
@@ -303,12 +201,11 @@ def main(target_prots, protein_ids, protein_data, output_file="",
 
 
     # General files
-    db_3did_file = data_dir + "general/3did_flat_July2018_edited.txt.gz"
+    db_3did_file = data_dir + "general/3did_flat-2018_04.gz"
     elm_int_dom_file = data_dir + "general/elm_interaction_domains_edited_Jan18.tsv"
 
     # Species files
     sp_data_dir = data_dir+"species/"+species+"/"
-    biogrid_file = sp_data_dir + "BIOGRID-ORGANISM-species-3.4.156.tab.txt.gz"
     dd_prop_file = sp_data_dir + "dom_dom_lo.txt"
     interprets_file = sp_data_dir + "human_aaa_biogrid_i2.txt.gz"
 
@@ -316,18 +213,7 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     elm_sets = count_elms(protein_data)
 
     # Get Interaction Data
-    ## BioGrid [protein-protein]
-    if len(target_prots) == 1:
-        # if not max_prots provided, a default value of 25 is used in the function
-        # otherwise, too many proteins
-        # if not max_prots:
-        #     max_prots == 25
-        biogrid_int, target_prots = get_biogrid_int_single_prot(biogrid_file,
-                                    target_prots, protein_ids["AC"], max_prots)
-    else:
-        biogrid_int = get_biogrid_mongo(client, target_prots, protein_ids)
-        # biogrid_int = get_biogrid_int(biogrid_file, target_prots,
-        #                               protein_ids["AC"])
+
     ## from 3did [domain-domain]
     dom_3did_int = get_3did_int(db_3did_file)
     ## from interaction propensities [domain-domain]
@@ -349,118 +235,121 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     n = 0
     pairs = []
 
-    for ac_1 in sorted(list(target_prots)):
-        for ac_2 in sorted(list(target_prots)):
-            if ac_1 < ac_2:
-                ac_a = ac_1
-                ac_b = ac_2
-            else:
-                ac_a = ac_2
-                ac_b = ac_1
+    for pair in itertools.combinations(target_prots, 2):
+        ac_a, ac_b = pair
+        # if homo_int == "n":
+        #     if ac_a == ac_b:
+        #         continue
+    # for ac_1 in sorted(list(target_prots)):
+    #     for ac_2 in sorted(list(target_prots)):
+    #         if ac_1 < ac_2:
+    #             ac_a = ac_1
+    #             ac_b = ac_2
+    #         else:
+    #             ac_a = ac_2
+    #             ac_b = ac_1
+            #
+            # if ac_a+"-"+ac_b in pairs:
+            #     continue
+            # pairs.append(ac_a+"-"+ac_b)
 
-            if homo_int == "n":
-                if ac_a == ac_b:
-                    continue
-            if ac_a+"-"+ac_b in pairs:
-                continue
-            pairs.append(ac_a+"-"+ac_b)
+        gene_a = protein_ids["GN"][ac_a]
+        gene_b = protein_ids["GN"][ac_b]
 
-            gene_a = protein_ids["GN"][ac_a]
-            gene_b = protein_ids["GN"][ac_b]
+        ## BioGRID interactions
+        info = get_biogrid_from_mongo(client, gene_a, gene_b)
 
-            ## BioGRID interactions
-            if ac_a in biogrid_int and ac_b in biogrid_int[ac_a]:
-                info = biogrid_int[ac_a][ac_b]
-                line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                  "PROT::PROT", "", "",
-                                  "; ".join(list(info)), "BioGRID"
-                                 ])
-                lines.append(line)
-                score[n] = 1
-                n += 1
+        if len(info)>0:
+            line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                              "PROT::PROT", "", "",
+                              "; ".join(list(info)), "BioGRID"
+                             ])
+            lines.append(line)
+            score[n] = 1
+            n += 1
 
-            for pfam_a in protein_data[ac_a]["pfams"]:
-                for pfam_b in protein_data[ac_b]["pfams"]:
+        for pfam_a in protein_data[ac_a]["pfams"]:
+            for pfam_b in protein_data[ac_b]["pfams"]:
 
-                    pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
-                                                  len(pfam_sets[pfam_b]),
-                                                  len(protein_data))
-                    # if pmax <= max_pmax:
+                pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
+                                              len(pfam_sets[pfam_b]),
+                                              len(protein_data))
+                # if pmax <= max_pmax:
 
-                    ## 3did interactions
-                    if (pfam_a in dom_3did_int and
-                        pfam_b in dom_3did_int[pfam_a]):
-                        info = dom_3did_int[pfam_a][pfam_b]
-                        line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                          "DOM::DOM", pfam_a, pfam_b,
-                                          info[0], "3did"
-                                         ])
-                                            # "; ".join(list(info))])
-                        lines.append(line)
-                        score[n] = p
-                        n += 1
-
-                    ## domain propensities*
-                    if (pfam_a in dom_prop_int and
-                        pfam_b in dom_prop_int[pfam_a]):
-                        info = dom_prop_int[pfam_a][pfam_b]
-                        line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                          "iDOM::iDOM", pfam_a, pfam_b,
-                                          "; ".join(list(info)),
-                                          "Statistical Prediction"
-                                         ])
-                        lines.append(line)
-                        score[n] = p
-                        n += 1
-
-            ## ELM-domain interactions
-            for pfam_a in protein_data[ac_a]["pfams"]:
-                for elm_b in protein_data[ac_b]["elms"]:
-                    if pfam_a in elm_int and elm_b in elm_int[pfam_a]:
-                        only_prts = elm_int[pfam_a][elm_b]
-                        if len(only_prts) > 0:
-                            if gene_a not in only_prts:
-                                continue
-                        pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
-                                                      len(elm_sets[elm_b]),
-                                                      len(protein_data))
-                        line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                          "DOM::ELM", pfam_a, elm_b,
-                                          "", "ELM DB"
-                                         ])
-                        lines.append(line)
-                        score[n] = p
-                        n += 1
-
-            for elm_a in protein_data[ac_a]["elms"]:
-                for pfam_b in protein_data[ac_b]["pfams"]:
-                    if elm_a in elm_int and pfam_b in elm_int[elm_a]:
-                        only_prts = elm_int[elm_a][pfam_b]
-                        if len(only_prts) > 0:
-                            if gene_b not in only_prts:
-                                continue
-                        pa, pb, p, pmax = calculate_p(len(elm_sets[elm_a]),
-                                                      len(pfam_sets[pfam_b]),
-                                                      len(protein_data))
-                        line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                          "ELM::DOM", elm_a, pfam_b,
-                                          "", "ELM DB"
-                                         ])
-                        lines.append(line)
-                        score[n] = p
-                        n += 1
-
-            ## InterPreTS interactions
-            if ac_a in iprets and ac_b in iprets[ac_a]:
-                for info in iprets[ac_a][ac_b]:
-                    info = info.split(";")
+                ## 3did interactions
+                if (pfam_a in dom_3did_int and
+                    pfam_b in dom_3did_int[pfam_a]):
+                    info = dom_3did_int[pfam_a][pfam_b]
                     line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                      "InterPreTS", info[0], info[1],
-                                      "; ".join(info[2:]), "InterPreTS prediction"
+                                      "DOM::DOM", pfam_a, pfam_b,
+                                      info[0], "3did"
+                                     ])
+                                        # "; ".join(list(info))])
+                    lines.append(line)
+                    score[n] = p
+                    n += 1
+
+                ## domain propensities*
+                if (pfam_a in dom_prop_int and
+                    pfam_b in dom_prop_int[pfam_a]):
+                    info = dom_prop_int[pfam_a][pfam_b]
+                    line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                      "iDOM::iDOM", pfam_a, pfam_b,
+                                      "; ".join(list(info)),
+                                      "Statistical Prediction"
                                      ])
                     lines.append(line)
-                    score[n] = float(info[-3])
+                    score[n] = p
                     n += 1
+
+        ## ELM-domain interactions
+        for pfam_a in protein_data[ac_a]["pfams"]:
+            for elm_b in protein_data[ac_b]["elms"]:
+                if pfam_a in elm_int and elm_b in elm_int[pfam_a]:
+                    only_prts = elm_int[pfam_a][elm_b]
+                    if len(only_prts) > 0:
+                        if gene_a not in only_prts:
+                            continue
+                    pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
+                                                  len(elm_sets[elm_b]),
+                                                  len(protein_data))
+                    line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                      "DOM::ELM", pfam_a, elm_b,
+                                      "", "ELM DB"
+                                     ])
+                    lines.append(line)
+                    score[n] = p
+                    n += 1
+
+        for elm_a in protein_data[ac_a]["elms"]:
+            for pfam_b in protein_data[ac_b]["pfams"]:
+                if elm_a in elm_int and pfam_b in elm_int[elm_a]:
+                    only_prts = elm_int[elm_a][pfam_b]
+                    if len(only_prts) > 0:
+                        if gene_b not in only_prts:
+                            continue
+                    pa, pb, p, pmax = calculate_p(len(elm_sets[elm_a]),
+                                                  len(pfam_sets[pfam_b]),
+                                                  len(protein_data))
+                    line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                      "ELM::DOM", elm_a, pfam_b,
+                                      "", "ELM DB"
+                                     ])
+                    lines.append(line)
+                    score[n] = p
+                    n += 1
+
+        ## InterPreTS interactions
+        if ac_a in iprets and ac_b in iprets[ac_a]:
+            for info in iprets[ac_a][ac_b]:
+                info = info.split(";")
+                line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                                  "InterPreTS", info[0], info[1],
+                                  "; ".join(info[2:]), "InterPreTS prediction"
+                                 ])
+                lines.append(line)
+                score[n] = float(info[-3])
+                n += 1
 
 
     cols = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
