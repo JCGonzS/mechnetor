@@ -2,7 +2,7 @@
 
 ### test PyMongo to connect to mongoDB ###
 
-## Data uploaded by: 
+## Data uploaded by:
 # mongoimport --db test_3 --collection protein_data --file static/data/protein_data_new_Hsa.json
 # from working directory:
 # /net/home.isilon/ag-russell/bq_kweise/kyle_piv/kyle_app
@@ -22,16 +22,46 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['test_3']
+db = client['interactions_Hsa']
 # Get collection #
-protein_data = db['protein_data']
+data = db['biogrid_Hsa']
+#print data.count()
 
-#~ get one document from collection 
-pprint.pprint(protein_data.find_one("P04637"))
+data.createIndex( {"Official Symbol Interactor A": 1} )
+b = "ACVR1" 
+a = "FNTA"
 
-#~ get all documents from collection 
+for p in data.find( {"Official Symbol Interactor A": a,
+		     "Official Symbol Interactor B": b}):
+	
+	pprint.pprint(p)
+
+#for p in data.find():
+#	gn_a = p["Official Symbol Interactor A"]
+#	gn_b = p["Official Symbol Interactor B"]
+#	
+#	i=0
+#	for d in data.find(
+#		{"Official Symbol Interactor A": gn_b,
+#		 "Official Symbol Interactor B": gn_a }
+#		):
+#		i+=1
+#		break
+
+#	if i==0:
+#		print gn_a, gn_b
+	
+	#pprint.pprint(p)
+#	print p["Official Symbol Interactor A"]
+#	print p["Official Symbol Interactor B"],"\n"
+	# continue
+
+sys.exit()
+#~ get one document from collection
+
+#~ get all documents from collection
 #for gene in protein_data.find():
-#	pprint.pprint(gene)	
+#	pprint.pprint(gene)
 
 #~ query document for uniprot ID ~#
 # Query protein_data_collection for documents with uniprot_id = ZCRB1_HUMAN
@@ -52,7 +82,7 @@ sys.exit()
 #~ Find document with the minimum domain.e-val value
 
 #~ Approach 1 - sort and get top 1
-#~ needs to be indexed 
+#~ needs to be indexed
 #~ cursor = protein_data.find().sort(["domains.e-val", 1]).limit(1)
 
 
