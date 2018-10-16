@@ -4,6 +4,7 @@ import sys, re
 import gzip
 from collections import defaultdict
 
+
 def open_file(input_file, mode="r"):
     """ Open file Zipped or not
     """
@@ -150,11 +151,14 @@ def parse_linear_motifs(elm_hits_file, prot_dict, masks,
                         #                             masks[uni_ac])
         return lms, lm_sets
 
-def main( data_dir="data/",
+def main( data_dir="static/data/",
           species="Hsa",
           max_overlap=0.2,
           no_overlap_between_doms_and_lms="y"
         ):
+
+    # General files:
+    
 
     #: Species Files
     sp_data_dir = data_dir+"species/"+species+"/"
@@ -198,7 +202,7 @@ def main( data_dir="data/",
                     out.write(instance + "\n")
     return
 
-##USE dom2dom.py FOR CALCULATING DOM-DOM PROPENSITIES!!!!!!!!! 
+##USE dom2dom.py FOR CALCULATING DOM-DOM PROPENSITIES!!!!!!!!!
 
 if __name__ == "__main__":
     main()
