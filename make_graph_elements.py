@@ -7,13 +7,10 @@ Needs a set of proteins and a file with their interactions (from int2mech.py)
 
 
 import sys, os, re
-import gzip
-import json
-import csv
-import copy
-import math
-import random
+import gzip, json, csv
+import math, random, copy
 from pprint import pprint
+from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 
 def open_file(input_file, mode="r"):
@@ -52,6 +49,8 @@ def get_interaction_data(proteins, protein_data, interaction_file,
                 interaction_type = t[4]
                 interacting_proteins = prot_acc_a + "::" + prot_acc_b
                 interacting_regions = "-"
+                info = t[-2]
+                source = t[-1]
                 if interaction_type != "PROT::PROT":
                     region_a, region_b = t[5:7]
                     interacting_regions = region_a + "::" + region_b
@@ -138,25 +137,36 @@ def get_interaction_data(proteins, protein_data, interaction_file,
 
                     if interaction_type == "InterPreTS":
                         try:
-                            z_value = float(t[-2].split("; ")[-1])
+                            z_score = float(t[-2].split("; ")[-1])
                         except ValueError:
-                            z_value = -999999
+                            z_score = -999999
 
                         protein_data, interaction_data = add_interprets_data(
                                                 prot_acc_a, prot_acc_b,
-                                                region_a, region_b, z_value,
+                                                region_a, region_b, z_score,
                                                 protein_data, interaction_data)
 
                     else:
-                        interaction_data.append({
-                            "interaction_type" : interaction_type,
-                            "interacting_proteins" : interacting_proteins,
-                            "interacting_regions" : interacting_regions
-                        })
+                        if source == "BioGRID":
+                            interaction_data.append({
+                                "interaction_type" : interaction_type,
+                                "interacting_proteins" : interacting_proteins,
+                                "interacting_regions" : interacting_regions,
+                                "info" : info,
+                                "data_source": source
+                            })
+
+                        else:
+                            interaction_data.append({
+                                "interaction_type" : interaction_type,
+                                "interacting_proteins" : interacting_proteins,
+                                "interacting_regions" : interacting_regions,
+                                "data_source": source
+                            })
 
     return protein_data, interaction_data
 
-def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_value,
+def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score,
                         protein_data, interaction_data):
 
     pdb_a = "-".join(region_a.split(":")[0].split("|")[1:])
@@ -174,7 +184,7 @@ def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_value,
                 "pdb" : pdb,
                 "start" : int(start),
                 "end" : int(end),
-                "z_value" : z_value
+                "z_score" : z_score
         })
 
     interaction_data.append(
@@ -183,7 +193,7 @@ def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_value,
             "interacting_proteins" : prot_acc_a+"::"+prot_acc_b,
             "interacting_regions" : "::".join([pdb_a+"|"+start_a+"-"+end_a,
                                                pdb_b+"|"+start_b+"-"+end_b]),
-            "z_value" : z_value
+            "z_score" : z_score
     })
 
     return protein_data, interaction_data
@@ -558,7 +568,7 @@ def add_interprets(prot_acc, protein_data, parent_id, start_x, start_y,
             pdb = iprets["pdb"]
             start = iprets["start"]
             end = iprets["end"]
-            z_value = iprets["z_value"]
+            z_score = iprets["z_score"]
             element_id = copy.deepcopy(id_counter)
 
             if start == 0:
@@ -567,7 +577,7 @@ def add_interprets(prot_acc, protein_data, parent_id, start_x, start_y,
                 end_found = True
 
             # Add central node
-            color = color_from_zvalue(z_value)
+            color = color_from_zvalue(z_score)
             graph_elements.append({
                 "group" : "nodes",
                 "data" : {
@@ -724,22 +734,23 @@ def add_all_proteins(proteins, protein_data, mutations, central_pos):
 
     return graph_elements, id_counter
 
-def color_from_zvalue(z_value):
-    if z_value == -999999:
-        color = "black"
-    elif z_value < 0 and z_value > -999999:
+def color_from_zvalue(z_score):
+    color = "grey"
+    if z_score < 0 and z_score > -999999:
+        color = "LightSkyBlue"
+    elif z_score >= 0 and z_score < 1.65:
         color = "blue"
-    elif z_value >= 0 and z_value < 1.6:
+    elif z_score >= 1.65 and z_score < 2.33:
         color = "yellow"
-    elif z_value >= 1.6 and z_value < 2.1:
+    elif z_score >= 2.33 and z_score < 3.0:
         color = "orange"
-    elif z_value >= 2.1:
+    elif z_score >= 3.0:
         color = "red"
 
     return color
 
-def add_interaction(graph_elements, id_counter, source, target,
-                    int_type, z_value=0):
+def add_interaction(graph_elements, id_counter, source_nodes, target_nodes,
+                    int_type, info, data_source, z_score=0):
     """Add edge between source and target elements
 
     Function arguments:
@@ -747,55 +758,48 @@ def add_interaction(graph_elements, id_counter, source, target,
                   "cytoscape-format"
     id_counter  --  the counter that is used as the id when a new elements is added
                  to the elements list
-    source  --  the elements list id of the first interacting protein
-    target  --  the elements list id of the second interacting protein
+    source_nodes  --  the elements list id of the first interacting protein
+    target_nodes  --  the elements list id of the second interacting protein
     int_type  --  type of interaction (DOM::DOM, iDOM::iDOM, DOM::ELM, PROT::PROT, INT::INT)
     """
 
-    if int_type == "InterPreTS":
-        color = color_from_zvalue(z_value)
+    role = int_type
+    if int_type == "DOM::DOM":
+        role = "DOM_interaction"
+    elif int_type == "iDOM::iDOM":
+        role = "iDOM_interaction"
+    elif int_type == "DOM::ELM" or int_type == "ELM::DOM":
+        role = "ELM_interaction"
+    elif int_type == "PROT::PROT":
+        role = "prot_prot_interaction"
+    elif int_type == "LMD2":
+        role = "LMD2_interaction"
+    elif int_type == "InterPreTS":
+        role = "INT_interaction"
+        color = color_from_zvalue(z_score)
 
-        for so in source:
-            for ta in target:
-                if so != ta:
-                    graph_elements.append({
-                        "group" : "edges",
-                        "data" : {
-                            "id" : id_counter,
-                            "source" : so,
-                            "target" : ta,
-                            "role" : "INT_interaction",
-                            "color" : color
-                        }
-                    })
-                    id_counter += 1
-    else:
-        if int_type == "DOM::DOM":
-            role = "DOM_interaction"
-        elif int_type == "iDOM::iDOM":
-            role = "iDOM_interaction"
-        elif int_type == "DOM::ELM" or int_type == "ELM::DOM":
-            role = "ELM_interaction"
-        elif int_type == "PROT::PROT":
-            role = "prot_prot_interaction"
-        elif int_type == "LMD2":
-            role = "LMD2_interaction"
-        else:
-            role = int_type
+    for source in source_nodes:
+        for target in target_nodes:
+            if source != target:
 
-        for so in source:
-            for ta in target:
-                if so != ta:
-                    graph_elements.append({
-                        "group" : "edges",
-                        "data" : {
-                            "id" : id_counter,
-                            "source" : so,
-                            "target" : ta,
-                            "role" : role
-                        }
-                    })
-                    id_counter += 1
+                # Add common fields for all edges
+                element = { "group" : "edges",
+                            "data" : {  "id" : id_counter,
+                                        "source" : source,
+                                        "target" : target,
+                                        "role" : role,
+                                        "ds": data_source
+                                        }
+                            }
+
+                # Add specific fields for some edge types
+                if int_type == "InterPreTS":
+                    element["data"]["color"] = color
+                elif int_type == "PROT::PROT" and data_source == "BioGRID":
+                    element["data"]["links"] = info
+
+                graph_elements.append(element)
+                id_counter += 1
 
     return graph_elements, id_counter
 
@@ -820,12 +824,14 @@ def add_all_interactions(interaction_data, graph_elements, id_counter):
         interaction_type = interaction["interaction_type"]
         protein_a, protein_b = interaction["interacting_proteins"].split("::")
         interacting_regions = interaction["interacting_regions"]
+        data_source = interaction["data_source"]
         if interacting_regions != "-":
             region_a, region_b = interacting_regions.split("::")
 
-        source = []
-        target = []
-        z_value = 0
+        source_nodes = []
+        target_nodes = []
+        z_score = 0
+        info = ""
         for ele in graph_elements:
             if ele["group"] == "nodes":
                 role = ele["data"]["role"]
@@ -834,40 +840,41 @@ def add_all_interactions(interaction_data, graph_elements, id_counter):
                 ele_id = ele["data"]["id"]
 
                 if interaction_type == "PROT::PROT":
+                    info = interaction["info"]
                     if role == "whole":
                         if parent_protein == protein_a:
-                            source.append(ele_id)
+                            source_nodes.append(ele_id)
                         if parent_protein == protein_b:
-                            target.append(ele_id)
+                            target_nodes.append(ele_id)
 
                 elif interaction_type == "LMD2":
                     elm = region_b.split("|")[0]
                     elm_start, elm_end = region_b.split("|")[1].split("-")
                     if role == "whole":
                         if region_a == parent_protein:
-                            source.append(ele_id)
+                            source_nodes.append(ele_id)
                     elif role == "newLM":
                         start = ele["data"]["start"]
                         end = ele["data"]["end"]
                         if (label == elm and parent_protein == protein_b
                             and start == elm_start and end == elm_end):
-                            target.append(ele_id)
+                            target_nodes.append(ele_id)
 
                 else:
                     if interaction_type == "InterPreTS":
-                        z_value = interaction["z_value"]
+                        z_score = interaction["z_score"]
                     if role in ["domain", "elms", "newLM", "iprets"]:
                         if label == region_a and parent_protein == protein_a:
-                            source.append(ele_id)
+                            source_nodes.append(ele_id)
                         if label == region_b and parent_protein == protein_b:
-                            target.append(ele_id)
+                            target_nodes.append(ele_id)
 
         # 2. Add interaction to graph elements as an edge
         graph_elements, id_counter = add_interaction(graph_elements,
                                                      id_counter,
-                                                     source, target,
+                                                     source_nodes, target_nodes,
                                                      interaction_type,
-                                                     z_value)
+                                                     info, data_source, z_score)
 
     return graph_elements, id_counter
 
@@ -970,6 +977,7 @@ def color_regions(graph_elements, palette=""):
 
     return graph_elements
 
+@line_profile
 def main(proteins, protein_data, mutations,
          interaction_file, lmd2_file="",  output_file="graph_elements.json",
          max_pval=999):
