@@ -48,6 +48,16 @@
     }
   },
   {
+    "selector": "node[role=\"whole\"].highlight2",
+    "style": {
+      "border-color": "#ff5733",
+      "border-width": "3px",
+      "font-size": "30",
+      "text-outline-color": "#ff5733",
+      "text-outline-width": "3"
+    }
+  },
+  {
     "selector": "node[role=\"dom_pos\"]",
     "style": {
       "shape": "rectangle",
