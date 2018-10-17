@@ -40,10 +40,20 @@
   {
     "selector": "node[role=\"whole\"].highlight",
     "style": {
-      "border-color": "#000",
+      "border-color": "#33a1c2",
       "border-width": "3px",
       "font-size": "30",
-      "text-outline-color": "#000",
+      "text-outline-color": "#33a1c2",
+      "text-outline-width": "3"
+    }
+  },
+  {
+    "selector": "node[role=\"whole\"].highlight2",
+    "style": {
+      "border-color": "#ff5733",
+      "border-width": "3px",
+      "font-size": "30",
+      "text-outline-color": "#ff5733",
       "text-outline-width": "3"
     }
   },
@@ -240,9 +250,9 @@
     "selector": "edge[role=\"prot_prot_interaction\"].highlight",
     "style": {
       "width": "10px",
-      "line-color": "#000",
-      "source-arrow-color": "#000",
-      "target-arrow-color": "#000"
+      "line-color": "#33a1c2",
+      "source-arrow-color": "#33a1c2",
+      "target-arrow-color": "#33a1c2"
     }
   },
   {

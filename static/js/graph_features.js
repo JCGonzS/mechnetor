@@ -16,50 +16,70 @@ $(document).ready(function(){
 		//console.log(n);
 	});
 
+	// // Lock PTM & Mutation nodes
 	cy.$('node[role="domain"]').ungrabify();
 	cy.$('node[role = "pp_mod"]').grabify();
 	cy.$('node[role = "ac_mod"]').grabify();
 	cy.$('node[role = "mutation"]').grabify();
 	cy.$('node[role = "position"]').grabify();
 
-  // // Lock PTM & Mutation nodes
-  // cy.nodes().nonorphans()
-  //   .on('grab', function(){
-  //     cy.$('node[role = "pp_mod"]').ungrabify();
-  //     cy.$('node[role = "ac_mod"]').ungrabify();
-  //     cy.$('node[role = "mutation"]').ungrabify();
-  //     cy.$('node[role = "position"]').ungrabify();
-  //   })
-  //   .on('free', function(){
-  //     cy.$('node[role = "pp_mod"]').grabify();
-  //     cy.$('node[role = "ac_mod"]').grabify();
-  //     cy.$('node[role = "mutation"]').grabify();
-  //     cy.$('node[role = "position"]').grabify();
-  //   });
 
   // MOUSEOVER
-  cy.on('mouseover','node[role=\"whole\"]', function(event) {
+  cy.on('mouseover mouseout','node[role=\"whole\"]', function(event) {
     var node = event.target;
 		var edges = node.connectedEdges();
+		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
 		edges.toggleClass("highlight");
+		neigh.toggleClass("highlight2");
   });
-	cy.on('mouseout','node[role=\"whole\"]', function(event) {
+
+	cy.on('mouseover mouseout','node[role=\"domain\"]', function(event) {
 		var node = event.target;
 		var edges = node.connectedEdges();
-		node.toggleClass("highlight");
 		edges.toggleClass("highlight");
 	});
 
-	cy.on('mouseover','node[role=\"domain\"]', function(event) {
-		var node = event.target;
-		var edges = node.connectedEdges();
-		edges.toggleClass("highlight");
+	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		edge.toggleClass("highlight");
+		nodes.toggleClass("highlight2");
 	});
-	cy.on('mouseout','node[role=\"domain\"]', function(event) {
-		var node = event.target;
-		var edges = node.connectedEdges();
-		edges.toggleClass("highlight");
+
+	// CLICKS
+	cy.on('click','edge[role=\"prot_prot_interaction\"]', function(event) {
+			var edge = event.target;
+			var nodes = edge.connectedNodes();
+			var genes = []
+			nodes.forEach(function(node) {
+				genes.push(node.data("label"));
+			});
+
+			var ds = edge.data("ds");
+			var links = edge.data("links").split("; ");
+			var all_links = []
+			links.forEach(function(link) {
+				all_links.push("<a href=\"https://thebiogrid.org/interaction/"+link+"\">"+link+"</a>");
+			});
+
+			edge.qtip({
+				content: "<b>"+ds+" interaction</b><br>"+
+								 "<b>"+genes.join(" - ")+"</b><br>"+
+								 all_links.join(", "),
+				position: {
+           my: 'top center',
+           at: 'bottom center'
+       	},
+
+				style: {
+					classes: 'qtip-bootstrap',
+					tip: {
+						width: 16,
+						height: 8
+			    }
+			  }
+			});
 	});
 
 	cy.on('click','node[role=\"whole\"]', function(event) {
