@@ -129,44 +129,20 @@ def get_elm_ints(elm_int_dom_file):
 def get_interprets_from_mongo(client, gene_a, gene_b):
     db = client['interactions_Hsa']
     data = db['iprets_Hsa']
-    
+    info = set()
+    for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
+                 {"#Gene1": gene_b, "Gene2": gene_a} ]},
+                 {"PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
+                 "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
+                 "Z": 1}):
 
+        eval_avg = (float(d["Blast-E1"])+float(d["Blast-E2"]))/2
+        eval_diff = abs(float(d["Blast-E1"])-float(d["Blast-E2"]))
+        info.add( ";".join([str(d["PDB1"])+":"+str(d["qstart1"])+"-"+str(d["qend1"])+":"+str(d["Blast-E1"])+":"+str(d["Blast-PCID1"]),
+                str(d["PDB2"])+":"+str(d["qstart2"])+"-"+str(d["qend2"])+":"+str(d["Blast-E2"])+":"+str(d["Blast-PCID2"]),
+                str(eval_avg), str(eval_diff), str(d["Z"]) ]))
 
-def get_interprets(interprets_file, target_prots, ac_dict):
-    """Get InterPreTS predicted region-region interactions from a previously
-    precomputed file from interacting proteins in BioGRID
-    """
-
-    iprets = defaultdict(lambda: defaultdict(set))
-    with open_file(interprets_file) as f:
-        for line in f:
-            if line[0]=="#":
-                cols = line.rstrip().split("\t")
-            else:
-                tab = line.rstrip().split("\t")
-                gn1, pdb1, eval1, pcid1, s1, e1 = tab[0:6]
-                gn2, pdb2, eval2, pcid2, s2, e2 = tab[8:14]
-                eval_avg = (float(eval1)+float(eval2))/2
-                eval_diff = abs(float(eval1)-float(eval2))
-                Z = "-"
-                if len(tab) > 16:
-                    Z = tab[20]
-                info = [pdb1+":"+s1+"-"+e1+":"+eval1+":"+pcid1,
-                        pdb2+":"+s2+"-"+e2+":"+eval2+":"+pcid2,
-                        str(eval_avg), str(eval_diff), Z]
-
-                if gn1.upper() in ac_dict and gn2.upper() in ac_dict:
-                    ac1 = ac_dict[gn1.upper()]
-                    ac2 = ac_dict[gn2.upper()]
-
-                    if ac1 in target_prots and ac2 in target_prots:
-                        iprets[ac1][ac2].add(";".join(info))
-                        iprets[ac2][ac1].add(";".join(info))
-                        # Like this, every interaction is taken. If there is a
-                        # lot of overlapping regions at the end, I need to add
-                        # a methods that searches that there aren't similar
-                        # interactions already taking (compare starts & ends)
-    return iprets
+    return info
 
 def calculate_p(na, nb, N):
     """Given 2 domains/elms calculates their frequencies and the probability
@@ -199,13 +175,11 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     # Species files
     sp_data_dir = data_dir+"species/"+species+"/"
     dd_prop_file = sp_data_dir + "dom_dom_lo.txt"
-    interprets_file = sp_data_dir + "human_aaa_biogrid_i2.txt.gz"
 
     pfam_sets = count_pfam_doms(protein_data)
     elm_sets = count_elms(protein_data)
 
     # Get Interaction Data
-
     ## from interaction propensities [domain-domain]
         ## needs to be adjusted !!
     dom_prop_int = get_dd_prop_int(dd_prop_file,
@@ -214,10 +188,6 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                                     ndom_min=4)
     ## from ELM [domain-linear motif]
     elm_int = get_elm_ints(elm_int_dom_file)
-    ### Get InterpreTS interactions
-    iprets = get_interprets(interprets_file, target_prots, protein_ids["AC"])
-    #FIX: add here a function to remove redundancy and overlapping
-        #within InterpreTS interactions.
 
     ## Print all interactions
     lines = []
@@ -342,16 +312,18 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                     n += 1
 
         ## InterPreTS interactions
-        if ac_a in iprets and ac_b in iprets[ac_a]:
-            for info in iprets[ac_a][ac_b]:
-                info = info.split(";")
-                line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-                                  "InterPreTS", info[0], info[1],
-                                  "; ".join(info[2:]), "InterPreTS prediction"
-                                 ])
-                lines.append(line)
-                score[n] = float(info[-3])
-                n += 1
+        hits = get_interprets_from_mongo(client, gene_a, gene_b)
+        # if ac_a in iprets and ac_b in iprets[ac_a]:
+            # for info in iprets[ac_a][ac_b]:
+        for info in hits:
+            info = info.split(";")
+            line = "\t".join([gene_a, ac_a, gene_b, ac_b,
+                              "InterPreTS", info[0], info[1],
+                              "; ".join(info[2:]), "InterPreTS prediction"
+                             ])
+            lines.append(line)
+            score[n] = float(info[-3])
+            n += 1
 
 
     cols = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
