@@ -22,11 +22,11 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['interactions_common']
+db = client['protein_data']
 # Get collection #
-data = db['3did']
+data = db['Hsa']
 print data.count()
-
+sys.exit()
 a = "2-Hacid_dh_C"
 b = "ATP-grasp"
 
