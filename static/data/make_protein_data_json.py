@@ -19,7 +19,7 @@ from Bio import SwissProt
 
 
 ## Data Files
-data_dir = "static/data/"
+data_dir = ""
 gen_data_dir = data_dir+"general/"
 species = "Hsa"
 sp_data_dir = data_dir+"species/"+species+"/"
@@ -260,7 +260,7 @@ if mode == "normal":
 
 elif mode == "mongo":
     protein_data = {}
-    with open(outfile_name, "w") as out:
+    with open_file(outfile_name, "w") as out:
         for uni_ac in prot_dict["seq"]:
             protein_data = {
                     "uniprot_acc" : uni_ac,

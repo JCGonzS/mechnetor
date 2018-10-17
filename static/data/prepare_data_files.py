@@ -178,6 +178,30 @@ def reduce_3did(db_file, out_file):
                     out.write( "\t".join(row)+"\n" )
     return
 
+def edit_interprets(interprets_file, out_file):
+    """ Placeholder function - does nothing right now
+        Edit this function so it creates a custom interprets-results file that
+        can be imported to Mongo
+    """
+
+    with open_file(interprets_file) as f:
+        for line in f:
+            if line[0]=="#":
+                cols = line.rstrip().split("\t")
+            else:
+                tab = line.rstrip().split("\t")
+                gn1, pdb1, eval1, pcid1, s1, e1 = tab[0:6]
+                gn2, pdb2, eval2, pcid2, s2, e2 = tab[8:14]
+                eval_avg = (float(eval1)+float(eval2))/2
+                eval_diff = abs(float(eval1)-float(eval2))
+                Z = "-"
+                if len(tab) > 16:
+                    Z = tab[20]
+                info = [pdb1+":"+s1+"-"+e1+":"+eval1+":"+pcid1,
+                        pdb2+":"+s2+"-"+e2+":"+eval2+":"+pcid2,
+                        str(eval_avg), str(eval_diff), Z]
+
+    return
 
 def main( data_dir="",
           species="Hsa",
@@ -189,15 +213,17 @@ def main( data_dir="",
     gen_dir = data_dir + "common/"
     db_3did_file = com_dir + "3did_flat-2018_04.gz"
 
-    edited_3did_file = com_dir + "3did_flat_edited-2018_04.tsv.gz"
-    reduce_3did(db_3did_file, edited_3did_file)
-
-    # #: Species Files
-    # sp_data_dir = data_dir+"species/"+species+"/"
+    # Species Files
+    sp_data_dir = data_dir+"species/"+species+"/"
+    iprets_file = sp_data_dir + "human_aaa_biogrid_i2.txt.gz"
     # proteome_file = sp_data_dir + "uniprot_sprot_species.fasta.gz"
     # pfam_hits_file = sp_data_dir + "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
     # elm_hits_file = sp_data_dir + "elm_hits.tsv.gz"
-    #
+
+    ## Editing Files
+    edited_3did_file = com_dir + "3did_flat_edited-2018_04.tsv.gz"
+    reduce_3did(db_3did_file, edited_3did_file)
+
     # #: Output Files
     # pfam_parsed_file = sp_data_dir + "pfam_parsed_info.tsv.gz"
     # elm_parsed_file = sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
