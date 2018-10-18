@@ -15,7 +15,7 @@ import make_graph_elements
 from collections import defaultdict
 from flask import render_template, url_for
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-
+from pymongo import MongoClient
 
 def open_file(input_file, mode="r"):
     """ Open file Zipped or not
@@ -128,6 +128,8 @@ def parse_mutation_input(input_text, prot_dict, protein_set):
 def main(query_prots, query_muts, max_prots="", query_lmd2="",
 		 sps="Hsa", max_pval=999, main_dir=""):
 
+    client = MongoClient('localhost', 27017)
+
     if hasNumbers(max_prots):
         max_prots = int(re.search("(\d+)", max_prots).group(1))
     else:
@@ -193,7 +195,7 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     	print "[{}] Running int2mech. Using {} as protein data...".format(st,protein_data_file )
         int_file =  main_dir+output_dir+outfile_int
     	int2mech.main(input_proteins, prot_ids, protein_data,
-    	              int_file, data_dir, sps, max_prots)
+    	              int_file, data_dir, sps, max_prots, client)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int
     else:

@@ -16,7 +16,7 @@ import sys, re
 import gzip, itertools
 from collections import defaultdict
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-from pymongo import MongoClient
+
 
 def open_file(input_file, mode="r"):
     """ Opens file Zipped or not
@@ -41,6 +41,11 @@ def count_pfam_doms(protein_data, e_val=0.1):
             for domain in protein_data[uni_ac]["pfams"][pfam_name]:
                 if domain["e-val"] < e_val:
                     pfam_sets[pfam_name].append(uni_ac)
+
+    # ##From Mongodb
+    # db = client['protein_data']
+    # data = db['Hsa']
+
 
     return pfam_sets
 
@@ -160,14 +165,11 @@ def calculate_p(na, nb, N):
 
 @line_profile
 def main(target_prots, protein_ids, protein_data, output_file="",
-        data_dir="data/", species="Hsa", max_prots=""):
+        data_dir="data/", species="Hsa", max_prots="", client):
 
     # Parameters
     max_pmax = 1.0
     homo_int = "n"
-
-    client = MongoClient('localhost', 27017)
-
 
     # Common files
     elm_int_dom_file = data_dir + "common/elm_interaction_domains_edited_Jan18.tsv"
