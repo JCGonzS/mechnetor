@@ -13,7 +13,7 @@ If these are missing, see "prepare_data_for_int2mech.py"
 
 
 import sys, re
-import gzip, itertools
+import gzip, itertools, pymongo
 from collections import defaultdict
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
@@ -75,7 +75,7 @@ def get_biogrid_from_mongo(client, gene_a, gene_b):
              "Official Symbol Interactor B": gene_b},
              {"Official Symbol Interactor A": gene_b,
               "Official Symbol Interactor B": gene_a}]},
-            {"#BioGRID Interaction ID": 1}):
+            {"_id": 0, "#BioGRID Interaction ID": 1}):
 
         bio_id = d["#BioGRID Interaction ID"]
         info.add(str(bio_id))
@@ -87,11 +87,30 @@ def get_3did_from_mongo(client, pfam_a, pfam_b):
     data = db['db3did']
 
     d = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
-                 {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]}, {"PDBs": 1})
+                 {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]},
+                 {"_id": 0, "PDBs": 1})
     if d:
         return d["PDBs"]
     else:
         return ""
+
+def get_interprets_from_mongo(client, gene_a, gene_b):
+    db = client['interactions_Hsa']
+    data = db['iprets_Hsa']
+    info = set()
+    for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
+                 {"#Gene1": gene_b, "Gene2": gene_a} ]},
+                 {"_id": 0, "PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
+                 "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
+                 "Z": 1}):
+
+        eval_avg = (float(d["Blast-E1"])+float(d["Blast-E2"]))/2
+        eval_diff = abs(float(d["Blast-E1"])-float(d["Blast-E2"]))
+        info.add( ";".join([str(d["PDB1"])+":"+str(d["qstart1"])+"-"+str(d["qend1"])+":"+str(d["Blast-E1"])+":"+str(d["Blast-PCID1"]),
+                str(d["PDB2"])+":"+str(d["qstart2"])+"-"+str(d["qend2"])+":"+str(d["Blast-E2"])+":"+str(d["Blast-PCID2"]),
+                str(eval_avg), str(eval_diff), str(d["Z"]) ]))
+
+    return info
 
 def get_dd_prop_int(dd_prop_file, obs_min, lo_min, ndom_min):
     """Gets domain-domain interactions from the pre-computed propensities
@@ -131,24 +150,6 @@ def get_elm_ints(elm_int_dom_file):
 
     return interactions
 
-def get_interprets_from_mongo(client, gene_a, gene_b):
-    db = client['interactions_Hsa']
-    data = db['iprets_Hsa']
-    info = set()
-    for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
-                 {"#Gene1": gene_b, "Gene2": gene_a} ]},
-                 {"PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
-                 "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
-                 "Z": 1}):
-
-        eval_avg = (float(d["Blast-E1"])+float(d["Blast-E2"]))/2
-        eval_diff = abs(float(d["Blast-E1"])-float(d["Blast-E2"]))
-        info.add( ";".join([str(d["PDB1"])+":"+str(d["qstart1"])+"-"+str(d["qend1"])+":"+str(d["Blast-E1"])+":"+str(d["Blast-PCID1"]),
-                str(d["PDB2"])+":"+str(d["qstart2"])+"-"+str(d["qend2"])+":"+str(d["Blast-E2"])+":"+str(d["Blast-PCID2"]),
-                str(eval_avg), str(eval_diff), str(d["Z"]) ]))
-
-    return info
-
 def calculate_p(na, nb, N):
     """Given 2 domains/elms calculates their frequencies and the probability
     of them being found in 2 random interacting proteins
@@ -164,8 +165,8 @@ def calculate_p(na, nb, N):
     return pa, pb, p, pmax
 
 @line_profile
-def main(target_prots, protein_ids, protein_data, output_file="",
-        data_dir="data/", species="Hsa", max_prots="", client):
+def main(client, target_prots, protein_ids, protein_data, output_file="",
+        data_dir="data/", species="Hsa", max_prots=""):
 
     # Parameters
     max_pmax = 1.0
@@ -178,8 +179,8 @@ def main(target_prots, protein_ids, protein_data, output_file="",
     sp_data_dir = data_dir+"species/"+species+"/"
     dd_prop_file = sp_data_dir + "dom_dom_lo.txt"
 
-    pfam_sets = count_pfam_doms(protein_data)
-    elm_sets = count_elms(protein_data)
+    # pfam_sets = count_pfam_doms(protein_data)
+    # elm_sets = count_elms(protein_data)
 
     # Get Interaction Data
     ## from interaction propensities [domain-domain]
@@ -227,16 +228,16 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                               "; ".join(list(info)), "BioGRID"
                              ])
             lines.append(line)
-            score[n] = 1
-            n += 1
+            # score[n] = 1
+            # n += 1
 
-
+        cursor = data.find_one( { "uniprot_acc": ac_a }, { "pfams.name": 1 } )
         for pfam_pair in itertools.product(protein_data[ac_a]["pfams"], protein_data[ac_b]["pfams"]):
             pfam_a, pfam_b = pfam_pair
 
-            pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
-                                          len(pfam_sets[pfam_b]),
-                                          len(protein_data))
+            # pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
+            #                               len(pfam_sets[pfam_b]),
+            #                               len(protein_data))
             # if pmax <= max_pmax:
 
             ## 3did interactions
@@ -248,8 +249,8 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                                   pdbs, "3did"
                                  ])
                 lines.append(line)
-                score[n] = p
-                n += 1
+                # score[n] = p
+                # n += 1
 
             # if (pfam_a in dom_3did_int and
             #     pfam_b in dom_3did_int[pfam_a]):
@@ -273,7 +274,7 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                                   "Statistical Prediction"
                                  ])
                 lines.append(line)
-                score[n] = p
+                # score[n] = p
                 n += 1
 
         ## ELM-domain interactions
@@ -284,15 +285,15 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                     if len(only_prts) > 0:
                         if gene_a not in only_prts:
                             continue
-                    pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
-                                                  len(elm_sets[elm_b]),
-                                                  len(protein_data))
+                    # pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
+                    #                               len(elm_sets[elm_b]),
+                    #                               len(protein_data))
                     line = "\t".join([gene_a, ac_a, gene_b, ac_b,
                                       "DOM::ELM", pfam_a, elm_b,
                                       "", "ELM DB"
                                      ])
                     lines.append(line)
-                    score[n] = p
+                    # score[n] = p
                     n += 1
 
         for elm_a in protein_data[ac_a]["elms"]:
@@ -302,15 +303,15 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                     if len(only_prts) > 0:
                         if gene_b not in only_prts:
                             continue
-                    pa, pb, p, pmax = calculate_p(len(elm_sets[elm_a]),
-                                                  len(pfam_sets[pfam_b]),
-                                                  len(protein_data))
+                    # pa, pb, p, pmax = calculate_p(len(elm_sets[elm_a]),
+                    #                               len(pfam_sets[pfam_b]),
+                    #                               len(protein_data))
                     line = "\t".join([gene_a, ac_a, gene_b, ac_b,
                                       "ELM::DOM", elm_a, pfam_b,
                                       "", "ELM DB"
                                      ])
                     lines.append(line)
-                    score[n] = p
+                    # score[n] = p
                     n += 1
 
         ## InterPreTS interactions
@@ -324,25 +325,16 @@ def main(target_prots, protein_ids, protein_data, output_file="",
                               "; ".join(info[2:]), "InterPreTS prediction"
                              ])
             lines.append(line)
-            score[n] = float(info[-3])
+            # score[n] = float(info[-3])
             n += 1
 
 
     cols = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
             "F(A)","F(B)","Info", "Source"]
     if output_file:
-        with open(output_file,"w") as out:
-            #out.write("#File generated with \"int2mech.py\"\n")
-            #out.write("# Interprets file:"+interprets_file+"\n")
+        with open_file(output_file,"w") as out:
             out.write("\t".join(cols) + "\n")
             for line in lines:
                 out.write(line+"\n")
             # for n in sorted(score, key=score.get, reverse=True):
             #     out.write(lines[n]+"\t"+str(score[n])+"\n")
-
-    # else:
-    #     print "\t".join(cols)
-    #     for line in lines:
-    #         print line
-    #     for n in sorted(score, key=score.get, reverse=True):
-    #         print lines[n]+"\t"+str(score[n])

@@ -9,6 +9,7 @@ Needs a set of proteins and a file with their interactions (from int2mech.py)
 import sys, os, re
 import gzip, json, csv
 import math, random, copy
+import pymongo
 from pprint import pprint
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
@@ -143,8 +144,8 @@ def get_interaction_data(proteins, protein_data, interaction_file,
 
                         protein_data, interaction_data = add_interprets_data(
                                                 prot_acc_a, prot_acc_b,
-                                                region_a, region_b, z_score,
-                                                protein_data, interaction_data)
+                                                region_a, region_b, z_score, source,
+                                                protein_data, interaction_data,)
 
                     else:
                         if source == "BioGRID":
@@ -166,7 +167,7 @@ def get_interaction_data(proteins, protein_data, interaction_file,
 
     return protein_data, interaction_data
 
-def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score,
+def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score, source,
                         protein_data, interaction_data):
 
     pdb_a = "-".join(region_a.split(":")[0].split("|")[1:])
@@ -193,6 +194,7 @@ def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score,
             "interacting_proteins" : prot_acc_a+"::"+prot_acc_b,
             "interacting_regions" : "::".join([pdb_a+"|"+start_a+"-"+end_a,
                                                pdb_b+"|"+start_b+"-"+end_b]),
+            "data_source": source,
             "z_score" : z_score
     })
 
@@ -978,7 +980,7 @@ def color_regions(graph_elements, palette=""):
     return graph_elements
 
 @line_profile
-def main(proteins, protein_data, mutations,
+def main(client, proteins, protein_data, mutations,
          interaction_file, lmd2_file="",  output_file="graph_elements.json",
          max_pval=999):
 

@@ -15,7 +15,7 @@ import make_graph_elements
 from collections import defaultdict
 from flask import render_template, url_for
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-from pymongo import MongoClient
+
 
 def open_file(input_file, mode="r"):
     """ Open file Zipped or not
@@ -125,10 +125,8 @@ def parse_mutation_input(input_text, prot_dict, protein_set):
     return mutations
 
 @line_profile
-def main(query_prots, query_muts, max_prots="", query_lmd2="",
+def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 		 sps="Hsa", max_pval=999, main_dir=""):
-
-    client = MongoClient('localhost', 27017)
 
     if hasNumbers(max_prots):
         max_prots = int(re.search("(\d+)", max_prots).group(1))
@@ -184,7 +182,7 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     ## Get output file names
     for i in range(0, 500):
       number = "0"*(4-len(str(i)))+str(i)
-      outfile_int = "interactions"+number+".tsv"
+      outfile_int = "interactions"+number+".tsv.gz"
       outfile_json = "graph_elements"+number+".json"
       outfile_table_json = "interaction_table"+number+".json"
       if not os.path.isfile(main_dir+output_dir+outfile_int):
@@ -194,32 +192,33 @@ def main(query_prots, query_muts, max_prots="", query_lmd2="",
     if example == 0:
     	print "[{}] Running int2mech. Using {} as protein data...".format(st,protein_data_file )
         int_file =  main_dir+output_dir+outfile_int
-    	int2mech.main(input_proteins, prot_ids, protein_data,
-    	              int_file, data_dir, sps, max_prots, client)
+    	int2mech.main(client, input_proteins, prot_ids, protein_data,
+    	              int_file, data_dir, sps, max_prots)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int
-    else:
-        if "TCF3" in query_prots:
-            int_file = main_dir + "static/examples/ints_example_TCF3.tsv"
-            tsv_file = "examples/ints_example_TCF3.tsv"
-        elif "SMARCA4" in query_prots:
-            int_file = main_dir + "static/examples/ints_example_SMARCA4.tsv"
-            tsv_file = "examples/ints_example_SMARCA4.tsv"
-        elif "SORBS3" in query_prots:
-            int_file = main_dir + "static/examples/ints_example_SORBS3.tsv"
-            tsv_file = "examples/ints_example_SORBS3.tsv"
+    # else:
+    #     if "TCF3" in query_prots:
+    #         int_file = main_dir + "static/examples/ints_example_TCF3.tsv"
+    #         tsv_file = "examples/ints_example_TCF3.tsv"
+    #     elif "SMARCA4" in query_prots:
+    #         int_file = main_dir + "static/examples/ints_example_SMARCA4.tsv"
+    #         tsv_file = "examples/ints_example_SMARCA4.tsv"
+    #     elif "SORBS3" in query_prots:
+    #         int_file = main_dir + "static/examples/ints_example_SORBS3.tsv"
+    #         tsv_file = "examples/ints_example_SORBS3.tsv"
 
     ## Create cytoscape's graph elements
     print "[{}] Running graph creation tool...".format(st)
-    make_graph_elements.main(input_proteins, protein_data, input_mutations,
-             		int_file, lmd2_file="",
-                    output_file= main_dir+output_dir+outfile_json,
-             		max_pval=max_pval)
+    make_graph_elements.main(   client,
+                                input_proteins, protein_data, input_mutations,
+                         		int_file, lmd2_file="",
+                                output_file= main_dir+output_dir+outfile_json,
+                         		max_pval=max_pval)
     print "[{}] ...graph created in \"{}\"".format(st,
      										main_dir+output_dir+outfile_json)
 
     # Create JSON file from TSV interaction file
-    data = pd.read_csv(int_file, sep='\t', index_col=False)
+    data = pd.read_csv(int_file, compression='gzip', sep='\t', index_col=False)
     data.to_json(main_dir+output_dir+outfile_table_json, orient='split')
 
     ## Print HTML
