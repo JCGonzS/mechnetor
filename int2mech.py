@@ -164,6 +164,15 @@ def calculate_p(na, nb, N):
 
     return pa, pb, p, pmax
 
+def pfams_from_acc(client, acc):
+    db = client['protein_data']
+    data = db['Hsa']
+    cursor = data.find_one( { "uniprot_acc": acc },
+                            { "_id": 0, "pfams.name": 1 } )
+    pfams = [c["name"] for c in cursor["pfams"]]
+
+    return sorted(list(set(pfams)))
+
 @line_profile
 def main(client, target_prots, protein_ids, protein_data, output_file="",
         data_dir="data/", species="Hsa", max_prots=""):
@@ -231,8 +240,13 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
             # score[n] = 1
             # n += 1
 
-        cursor = data.find_one( { "uniprot_acc": ac_a }, { "pfams.name": 1 } )
-        for pfam_pair in itertools.product(protein_data[ac_a]["pfams"], protein_data[ac_b]["pfams"]):
+        pfams_a = pfams_from_acc(client, ac_a)
+        ## can same pfam be repeated (i think so)
+        pfams_b = pfams_from_acc(client, ac_b)
+        for pfam_pair in itertools.product(pfams_a, pfams_b):
+        # for pfam_pair in itertools.product(sorted(protein_data[ac_a]["pfams"]),
+        #                                    sorted(protein_data[ac_b]["pfams"])):
+
             pfam_a, pfam_b = pfam_pair
 
             # pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
