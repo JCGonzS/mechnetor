@@ -8,13 +8,19 @@ Oct 2018
 
 Short instructions summary
 --------------------------
+
 1. Download all required sources files. See list below
+
+From static/data: run
 
 2. Run "prepare_data_files.py" to generate some additional files.
 
-3. Run "create_mongo_dbs.sh" to create Mongo databases and collections
+3. Run "make_protein_data_json" to generate json file with required protein annotation
 
-4. make protein data?
+4. Run "create_mongo_dbs.sh" to create Mongo databases and collections
+
+5. manually create mongodb indexes
+
 
 
 Data Files
@@ -35,21 +41,54 @@ Required source files are the following:
 
 
 
+*****************
+MongoDB structure
+*****************
+
+Databases & collections:
+
+  > protein_data
+    - Hsa
+
+  > interactions_common
+    - db3did
+
+  > interactions_Hsa
+    - biogrid_Hsa
+    - iprets_Hsa
+
+
+**************************
+Importing files to MongoDB
+**************************
+
+MongoDB accepts files in json, csv or tsv formats.
+
 The following instructions explains in detail how this files need to be processed
 so they can be used by PIV.
 
 
----------------------------
-Importing files to MongoDB
----------------------------
-
-MongoDB accepts files in json, csv or tsv formats.
-
-********************
+-------------------
 A. SPECIES-SPECIFIC
-********************
+-------------------
 
-I. BioGRID -  Biological General Repository for Interaction Datasets
+I. Protein Data JSON
+----------------------
+* Contains info/annotations for every organism proteins, from:
+  - UniProt: accession, gene, description
+  - Pfam: domains
+  - ELM: linear motifs
+  - PSP: post-translational modifications (phoshorylations and acetylations)
+  - COSMIC: cancer mutations
+
+1. Use 'make_protein_data_json.py' to generate JSON file in the species folder
+2. Use 'create_mongo_dbs.sh' to create collection in the Mongo interactions database
+3. Create indexes for this database in mongo shell:
+   > use protein_data
+   > db.Hsa.
+
+
+II. BioGRID -  Biological General Repository for Interaction Datasets
 --------------------------------------------------------------------
 * thebiogrid.org/
 * version 3.5.165 (Oct 2018)
@@ -63,7 +102,7 @@ I. BioGRID -  Biological General Repository for Interaction Datasets
                                    "Official Symbol Interactor B": 1} )
 
 
-II. InterPreTS - Interaction Prediction through Tertiary Structure
+III. InterPreTS - Interaction Prediction through Tertiary Structure
 ------------------------------------------------------------------
 * russelllab.org/cgi-bin/tools/interprets.pl/
 * Results of the predictions for all interaction pairs according to BioGRID
@@ -75,11 +114,12 @@ II. InterPreTS - Interaction Prediction through Tertiary Structure
     > db.iprets_Hsa.createIndex( { "#Gene1": 1, "Gene2": 1 } )
 
 
-*********
-B. COMMON
-*********
 
-II. 3did - Database of three-dimensional interacting domains
+---------
+B. COMMON
+---------
+
+IV. 3did - Database of three-dimensional interacting domains
 ------------------------------------------------------------
 * 3did.irbbarcelona.org/
 * version 2018_04
