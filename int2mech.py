@@ -177,8 +177,8 @@ def elms_from_acc(client, acc):
     db = client['protein_data']
     data = db['Hsa']
     cursor = data.find_one( { "uniprot_acc": acc },
-                            { "_id": 0, "elms.acc": 1 } )
-    elms = [c["acc"] for c in cursor["elms"]]
+                            { "_id": 0, "elms.name": 1 } )
+    elms = [c["name"] for c in cursor["elms"]]
 
     return sorted(list(set(elms)))
 
