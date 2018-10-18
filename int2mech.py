@@ -173,6 +173,15 @@ def pfams_from_acc(client, acc):
 
     return sorted(list(set(pfams)))
 
+def elms_from_acc(client, acc):
+    db = client['protein_data']
+    data = db['Hsa']
+    cursor = data.find_one( { "uniprot_acc": acc },
+                            { "_id": 0, "elms.acc": 1 } )
+    elms = [c["acc"] for c in cursor["elms"]]
+
+    return sorted(list(set(elms)))
+
 @line_profile
 def main(client, target_prots, protein_ids, protein_data, output_file="",
         data_dir="data/", species="Hsa", max_prots=""):
@@ -240,13 +249,10 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
             # score[n] = 1
             # n += 1
 
+            ## can same pfam be repeated (i think so)
         pfams_a = pfams_from_acc(client, ac_a)
-        ## can same pfam be repeated (i think so)
         pfams_b = pfams_from_acc(client, ac_b)
         for pfam_pair in itertools.product(pfams_a, pfams_b):
-        # for pfam_pair in itertools.product(sorted(protein_data[ac_a]["pfams"]),
-        #                                    sorted(protein_data[ac_b]["pfams"])):
-
             pfam_a, pfam_b = pfam_pair
 
             # pa, pb, p, pmax = calculate_p(len(pfam_sets[pfam_a]),
@@ -266,17 +272,6 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                 # score[n] = p
                 # n += 1
 
-            # if (pfam_a in dom_3did_int and
-            #     pfam_b in dom_3did_int[pfam_a]):
-            #     info = dom_3did_int[pfam_a][pfam_b]
-            #     line = "\t".join([gene_a, ac_a, gene_b, ac_b,
-            #                       "DOM::DOM", pfam_a, pfam_b,
-            #                       info[0], "3did"
-            #                      ])
-            #                         # "; ".join(list(info))])
-            #     lines.append(line)
-            #     score[n] = p
-            #     n += 1
 
             ## domain propensities*
             if (pfam_a in dom_prop_int and
@@ -292,8 +287,10 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                 n += 1
 
         ## ELM-domain interactions
-        for pfam_a in protein_data[ac_a]["pfams"]:
-            for elm_b in protein_data[ac_b]["elms"]:
+        elms_a = elms_from_acc(client, ac_a)
+        elms_b = elms_from_acc(client, ac_b)
+        for pfam_a in pfams_a:
+            for elm_b in elms_b:
                 if pfam_a in elm_int and elm_b in elm_int[pfam_a]:
                     only_prts = elm_int[pfam_a][elm_b]
                     if len(only_prts) > 0:
@@ -310,8 +307,8 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                     # score[n] = p
                     n += 1
 
-        for elm_a in protein_data[ac_a]["elms"]:
-            for pfam_b in protein_data[ac_b]["pfams"]:
+        for elm_a in elms_a:
+            for pfam_b in pfams_b:
                 if elm_a in elm_int and pfam_b in elm_int[elm_a]:
                     only_prts = elm_int[elm_a][pfam_b]
                     if len(only_prts) > 0:
