@@ -173,7 +173,7 @@
     }
   },
   {
-    "selector": "node[role=\"pp_mod\"]",
+    "selector": "node[role=\"phosphorylation\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",
@@ -190,7 +190,7 @@
     }
   },
   {
-    "selector": "node[role=\"ac_mod\"]",
+    "selector": "node[role=\"acetylation\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",

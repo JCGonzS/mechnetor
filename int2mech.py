@@ -28,47 +28,45 @@ def open_file(input_file, mode="r"):
         infile = open(input_file, mode)
     return infile
 
-def count_pfam_doms(protein_data, e_val=0.1):
-    """ Gets the set of unique proteins that contain every Pfam domain
+# def count_pfam_doms(protein_data, e_val=0.1):
+#     """ Gets the set of unique proteins that contain every Pfam domain
+#
+#     """
+#     ## Requires calibration... how many proteins am I counting?
+#     ## should be only those from proteome? or from swissprot?
+#
+#     pfam_sets = defaultdict(list)
+#     for uni_ac in protein_data:
+#         for pfam_name in protein_data[uni_ac]["pfams"]:
+#             for domain in protein_data[uni_ac]["pfams"][pfam_name]:
+#                 if domain["e-val"] < e_val:
+#                     pfam_sets[pfam_name].append(uni_ac)
+#
+#     # ##From Mongodb
+#     # db = client['protein_data']
+#     # data = db['Hsa']
+#
+#
+#     return pfam_sets
+#
+# def count_elms(protein_data, e_val=0.1):
+#     """ Gets the set of unique proteins that contain every ELM
+#
+#     """
+#     ## Requires calibration... how many proteins am I counting?
+#     ## should be only those from proteome? or from swissprot?
+#
+#     elm_sets = defaultdict(list)
+#     for uni_ac in protein_data:
+#         for elm_name in protein_data[uni_ac]["elms"]:
+#             for elm in protein_data[uni_ac]["elms"][elm_name]:
+#                 if elm["score"] < e_val:
+#                     elm_sets[elm_name].append(uni_ac)
+#
+#     return elm_sets
 
-    """
-    ## Requires calibration... how many proteins am I counting?
-    ## should be only those from proteome? or from swissprot?
+def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
 
-    pfam_sets = defaultdict(list)
-    for uni_ac in protein_data:
-        for pfam_name in protein_data[uni_ac]["pfams"]:
-            for domain in protein_data[uni_ac]["pfams"][pfam_name]:
-                if domain["e-val"] < e_val:
-                    pfam_sets[pfam_name].append(uni_ac)
-
-    # ##From Mongodb
-    # db = client['protein_data']
-    # data = db['Hsa']
-
-
-    return pfam_sets
-
-def count_elms(protein_data, e_val=0.1):
-    """ Gets the set of unique proteins that contain every ELM
-
-    """
-    ## Requires calibration... how many proteins am I counting?
-    ## should be only those from proteome? or from swissprot?
-
-    elm_sets = defaultdict(list)
-    for uni_ac in protein_data:
-        for elm_name in protein_data[uni_ac]["elms"]:
-            for elm in protein_data[uni_ac]["elms"][elm_name]:
-                if elm["score"] < e_val:
-                    elm_sets[elm_name].append(uni_ac)
-
-    return elm_sets
-
-def get_biogrid_from_mongo(client, gene_a, gene_b):
-            # modify for single protein_input
-    db = client['interactions_Hsa']
-    data = db['biogrid_Hsa']
     info = set()
     for d in data.find( {"$or":
             [{"Official Symbol Interactor A": gene_a,
@@ -82,9 +80,7 @@ def get_biogrid_from_mongo(client, gene_a, gene_b):
 
     return info
 
-def get_3did_from_mongo(client, pfam_a, pfam_b):
-    db = client['interactions_common']
-    data = db['db3did']
+def get_3did_from_MongoDB(data, pfam_a, pfam_b):
 
     d = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
                  {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]},
@@ -94,9 +90,8 @@ def get_3did_from_mongo(client, pfam_a, pfam_b):
     else:
         return ""
 
-def get_interprets_from_mongo(client, gene_a, gene_b):
-    db = client['interactions_Hsa']
-    data = db['iprets_Hsa']
+def get_Interprets_from_MongoDB(data, gene_a, gene_b):
+
     info = set()
     for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
                  {"#Gene1": gene_b, "Gene2": gene_a} ]},
@@ -164,38 +159,31 @@ def calculate_p(na, nb, N):
 
     return pa, pb, p, pmax
 
-def pfams_from_acc(client, acc):
-    db = client['protein_data']
-    data = db['Hsa']
-    cursor = data.find_one( { "uniprot_acc": acc },
+def pfams_of_acc_from_MongoDB(protein_data, acc):
+
+    cursor = protein_data.find_one( { "uniprot_acc": acc },
                             { "_id": 0, "pfams.name": 1 } )
     pfams = [c["name"] for c in cursor["pfams"]]
 
     return sorted(list(set(pfams)))
 
-def elms_from_acc(client, acc):
-    db = client['protein_data']
-    data = db['Hsa']
-    cursor = data.find_one( { "uniprot_acc": acc },
+def elms_of_acc_from_MongoDB(protein_data, acc):
+
+    cursor = protein_data.find_one( { "uniprot_acc": acc },
                             { "_id": 0, "elms.name": 1 } )
     elms = [c["name"] for c in cursor["elms"]]
 
     return sorted(list(set(elms)))
 
 @line_profile
-def main(client, target_prots, protein_ids, output_file="",
-        data_dir="data/", species="Hsa", max_prots=""):
+def main(target_prots, protein_data,
+        biogrid_data, iprets_data, db3did_data, dd_prop_file, elm_int_dom_file,
+        output_file="", max_prots=""):
 
     # Parameters
     max_pmax = 1.0
     homo_int = "n"
 
-    # Common files
-    elm_int_dom_file = data_dir + "common/elm_interaction_domains_edited_Jan18.tsv"
-
-    # Species files
-    sp_data_dir = data_dir+"species/"+species+"/"
-    dd_prop_file = sp_data_dir + "dom_dom_lo.txt"
 
     # pfam_sets = count_pfam_doms(protein_data)
     # elm_sets = count_elms(protein_data)
@@ -234,11 +222,13 @@ def main(client, target_prots, protein_ids, output_file="",
             #     continue
             # pairs.append(ac_a+"-"+ac_b)
 
-        gene_a = protein_ids["GN"][ac_a]
-        gene_b = protein_ids["GN"][ac_b]
+        gene_a = protein_data.find_one({"uniprot_acc": ac_a},
+                                       {"_id": 0, "gene": 1})["gene"]
+        gene_b = protein_data.find_one({"uniprot_acc": ac_b},
+                                       {"_id": 0, "gene": 1})["gene"]
 
         ## BioGRID interactions
-        info = get_biogrid_from_mongo(client, gene_a, gene_b)
+        info = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
 
         if len(info)>0:
             line = "\t".join([gene_a, ac_a, gene_b, ac_b,
@@ -250,8 +240,8 @@ def main(client, target_prots, protein_ids, output_file="",
             # n += 1
 
             ## can same pfam be repeated (i think so)
-        pfams_a = pfams_from_acc(client, ac_a)
-        pfams_b = pfams_from_acc(client, ac_b)
+        pfams_a = pfams_of_acc_from_MongoDB(protein_data, ac_a)
+        pfams_b = pfams_of_acc_from_MongoDB(protein_data, ac_b)
         for pfam_pair in itertools.product(pfams_a, pfams_b):
             pfam_a, pfam_b = pfam_pair
 
@@ -261,7 +251,7 @@ def main(client, target_prots, protein_ids, output_file="",
             # if pmax <= max_pmax:
 
             ## 3did interactions
-            pdbs = get_3did_from_mongo(client, pfam_a, pfam_b)
+            pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
 
             if pdbs != "":
                 line = "\t".join([gene_a, ac_a, gene_b, ac_b,
@@ -287,8 +277,8 @@ def main(client, target_prots, protein_ids, output_file="",
                 # n += 1
 
         ## ELM-domain interactions
-        elms_a = elms_from_acc(client, ac_a)
-        elms_b = elms_from_acc(client, ac_b)
+        elms_a = elms_of_acc_from_MongoDB(protein_data, ac_a)
+        elms_b = elms_of_acc_from_MongoDB(protein_data, ac_b)
         for pfam_a in pfams_a:
             for elm_b in elms_b:
                 if pfam_a in elm_int and elm_b in elm_int[pfam_a]:
@@ -326,7 +316,7 @@ def main(client, target_prots, protein_ids, output_file="",
                     # n += 1
 
         ## InterPreTS interactions
-        hits = get_interprets_from_mongo(client, gene_a, gene_b)
+        hits = get_Interprets_from_MongoDB(iprets_data, gene_a, gene_b)
         for info in hits:
             info = info.split(";")
             line = "\t".join([gene_a, ac_a, gene_b, ac_b,

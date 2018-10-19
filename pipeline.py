@@ -62,7 +62,7 @@ def parse_fasta(proteome_file):
 
     return D, seqs #, masks
 
-def get_protein_data(prot_data_file):
+def get_protein_ids(prot_data_file):
     D = defaultdict(dict)
     D["doms"] = defaultdict(dict)
     with open_file(prot_data_file) as f:
@@ -133,25 +133,32 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     else:
         max_prots = 20
 
-    db = client['protein_data']
-    data = db[sps]
+    ## Set MongoDB databases & collections
+    #  client[database][collection]
+    protein_data = client['protein_data'][sps]
+    biogrid_data = client['interactions_'+sps]['biogrid_'+sps]
+    iprets_data = client['interactions_'+sps]['iprets_'+sps]
+    db3did_data = client['interactions_common']['db3did']
 
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
     sps_dir = data_dir+"species/"+sps+"/"
+    elm_int_dom_file = data_dir + "common/elm_interaction_domains_edited_Jan18.tsv"
     proteome_file = sps_dir+"uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
     protein_data_file = sps_dir+"swissprot_human_parsed_data.tsv.gz"
     protein_data_json_file = sps_dir+"protein_data_new_Hsa_normal.json.gz"
+    dd_prop_file = sps_dir + "dom_dom_lo.txt"
     output_dir = "static/output/"
-    log_file = main_dir+"static/log.txt"
 
+
+    log_file = main_dir+"static/log.txt"
     sys.stdout = open(log_file, 'a')
     st = datetime.datetime.now()
     print "\n[{}] Running \"{}\"".format(st, "PIV pipeline.py")
 
     ## Get protein dictionary & sequences for species
-    prot_ids = get_protein_data(protein_data_file)
-    protein_data = json.load(open_file(protein_data_json_file))
+    prot_ids = get_protein_ids(protein_data_file)
+
 
     ## Read Input/Query Values & Check Format
 
@@ -193,10 +200,11 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 
     ## Run int2mech: create interaction data file
     if example == 0:
-    	print "[{}] Running int2mech. Using {} as protein data...".format(st,protein_data_file )
+    	print "[{}] Running int2mech".format(st)
         int_file =  main_dir+output_dir+outfile_int
-    	int2mech.main(client, input_proteins, prot_ids,
-    	              int_file, data_dir, sps, max_prots)
+    	int2mech.main(input_proteins, protein_data,
+                biogrid_data, iprets_data, db3did_data, dd_prop_file, elm_int_dom_file,
+    	        int_file, max_prots)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int
     # else:
@@ -210,10 +218,11 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     #         int_file = main_dir + "static/examples/ints_example_SORBS3.tsv"
     #         tsv_file = "examples/ints_example_SORBS3.tsv"
 
+    protein_data_dict = json.load(open_file(protein_data_json_file))
     ## Create cytoscape's graph elements
     print "[{}] Running graph creation tool...".format(st)
-    make_graph_elements.main(   client,
-                                input_proteins, protein_data, input_mutations,
+    make_graph_elements.main(   input_proteins, input_mutations,
+                                protein_data_dict, protein_data,
                          		int_file, lmd2_file="",
                                 output_file= main_dir+output_dir+outfile_json,
                          		max_pval=max_pval)

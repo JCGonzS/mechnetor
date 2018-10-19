@@ -40,6 +40,7 @@ def get_interaction_data(proteins, protein_data, interaction_file,
     max_pval -- p-value threshold to select interactions
     """
 
+    elms_to_show = defaultdict(set)
     interaction_data = []
     with open_file(interaction_file) as f:
         for line in f:
@@ -130,22 +131,21 @@ def get_interaction_data(proteins, protein_data, interaction_file,
                 if skip == False:
 
                     if interaction_type == "ELM::DOM":
-                        for elm in protein_data[prot_acc_a]["elms"][region_a]:
-                            elm["int"] = "yes"
+                        elms_to_show[prot_acc_a].add(region_a)
+
                     elif interaction_type == "DOM::ELM":
-                        for elm in protein_data[prot_acc_b]["elms"][region_b]:
-                            elm["int"] = "yes"
+                        elms_to_show[prot_acc_b].add(region_b)
 
-                    if interaction_type == "InterPreTS":
-                        try:
-                            z_score = float(t[-2].split("; ")[-1])
-                        except ValueError:
-                            z_score = -999999
-
-                        protein_data, interaction_data = add_interprets_data(
-                                                prot_acc_a, prot_acc_b,
-                                                region_a, region_b, z_score, source,
-                                                protein_data, interaction_data,)
+                    # if interaction_type == "InterPreTS":
+                    #     try:
+                    #         z_score = float(t[-2].split("; ")[-1])
+                    #     except ValueError:
+                    #         z_score = -999999
+                    #
+                    #     protein_data, interaction_data = add_interprets_data(
+                    #                             prot_acc_a, prot_acc_b,
+                    #                             region_a, region_b, z_score, source,
+                    #                             protein_data, interaction_data,)
 
                     else:
                         if source == "BioGRID":
@@ -165,7 +165,7 @@ def get_interaction_data(proteins, protein_data, interaction_file,
                                 "data_source": source
                             })
 
-    return protein_data, interaction_data
+    return protein_data, interaction_data, elms_to_show
 
 def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score, source,
                         protein_data, interaction_data):
@@ -308,8 +308,9 @@ def central_positions_layout(proteins):
 
     return central_pos
 
-def add_protein(prot_acc, protein_data, mutations, central_pos,
+def add_protein(protein_data, prot_acc, central_pos, mutations, elms_to_show,
                 graph_elements, id_counter):
+
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
 
     This function first adds three nodes per protein to the graph:
@@ -320,33 +321,27 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
     Function also calls others to add the domains, ELMs, mutations, PTMs of
     the protein, which are checked to see if they are located at the start or
     at the end.
-
-    Function arguments:
-    prot_acc -- the protein accession/identifier
-    protein_data -- protein data dictionary (db) for this protein
-    mutations -- mutation list for this protein
-    central_pos -- x, y coordinates for this protein
-    graph_elements --
-    id_counter  --
     """
-
-    cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
-                        { "_id": 0, "gene": 1, "description": 1, "length": 1})
 
     protein_id = copy.deepcopy(id_counter)
 
+    cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
+                        { "_id": 0, "cosmic_muts": 0, "data_class": 0 })
+
     ## Add protein central node
     graph_elements.append({
-    "group" : "nodes",
-    "data" : {
-        "id" : protein_id,
-        "parent" : protein_id,
-        "protein" : prot_acc,
-        "role" : "whole",
-        "label" : cursor["gene"],
-        "des": cursor["description"]
-        }
-    })
+        "group" : "nodes",
+        "data" : {
+            "id" : protein_id,
+            "parent" : protein_id,
+            "role" : "whole",
+            "label" : cursor["gene"],
+            "uni_id" : cursor["uniprot_id"],
+            "des": cursor["description"],
+            "length": cursor["length"]
+            "protein" : prot_acc
+            }
+        })
     id_counter += 1
 
     start_x = central_pos[0] - cursor["length"]/2
@@ -357,30 +352,29 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
     end_found = False
 
     start_found, end_found, graph_elements, id_counter = add_domains(
-                                    prot_acc, protein_data, protein_id,
+                                    prot_acc, protein_id, cursor,
                                     start_x, start_y, start_found, end_found,
                                     graph_elements, id_counter)
 
     ## adds ELMs and LMD2-LMs
     start_found, end_found, graph_elements, id_counter = add_elms(
-                                    prot_acc, protein_data, protein_id,
+                                    prot_acc, protein_id, cursor, elms_to_show,
                                     start_x, start_y, start_found, end_found,
                                     graph_elements, id_counter)
 
-    start_found, end_found, graph_elements, id_counter = add_interprets(
-                                    prot_acc, protein_data, protein_id,
-                                    start_x, start_y, start_found, end_found,
-                                    graph_elements, id_counter)
+    # start_found, end_found, graph_elements, id_counter = add_interprets(
+    #                                 prot_acc, protein_data, protein_id,
+    #                                 start_x, start_y, start_found, end_found,
+    #                                 graph_elements, id_counter)
 
+    graph_elements, id_counter = add_ptms( prot_acc, protein_id, cursor,
+                                           start_x, start_y,
+                                           graph_elements, id_counter)
 
-    graph_elements, id_counter = add_mutations(prot_acc, protein_data,
-                                               mutations, protein_id,
-                                               start_x, start_y,
+    graph_elements, id_counter = add_mutations(prot_acc, protein_id, cursor,
+                                               mutations, start_x, start_y,
                                                graph_elements, id_counter)
 
-    graph_elements, id_counter = add_ptms(prot_acc, protein_data, protein_id,
-                                          start_x, start_y,
-                                          graph_elements, id_counter)
 
 
     ## Add protein start node (if not occupied by another element)
@@ -421,20 +415,21 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
 
     return graph_elements, id_counter
 
-def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
+def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
                 start_found, end_found, graph_elements, id_counter):
+
     """Add protein's Pfam domains
 
     Adds three nodes per domain: central, start and end
     """
 
-    for pfam in protein_data["pfams"]:
+    for domain in cursor["pfams"]:
         element_id = copy.deepcopy(id_counter)
-        start = pfam["start"]
-        end = pfam["end"]
+        start = domain["start"]
+        end = domain["end"]
         if start == 0:
             start_found = True
-        if end == int(protein_data["length"]):
+        if end == int(cursor["length"]):
             end_found = True
 
             # Add central node
@@ -444,8 +439,10 @@ def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
                     "id" : element_id,
                     "parent" : parent_id,
                     "role" : "domain",
-                    "label" : pfam["name"],
-                    "acc" : pfam["acc"],
+                    "label" : domain["name"],
+                    "acc" : domain["acc"],
+                    "start": str(start),
+                    "end": str(end),
                     "protein" : prot_acc
                 }
             })
@@ -487,77 +484,81 @@ def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
 
     return start_found, end_found, graph_elements, id_counter
 
-def add_elms(prot_acc, protein_data, parent_id, start_x, start_y,
-             start_found, end_found, graph_elements, id_counter):
-    """Add protein's ELMs
 
+def add_elms(prot_acc, parent_id, cursor, allowed_elms,
+             start_x, start_y, start_found, end_found,
+             graph_elements, id_counter):
+
+    """Add protein's ELMs
+    this function is supposed to work for ELM linear motifs and
+    also LMD2 linear motifs (not implemented yet)
     Adds three nodes per ELM: central, start and end
     """
 
-    for node_role in ["elms", "newLM"]:
-        if node_role in protein_data:
+    # for node_role in ["elms", "newLM"]:
+    #     if node_role in protein_data:
+    node_role = "elms"
 
-            for lm_name in protein_data[node_role]:
-                for lm in protein_data[node_role][lm_name]:
-                    if "int" in lm:
-                        lm_acc = lm["acc"]
-                        start = lm["start"]
-                        end = lm["end"]
-                        element_id = copy.deepcopy(id_counter)
+    for lm in cursor[node_role]:
+        if lm not in allowed_elms[prot_acc]:
+            continue
+        start = lm["start"]
+        end = lm["end"]
+        element_id = copy.deepcopy(id_counter)
+        if start == 0:
+            start_found = True
+        if end == int(cursor["length"]):
+            end_found = True
 
-                        if start == 0:
-                            start_found = True
-                        if end == int(protein_data["length"]):
-                            end_found = True
+        # Add central node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : element_id,
+                "parent" : parent_id,
+                "role" : node_role,
+                "label" : lm["name"],
+                "acc" : lm["acc"],
+                "start" : str(start),
+                "end" : str(end),
+                "protein" : prot_acc
+            }
+        })
+        id_counter += 1
 
-                        # Add central node
-                        graph_elements.append({
-                            "group" : "nodes",
-                            "data" : {
-                                "id" : element_id,
-                                "label" : lm_name,
-                                "start" : str(start),
-                                "end" : str(end),
-                                "role" : node_role,
-                                "parent" : parent_id,
-                                "protein" : prot_acc
-                            }
-                        })
-                        id_counter += 1
+        # Add start node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : element_id,
+                "role" : "position",
+                "label" : str(start),
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + start,
+                "y" : start_y
+            }
+        })
+        id_counter += 1
 
-                        # Add start node
-                        graph_elements.append({
-                            "group" : "nodes",
-                            "data" : {
-                                "id" : id_counter,
-                                "label" : str(start),
-                                "role" : "position",
-                                "parent" : element_id,
-                                "protein" : prot_acc
-                            },
-                            "position" : {
-                                "x" : start_x + start,
-                                "y" : start_y
-                            }
-                        })
-                        id_counter += 1
-
-                        # Add end node
-                        graph_elements.append({
-                            "group" : "nodes",
-                            "data" : {
-                                "id" : id_counter,
-                                "label" : str(end),
-                                "role" : "position",
-                                "parent" : element_id,
-                                "protein" : prot_acc
-                            },
-                            "position" : {
-                                "x" : start_x + end,
-                                "y" : start_y
-                            }
-                        })
-                        id_counter += 1
+        # Add end node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : element_id,
+                "role" : "position",
+                "label" : str(end),
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + end,
+                "y" : start_y
+            }
+        })
+        id_counter += 1
 
     return start_found, end_found, graph_elements, id_counter
 
@@ -632,49 +633,49 @@ def add_interprets(prot_acc, protein_data, parent_id, start_x, start_y,
 
     return start_found, end_found, graph_elements, id_counter
 
-def add_mutations(prot_acc, protein_data, mutations, parent_id,
-                  start_x, start_y,
-                  graph_elements, id_counter):
+def add_mutations(prot_acc, parent_id, cursor, mutations,
+                  start_x, start_y, graph_elements, id_counter):
 
-    for pos in protein_data["cosmic_muts"]:
-        label = ";".join(protein_data["cosmic_muts"][pos])
-
-        if int(pos)== 0:
-            start_found = True
-        if int(pos) == int(protein_data["length"]):
-            end_found = True
-
-        graph_elements.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "label" : label,
-                "role" : "mutation",
-                "parent" : parent_id,
-                "protein" : prot_acc
-            },
-            "position" : {
-                "x" : start_x + int(pos),
-                "y" : start_y
-            }
-        })
-        id_counter += 1
+    # for mut in cursor["cosmic_muts"]:
+    #     pos = mut["pos"]
+    #     res = mut["res"]
+    #
+    #     if int(pos)== 0:
+    #         start_found = True
+    #     if int(pos) == int(cursor["length"]):
+    #         end_found = True
+    #
+    #     graph_elements.append({
+    #         "group" : "nodes",
+    #         "data" : {
+    #             "id" : id_counter,
+    #             "parent" : parent_id,
+    #             "role" : "mutation",
+    #             "label" : label,
+    #             "protein" : prot_acc
+    #         },
+    #         "position" : {
+    #             "x" : start_x + int(pos),
+    #             "y" : start_y
+    #         }
+    #     })
+    #     id_counter += 1
 
     for pos in mutations:
         label = ";".join(list(mutations[pos]))
 
         if int(pos)== 0:
             start_found = True
-        if int(pos) == int(protein_data["length"]):
+        if int(pos) == int(cursor["length"]):
             end_found = True
 
         graph_elements.append({
             "group" : "nodes",
             "data" : {
                 "id" : id_counter,
-                "label" : label,
-                "role" : "mutation",
                 "parent" : parent_id,
+                "role" : "mutation",
+                "label" : label,
                 "protein" : prot_acc
             },
             "position" : {
@@ -686,27 +687,26 @@ def add_mutations(prot_acc, protein_data, mutations, parent_id,
 
     return graph_elements, id_counter
 
-def add_ptms(prot_acc, protein_data, parent_id, start_x, start_y,
+def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
              graph_elements, id_counter):
 
-    for ptm, role in zip(["phosphorylation", "acetylation"],
-                         ["pp_mod", "ac_mod"]):
-
-        for pos in protein_data[ptm]:
-            residue = protein_data[ptm][pos]
+    for ptm_type in zip(["phosphorylation", "acetylation"]):
+        for ptm in cursor[ptm_type]:
+            pos = ptm["pos"]
+            res = ptm["res"]
 
             if int(pos)== 0:
                 start_found = True
-            if int(pos) == int(protein_data["length"]):
+            if int(pos) == int(cursor["length"]):
                 end_found = True
 
             graph_elements.append({
                 "group" : "nodes",
                 "data" : {
                     "id" : id_counter,
-                    "label" : residue + str(pos),
-                    "role" : role,
                     "parent" : parent_id,
+                    "role" : ptm_type,
+                    "label" : res + str(pos),
                     "protein" : prot_acc
                 },
                 "position" : {
@@ -718,7 +718,7 @@ def add_ptms(prot_acc, protein_data, parent_id, start_x, start_y,
 
     return graph_elements, id_counter
 
-def add_all_proteins(proteins, protein_data, mutations, central_pos):
+def add_all_proteins(protein_data, proteins, central_pos, mutations, elms_to_show):
     """Add all proteins to the graph elements list
 
     This function adds, individually, all proteins that need to be displayed
@@ -729,10 +729,11 @@ def add_all_proteins(proteins, protein_data, mutations, central_pos):
     id_counter = 0
 
     for prot_acc in sorted(list(proteins)):
-        graph_elements, id_counter = add_protein(
-                                prot_acc, protein_data,
-                                mutations[prot_acc], central_pos[prot_acc],
-                                graph_elements, id_counter)
+        graph_elements, id_counter = add_protein( protein_data,
+                                                  prot_acc, central_pos[prot_acc],
+                                                  mutations[prot_acc],
+                                                  elms_to_show[prot_acc],
+                                                  graph_elements, id_counter)
 
     return graph_elements, id_counter
 
@@ -980,28 +981,25 @@ def color_regions(graph_elements, palette=""):
     return graph_elements
 
 @line_profile
-def main(client, proteins, protein_data, mutations,
-         interaction_file, lmd2_file="",  output_file="graph_elements.json",
+def main(proteins, mutations, protein_data_dict, protein_data,
+         interaction_file, lmd2_file="", output_file="graph_elements.json",
          max_pval=999):
 
-    protein_data, interaction_data = get_interaction_data(proteins,
-                                    protein_data, interaction_file, max_pval)
+    protein_data_dict, interaction_data, elms_to_show = get_interaction_data(proteins,
+                                    protein_data_dict, interaction_file, max_pval)
 
     if lmd2_file != "":
-        interaction_data, protein_data = get_lmd2_data(lmd2_file,
+        interaction_data, protein_data_dict = get_lmd2_data(lmd2_file,
                                                        interaction_pairs,
                                                        interaction_data,
-                                                       protein_data)
-    protein_data_dict = protein_data
-    protein_data = ""
-    db = client['protein_data']
-    protein_data = db['Hsa']
+                                                       protein_data_dict)
 
     ## Make graph elements
     central_pos = central_positions_layout(proteins)
 
-    graph_elements, id_counter = add_all_proteins(proteins, protein_data,
-                                                  mutations, central_pos)
+    graph_elements, id_counter = add_all_proteins(protein_data,
+                                                  proteins, central_pos,
+                                                  mutations, elms_to_show)
     graph_elements, id_counter = connect_protein_sequence(proteins,
                                                     graph_elements, id_counter)
     graph_elements, id_counter = add_all_interactions(interaction_data,
