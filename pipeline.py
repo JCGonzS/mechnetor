@@ -138,6 +138,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     protein_data = client['protein_data'][sps]
     biogrid_data = client['interactions_'+sps]['biogrid_'+sps]
     iprets_data = client['interactions_'+sps]['iprets_'+sps]
+    dom_prop_data = client['interactions_'+sps]['domain_propensities_'+sps]
     db3did_data = client['interactions_common']['db3did']
 
     ## Data Directories & Files
@@ -203,7 +204,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     	print "[{}] Running int2mech".format(st)
         int_file =  main_dir+output_dir+outfile_int
     	int2mech.main(input_proteins, protein_data,
-                biogrid_data, iprets_data, db3did_data, dd_prop_file, elm_int_dom_file,
+                biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_dom_file,
     	        int_file, max_prots)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int
@@ -218,11 +219,9 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     #         int_file = main_dir + "static/examples/ints_example_SORBS3.tsv"
     #         tsv_file = "examples/ints_example_SORBS3.tsv"
 
-    protein_data_dict = json.load(open_file(protein_data_json_file))
     ## Create cytoscape's graph elements
     print "[{}] Running graph creation tool...".format(st)
-    make_graph_elements.main(   input_proteins, input_mutations,
-                                protein_data_dict, protein_data,
+    make_graph_elements.main(   input_proteins, input_mutations, protein_data,
                          		int_file, lmd2_file="",
                                 output_file= main_dir+output_dir+outfile_json,
                          		max_pval=max_pval)

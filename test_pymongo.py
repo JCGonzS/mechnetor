@@ -22,33 +22,40 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['protein_data']
+db = client['interactions_Hsa']
 # Get collection #
-data = db['Hsa']
+data = db['domain_propensities_Hsa']
+
+pfam_a = "XkdN"
+pfam_b = "SH3_9"
+obs_min=1
+lo_min=2.0
+ndom_min=1
 
 
-a = "Q5VW36"
-b = "P15923"
-cursor = data.find( { "uniprot_acc": a}, { "pfams.name": 1, "_id": 0 } )
+cursor = data.find({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
+					{"#DOM1": pfam_b, "DOM2": pfam_a}],
+					"OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
+					"N_DOM1": {"$gte": ndom_min}, "N_DOM2": {"$gte": ndom_min}},
+					{ "_id": 0})
+
 for c in cursor:
 	pprint.pprint(c)
-# 	continue
-# for p in  c["pfams"]:
-# 	print p
-# print cursor["pfams"][0]["name"]
+	# print c["LO"]
 
-print "\n\n"
-# sys.exit()
-pipeline = [
-	{"$unwind": "$pfams"},
-	{"$match": {"uniprot_acc": a }},
-	# {"$match": {"$and":[{"pfams":{"$ne":[]}} , { "pfams.e-val":{"$gt":0}}]}},
-	# {"$sort":{"pfams.e-val":1}}
-	# {"$limit":1}
-	{"$project": {"_id": 0, "pfams.name": 1 }}
-	]
-pprint.pprint(list(data.aggregate(pipeline)))
+print "done"
 sys.exit()
+# sys.exit()
+# pipeline = [
+# 	{"$unwind": "$pfams"},
+# 	{"$match": {"uniprot_acc": a }},
+# 	# {"$match": {"$and":[{"pfams":{"$ne":[]}} , { "pfams.e-val":{"$gt":0}}]}},
+# 	# {"$sort":{"pfams.e-val":1}}
+# 	# {"$limit":1}
+# 	{"$project": {"_id": 0, "pfams.name": 1 }}
+# 	]
+# pprint.pprint(list(data.aggregate(pipeline)))
+# sys.exit()
 
 
 

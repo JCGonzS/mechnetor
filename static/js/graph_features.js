@@ -18,10 +18,10 @@ $(document).ready(function(){
 
 	// // Lock PTM & Mutation nodes
 	cy.$('node[role="domain"]').ungrabify();
-	cy.$('node[role = "pp_mod"]').grabify();
-	cy.$('node[role = "ac_mod"]').grabify();
-	cy.$('node[role = "mutation"]').grabify();
-	cy.$('node[role = "position"]').grabify();
+	cy.$('node[role="phosphorylation"]').grabify();
+	cy.$('node[role="acetylation"]').grabify();
+	cy.$('node[role="mutation"]').grabify();
+	cy.$('node[role="position"]').grabify();
 
 
   // MOUSEOVER

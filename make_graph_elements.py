@@ -10,6 +10,7 @@ import sys, os, re
 import gzip, json, csv
 import math, random, copy
 import pymongo
+from collections import defaultdict
 from pprint import pprint
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
@@ -24,20 +25,9 @@ def open_file(input_file, mode="r"):
         infile = open(input_file, mode)
     return infile
 
-def get_interaction_data(proteins, protein_data, interaction_file,
-                        max_pval):
+def get_interaction_data(proteins, interaction_file, max_pval):
     """Gets interaction data from int2mech output file
 
-    Puts info into a dictionary that will later be used to draw edges between
-    the graph elements.
-    It also "tags" ELM that have interactions so they are plotted later on.
-
-    Function arguments:
-    proteins -- list of proteins input by the user
-    protein_data -- protein data dictionary (db)
-    interaction_file  --  TSV file with interaction info (from int2mech.py)
-    interaction_pairs  --  the list of all interacting protein pairs
-    max_pval -- p-value threshold to select interactions
     """
 
     elms_to_show = defaultdict(set)
@@ -136,16 +126,17 @@ def get_interaction_data(proteins, protein_data, interaction_file,
                     elif interaction_type == "DOM::ELM":
                         elms_to_show[prot_acc_b].add(region_b)
 
-                    # if interaction_type == "InterPreTS":
-                    #     try:
-                    #         z_score = float(t[-2].split("; ")[-1])
-                    #     except ValueError:
-                    #         z_score = -999999
-                    #
-                    #     protein_data, interaction_data = add_interprets_data(
-                    #                             prot_acc_a, prot_acc_b,
-                    #                             region_a, region_b, z_score, source,
-                    #                             protein_data, interaction_data,)
+                    if interaction_type == "InterPreTS":
+                        continue
+                        # try:
+                        #     z_score = float(t[-2].split("; ")[-1])
+                        # except ValueError:
+                        #     z_score = -999999
+                        #
+                        # protein_data, interaction_data = add_interprets_data(
+                        #                         prot_acc_a, prot_acc_b,
+                        #                         region_a, region_b, z_score, source,
+                        #                         protein_data, interaction_data,)
 
                     else:
                         if source == "BioGRID":
@@ -165,7 +156,7 @@ def get_interaction_data(proteins, protein_data, interaction_file,
                                 "data_source": source
                             })
 
-    return protein_data, interaction_data, elms_to_show
+    return interaction_data, elms_to_show
 
 def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score, source,
                         protein_data, interaction_data):
@@ -338,7 +329,7 @@ def add_protein(protein_data, prot_acc, central_pos, mutations, elms_to_show,
             "label" : cursor["gene"],
             "uni_id" : cursor["uniprot_id"],
             "des": cursor["description"],
-            "length": cursor["length"]
+            "length": cursor["length"],
             "protein" : prot_acc
             }
         })
@@ -383,9 +374,9 @@ def add_protein(protein_data, prot_acc, central_pos, mutations, elms_to_show,
             "group" : "nodes",
             "data" : {
                 "id" : id_counter,
-                "label" : "0",
-                "role" : "start-end",
                 "parent" : protein_id,
+                "role" : "start-end",
+                "label" : "0",
                 "protein" : prot_acc
             },
             "position" : {
@@ -401,9 +392,9 @@ def add_protein(protein_data, prot_acc, central_pos, mutations, elms_to_show,
             "group" : "nodes",
             "data" : {
                 "id" : id_counter,
-                "label" : str(protein_data["length"]),
-                "role" : "start-end",
                 "parent" : protein_id,
+                "role" : "start-end",
+                "label" : str(cursor["length"]),
                 "protein" : prot_acc
             },
             "position" : {
@@ -424,6 +415,7 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
     """
 
     for domain in cursor["pfams"]:
+        print prot_acc, domain["name"]
         element_id = copy.deepcopy(id_counter)
         start = domain["start"]
         end = domain["end"]
@@ -432,55 +424,55 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
         if end == int(cursor["length"]):
             end_found = True
 
-            # Add central node
-            graph_elements.append({
-                "group" : "nodes",
-                "data" : {
-                    "id" : element_id,
-                    "parent" : parent_id,
-                    "role" : "domain",
-                    "label" : domain["name"],
-                    "acc" : domain["acc"],
-                    "start": str(start),
-                    "end": str(end),
-                    "protein" : prot_acc
-                }
-            })
-            id_counter += 1
+        # Add central node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : element_id,
+                "parent" : parent_id,
+                "role" : "domain",
+                "label" : domain["name"],
+                "acc" : domain["acc"],
+                "start": str(start),
+                "end": str(end),
+                "protein" : prot_acc
+            }
+        })
+        id_counter += 1
 
-            # Add start node
-            graph_elements.append({
-                "group" : "nodes",
-                "data" : {
-                    "id" : id_counter,
-                    "parent" : element_id,
-                    "role" : "dom_pos",
-                    "label" : str(start),
-                    "protein" : prot_acc
-                },
-                "position" : {
-                    "x" : start_x + start,
-                    "y" : start_y
-                }
-            })
-            id_counter += 1
+        # Add start node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : element_id,
+                "role" : "dom_pos",
+                "label" : str(start),
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + start,
+                "y" : start_y
+            }
+        })
+        id_counter += 1
 
-            # Add end node
-            graph_elements.append({
-                "group" : "nodes",
-                "data" : {
-                    "id" : id_counter,
-                    "parent" : element_id,
-                    "role" : "dom_pos",
-                    "label" : str(end),
-                    "protein" : prot_acc
-                },
-                "position" : {
-                    "x" : start_x + end,
-                    "y" : start_y
-                }
-            })
-            id_counter += 1
+        # Add end node
+        graph_elements.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : element_id,
+                "role" : "dom_pos",
+                "label" : str(end),
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + end,
+                "y" : start_y
+            }
+        })
+        id_counter += 1
 
     return start_found, end_found, graph_elements, id_counter
 
@@ -500,7 +492,7 @@ def add_elms(prot_acc, parent_id, cursor, allowed_elms,
     node_role = "elms"
 
     for lm in cursor[node_role]:
-        if lm not in allowed_elms[prot_acc]:
+        if lm["name"] not in allowed_elms:
             continue
         start = lm["start"]
         end = lm["end"]
@@ -690,7 +682,7 @@ def add_mutations(prot_acc, parent_id, cursor, mutations,
 def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
              graph_elements, id_counter):
 
-    for ptm_type in zip(["phosphorylation", "acetylation"]):
+    for ptm_type in ["phosphorylation", "acetylation"]:
         for ptm in cursor[ptm_type]:
             pos = ptm["pos"]
             res = ptm["res"]
@@ -981,18 +973,18 @@ def color_regions(graph_elements, palette=""):
     return graph_elements
 
 @line_profile
-def main(proteins, mutations, protein_data_dict, protein_data,
+def main(proteins, mutations, protein_data,
          interaction_file, lmd2_file="", output_file="graph_elements.json",
          max_pval=999):
 
-    protein_data_dict, interaction_data, elms_to_show = get_interaction_data(proteins,
-                                    protein_data_dict, interaction_file, max_pval)
+    interaction_data, elms_to_show = get_interaction_data(proteins,
+                                    interaction_file, max_pval)
 
-    if lmd2_file != "":
-        interaction_data, protein_data_dict = get_lmd2_data(lmd2_file,
-                                                       interaction_pairs,
-                                                       interaction_data,
-                                                       protein_data_dict)
+    # if lmd2_file != "":
+    #     interaction_data, protein_data_dict = get_lmd2_data(lmd2_file,
+    #                                                    interaction_pairs,
+    #                                                    interaction_data,
+    #                                                    protein_data_dict)
 
     ## Make graph elements
     central_pos = central_positions_layout(proteins)

@@ -107,26 +107,39 @@ def get_Interprets_from_MongoDB(data, gene_a, gene_b):
 
     return info
 
-def get_dd_prop_int(dd_prop_file, obs_min, lo_min, ndom_min):
-    """Gets domain-domain interactions from the pre-computed propensities
-    """
+def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
+                                     obs_min, lo_min, ndom_min):
+    cursor = data.find_one({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
+    					   {"#DOM1": pfam_b, "DOM2": pfam_a}],
+    				  	   "OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
+    				  	   "N_DOM1": {"$gte": ndom_min},
+                           "N_DOM2": {"$gte": ndom_min}},
+    					    { "_id": 0})
+    if cursor:
+        return cursor["LO"]
+    else:
+        return ""
 
-    dom_int = defaultdict(dict)
-    with open_file(dd_prop_file) as f:
-        for line in f:
-            if line[0]!="#":
-                t = line.rstrip().split("\t")
-                pfam_a, pfam_b = t[0:2]
-                obs = int(t[2])
-                lo = float(t[4])
-                n_a, n_b = int(t[5]), int(t[6])
-                if (obs >= obs_min and lo >= lo_min and
-                    n_a >= ndom_min and n_b >= ndom_min):
-                    dom_int[pfam_a][pfam_b] = "{} {} {} {:.3f}".format(obs,
-                                                                 n_a, n_b, lo)
-                    dom_int[pfam_b][pfam_a] = "{} {} {} {:.3f}".format(obs,
-                                                                 n_b, n_a, lo)
-    return dom_int
+# def get_dd_prop_int(dd_prop_file, obs_min, lo_min, ndom_min):
+#     """Gets domain-domain interactions from the pre-computed propensities
+#     """
+#
+#     dom_int = defaultdict(dict)
+#     with open_file(dd_prop_file) as f:
+#         for line in f:
+#             if line[0]!="#":
+#                 t = line.rstrip().split("\t")
+#                 pfam_a, pfam_b = t[0:2]
+#                 obs = int(t[2])
+#                 lo = float(t[4])
+#                 n_a, n_b = int(t[5]), int(t[6])
+#                 if (obs >= obs_min and lo >= lo_min and
+#                     n_a >= ndom_min and n_b >= ndom_min):
+#                     dom_int[pfam_a][pfam_b] = "{} {} {} {:.3f}".format(obs,
+#                                                                  n_a, n_b, lo)
+#                     dom_int[pfam_b][pfam_a] = "{} {} {} {:.3f}".format(obs,
+#                                                                  n_b, n_a, lo)
+#     return dom_int
 
 def get_elm_ints(elm_int_dom_file):
     """Gets ELM-domain interactions from the ELM database file
@@ -177,7 +190,7 @@ def elms_of_acc_from_MongoDB(protein_data, acc):
 
 @line_profile
 def main(target_prots, protein_data,
-        biogrid_data, iprets_data, db3did_data, dd_prop_file, elm_int_dom_file,
+        biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_dom_file,
         output_file="", max_prots=""):
 
     # Parameters
@@ -191,10 +204,10 @@ def main(target_prots, protein_data,
     # Get Interaction Data
     ## from interaction propensities [domain-domain]
         ## needs to be adjusted !!
-    dom_prop_int = get_dd_prop_int(dd_prop_file,
-                                    obs_min=4,
-                                    lo_min=2.0,
-                                    ndom_min=4)
+    # dom_prop_int = get_dd_prop_int(dd_prop_file,
+    #                                 obs_min=4,
+    #                                 lo_min=2.0,
+    #                                 ndom_min=4)
     ## from ELM [domain-linear motif]
     elm_int = get_elm_ints(elm_int_dom_file)
 
@@ -264,13 +277,15 @@ def main(target_prots, protein_data,
 
 
             ## domain propensities*
-            if (pfam_a in dom_prop_int and
-                pfam_b in dom_prop_int[pfam_a]):
-                info = dom_prop_int[pfam_a][pfam_b]
+            info = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
+                                             obs_min=4, lo_min=2.0, ndom_min=4)
+            # if (pfam_a in dom_prop_int and
+            #     pfam_b in dom_prop_int[pfam_a]):
+            #     info = dom_prop_int[pfam_a][pfam_b]
+            if info != "":
                 line = "\t".join([gene_a, ac_a, gene_b, ac_b,
                                   "iDOM::iDOM", pfam_a, pfam_b,
-                                  "; ".join(list(info)),
-                                  "Statistical Prediction"
+                                  str(info), "Statistical Prediction"
                                  ])
                 lines.append(line)
                 # score[n] = p

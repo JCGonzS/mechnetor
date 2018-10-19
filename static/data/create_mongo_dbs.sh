@@ -20,6 +20,11 @@ mongoimport --db protein_data --collection Hsa --file species/Hsa/protein_data_n
 gzip species/Hsa/protein_data_new_Hsa_mongo.json
 #
 #
+gunzip species/Hsa/dom_dom_lo.csv.gz
+mongoimport --db interactions_Hsa --collection domain_propensities_Hsa --file species/Hsa/dom_dom_lo.txt --type tsv --headerline
+gzip species/Hsa/dom_dom_lo.csv
+#
+#
 gunzip common/3did_flat_edited-2018_04.tsv.gz
 mongoimport --db interactions_common --collection db3did --file common/3did_flat_edited-2018_04.tsv --type tsv --headerline
 gzip common/3did_flat_edited-2018_04.tsv
