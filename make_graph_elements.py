@@ -287,7 +287,7 @@ def add_interprets_data(prot_acc_a, prot_acc_b, region_a, region_b, z_score, sou
 #                         }
 #     return protein_data
 
-def create_positions(proteins):
+def central_positions_layout(proteins):
     """Creates x/y coordinates of proteins to be displayed
 
     This function uses the parameterized archimedean spiral equation to
@@ -330,6 +330,9 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
     id_counter  --
     """
 
+    cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
+                        { "_id": 0, "gene": 1, "description": 1, "length": 1})
+
     protein_id = copy.deepcopy(id_counter)
 
     ## Add protein central node
@@ -337,18 +340,18 @@ def add_protein(prot_acc, protein_data, mutations, central_pos,
     "group" : "nodes",
     "data" : {
         "id" : protein_id,
-        "label" : protein_data["gene"],
-        "des": protein_data["description"],
-        "role" : "whole",
         "parent" : protein_id,
         "protein" : prot_acc,
+        "role" : "whole",
+        "label" : cursor["gene"],
+        "des": cursor["description"]
         }
     })
     id_counter += 1
 
-    start_x = central_pos[0] - protein_data["length"]/2
+    start_x = central_pos[0] - cursor["length"]/2
     start_y = central_pos[1]
-    end_x = central_pos[0] + protein_data["length"]/2
+    end_x = central_pos[0] + cursor["length"]/2
     end_y = start_y
     start_found = False
     end_found = False
@@ -425,24 +428,24 @@ def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
     Adds three nodes per domain: central, start and end
     """
 
-    for pfam_name in protein_data["pfams"]:
-        for instance in protein_data["pfams"][pfam_name]:
-            start = instance["start"]
-            end = instance["end"]
-            element_id = copy.deepcopy(id_counter)
-            if start == 0:
-                start_found = True
-            if end == int(protein_data["length"]):
-                end_found = True
+    for pfam in protein_data["pfams"]:
+        element_id = copy.deepcopy(id_counter)
+        start = pfam["start"]
+        end = pfam["end"]
+        if start == 0:
+            start_found = True
+        if end == int(protein_data["length"]):
+            end_found = True
 
             # Add central node
             graph_elements.append({
                 "group" : "nodes",
                 "data" : {
                     "id" : element_id,
-                    "label" : pfam_name,
-                    "role" : "domain",
                     "parent" : parent_id,
+                    "role" : "domain",
+                    "label" : pfam["name"],
+                    "acc" : pfam["acc"],
                     "protein" : prot_acc
                 }
             })
@@ -453,9 +456,9 @@ def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
                 "group" : "nodes",
                 "data" : {
                     "id" : id_counter,
-                    "label" : str(start),
-                    "role" : "dom_pos",
                     "parent" : element_id,
+                    "role" : "dom_pos",
+                    "label" : str(start),
                     "protein" : prot_acc
                 },
                 "position" : {
@@ -470,9 +473,9 @@ def add_domains(prot_acc, protein_data, parent_id, start_x, start_y,
                 "group" : "nodes",
                 "data" : {
                     "id" : id_counter,
-                    "label" : str(end),
-                    "role" : "dom_pos",
                     "parent" : element_id,
+                    "role" : "dom_pos",
+                    "label" : str(end),
                     "protein" : prot_acc
                 },
                 "position" : {
@@ -726,13 +729,10 @@ def add_all_proteins(proteins, protein_data, mutations, central_pos):
     id_counter = 0
 
     for prot_acc in sorted(list(proteins)):
-        try:
-            graph_elements, id_counter = add_protein(
-                                    prot_acc, protein_data[prot_acc],
-                                    mutations[prot_acc], central_pos[prot_acc],
-                                    graph_elements, id_counter)
-        except KeyError as err:
-            print "ERROR:", prot_acc + ": MISSING DATA!"
+        graph_elements, id_counter = add_protein(
+                                prot_acc, protein_data,
+                                mutations[prot_acc], central_pos[prot_acc],
+                                graph_elements, id_counter)
 
     return graph_elements, id_counter
 
@@ -992,9 +992,13 @@ def main(client, proteins, protein_data, mutations,
                                                        interaction_pairs,
                                                        interaction_data,
                                                        protein_data)
+    protein_data_dict = protein_data
+    protein_data = ""
+    db = client['protein_data']
+    protein_data = db['Hsa']
 
     ## Make graph elements
-    central_pos = create_positions(proteins)
+    central_pos = central_positions_layout(proteins)
 
     graph_elements, id_counter = add_all_proteins(proteins, protein_data,
                                                   mutations, central_pos)

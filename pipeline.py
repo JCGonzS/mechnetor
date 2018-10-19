@@ -133,6 +133,9 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     else:
         max_prots = 20
 
+    db = client['protein_data']
+    data = db[sps]
+
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
     sps_dir = data_dir+"species/"+sps+"/"
@@ -192,7 +195,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     if example == 0:
     	print "[{}] Running int2mech. Using {} as protein data...".format(st,protein_data_file )
         int_file =  main_dir+output_dir+outfile_int
-    	int2mech.main(client, input_proteins, prot_ids, protein_data,
+    	int2mech.main(client, input_proteins, prot_ids,
     	              int_file, data_dir, sps, max_prots)
     	print "[{}] ...interaction file created in \"{}\"".format(st, int_file)
         tsv_file = "output/" + outfile_int

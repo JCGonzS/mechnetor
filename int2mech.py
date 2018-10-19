@@ -183,7 +183,7 @@ def elms_from_acc(client, acc):
     return sorted(list(set(elms)))
 
 @line_profile
-def main(client, target_prots, protein_ids, protein_data, output_file="",
+def main(client, target_prots, protein_ids, output_file="",
         data_dir="data/", species="Hsa", max_prots=""):
 
     # Parameters
@@ -284,7 +284,7 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                                  ])
                 lines.append(line)
                 # score[n] = p
-                n += 1
+                # n += 1
 
         ## ELM-domain interactions
         elms_a = elms_from_acc(client, ac_a)
@@ -305,7 +305,7 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                                      ])
                     lines.append(line)
                     # score[n] = p
-                    n += 1
+                    # n += 1
 
         for elm_a in elms_a:
             for pfam_b in pfams_b:
@@ -323,12 +323,10 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                                      ])
                     lines.append(line)
                     # score[n] = p
-                    n += 1
+                    # n += 1
 
         ## InterPreTS interactions
         hits = get_interprets_from_mongo(client, gene_a, gene_b)
-        # if ac_a in iprets and ac_b in iprets[ac_a]:
-            # for info in iprets[ac_a][ac_b]:
         for info in hits:
             info = info.split(";")
             line = "\t".join([gene_a, ac_a, gene_b, ac_b,
@@ -337,7 +335,7 @@ def main(client, target_prots, protein_ids, protein_data, output_file="",
                              ])
             lines.append(line)
             # score[n] = float(info[-3])
-            n += 1
+            # n += 1
 
 
     cols = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
