@@ -432,7 +432,7 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
                 "parent" : parent_id,
                 "role" : "domain",
                 "label" : domain["name"],
-                "acc" : domain["acc"],
+                "acc" : domain["acc"].split(".")[0],
                 "start": str(start),
                 "end": str(end),
                 "protein" : prot_acc

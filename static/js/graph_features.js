@@ -18,6 +18,7 @@ $(document).ready(function(){
 
 	// // Lock PTM & Mutation nodes
 	cy.$('node[role="domain"]').ungrabify();
+	cy.$('node[role="elms"]').ungrabify();
 	cy.$('node[role="phosphorylation"]').grabify();
 	cy.$('node[role="acetylation"]').grabify();
 	cy.$('node[role="mutation"]').grabify();
@@ -36,11 +37,38 @@ $(document).ready(function(){
 
 	cy.on('mouseover mouseout','node[role=\"domain\"]', function(event) {
 		var node = event.target;
+		console.log("domain",node)
 		var edges = node.connectedEdges();
+		var neigh = node.neighborhood();
+		node.toggleClass("highlight");
 		edges.toggleClass("highlight");
+		neigh.toggleClass("highlight2");
+	});
+
+	cy.on('mouseover mouseout','node[role=\"elms\"]', function(event) {
+		var node = event.target;
+		var edges = node.connectedEdges();
+		var neigh = node.neighborhood();
+		node.toggleClass("highlight");
+		// edges.toggleClass("highlight");
+		// neigh.toggleClass("highlight2");
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		edge.toggleClass("highlight");
+		nodes.toggleClass("highlight2");
+	});
+
+	cy.on('mouseover mouseout','edge[role=\"DOM_interaction\"]', function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		edge.toggleClass("highlight");
+		nodes.toggleClass("highlight2");
+	});
+
+	cy.on('mouseover mouseout','edge[role=\"iDOM_interaction\"]', function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
@@ -82,18 +110,56 @@ $(document).ready(function(){
 			});
 	});
 
+	// CLICKS
+	cy.on('click','edge[role=\"DOM_interaction\"]', function(event) {
+			var edge = event.target;
+			var nodes = edge.connectedNodes();
+			var doms = []
+			nodes.forEach(function(node) {
+				doms.push(node.data("label"));
+			});
+
+			var ds = edge.data("ds");
+			// var links = edge.data("links").split("; ");
+			// var all_links = []
+			// links.forEach(function(link) {
+			// 	all_links.push("<a href=\"https://thebiogrid.org/interaction/"+link+"\">"+link+"</a>");
+			// });
+
+			edge.qtip({
+				content: "<b>"+ds+" interaction</b><br>"+
+								 "<b>"+doms.join(" - ")+"</b><br>",
+								 // all_links.join(", "),
+				position: {
+           my: 'top center',
+           at: 'bottom center'
+       	},
+
+				style: {
+					classes: 'qtip-bootstrap',
+					tip: {
+						width: 16,
+						height: 8
+			    }
+			  }
+			});
+	});
+
+
 	cy.on('click','node[role=\"whole\"]', function(event) {
 		var node = event.target;
 		var gene = node.data("label");
 		var des = node.data("des");
 		var acc = node.data("protein");
+		var length = node.data("length");
 		node.qtip({
 		  content: "<a style=\"color:#17A589;\">Gene</a> | " +
-								"<b>"+gene+"</b>" +
-								"<br><a style=\"color:#17A589;\">Protein</a> | " +
-								"<b>"+des+"</b>" +
-								"<br><a style=\"color:#17A589;\">UniProt</a> | " +
-								"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">"+acc+"</a>",
+								"<b>"+gene+"</b><br>" +
+								"<a style=\"color:#17A589;\">Protein</a> | " +
+								"<b>"+des+"</b><br>" +
+								"<a style=\"color:#17A589;\">UniProt</a> | " +
+								"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">"+acc+"</a>"+
+								"<br><a style=\"color:#17A589;\">Length</a> | "+length+"<br>",
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'
@@ -108,7 +174,29 @@ $(document).ready(function(){
 		});
 	});
 
-
+	cy.on('click','node[role=\"domain\"]', function(event) {
+		var node = event.target;
+		var name = node.data("label");
+		var acc = node.data("acc");
+		var start = node.data("start");
+		var end = node.data("end");
+		node.qtip({
+		  content: "<b><i>"+start+"-"+end+"</b></i><br>"+
+							 "<b>"+name+"</b><br>"+
+							 "<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+"</a>",
+		  position: {
+		    my: 'top center',
+		    at: 'bottom center'
+		  },
+		  style: {
+				classes: 'qtip-bootstrap',
+		    tip: {
+		      width: 16,
+		      height: 8
+		    }
+		  }
+		});
+	});
 
   // BUTTON: Center the graph on the page
   $("#center").click(function(){
@@ -165,8 +253,8 @@ $(document).ready(function(){
     var checked = document.getElementById("coord").checked;
 
     if (checked) {
-		eles.style("text-opacity", 1);
-		eles.style("background-color", "#FFF");
+			eles.style("text-opacity", 1);
+			eles.style("background-color", "#FFF");
       //coord_action = 1;
     } else {
       //coord_action = 0;
@@ -184,32 +272,38 @@ $(document).ready(function(){
     if (checked) {
       eles.style("border-opacity", "1");
     } else {
-		eles.style("border-opacity", "0");
-		eles2.style("border-opacity", "1");
+			eles.style("border-opacity", "0");
+			eles2.style("border-opacity", "1");
     }
   });
 
   // BUTTON: Toggle regions:
   // Domains
   $("#toggle_doms").click(function(){
-    var eles = cy.$('node[role = "domain"]');
+    var nodes = cy.$('node[role="domain"]');
+		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_doms").checked;
     if (checked) {
-			eles.style("visibility", "visible");
-			// eles.style("display","element");
+			nodes.style("visibility", "visible");
     } else {
-			eles.style("visibility", "hidden");
-			// eles.style("display","none");
+			nodes.style("visibility", "hidden");
+			edges.style("visibility", "hidden");
+			$("#toggle_dom_int").prop("checked", false);
+			$("#toggle_idom_int").prop("checked", false);
+			$("#toggle_elmdom_int").prop("checked", false);
     }
   });
   // ELMs
   $("#toggle_elms").click(function(){
-    var eles = cy.$('node[role = "elms"]');
+    var nodes = cy.$('node[role="elms"]');
+		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_elms").checked;
     if (checked) {
-      eles.style("visibility", "visible");
+      nodes.style("visibility", "visible");
     } else {
-      eles.style("visibility", "hidden");
+			nodes.style("visibility", "hidden");
+			edges.style("visibility", "hidden");
+			$("#toggle_elmdom_int").prop("checked", false);
     }
   });
   // LMD2-LMs
