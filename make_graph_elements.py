@@ -292,8 +292,8 @@ def central_positions_layout(proteins):
         angle = i
         x = (1+100*angle)*math.cos(angle)
         y = (1+100*angle)*math.sin(angle)
-        x += 800
-        y += 225
+        x += 600
+        y += 200
         central_pos[prot_acc] = (x, y)
         i = i+2
 
