@@ -50,8 +50,21 @@ $(document).ready(function(){
 		var edges = node.connectedEdges();
 		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		// edges.toggleClass("highlight");
-		// neigh.toggleClass("highlight2");
+		edges.toggleClass("highlight");
+		neigh.toggleClass("highlight2");
+	});
+
+	cy.on('mouseover mouseout','node[role=\"phosphorylation\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+	});
+	cy.on('mouseover mouseout','node[role=\"acetylation\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+	});
+	cy.on('mouseover mouseout','node[role=\"mutation\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
@@ -69,6 +82,13 @@ $(document).ready(function(){
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"iDOM_interaction\"]', function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		edge.toggleClass("highlight");
+		nodes.toggleClass("highlight2");
+	});
+
+	cy.on('mouseover mouseout','edge[role=\"ELM_interaction\"]', function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
@@ -266,8 +286,8 @@ $(document).ready(function(){
 
   // BUTTON: Toggles box surrounding the whole protein
   $("#toggle_box").click(function(){
-    var eles = cy.$('node[role = "whole"]');
-    var eles2 = cy.$('node[role = "whole"]:selected');
+    var eles = cy.$('node[role="whole"]');
+    var eles2 = cy.$('node[role="whole"]:selected');
     var checked = document.getElementById("toggle_box").checked;
     if (checked) {
       eles.style("border-opacity", "1");
@@ -308,22 +328,28 @@ $(document).ready(function(){
   });
   // LMD2-LMs
   $("#toggle_newlms").click(function(){
-    var eles = cy.$('node[role = "newLM"]');
+    var nodes = cy.$('node[role="newLM"]');
+		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_newlms").checked;
     if (checked) {
-      eles.style("visibility", "visible");
+      nodes.style("visibility", "visible");
     } else {
-			eles.style("visibility", "hidden");
+			nodes.style("visibility", "hidden");
+			edges.style("visibility", "hidden");
+			$("#toggle_lmd2_int").prop("checked", false);
     }
   });
   // InterPreTS regions
   $("#toggle_iprets").click(function(){
-    var eles = cy.$('node[role = "iprets"]');
+    var nodes = cy.$('node[role="iprets"]');
+		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_iprets").checked;
     if (checked) {
-      eles.style("visibility", "visible");
+      nodes.style("visibility", "visible");
     } else {
-			eles.style("visibility", "hidden");
+			nodes.style("visibility", "hidden");
+			edges.style("visibility", "hidden");
+			$("#toggle_prets_int").prop("checked", false);
     }
   });
 
@@ -331,73 +357,93 @@ $(document).ready(function(){
   // Protein-Protein
   //var pp_int_action = 0;
   $("#toggle_pp_int").click(function(){
-    var eles = cy.$('edge[role = "prot_prot_interaction"]');
+    var edges = cy.$('edge[role="prot_prot_interaction"]');
     var checked = document.getElementById("toggle_pp_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
+
   // Dom-Dom (i)
   //var dom_int_action = 0;
   $("#toggle_dom_int").click(function(){
-    var eles = cy.$('edge[role = "DOM_interaction"]');
+    var edges = cy.$('edge[role="DOM_interaction"]');
+		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_dom_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+			nodes.style("visibility", "visible");
+			$("#toggle_doms").prop("checked", true);
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
+
   // Dom-Dom (ii)
   //var idom_int_action = 0;
   $("#toggle_idom_int").click(function(){
-    var eles = cy.$('edge[role = "iDOM_interaction"]');
+    var edges = cy.$('edge[role="iDOM_interaction"]');
+		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_idom_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+			nodes.style("visibility", "visible");
+			$("#toggle_doms").prop("checked", true);
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
+
   // ELM-Dom
   //var elm_int_action = 0;
   $("#toggle_elmdom_int").click(function(){
-    var eles = cy.$('edge[role = "ELM_interaction"]');
+    var edges = cy.$('edge[role="ELM_interaction"]');
+		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_elmdom_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+			nodes.style("visibility", "visible");
+			$("#toggle_elms").prop("checked", true);
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
+
   // LMD2-int
   //var lmd2_int_action = 0;
   $("#toggle_lmd2_int").click(function(){
-    var eles = cy.$('edge[role = "LMD2_interaction"]');
+    var edges = cy.$('edge[role="LMD2_interaction"]');
+		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_lmd2_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+			nodes.style("visibility", "visible");
+			$("#toggle_newlms").prop("checked", true);
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
   // InterpreTS
   //var prets_int_action = 0;
   $("#toggle_prets_int").click(function(){
-    var eles = cy.$('edge[role = "INT_interaction"]');
+    var edges = cy.$('edge[role="INT_interaction"]');
+		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_prets_int").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      edges.style("visibility", "visible");
+			nodes.style("visibility", "visible");
+			$("#toggle_iprets").prop("checked", true);
     } else {
-      eles.style("visibility", "hidden");
+      edges.style("visibility", "hidden");
     }
   });
 
 	// BUTTON: Shows/Hides phosphorylation sites
   $("#phospho").click(function(){
-    var eles = cy.$('node[role = "pp_mod"]');
+    var eles = cy.$('node[role="phosphorylation"]');
     var checked = document.getElementById("phospho").checked;
 		if (checked) {
       eles.style("visibility", "visible");
@@ -407,7 +453,7 @@ $(document).ready(function(){
   });
   // Button: Shows/Hides acetylation sites
   $("#acet").click(function(){
-    var eles = cy.$('node[role = "ac_mod"]');
+    var eles = cy.$('node[role="acetylation"]');
     var checked = document.getElementById("acet").checked;
     if (checked) {
       eles.style("visibility", "visible");
@@ -417,7 +463,7 @@ $(document).ready(function(){
   });
   // Button: Shows/Hides mutations
   $("#mutation").click(function(){
-    var eles = cy.$('node[role = "mutation"]');
+    var eles = cy.$('node[role="mutation"]');
     var checked = document.getElementById("mutation").checked;
     if (checked) {
       eles.style("visibility", "visible");

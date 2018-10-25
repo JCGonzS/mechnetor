@@ -116,7 +116,7 @@ def parse_mutation_input(input_text, prot_dict, protein_set):
     mutations = defaultdict(lambda: defaultdict(set))
     for line in input_text.split("\n"):
         if line.strip() and line[0] != "#":
-            prot, mut = line.rstrip().split("/")
+            prot, mut = line.rstrip().split()[0].split("/")
             pos = int(re.search("([\d]+)", mut).group(1))
             if prot in prot_dict["AC"]:
                 prot = prot_dict["AC"][prot]
