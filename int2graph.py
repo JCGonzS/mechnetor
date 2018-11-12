@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 
-import sys, re
+import sys, re, os
+import math, random, copy, pprint, json
 import gzip, itertools, pymongo
 from collections import defaultdict
-from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+# from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 def central_positions_layout(proteins):
     """Creates x/y coordinates of proteins to be displayed
@@ -29,7 +30,7 @@ def central_positions_layout(proteins):
 
 
 def add_protein(protein_data, prot_acc, central_pos, mutations,
-                graph_elements, id_counter):
+                nodes, id_counter, id_dict, start_pos):
 
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
 
@@ -42,14 +43,13 @@ def add_protein(protein_data, prot_acc, central_pos, mutations,
     the protein, which are checked to see if they are located at the start or
     at the end.
     """
-
+    id_dict[prot_acc] = defaultdict(list)
     protein_id = copy.deepcopy(id_counter)
-
     cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
                         { "_id": 0, "cosmic_muts": 0, "data_class": 0 })
 
     ## Add protein central node
-    graph_elements.append({
+    nodes.append({
         "group" : "nodes",
         "data" : {
             "id" : protein_id,
@@ -62,179 +62,502 @@ def add_protein(protein_data, prot_acc, central_pos, mutations,
             "protein" : prot_acc
             }
         })
+    id_dict[prot_acc]["main"] = protein_id
     id_counter += 1
 
+    ## Add protein start & end nodes (protein sequence will be drawn between the two)
     start_x = central_pos[0] - cursor["length"]/2
     start_y = central_pos[1]
     end_x = central_pos[0] + cursor["length"]/2
     end_y = start_y
-    start_found = False
-    end_found = False
+    start_pos[prot_acc] = (start_x, start_y)
 
-    start_found, end_found, graph_elements, id_counter = add_domains(
-                                    prot_acc, protein_id, cursor,
-                                    start_x, start_y, start_found, end_found,
-                                    graph_elements, id_counter)
+    ## protein start
+    nodes.append({
+        "group" : "nodes",
+        "data" : {
+            "id" : id_counter,
+            "parent" : protein_id,
+            "role" : "start-end",
+            "label" : "0",
+            "protein" : prot_acc
+        },
+        "position" : {
+            "x" : start_x,
+            "y" : start_y
+        }
+    })
+    id_counter += 1
 
-    ## adds ELMs and LMD2-LMs
-    start_found, end_found, graph_elements, id_counter = add_elms(
-                                    prot_acc, protein_id, cursor, elms_to_show,
-                                    start_x, start_y, start_found, end_found,
-                                    graph_elements, id_counter)
+    ## protein end
+    nodes.append({
+        "group" : "nodes",
+        "data" : {
+            "id" : id_counter,
+            "parent" : protein_id,
+            "role" : "start-end",
+            "label" : str(cursor["length"]),
+            "protein" : prot_acc
+        },
+        "position" : {
+            "x" : end_x,
+            "y" : end_y
+        }
+    })
+    id_counter += 1
+
+    ## Add other protein elements:
+    nodes, id_counter, id_dict = add_domains(prot_acc, protein_id, cursor,
+                                    start_x, start_y, nodes, id_counter, id_dict)
+
+    nodes, id_counter = add_mutations(prot_acc, protein_id, cursor,
+                                mutations, start_x, start_y, nodes, id_counter)
+
+    nodes, id_counter = add_ptms(prot_acc, protein_id, cursor,
+                                 start_x, start_y, nodes, id_counter)
 
     # start_found, end_found, graph_elements, id_counter = add_interprets(
     #                                 prot_acc, protein_data, protein_id,
     #                                 start_x, start_y, start_found, end_found,
     #                                 graph_elements, id_counter)
-
-    graph_elements, id_counter = add_ptms( prot_acc, protein_id, cursor,
-                                           start_x, start_y,
-                                           graph_elements, id_counter)
-
-    graph_elements, id_counter = add_mutations(prot_acc, protein_id, cursor,
-                                               mutations, start_x, start_y,
-                                               graph_elements, id_counter)
+    #
 
 
+    return nodes, id_counter, id_dict, start_pos
 
-    ## Add protein start node (if not occupied by another element)
-    if not start_found:
-        graph_elements.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "parent" : protein_id,
-                "role" : "start-end",
-                "label" : "0",
-                "protein" : prot_acc
-            },
-            "position" : {
-                "x" : start_x,
-                "y" : start_y
-            }
-        })
-        id_counter += 1
-
-    ## Add protein end node (if not occupied by another element)
-    if not end_found:
-        graph_elements.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "parent" : protein_id,
-                "role" : "start-end",
-                "label" : str(cursor["length"]),
-                "protein" : prot_acc
-            },
-            "position" : {
-                "x" : end_x,
-                "y" : end_y
-            }
-        })
-        id_counter += 1
-
-    return graph_elements, id_counter
 
 def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
-                start_found, end_found, graph_elements, id_counter):
+                nodes, id_counter, id_dict):
 
     """Add protein's Pfam domains
 
-    Adds three nodes per domain: central, start and end
+    Adds domain as a single node whose width is proportional to domain's length
     """
 
     for domain in cursor["pfams"]:
-        print prot_acc, domain["name"]
-        element_id = copy.deepcopy(id_counter)
         start = domain["start"]
         end = domain["end"]
-        if start == 0:
-            start_found = True
-        if end == int(cursor["length"]):
-            end_found = True
+        length = end-start
 
-        # Add central node
-        graph_elements.append({
+        nodes.append({
             "group" : "nodes",
             "data" : {
-                "id" : element_id,
+                "id" : id_counter,
                 "parent" : parent_id,
                 "role" : "domain",
                 "label" : domain["name"],
                 "acc" : domain["acc"].split(".")[0],
                 "start": str(start),
                 "end": str(end),
-                "protein" : prot_acc
-            }
-        })
-        id_counter += 1
-
-        # Add start node
-        graph_elements.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "parent" : element_id,
-                "role" : "dom_pos",
-                "label" : str(start),
+                "length": str(length),
                 "protein" : prot_acc
             },
             "position" : {
-                "x" : start_x + start,
+                "x" : start_x+start+(length/2),
+                "y" : start_y
+            }
+        })
+        id_dict[prot_acc][domain["name"]].append(id_counter)
+        id_counter += 1
+
+
+    return nodes, id_counter, id_dict
+
+
+def add_mutations(prot_acc, parent_id, cursor, mutations, start_x, start_y,
+                  nodes, id_counter):
+    """
+    """
+
+    # for mut in cursor["cosmic_muts"]:
+    #     pos = mut["pos"]
+    #     res = mut["res"]
+    #
+    #     if int(pos)== 0:
+    #         start_found = True
+    #     if int(pos) == int(cursor["length"]):
+    #         end_found = True
+    #
+    #     graph_elements.append({
+    #         "group" : "nodes",
+    #         "data" : {
+    #             "id" : id_counter,
+    #             "parent" : parent_id,
+    #             "role" : "mutation",
+    #             "label" : label,
+    #             "protein" : prot_acc
+    #         },
+    #         "position" : {
+    #             "x" : start_x + int(pos),
+    #             "y" : start_y
+    #         }
+    #     })
+    #     id_counter += 1
+
+    for pos in mutations:
+        label = ";".join(list(mutations[pos]))
+
+        nodes.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : parent_id,
+                "role" : "mutation",
+                "label" : label,
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + int(pos),
                 "y" : start_y
             }
         })
         id_counter += 1
 
-        # Add end node
-        graph_elements.append({
-            "group" : "nodes",
+    return nodes, id_counter
+
+def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
+             nodes, id_counter):
+
+    for ptm_type in ["phosphorylation", "acetylation"]:
+        for ptm in cursor[ptm_type]:
+            pos = ptm["pos"]
+            res = ptm["res"]
+
+            nodes.append({
+                "group" : "nodes",
+                "data" : {
+                    "id" : id_counter,
+                    "parent" : parent_id,
+                    "role" : ptm_type,
+                    "label" : res + str(pos),
+                    "protein" : prot_acc
+                },
+                "position" : {
+                    "x" : start_x + int(pos),
+                    "y": start_y
+                }
+            })
+            id_counter += 1
+
+    return nodes, id_counter
+
+def connect_protein_sequence(prot_acc, nodes, edges, id_counter):
+
+    # 1. Decide which nodes form the protein sequence
+    prot_positions = []
+    for ele in nodes:
+        role = ele["data"]["role"]
+        parent_prot = ele["data"]["protein"]
+        position = ele["data"]["label"]
+        ele_id = ele["data"]["id"]
+        if (role == "start-end" and parent_prot == prot_acc):
+            prot_positions.append((ele_id, int(position)))
+
+    # 2. Join those nodes by edges
+    prot_positions.sort(key=lambda x: x[1])
+    for i in range(len(prot_positions)-1):
+        edges.append({
+            "group" : "edges",
             "data" : {
                 "id" : id_counter,
-                "parent" : element_id,
-                "role" : "dom_pos",
-                "label" : str(end),
-                "protein" : prot_acc
-            },
-            "position" : {
-                "x" : start_x + end,
-                "y" : start_y
+                "source" : prot_positions[i][0],
+                "target" : prot_positions[i+1][0],
+                "role" : "protein_sequence"
             }
         })
         id_counter += 1
 
-    return start_found, end_found, graph_elements, id_counter
+    return edges, id_counter
+
+def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
+
+    info = set()
+    for cursor in data.find( {"$or":
+            [{"Official Symbol Interactor A": gene_a,
+             "Official Symbol Interactor B": gene_b},
+             {"Official Symbol Interactor A": gene_b,
+              "Official Symbol Interactor B": gene_a}]},
+            {"_id": 0, "#BioGRID Interaction ID": 1}):
+
+        bio_id = cursor["#BioGRID Interaction ID"]
+        info.add(str(bio_id))
+
+    return info
+
+def get_3did_from_MongoDB(data, pfam_a, pfam_b):
+
+    cursor = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
+                 {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]},
+                 {"_id": 0, "PDBs": 1})
+    if cursor:
+        return cursor["PDBs"]
+
+def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
+                                     obs_min, lo_min, ndom_min):
+    cursor = data.find_one({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
+    					   {"#DOM1": pfam_b, "DOM2": pfam_a}],
+    				  	   "OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
+    				  	   "N_DOM1": {"$gte": ndom_min},
+                           "N_DOM2": {"$gte": ndom_min}},
+    					    { "_id": 0, "LO": 1 })
+    if cursor:
+        return cursor["LO"]
 
 
-@line_profile
+def get_elm_dom_from_MongoDB(data, elm, pfam):
+    cursor = data.find_one({"#ELM identifier": elm, "Domain Name": pfam},
+                           {"_id": 0, "Only in these genes": 1})
+
+    if cursor:
+        return cursor["Only in these genes"].split(",")
+
+def pfams_of_acc_from_MongoDB(protein_data, acc):
+
+    cursor = protein_data.find_one( { "uniprot_acc": acc },
+                            { "_id": 0, "pfams.name": 1 } )
+    pfams = [c["name"] for c in cursor["pfams"]]
+
+    return sorted(list(set(pfams)))
+
+
+def elms_of_acc_from_MongoDB(protein_data, acc):
+
+    cursor = protein_data.find_one( { "uniprot_acc": acc },
+                            { "_id": 0} )
+
+    # elm_names = sorted(list(set([c["name"] for c in cursor["elms"]])))
+    elms = defaultdict(list)
+    for c in cursor["elms"]:
+        elms[c["name"]].append(c)
+
+    return elms
+
+def get_random_color(already_used):
+    """Get random color in hex-value
+    """
+
+    values = "123456789ABCDE"
+    color = "#"
+    for _ in range(100):
+        for _ in range(6):
+            color += values[int(round(random.random()*13))]
+        if color not in already_used:
+            break
+
+    return color
+
+def get_palette(palette):
+    c = []
+    if palette == "autumn":
+        c = ["#CDBE70","#CD8500","#8B7500","#EE7600","#8B4513","#EE4000",
+            "#528B8B","#4F94CD","#00688B", "#68838B", "#20B2AA","#8B7355"]
+    elif palette == "custom1":
+        c = ["#978897", "#E49AB0", "#494850", "#904C77", "#957D95"]
+    return c
+
+def color_regions(nodes, palette=""):
+    """Gets colours for domains and ELMs graph elements
+
+    Function arguments:
+     nodes -- list of nodes
+     palette -- if specified a custom palette of colours will be used. See
+        "get_palette" for options. If empty, random colours will be used.
+    """
+
+    custom_colors = get_palette(palette)
+    color_map = {}
+    counter = 0
+    for node in nodes:
+        if node["group"] == "nodes":
+            role = node["data"]["role"]
+            label = node["data"]["label"]
+            if role in ["domain", "elm"]:
+                if label not in color_map:
+                    if palette != "" and counter < len(custom_colors):
+                        color_map[label] = custom_colors[counter]
+                        counter += 1
+                    else:
+                        color_map[label] = get_random_color(color_map.values())
+
+                node["data"]["color"] = color_map[label]
+
+    return nodes
+
+# @line_profile
 def main(target_prots, protein_data, mutations,
-        biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_dom_file,
-        output_file="", max_prots=""):
+        biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
+        max_prots="", tsv_table="table.tsv", graph_file="graph.json"):
 
-
-    central_pos = central_positions_layout(target_proteins)
+    print target_prots
+    central_pos = central_positions_layout(target_prots)
+    start_pos = {}
     nodes, edges = [], []
     id_counter = 0
-
+    id_dict = {}
     for prot_acc in sorted(list(target_prots)):
-        nodes, id_counter = add_protein( protein_data,
-                                                  prot_acc, central_pos[prot_acc],
+        nodes, id_counter, id_dict, start_pos = add_protein( protein_data, prot_acc,
+                                                  central_pos[prot_acc],
                                                   mutations[prot_acc],
-                                                #   elms_to_show[prot_acc],
-                                                  nodes, id_counter)
+                                                  nodes, id_counter, id_dict,
+                                                  start_pos)
+
+        edges, id_counter = connect_protein_sequence(prot_acc, nodes, edges,
+                                                     id_counter)
 
 
-    nodes, id_counter = add_all_proteins(protein_data, proteins, central_pos,
-                                            mutations, elms_to_show)
-    edges, id_counter = connect_protein_sequence(proteins, nodes, id_counter)
-
+    elm_nodes = defaultdict(list)
+    lines = []
     for pair in itertools.combinations(target_prots, 2):
+        print pair
         ac_a, ac_b = pair
         gene_a = protein_data.find_one({"uniprot_acc": ac_a},
                                        {"_id": 0, "gene": 1})["gene"]
         gene_b = protein_data.find_one({"uniprot_acc": ac_b},
                                        {"_id": 0, "gene": 1})["gene"]
 
-
         ## BioGRID interactions
-        info = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
+        biogrid_ids = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
+
+        if len(biogrid_ids) > 0:
+            edges.append(   {"group" : "edges",
+                             "data" : {  "id" : id_counter,
+                                         "source" : id_dict[ac_a]["main"],
+                                         "target" : id_dict[ac_b]["main"],
+                                         "role" : "prot_prot_interaction",
+                                         "ds": "BioGRID",
+                                         "links": ";".join(list(biogrid_ids))
+                                      }
+                            })
+            id_counter += 1
+
+            line = "\t".join([gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
+                              "; ".join(list(biogrid_ids)), "BioGRID"])
+            lines.append(line)
+
+
+        pfams_a = pfams_of_acc_from_MongoDB(protein_data, ac_a)
+        pfams_b = pfams_of_acc_from_MongoDB(protein_data, ac_b)
+        for pfam_pair in itertools.product(pfams_a, pfams_b):
+            pfam_a, pfam_b = pfam_pair
+
+            ## 3did interactions
+            pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
+
+            if pdbs:
+                for source in id_dict[ac_a][pfam_a]:
+                    for target in id_dict[ac_b][pfam_b]:
+                        if source == target:
+                            continue
+                        edges.append({ "group" : "edges",
+                                       "data" : { "id" : id_counter,
+                                                  "source" : source,
+                                                  "target" : target,
+                                                  "role" : "DOM_interaction",
+                                                  "ds": "3did",
+                                                  "links": pdbs
+                                                 }
+                                    })
+                        id_counter += 1
+
+                line = "\t".join([gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
+                                  pfam_a, pfam_b, pdbs, "3did"])
+                lines.append(line)
+
+            ## domain propensities
+            prop_lo = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
+                                             obs_min=4, lo_min=2.0, ndom_min=4)
+            if prop_lo:
+                for source in id_dict[ac_a][pfam_a]:
+                    for target in id_dict[ac_b][pfam_b]:
+                        if source == target:
+                            continue
+                        edges.append({ "group" : "edges",
+                                       "data" : { "id" : id_counter,
+                                                  "source" : source,
+                                                  "target" : target,
+                                                  "role" : "iDOM_interaction",
+                                                  "ds": "Statistical Prediction"
+                                                 }
+                                    })
+                        id_counter += 1
+
+                line = "\t".join([gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
+                                  pfam_a, pfam_b,
+                                  str(prop_lo), "Statistical Prediction"])
+                lines.append(line)
+
+
+        ## ELM-domain interactions
+        for ac1, gene1, ac2, gene2, pfams in zip([ac_a, ac_b], [gene_a, gene_b],
+                                                 [ac_b, ac_a], [gene_b, gene_a],
+                                                 [pfams_b, pfams_a]):
+
+            elms = elms_of_acc_from_MongoDB(protein_data, ac1)
+            for elm_name in elms:
+                for pfam in pfams:
+                    only_prts = get_elm_dom_from_MongoDB(elm_int_data, elm_name, pfam)
+                    if only_prts:
+                        if only_prts[0].strip() and gene2 not in only_prts:
+                            continue
+
+                        ## Add ELM nodes if they don't exist
+                        if elm_name not in id_dict[ac1]:
+
+                            for elm in elms[elm_name]:
+                                elm_acc = elm["acc"]
+                                start = elm["start"]
+                                end = elm["end"]
+                                length = end-start
+
+                                nodes.append(
+                                    { "group" : "nodes",
+                                      "data" :
+                                          { "id" : id_counter,
+                                            "parent" : id_dict[ac1]["main"],
+                                            "role" : "elm",
+                                            "label" : elm_name,
+                                            "acc" : elm_acc,
+                                            "start" : str(start),
+                                            "end" : str(end),
+                                            "length": str(length),
+                                            "protein" : ac1
+                                          },
+                                            "position" : {
+                                                "x" : start_pos[ac1][0]+start+(length/2),
+                                                "y" : start_pos[ac1][1]
+                                          }
+                                })
+                                id_dict[ac1][elm_name].append(id_counter)
+                                id_counter += 1
+
+                            ## Add interaction edge
+                            for source in id_dict[ac1][elm_name]:
+                                for target in id_dict[ac2][pfam]:
+                                    edges.append(
+                                            { "group" : "edges",
+                                              "data" :
+                                                { "id" : id_counter,
+                                                  "source" : source,
+                                                  "target" : target,
+                                                  "role" : "ELM_interaction",
+                                                  "ds": "ELM"
+                                                }
+                                            })
+                                    id_counter += 1
+
+                            line = "\t".join([gene1, ac1, gene2, ac2, "ELM::DOM",
+                                              elm_name, pfam, "", "ELM"])
+                            lines.append(line)
+
+
+    ## Color domain & LMs nodes
+    nodes = color_regions(nodes, palette="custom1")
+
+    ## Print graph as JSON file
+    graph_elements = nodes + edges
+    with open(graph_file, "w") as output:
+        json.dump(graph_elements, output, indent=4)
+
+    ## Print interaction list (should be a JSON as well)
+    for l in lines:
+        print l

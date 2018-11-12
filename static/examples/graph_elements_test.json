@@ -1,0 +1,3640 @@
+[
+    {
+        "data": {
+            "length": 653, 
+            "role": "whole", 
+            "parent": 0, 
+            "protein": "O75081", 
+            "des": "Protein CBFA2T3", 
+            "uni_id": "MTG16_HUMAN", 
+            "id": 0, 
+            "label": "CBFA2T3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "start-end", 
+            "id": 1, 
+            "parent": 0, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 325.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "start-end", 
+            "id": 2, 
+            "parent": 0, 
+            "label": "653"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 977.0
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF01753", 
+            "start": "556", 
+            "length": "36", 
+            "role": "domain", 
+            "parent": 0, 
+            "color": "#978897", 
+            "end": "592", 
+            "protein": "O75081", 
+            "id": 3, 
+            "label": "zf-MYND"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 899.0
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF07531", 
+            "start": "174", 
+            "length": "88", 
+            "role": "domain", 
+            "parent": 0, 
+            "color": "#E49AB0", 
+            "end": "262", 
+            "protein": "O75081", 
+            "id": 4, 
+            "label": "TAFH"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 543.0
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF08788", 
+            "start": "379", 
+            "length": "66", 
+            "role": "domain", 
+            "parent": 0, 
+            "color": "#494850", 
+            "end": "445", 
+            "protein": "O75081", 
+            "id": 5, 
+            "label": "NHR2"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 737.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 6, 
+            "parent": 0, 
+            "label": "S15"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 340.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 7, 
+            "parent": 0, 
+            "label": "S36"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 361.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 8, 
+            "parent": 0, 
+            "label": "S65"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 390.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 9, 
+            "parent": 0, 
+            "label": "Y327"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 652.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 10, 
+            "parent": 0, 
+            "label": "S328"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 653.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 11, 
+            "parent": 0, 
+            "label": "T337"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 662.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 12, 
+            "parent": 0, 
+            "label": "S439"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 764.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 13, 
+            "parent": 0, 
+            "label": "S457"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 782.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 14, 
+            "parent": 0, 
+            "label": "S458"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 783.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 15, 
+            "parent": 0, 
+            "label": "S459"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 784.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 16, 
+            "parent": 0, 
+            "label": "T477"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 802.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 17, 
+            "parent": 0, 
+            "label": "T479"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 804.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 18, 
+            "parent": 0, 
+            "label": "T521"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 846.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 19, 
+            "parent": 0, 
+            "label": "S539"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 864.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 20, 
+            "parent": 0, 
+            "label": "S578"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 903.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 21, 
+            "parent": 0, 
+            "label": "S629"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 954.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 22, 
+            "parent": 0, 
+            "label": "S637"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 962.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 23, 
+            "parent": 0, 
+            "label": "S641"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 966.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 24, 
+            "parent": 0, 
+            "label": "S643"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 968.0
+        }
+    }, 
+    {
+        "data": {
+            "protein": "O75081", 
+            "role": "phosphorylation", 
+            "id": 25, 
+            "parent": 0, 
+            "label": "T650"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 975.0
+        }
+    }, 
+    {
+        "data": {
+            "length": 654, 
+            "role": "whole", 
+            "parent": 27, 
+            "protein": "P15923", 
+            "des": "Transcription factor E2-alpha", 
+            "uni_id": "TFE2_HUMAN", 
+            "id": 27, 
+            "label": "TCF3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "start-end", 
+            "id": 28, 
+            "parent": 27, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 239.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "start-end", 
+            "id": 29, 
+            "parent": 27, 
+            "label": "654"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 893.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00010", 
+            "start": "550", 
+            "length": "53", 
+            "role": "domain", 
+            "parent": 27, 
+            "color": "#904C77", 
+            "end": "603", 
+            "protein": "P15923", 
+            "id": 30, 
+            "label": "HLH"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 815.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "mutation", 
+            "id": 31, 
+            "parent": 27, 
+            "label": "T23C"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 262.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 32, 
+            "parent": 27, 
+            "label": "T12"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 251.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 33, 
+            "parent": 27, 
+            "label": "S39"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 278.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 34, 
+            "parent": 27, 
+            "label": "Y108"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 347.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 35, 
+            "parent": 27, 
+            "label": "S110"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 349.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 36, 
+            "parent": 27, 
+            "label": "S134"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 373.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 37, 
+            "parent": 27, 
+            "label": "S139"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 378.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 38, 
+            "parent": 27, 
+            "label": "S141"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 380.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 39, 
+            "parent": 27, 
+            "label": "Y149"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 388.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 40, 
+            "parent": 27, 
+            "label": "Y150"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 389.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 41, 
+            "parent": 27, 
+            "label": "Y153"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 392.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 42, 
+            "parent": 27, 
+            "label": "S156"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 395.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 43, 
+            "parent": 27, 
+            "label": "S245"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 484.35448585402435
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 44, 
+            "parent": 27, 
+            "label": "S341"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 580.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 45, 
+            "parent": 27, 
+            "label": "S345"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 584.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 46, 
+            "parent": 27, 
+            "label": "S346"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 585.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 47, 
+            "parent": 27, 
+            "label": "S350"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 589.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 48, 
+            "parent": 27, 
+            "label": "S351"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 590.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 49, 
+            "parent": 27, 
+            "label": "S352"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 591.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 50, 
+            "parent": 27, 
+            "label": "S354"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 593.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 51, 
+            "parent": 27, 
+            "label": "T355"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 594.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 52, 
+            "parent": 27, 
+            "label": "S359"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 598.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 53, 
+            "parent": 27, 
+            "label": "T366"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 605.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 54, 
+            "parent": 27, 
+            "label": "S367"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 606.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 55, 
+            "parent": 27, 
+            "label": "S379"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 618.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 56, 
+            "parent": 27, 
+            "label": "S381"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 620.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 57, 
+            "parent": 27, 
+            "label": "Y382"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 621.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 58, 
+            "parent": 27, 
+            "label": "T411"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 650.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 59, 
+            "parent": 27, 
+            "label": "S509"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 748.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 60, 
+            "parent": 27, 
+            "label": "S514"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 753.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 61, 
+            "parent": 27, 
+            "label": "T528"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 767.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "protein": "P15923", 
+            "role": "phosphorylation", 
+            "id": 62, 
+            "parent": 27, 
+            "label": "S529"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 282.76878279196205, 
+            "x": 768.3544858540243
+        }
+    }, 
+    {
+        "data": {
+            "length": 119, 
+            "role": "whole", 
+            "parent": 64, 
+            "protein": "Q02535", 
+            "des": "DNA-binding protein inhibitor ID-3", 
+            "uni_id": "ID3_HUMAN", 
+            "id": 64, 
+            "label": "ID3"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "start-end", 
+            "id": 65, 
+            "parent": 64, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 328.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "start-end", 
+            "id": 66, 
+            "parent": 64, 
+            "label": "119"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 446.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00010", 
+            "start": "42", 
+            "length": "39", 
+            "role": "domain", 
+            "parent": 64, 
+            "color": "#904C77", 
+            "end": "81", 
+            "protein": "Q02535", 
+            "id": 67, 
+            "label": "HLH"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 389.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "mutation", 
+            "id": 68, 
+            "parent": 64, 
+            "label": "S15P"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 343.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 69, 
+            "parent": 64, 
+            "label": "S5"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 333.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 70, 
+            "parent": 64, 
+            "label": "Y11"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 339.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 71, 
+            "parent": 64, 
+            "label": "S18"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 346.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 72, 
+            "parent": 64, 
+            "label": "S21"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 349.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 73, 
+            "parent": 64, 
+            "label": "Y48"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 376.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "phosphorylation", 
+            "id": 74, 
+            "parent": 64, 
+            "label": "S65"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 393.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q02535", 
+            "role": "acetylation", 
+            "id": 75, 
+            "parent": 64, 
+            "label": "K2"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -203.4778006184792, 
+            "x": 330.8889080336916
+        }
+    }, 
+    {
+        "data": {
+            "length": 545, 
+            "role": "whole", 
+            "parent": 77, 
+            "protein": "Q13153", 
+            "des": "Serine/threonine-protein kinase PAK 1 {ECO:0000303|PubMed:8805275}", 
+            "uni_id": "PAK1_HUMAN", 
+            "id": 77, 
+            "label": "PAK1"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "start-end", 
+            "id": 78, 
+            "parent": 77, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 955.0623422768699
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "start-end", 
+            "id": 79, 
+            "parent": 77, 
+            "label": "545"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1499.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00069", 
+            "start": "270", 
+            "length": "251", 
+            "role": "domain", 
+            "parent": 77, 
+            "color": "#957D95", 
+            "end": "521", 
+            "protein": "Q13153", 
+            "id": 80, 
+            "label": "Pkinase"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1350.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00786", 
+            "start": "74", 
+            "length": "58", 
+            "role": "domain", 
+            "parent": 77, 
+            "color": "#2193A4", 
+            "end": "132", 
+            "protein": "Q13153", 
+            "id": 81, 
+            "label": "PBD"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1058.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 82, 
+            "parent": 77, 
+            "label": "S2"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 957.0623422768699
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 83, 
+            "parent": 77, 
+            "label": "T20"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 975.0623422768699
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 84, 
+            "parent": 77, 
+            "label": "S21"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 976.0623422768699
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 85, 
+            "parent": 77, 
+            "label": "S28"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 983.0623422768699
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 86, 
+            "parent": 77, 
+            "label": "T109"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1064.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 87, 
+            "parent": 77, 
+            "label": "S110"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1065.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 88, 
+            "parent": 77, 
+            "label": "S115"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1070.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 89, 
+            "parent": 77, 
+            "label": "Y131"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1086.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 90, 
+            "parent": 77, 
+            "label": "S133"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1088.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 91, 
+            "parent": 77, 
+            "label": "T136"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1091.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 92, 
+            "parent": 77, 
+            "label": "S137"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1092.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 93, 
+            "parent": 77, 
+            "label": "S139"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1094.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 94, 
+            "parent": 77, 
+            "label": "Y142"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1097.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 95, 
+            "parent": 77, 
+            "label": "S144"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1099.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 96, 
+            "parent": 77, 
+            "label": "T146"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1101.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 97, 
+            "parent": 77, 
+            "label": "S149"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1104.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 98, 
+            "parent": 77, 
+            "label": "Y153"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1108.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 99, 
+            "parent": 77, 
+            "label": "S155"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1110.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 100, 
+            "parent": 77, 
+            "label": "S156"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1111.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 101, 
+            "parent": 77, 
+            "label": "S174"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1129.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 102, 
+            "parent": 77, 
+            "label": "T185"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1140.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 103, 
+            "parent": 77, 
+            "label": "T197"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1152.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 104, 
+            "parent": 77, 
+            "label": "S199"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1154.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 105, 
+            "parent": 77, 
+            "label": "Y201"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1156.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 106, 
+            "parent": 77, 
+            "label": "S204"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1159.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 107, 
+            "parent": 77, 
+            "label": "T212"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1167.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 108, 
+            "parent": 77, 
+            "label": "T214"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1169.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 109, 
+            "parent": 77, 
+            "label": "T219"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1174.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 110, 
+            "parent": 77, 
+            "label": "S220"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1175.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 111, 
+            "parent": 77, 
+            "label": "S223"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1178.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 112, 
+            "parent": 77, 
+            "label": "T225"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1180.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 113, 
+            "parent": 77, 
+            "label": "T229"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1184.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 114, 
+            "parent": 77, 
+            "label": "T230"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1185.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 115, 
+            "parent": 77, 
+            "label": "T236"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1191.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 116, 
+            "parent": 77, 
+            "label": "S249"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1204.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 117, 
+            "parent": 77, 
+            "label": "S259"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1214.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 118, 
+            "parent": 77, 
+            "label": "S262"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1217.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 119, 
+            "parent": 77, 
+            "label": "Y285"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1240.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 120, 
+            "parent": 77, 
+            "label": "T415"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1370.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 121, 
+            "parent": 77, 
+            "label": "S422"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1377.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 122, 
+            "parent": 77, 
+            "label": "T423"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1378.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 123, 
+            "parent": 77, 
+            "label": "T427"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1382.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 124, 
+            "parent": 77, 
+            "label": "Y474"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1429.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 125, 
+            "parent": 77, 
+            "label": "S491"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1446.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 126, 
+            "parent": 77, 
+            "label": "S511"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1466.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 127, 
+            "parent": 77, 
+            "label": "S528"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1483.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 128, 
+            "parent": 77, 
+            "label": "S529"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1484.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q13153", 
+            "role": "phosphorylation", 
+            "id": 129, 
+            "parent": 77, 
+            "label": "T531"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": -67.92871441755443, 
+            "x": 1486.06234227687
+        }
+    }, 
+    {
+        "data": {
+            "length": 1919, 
+            "role": "whole", 
+            "parent": 131, 
+            "protein": "Q8TDM6", 
+            "des": "Disks large homolog 5", 
+            "uni_id": "DLG5_HUMAN", 
+            "id": 131, 
+            "label": "DLG5"
+        }, 
+        "group": "nodes"
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "start-end", 
+            "id": 132, 
+            "parent": 131, 
+            "label": "0"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -425.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "start-end", 
+            "id": 133, 
+            "parent": 131, 
+            "label": "1919"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1492.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00595", 
+            "start": "633", 
+            "length": "73", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#A94C26", 
+            "end": "706", 
+            "protein": "Q8TDM6", 
+            "id": 134, 
+            "label": "PDZ"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 243.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00595", 
+            "start": "722", 
+            "length": "70", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#A94C26", 
+            "end": "792", 
+            "protein": "Q8TDM6", 
+            "id": 135, 
+            "label": "PDZ"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 331.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00595", 
+            "start": "1351", 
+            "length": "73", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#A94C26", 
+            "end": "1424", 
+            "protein": "Q8TDM6", 
+            "id": 136, 
+            "label": "PDZ"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 961.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00595", 
+            "start": "1505", 
+            "length": "74", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#A94C26", 
+            "end": "1579", 
+            "protein": "Q8TDM6", 
+            "id": 137, 
+            "label": "PDZ"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1116.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF00625", 
+            "start": "1775", 
+            "length": "131", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#16B8D4", 
+            "end": "1906", 
+            "protein": "Q8TDM6", 
+            "id": 138, 
+            "label": "Guanylate_kin"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1414.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF04822", 
+            "start": "130", 
+            "length": "83", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#2A5456", 
+            "end": "213", 
+            "protein": "Q8TDM6", 
+            "id": 139, 
+            "label": "Takusan"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -254.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "acc": "PF16610", 
+            "start": "1427", 
+            "length": "59", 
+            "role": "domain", 
+            "parent": 131, 
+            "color": "#44B377", 
+            "end": "1486", 
+            "protein": "Q8TDM6", 
+            "id": 140, 
+            "label": "dbPDZ_assoc"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1030.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 141, 
+            "parent": 131, 
+            "label": "S37"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -388.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 142, 
+            "parent": 131, 
+            "label": "S132"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -293.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 143, 
+            "parent": 131, 
+            "label": "S150"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -275.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 144, 
+            "parent": 131, 
+            "label": "Y181"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -244.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 145, 
+            "parent": 131, 
+            "label": "Y188"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -237.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 146, 
+            "parent": 131, 
+            "label": "S200"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -225.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 147, 
+            "parent": 131, 
+            "label": "S204"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -221.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 148, 
+            "parent": 131, 
+            "label": "T210"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -215.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 149, 
+            "parent": 131, 
+            "label": "S264"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -161.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 150, 
+            "parent": 131, 
+            "label": "S295"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -130.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 151, 
+            "parent": 131, 
+            "label": "S296"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -129.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 152, 
+            "parent": 131, 
+            "label": "Y429"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 3.4544729193005423
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 153, 
+            "parent": 131, 
+            "label": "S430"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 4.454472919300542
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 154, 
+            "parent": 131, 
+            "label": "Y432"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 6.454472919300542
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 155, 
+            "parent": 131, 
+            "label": "S711"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 285.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 156, 
+            "parent": 131, 
+            "label": "T718"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 292.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 157, 
+            "parent": 131, 
+            "label": "S725"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 299.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 158, 
+            "parent": 131, 
+            "label": "S730"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 304.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 159, 
+            "parent": 131, 
+            "label": "S733"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 307.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 160, 
+            "parent": 131, 
+            "label": "S773"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 347.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 161, 
+            "parent": 131, 
+            "label": "S791"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 365.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 162, 
+            "parent": 131, 
+            "label": "S803"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 377.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 163, 
+            "parent": 131, 
+            "label": "S814"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 388.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 164, 
+            "parent": 131, 
+            "label": "S819"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 393.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 165, 
+            "parent": 131, 
+            "label": "S841"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 415.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 166, 
+            "parent": 131, 
+            "label": "S900"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 474.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 167, 
+            "parent": 131, 
+            "label": "S932"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 506.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 168, 
+            "parent": 131, 
+            "label": "S938"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 512.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 169, 
+            "parent": 131, 
+            "label": "S941"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 515.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 170, 
+            "parent": 131, 
+            "label": "S943"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 517.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 171, 
+            "parent": 131, 
+            "label": "T946"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 520.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 172, 
+            "parent": 131, 
+            "label": "S962"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 536.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 173, 
+            "parent": 131, 
+            "label": "Y964"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 538.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 174, 
+            "parent": 131, 
+            "label": "S972"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 546.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 175, 
+            "parent": 131, 
+            "label": "T984"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 558.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 176, 
+            "parent": 131, 
+            "label": "Y990"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 564.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 177, 
+            "parent": 131, 
+            "label": "S1000"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 574.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 178, 
+            "parent": 131, 
+            "label": "T1011"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 585.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 179, 
+            "parent": 131, 
+            "label": "S1021"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 595.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 180, 
+            "parent": 131, 
+            "label": "S1064"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 638.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 181, 
+            "parent": 131, 
+            "label": "S1075"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 649.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 182, 
+            "parent": 131, 
+            "label": "S1076"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 650.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 183, 
+            "parent": 131, 
+            "label": "Y1077"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 651.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 184, 
+            "parent": 131, 
+            "label": "Y1078"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 652.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 185, 
+            "parent": 131, 
+            "label": "S1086"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 660.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 186, 
+            "parent": 131, 
+            "label": "S1093"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 667.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 187, 
+            "parent": 131, 
+            "label": "S1115"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 689.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 188, 
+            "parent": 131, 
+            "label": "S1146"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 720.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 189, 
+            "parent": 131, 
+            "label": "S1156"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 730.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 190, 
+            "parent": 131, 
+            "label": "S1171"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 745.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 191, 
+            "parent": 131, 
+            "label": "T1183"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 757.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 192, 
+            "parent": 131, 
+            "label": "Y1197"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 771.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 193, 
+            "parent": 131, 
+            "label": "T1198"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 772.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 194, 
+            "parent": 131, 
+            "label": "S1208"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 782.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 195, 
+            "parent": 131, 
+            "label": "S1209"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 783.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 196, 
+            "parent": 131, 
+            "label": "S1232"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 806.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 197, 
+            "parent": 131, 
+            "label": "S1241"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 815.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 198, 
+            "parent": 131, 
+            "label": "Y1243"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 817.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 199, 
+            "parent": 131, 
+            "label": "S1244"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 818.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 200, 
+            "parent": 131, 
+            "label": "T1249"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 823.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 201, 
+            "parent": 131, 
+            "label": "S1252"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 826.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 202, 
+            "parent": 131, 
+            "label": "S1254"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 828.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 203, 
+            "parent": 131, 
+            "label": "S1263"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 837.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 204, 
+            "parent": 131, 
+            "label": "S1264"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 838.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 205, 
+            "parent": 131, 
+            "label": "S1265"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 839.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 206, 
+            "parent": 131, 
+            "label": "T1279"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 853.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 207, 
+            "parent": 131, 
+            "label": "S1289"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 863.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 208, 
+            "parent": 131, 
+            "label": "S1293"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 867.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 209, 
+            "parent": 131, 
+            "label": "T1301"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 875.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 210, 
+            "parent": 131, 
+            "label": "S1305"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 879.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 211, 
+            "parent": 131, 
+            "label": "S1334"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 908.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 212, 
+            "parent": 131, 
+            "label": "S1357"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 931.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 213, 
+            "parent": 131, 
+            "label": "S1363"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 937.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 214, 
+            "parent": 131, 
+            "label": "S1478"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1052.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 215, 
+            "parent": 131, 
+            "label": "T1479"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1053.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 216, 
+            "parent": 131, 
+            "label": "S1666"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1240.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 217, 
+            "parent": 131, 
+            "label": "S1668"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1242.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "protein": "Q8TDM6", 
+            "role": "phosphorylation", 
+            "id": 218, 
+            "parent": 131, 
+            "label": "S1795"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1369.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000432", 
+            "start": "52", 
+            "length": "9", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#59B84D", 
+            "end": "61", 
+            "protein": "Q8TDM6", 
+            "id": 220, 
+            "label": "DOC_MAPK_MEF2A_6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -369.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000432", 
+            "start": "715", 
+            "length": "9", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#59B84D", 
+            "end": "724", 
+            "protein": "Q8TDM6", 
+            "id": 221, 
+            "label": "DOC_MAPK_MEF2A_6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 293.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000432", 
+            "start": "911", 
+            "length": "8", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#59B84D", 
+            "end": "919", 
+            "protein": "Q8TDM6", 
+            "id": 222, 
+            "label": "DOC_MAPK_MEF2A_6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 489.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000432", 
+            "start": "1495", 
+            "length": "9", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#59B84D", 
+            "end": "1504", 
+            "protein": "Q8TDM6", 
+            "id": 223, 
+            "label": "DOC_MAPK_MEF2A_6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 1073.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000428", 
+            "start": "34", 
+            "length": "7", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#637B15", 
+            "end": "41", 
+            "protein": "Q8TDM6", 
+            "id": 228, 
+            "label": "MOD_CDK_SPxxK_3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -388.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000428", 
+            "start": "1061", 
+            "length": "7", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#637B15", 
+            "end": "1068", 
+            "protein": "Q8TDM6", 
+            "id": 229, 
+            "label": "MOD_CDK_SPxxK_3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 638.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000434", 
+            "start": "712", 
+            "length": "12", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#96C752", 
+            "end": "724", 
+            "protein": "Q8TDM6", 
+            "id": 232, 
+            "label": "DOC_MAPK_HePTP_8"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 292.45447291930054
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000411", 
+            "start": "1326", 
+            "length": "13", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#26BC87", 
+            "end": "1339", 
+            "protein": "Q8TDM6", 
+            "id": 234, 
+            "label": "DOC_MAPK_RevD_3"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 906.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000423", 
+            "start": "52", 
+            "length": "8", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#52BC38", 
+            "end": "60", 
+            "protein": "Q8TDM6", 
+            "id": 236, 
+            "label": "DOC_MAPK_NFAT4_5"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -369.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000433", 
+            "start": "1120", 
+            "length": "8", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#ED95BE", 
+            "end": "1128", 
+            "protein": "Q8TDM6", 
+            "id": 238, 
+            "label": "DOC_MAPK_DCC_7"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 698.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000429", 
+            "start": "1276", 
+            "length": "5", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#5C6E3D", 
+            "end": "1281", 
+            "protein": "Q8TDM6", 
+            "id": 240, 
+            "label": "MOD_CDK_SPK_2"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 852.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000432", 
+            "start": "120", 
+            "length": "8", 
+            "role": "elm", 
+            "parent": 0, 
+            "color": "#59B84D", 
+            "end": "128", 
+            "protein": "O75081", 
+            "id": 242, 
+            "label": "DOC_MAPK_MEF2A_6"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 100.0, 
+            "x": 449.0
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000145", 
+            "start": "80", 
+            "length": "4", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#529572", 
+            "end": "84", 
+            "protein": "Q8TDM6", 
+            "id": 244, 
+            "label": "LIG_MYND_1"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": -343.54552708069946
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000145", 
+            "start": "1121", 
+            "length": "4", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#529572", 
+            "end": "1125", 
+            "protein": "Q8TDM6", 
+            "id": 245, 
+            "label": "LIG_MYND_1"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 697.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "acc": "ELME000145", 
+            "start": "1166", 
+            "length": "4", 
+            "role": "elm", 
+            "parent": 131, 
+            "color": "#529572", 
+            "end": "1170", 
+            "protein": "Q8TDM6", 
+            "id": 246, 
+            "label": "LIG_MYND_1"
+        }, 
+        "group": "nodes", 
+        "position": {
+            "y": 892.4759555453288, 
+            "x": 742.4544729193005
+        }
+    }, 
+    {
+        "data": {
+            "source": 1, 
+            "role": "protein_sequence", 
+            "id": 26, 
+            "target": 2
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 28, 
+            "role": "protein_sequence", 
+            "id": 63, 
+            "target": 29
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 65, 
+            "role": "protein_sequence", 
+            "id": 76, 
+            "target": 66
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 78, 
+            "role": "protein_sequence", 
+            "id": 130, 
+            "target": 79
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 132, 
+            "role": "protein_sequence", 
+            "id": 219, 
+            "target": 133
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 220, 
+            "role": "ELM_interaction", 
+            "id": 224, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 221, 
+            "role": "ELM_interaction", 
+            "id": 225, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 222, 
+            "role": "ELM_interaction", 
+            "id": 226, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 223, 
+            "role": "ELM_interaction", 
+            "id": 227, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 228, 
+            "role": "ELM_interaction", 
+            "id": 230, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 229, 
+            "role": "ELM_interaction", 
+            "id": 231, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 232, 
+            "role": "ELM_interaction", 
+            "id": 233, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 234, 
+            "role": "ELM_interaction", 
+            "id": 235, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 236, 
+            "role": "ELM_interaction", 
+            "id": 237, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 238, 
+            "role": "ELM_interaction", 
+            "id": 239, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 240, 
+            "role": "ELM_interaction", 
+            "id": 241, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 242, 
+            "role": "ELM_interaction", 
+            "id": 243, 
+            "ds": "ELM", 
+            "target": 80
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 244, 
+            "role": "ELM_interaction", 
+            "id": 247, 
+            "ds": "ELM", 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 245, 
+            "role": "ELM_interaction", 
+            "id": 248, 
+            "ds": "ELM", 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 246, 
+            "role": "ELM_interaction", 
+            "id": 249, 
+            "ds": "ELM", 
+            "target": 3
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "target": 0, 
+            "links": "279396;279400;279391", 
+            "ds": "BioGRID", 
+            "source": 27, 
+            "role": "prot_prot_interaction", 
+            "id": 250
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 30, 
+            "role": "iDOM_interaction", 
+            "id": 251, 
+            "ds": "Statistical Prediction", 
+            "target": 5
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 30, 
+            "role": "iDOM_interaction", 
+            "id": 252, 
+            "ds": "Statistical Prediction", 
+            "target": 4
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "target": 64, 
+            "links": "287917;1277687;1039151;278675;670386;8324", 
+            "ds": "BioGRID", 
+            "source": 27, 
+            "role": "prot_prot_interaction", 
+            "id": 253
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "target": 67, 
+            "links": "1a0a;1am9;1an4;1hlo;1mdy;1nkp;1nlw;1r05;1ukl;2lfh;2mh3;2ql2;2ypa;2ypb;4ath;4ati;4atk;4aya;4f3l;4h10;5gnj;5i4z;5i50;5nj8;5sy5;5sy7;5v0l;5y7y", 
+            "ds": "3did", 
+            "source": 30, 
+            "role": "DOM_interaction", 
+            "id": 254
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 30, 
+            "role": "iDOM_interaction", 
+            "id": 255, 
+            "ds": "Statistical Prediction", 
+            "target": 67
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 5, 
+            "role": "iDOM_interaction", 
+            "id": 256, 
+            "ds": "Statistical Prediction", 
+            "target": 67
+        }, 
+        "group": "edges"
+    }, 
+    {
+        "data": {
+            "source": 4, 
+            "role": "iDOM_interaction", 
+            "id": 257, 
+            "ds": "Statistical Prediction", 
+            "target": 67
+        }, 
+        "group": "edges"
+    }
+]

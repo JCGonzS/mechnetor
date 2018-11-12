@@ -276,7 +276,7 @@ def main(target_prots, protein_data,
                 # n += 1
 
 
-            ## domain propensities*
+            ## domain propensities
             info = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
                                              obs_min=4, lo_min=2.0, ndom_min=4)
             # if (pfam_a in dom_prop_int and

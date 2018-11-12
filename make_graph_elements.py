@@ -960,7 +960,7 @@ def color_regions(graph_elements, palette=""):
         if ele["group"] == "nodes":
             role = ele["data"]["role"]
             label = ele["data"]["label"]
-            if role in ["domain", "elms", "newLM"]:
+            if role in ["domain", "elm"]:
                 if label not in color_map:
                     if palette != "" and counter < len(custom_colors):
                         color_map[label] = custom_colors[counter]

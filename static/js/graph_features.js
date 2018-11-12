@@ -17,27 +17,46 @@ $(document).ready(function(){
 	});
 
 	// // Lock PTM & Mutation nodes
-	cy.$('node[role="domain"]').ungrabify();
-	cy.$('node[role="elms"]').ungrabify();
-	cy.$('node[role="phosphorylation"]').grabify();
-	cy.$('node[role="acetylation"]').grabify();
-	cy.$('node[role="mutation"]').grabify();
-	cy.$('node[role="position"]').grabify();
+	// cy.$('node[role="domain"]').ungrabify();
+	// cy.$('node[role="elm"]').ungrabify();
+	// cy.$('node[role="phosphorylation"]').grabify();
+	// cy.$('node[role="acetylation"]').grabify();
+	// cy.$('node[role="mutation"]').grabify();
+	// cy.$('node[role="position"]').grabify();
 
 
   // MOUSEOVER
   cy.on('mouseover mouseout','node[role=\"whole\"]', function(event) {
     var node = event.target;
-		var edges = node.connectedEdges();
-		var neigh = node.neighborhood();
+		// var edges = node.connectedEdges();
+		// var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		edges.toggleClass("highlight");
-		neigh.toggleClass("highlight2");
+		node.connectedEdges().toggleClass("highlight");
+		node.neighborhood().toggleClass("highlight2");
   });
 
-	cy.on('mouseover mouseout','node[role=\"domain\"]', function(event) {
+	cy.on('mouseover','node[role=\"domain\"]', function(event) {
 		var node = event.target;
-		console.log("domain",node)
+		var edges = node.connectedEdges();
+		var neigh = node.neighborhood();
+		node.toggleClass("highlight");
+		edges.toggleClass("highlight");
+		neigh.toggleClass("highlight2");
+		node.ungrabify();
+	});
+
+	cy.on('mouseout','node[role=\"domain\"]', function(event) {
+		var node = event.target;
+		var edges = node.connectedEdges();
+		var neigh = node.neighborhood();
+		node.toggleClass("highlight");
+		edges.toggleClass("highlight");
+		neigh.toggleClass("highlight2");
+		node.grabify();
+	});
+
+	cy.on('mouseover mouseout','node[role=\"elm\"]', function(event) {
+		var node = event.target;
 		var edges = node.connectedEdges();
 		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
@@ -45,26 +64,38 @@ $(document).ready(function(){
 		neigh.toggleClass("highlight2");
 	});
 
-	cy.on('mouseover mouseout','node[role=\"elms\"]', function(event) {
+
+	cy.on('mouseover','node[role=\"phosphorylation\"]', function(event) {
 		var node = event.target;
-		var edges = node.connectedEdges();
-		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		edges.toggleClass("highlight");
-		neigh.toggleClass("highlight2");
+		node.ungrabify();
+	});
+	cy.on('mouseout','node[role=\"phosphorylation\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+		node.grabify();
 	});
 
-	cy.on('mouseover mouseout','node[role=\"phosphorylation\"]', function(event) {
+	cy.on('mouseover','node[role=\"acetylation\"]', function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
+		node.ungrabify();
 	});
-	cy.on('mouseover mouseout','node[role=\"acetylation\"]', function(event) {
+	cy.on('mouseout','node[role=\"acetylation\"]', function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
+		node.grabify();
 	});
-	cy.on('mouseover mouseout','node[role=\"mutation\"]', function(event) {
+
+	cy.on('mouseover','node[role=\"mutation\"]', function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
+		node.ungrabify();
+	});
+	cy.on('mouseout','node[role=\"mutation\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+		node.grabify();
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
@@ -105,7 +136,7 @@ $(document).ready(function(){
 			});
 
 			var ds = edge.data("ds");
-			var links = edge.data("links").split("; ");
+			var links = edge.data("links").split(";");
 			var all_links = []
 			links.forEach(function(link) {
 				all_links.push("<a href=\"https://thebiogrid.org/interaction/"+link+"\">"+link+"</a>");
@@ -148,7 +179,8 @@ $(document).ready(function(){
 
 			edge.qtip({
 				content: "<b>"+ds+" interaction</b><br>"+
-								 "<b>"+doms.join(" - ")+"</b><br>",
+								 "<b>"+doms.join(" - ")+"</b><br>"+
+								 "<a href=\"https://3did.irbbarcelona.org/dispatch.php?type=interaction&type1=domain&type2=domain&value1="+doms[0]+"&value2="+doms[1]+"\">link</a>",
 								 // all_links.join(", "),
 				position: {
            my: 'top center',
@@ -315,7 +347,7 @@ $(document).ready(function(){
   });
   // ELMs
   $("#toggle_elms").click(function(){
-    var nodes = cy.$('node[role="elms"]');
+    var nodes = cy.$('node[role="elm"]');
 		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_elms").checked;
     if (checked) {
