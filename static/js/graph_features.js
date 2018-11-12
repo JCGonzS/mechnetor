@@ -230,12 +230,15 @@ $(document).ready(function(){
 		var node = event.target;
 		var name = node.data("label");
 		var acc = node.data("acc");
+		var des = node.data("des");
 		var start = node.data("start");
 		var end = node.data("end");
 		node.qtip({
-		  content: "<b><i>"+start+"-"+end+"</b></i><br>"+
-							 "<b>"+name+"</b><br>"+
-							 "<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+"</a>",
+		  content: "<span style='color:#074987;'><b><i>"+name+"</i></b> "+
+							 "(<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+"</a>)</span><br>"+
+							 "<span style='background-color:#074987; color:white;'><b> "+des+" </b></span><br>"+
+							 "<b><i>"+start+"-"+end+"</b></i><br>",
+
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'

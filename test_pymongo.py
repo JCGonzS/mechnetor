@@ -22,23 +22,25 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['interactions_Hsa']
+db = client['protein_data']
 # Get collection #
-data = db['domain_propensities_Hsa']
+data = db['Hsa']
 
-pfam_a = "XkdN"
-pfam_b = "SH3_9"
-obs_min=1
-lo_min=2.0
-ndom_min=1
+cursor = data.find({"gene":"TP53"})
 
-
-cursor = data.find({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
-					{"#DOM1": pfam_b, "DOM2": pfam_a}],
-					"OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
-					"N_DOM1": {"$gte": ndom_min}, "N_DOM2": {"$gte": ndom_min}},
-					{ "_id": 0})
-
+# pfam_a = "XkdN"
+# pfam_b = "SH3_9"
+# obs_min=1
+# lo_min=2.0
+# ndom_min=1
+#
+#
+# cursor = data.find({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
+# 					{"#DOM1": pfam_b, "DOM2": pfam_a}],
+# 					"OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
+# 					"N_DOM1": {"$gte": ndom_min}, "N_DOM2": {"$gte": ndom_min}},
+# 					{ "_id": 0})
+#
 for c in cursor:
 	pprint.pprint(c)
 	# print c["LO"]

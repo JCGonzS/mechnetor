@@ -42,16 +42,17 @@
     }, 
     {
         "data": {
-            "acc": "PF01753", 
-            "start": "556", 
-            "length": "36", 
-            "role": "domain", 
             "parent": 0, 
             "color": "#978897", 
-            "end": "592", 
             "protein": "O75081", 
             "id": 3, 
-            "label": "zf-MYND"
+            "acc": "PF01753", 
+            "end": "592", 
+            "des": "MYND finger", 
+            "label": "zf-MYND", 
+            "start": "556", 
+            "length": "36", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -61,16 +62,17 @@
     }, 
     {
         "data": {
-            "acc": "PF07531", 
-            "start": "174", 
-            "length": "88", 
-            "role": "domain", 
             "parent": 0, 
             "color": "#E49AB0", 
-            "end": "262", 
             "protein": "O75081", 
             "id": 4, 
-            "label": "TAFH"
+            "acc": "PF07531", 
+            "end": "262", 
+            "des": "NHR1 homology to TAF", 
+            "label": "TAFH", 
+            "start": "174", 
+            "length": "88", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -80,16 +82,17 @@
     }, 
     {
         "data": {
-            "acc": "PF08788", 
-            "start": "379", 
-            "length": "66", 
-            "role": "domain", 
             "parent": 0, 
             "color": "#494850", 
-            "end": "445", 
             "protein": "O75081", 
             "id": 5, 
-            "label": "NHR2"
+            "acc": "PF08788", 
+            "end": "445", 
+            "des": "NHR2 domain like", 
+            "label": "NHR2", 
+            "start": "379", 
+            "length": "66", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -420,16 +423,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00010", 
-            "start": "550", 
-            "length": "53", 
-            "role": "domain", 
             "parent": 27, 
             "color": "#904C77", 
-            "end": "603", 
             "protein": "P15923", 
             "id": 30, 
-            "label": "HLH"
+            "acc": "PF00010", 
+            "end": "603", 
+            "des": "Helix-loop-helix DNA-binding domain", 
+            "label": "HLH", 
+            "start": "550", 
+            "length": "53", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -928,16 +932,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00010", 
-            "start": "42", 
-            "length": "39", 
-            "role": "domain", 
             "parent": 64, 
             "color": "#904C77", 
-            "end": "81", 
             "protein": "Q02535", 
             "id": 67, 
-            "label": "HLH"
+            "acc": "PF00010", 
+            "end": "81", 
+            "des": "Helix-loop-helix DNA-binding domain", 
+            "label": "HLH", 
+            "start": "42", 
+            "length": "39", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1100,16 +1105,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00069", 
-            "start": "270", 
-            "length": "251", 
-            "role": "domain", 
             "parent": 77, 
             "color": "#957D95", 
-            "end": "521", 
             "protein": "Q13153", 
             "id": 80, 
-            "label": "Pkinase"
+            "acc": "PF00069", 
+            "end": "521", 
+            "des": "Protein kinase domain", 
+            "label": "Pkinase", 
+            "start": "270", 
+            "length": "251", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1119,16 +1125,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00786", 
-            "start": "74", 
-            "length": "58", 
-            "role": "domain", 
             "parent": 77, 
-            "color": "#2193A4", 
-            "end": "132", 
+            "color": "#223964", 
             "protein": "Q13153", 
             "id": 81, 
-            "label": "PBD"
+            "acc": "PF00786", 
+            "end": "132", 
+            "des": "P21-Rho-binding domain", 
+            "label": "PBD", 
+            "start": "74", 
+            "length": "58", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1851,16 +1858,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00595", 
-            "start": "633", 
-            "length": "73", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#A94C26", 
-            "end": "706", 
+            "color": "#9267B1", 
             "protein": "Q8TDM6", 
             "id": 134, 
-            "label": "PDZ"
+            "acc": "PF00595", 
+            "end": "706", 
+            "des": "PDZ domain", 
+            "label": "PDZ", 
+            "start": "633", 
+            "length": "73", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1870,16 +1878,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00595", 
-            "start": "722", 
-            "length": "70", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#A94C26", 
-            "end": "792", 
+            "color": "#9267B1", 
             "protein": "Q8TDM6", 
             "id": 135, 
-            "label": "PDZ"
+            "acc": "PF00595", 
+            "end": "792", 
+            "des": "PDZ domain", 
+            "label": "PDZ", 
+            "start": "722", 
+            "length": "70", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1889,16 +1898,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00595", 
-            "start": "1351", 
-            "length": "73", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#A94C26", 
-            "end": "1424", 
+            "color": "#9267B1", 
             "protein": "Q8TDM6", 
             "id": 136, 
-            "label": "PDZ"
+            "acc": "PF00595", 
+            "end": "1424", 
+            "des": "PDZ domain", 
+            "label": "PDZ", 
+            "start": "1351", 
+            "length": "73", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1908,16 +1918,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00595", 
-            "start": "1505", 
-            "length": "74", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#A94C26", 
-            "end": "1579", 
+            "color": "#9267B1", 
             "protein": "Q8TDM6", 
             "id": 137, 
-            "label": "PDZ"
+            "acc": "PF00595", 
+            "end": "1579", 
+            "des": "PDZ domain", 
+            "label": "PDZ", 
+            "start": "1505", 
+            "length": "74", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1927,16 +1938,17 @@
     }, 
     {
         "data": {
-            "acc": "PF00625", 
-            "start": "1775", 
-            "length": "131", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#16B8D4", 
-            "end": "1906", 
+            "color": "#52C795", 
             "protein": "Q8TDM6", 
             "id": 138, 
-            "label": "Guanylate_kin"
+            "acc": "PF00625", 
+            "end": "1906", 
+            "des": "Guanylate kinase", 
+            "label": "Guanylate_kin", 
+            "start": "1775", 
+            "length": "131", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1946,16 +1958,17 @@
     }, 
     {
         "data": {
-            "acc": "PF04822", 
-            "start": "130", 
-            "length": "83", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#2A5456", 
-            "end": "213", 
+            "color": "#B37D2A", 
             "protein": "Q8TDM6", 
             "id": 139, 
-            "label": "Takusan"
+            "acc": "PF04822", 
+            "end": "213", 
+            "des": "Takusan", 
+            "label": "Takusan", 
+            "start": "130", 
+            "length": "83", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -1965,16 +1978,17 @@
     }, 
     {
         "data": {
-            "acc": "PF16610", 
-            "start": "1427", 
-            "length": "59", 
-            "role": "domain", 
             "parent": 131, 
-            "color": "#44B377", 
-            "end": "1486", 
+            "color": "#5DB9AE", 
             "protein": "Q8TDM6", 
             "id": 140, 
-            "label": "dbPDZ_assoc"
+            "acc": "PF16610", 
+            "end": "1486", 
+            "des": "Unstructured region between two PDZ domains on Dlg5", 
+            "label": "dbPDZ_assoc", 
+            "start": "1427", 
+            "length": "59", 
+            "role": "domain"
         }, 
         "group": "nodes", 
         "position": {
@@ -3081,7 +3095,7 @@
             "length": "9", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#59B84D", 
+            "color": "#56749E", 
             "end": "61", 
             "protein": "Q8TDM6", 
             "id": 220, 
@@ -3100,7 +3114,7 @@
             "length": "9", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#59B84D", 
+            "color": "#56749E", 
             "end": "724", 
             "protein": "Q8TDM6", 
             "id": 221, 
@@ -3119,7 +3133,7 @@
             "length": "8", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#59B84D", 
+            "color": "#56749E", 
             "end": "919", 
             "protein": "Q8TDM6", 
             "id": 222, 
@@ -3138,7 +3152,7 @@
             "length": "9", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#59B84D", 
+            "color": "#56749E", 
             "end": "1504", 
             "protein": "Q8TDM6", 
             "id": 223, 
@@ -3157,7 +3171,7 @@
             "length": "7", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#637B15", 
+            "color": "#67284E", 
             "end": "41", 
             "protein": "Q8TDM6", 
             "id": 228, 
@@ -3176,7 +3190,7 @@
             "length": "7", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#637B15", 
+            "color": "#67284E", 
             "end": "1068", 
             "protein": "Q8TDM6", 
             "id": 229, 
@@ -3195,7 +3209,7 @@
             "length": "12", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#96C752", 
+            "color": "#71214D", 
             "end": "724", 
             "protein": "Q8TDM6", 
             "id": 232, 
@@ -3214,7 +3228,7 @@
             "length": "13", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#26BC87", 
+            "color": "#B47B3D", 
             "end": "1339", 
             "protein": "Q8TDM6", 
             "id": 234, 
@@ -3233,7 +3247,7 @@
             "length": "8", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#52BC38", 
+            "color": "#391595", 
             "end": "60", 
             "protein": "Q8TDM6", 
             "id": 236, 
@@ -3252,7 +3266,7 @@
             "length": "8", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#ED95BE", 
+            "color": "#D32294", 
             "end": "1128", 
             "protein": "Q8TDM6", 
             "id": 238, 
@@ -3271,7 +3285,7 @@
             "length": "5", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#5C6E3D", 
+            "color": "#61A6D1", 
             "end": "1281", 
             "protein": "Q8TDM6", 
             "id": 240, 
@@ -3290,7 +3304,7 @@
             "length": "8", 
             "role": "elm", 
             "parent": 0, 
-            "color": "#59B84D", 
+            "color": "#56749E", 
             "end": "128", 
             "protein": "O75081", 
             "id": 242, 
@@ -3309,7 +3323,7 @@
             "length": "4", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#529572", 
+            "color": "#96CD52", 
             "end": "84", 
             "protein": "Q8TDM6", 
             "id": 244, 
@@ -3328,7 +3342,7 @@
             "length": "4", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#529572", 
+            "color": "#96CD52", 
             "end": "1125", 
             "protein": "Q8TDM6", 
             "id": 245, 
@@ -3347,7 +3361,7 @@
             "length": "4", 
             "role": "elm", 
             "parent": 131, 
-            "color": "#529572", 
+            "color": "#96CD52", 
             "end": "1170", 
             "protein": "Q8TDM6", 
             "id": 246, 

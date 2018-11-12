@@ -20,12 +20,13 @@ from Bio import SwissProt
 
 ## Data Files
 data_dir = ""
-gen_data_dir = data_dir+"general/"
+common_data_dir = data_dir+"common/"
 species = "Hsa"
 sp_data_dir = data_dir+"species/"+species+"/"
 proteome_file =     sp_data_dir + "uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
 uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
 pfam_hits_file =    sp_data_dir + "pfam_parsed_info.tsv.gz"
+pfam_data_file = common_data_dir + "Pfam-A.hmm_r32.0.dat.gz"
 elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
 psp_file =          sp_data_dir + "PSP_ptms_human.tsv.gz"
 
@@ -117,6 +118,18 @@ def get_pfam_doms(pfam_hits_file, prot_id, max_eval=1):
                     pfam_names[pfam_ac] = pfam_name
     return pfams, pfam_sets, pfam_names
 
+def pfam_descriptions(pfam_data_file):
+    d = {}
+    with open_file(pfam_data_file) as f:
+        for line in f:
+            if "#=GF AC" in line:
+                ac = line.rstrip().split()[2].split(".")[0]
+            elif "#=GF DE" in line:
+                des = " ".join(line.rstrip().split()[2:])
+            elif line == "//\n":
+                d[ac] = des
+    return d
+
 def get_linear_motifs(elm_hits_file, prot_id, max_eval=1):
     """ Reads pre-generated file with ELMs annotated for each protein
         If there's any filtering for these, it has already been done. All the
@@ -192,6 +205,8 @@ prot_dict = get_protein_data_from_uniprot_text(uniprot_text_file)
 ## 2. Get Pfam domains and ELMs
 pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_hits_file,
                                                 prot_dict["AC"])
+pfam_des = pfam_descriptions(pfam_data_file)
+
 elms, elm_sets, elm_names = get_linear_motifs(elm_hits_file,
                                             prot_dict["AC"])
 ## 3. Get PTMs
@@ -218,6 +233,9 @@ if mode == "normal":
 
         if uni_ac in pfams:
             for pfam_ac in sorted(pfams[uni_ac]):
+                des = ""
+                if pfam_ac.split(".")[0] in pfam_des:
+                    des = pfam_des[pfam_ac.split(".")[0]]
                 pfam_name = pfam_names[pfam_ac]
                 if pfam_name not in protein_data[uni_ac]["pfams"]:
                     protein_data[uni_ac]["pfams"][pfam_name] = []
@@ -226,6 +244,7 @@ if mode == "normal":
                     protein_data[uni_ac]["pfams"][pfam_name].append(
                         {
                             "acc" : pfam_ac,
+                            "des": des,
                             "start" : int(start),
                             "end" : int(end),
                             "e-val" : float(e_val)
@@ -278,12 +297,16 @@ elif mode == "mongo":
 
             if uni_ac in pfams:
                 for pfam_ac in sorted(pfams[uni_ac]):
+                    des = ""
+                    if pfam_ac.split(".")[0] in pfam_des:
+                        des = pfam_des[pfam_ac.split(".")[0]]
                     pfam_name = pfam_names[pfam_ac]
                     for (start, end, e_val) in sorted(pfams[uni_ac][pfam_ac],
                                                       key=lambda x: int(x[0])):
                         protein_data["pfams"].append(
                             {
                                 "acc" : pfam_ac,
+                                "des": des,
                                 "name" : pfam_name,
                                 "start" : int(start),
                                 "end" : int(end),
