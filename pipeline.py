@@ -152,40 +152,27 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     ## Get output file names
     for i in range(0, 500):
       number = "0"*(4-len(str(i)))+str(i)
-      outfile_int = "interactions"+number+".tsv.gz"
-      outfile_json = "graph_elements"+number+".json"
-      outfile_table_json = "interaction_table"+number+".json"
-      if not os.path.isfile(main_dir+output_dir+outfile_json):
+      graph_json = "graph_elements"+number+".json"
+      graph_path = main_dir+output_dir+outfile_int
+      ints_json = "interaction_table"+number+".json"
+      ints_path = main_dir+output_dir+outfile_json
+      if not os.path.isfile(graph_path):
         break
 
     ## Run int2graph
 	print "[{}] Running int2graph...".format(st)
-    int_file = main_dir+output_dir+outfile_int
-    output_file= main_dir+output_dir+outfile_json
 
     int2graph.main(input_proteins, protein_data, input_mutations,
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
-            max_prots, int_file, output_file)
+            max_prots, graph_path, ints_path)
 
 	print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, int_file,
                                                                    output_file)
-    tsv_file = "output/" + outfile_int
-
-    ## Create cytoscape's graph elements
-    make_graph_elements.main(   input_proteins, input_mutations, protein_data,
-                         		int_file, lmd2_file="",
-                                output_file= main_dir+output_dir+outfile_json,
-                         		max_pval=max_pval)
-
-
-    # Create JSON file from TSV interaction file
-    data = pd.read_csv(int_file, compression='gzip', sep='\t', index_col=False)
-    data.to_json(main_dir+output_dir+outfile_table_json, orient='split')
 
     ## Print HTML
     print "[{}] Printing HTML output".format(st)
     sys.stdout = sys.__stdout__
 
     return render_template("results_page.html",
-                           elements_json = "output/" + outfile_json,
-                           ints_json = "output/" + outfile_table_json)
+                           graph_json = "output/"+graph_json,
+                           ints_json = "output/"+ints_json)

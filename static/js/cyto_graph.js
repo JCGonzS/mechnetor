@@ -5,7 +5,7 @@ var json_elements = (function () {
   $.ajax({
       'async': false,
       'global': false,
-      'url': elements_json,
+      'url': graph_json,
       'dataType': "json",
       'success': function (data) {
         json_elements = data;

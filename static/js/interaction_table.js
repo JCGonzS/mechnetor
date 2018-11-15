@@ -46,7 +46,7 @@ $(document).ready(function(){
 				 else if ( headerText == "Accession (A)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
 			   else if ( headerText == "Type" ) headerTitle =  "Type of Interaction";
 			   else if ( headerText == "F (A)" ) headerTitle =  "Interacting Element of Protein A";
-				 else if ( headerText == "F (A)" ) headerTitle =  "Interacting Element of Protein B";
+				 else if ( headerText == "F (B)" ) headerTitle =  "Interacting Element of Protein B";
 				 else if ( headerText == "Source" ) headerTitle =  "Source of interaction information (DB, tool, etc)";
 			   td.attr('title', headerTitle);
 			});

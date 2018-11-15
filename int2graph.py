@@ -421,9 +421,8 @@ def color_from_zvalue(z_score):
 # @line_profile
 def main(target_prots, protein_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
-        max_prots="", graph_out="graph.json", ints_out="table.tsv"):
+        max_prots, graph_out, ints_out):
 
-    print target_prots
     central_pos = central_positions_layout(target_prots)
     start_pos = {}
     nodes, edges = [], []

@@ -85,11 +85,11 @@
     						<label class="form-check-label" for="toggle_elms"> Linear Motifs (ELM)</label>
     					</div>
               </br>
-    					<div class="form-check form-check-inline">
+    					<!-- <div class="form-check form-check-inline">
     						<input class="form-check-input" type="checkbox" id="toggle_newlms">
     						<label class="form-check-label" for="toggle_newlms"> Linear Motifs (LMD2)</label>
     					</div>
-              </br>
+              </br> -->
     					<div class="form-check form-check-inline">
     						<input class="form-check-input" type="checkbox" id="toggle_iprets">
     						<label class="form-check-label" for="toggle_iprets"> 3D-homology (InterPreTs)</label>
@@ -122,11 +122,11 @@
     						<label class="form-check-label" for="toggle_elmdom_int" style="color:#b95db9;"> ELM-Domain</label>
     					</div>
               </br>
-    					<div class="form-check form-check-inline">
+    					<!-- <div class="form-check form-check-inline">
     						<input class="form-check-input" type="checkbox" id="toggle_lmd2_int">
     						<label class="form-check-label" for="toggle_lmd2_int"> LM(pred)-Protein (LMD2)</label>
     					</div>
-              </br>
+              </br> -->
     					<div class="form-check form-check-inline">
     						<input class="form-check-input" type="checkbox" id="toggle_prets_int">
     						<label class="form-check-label" for="toggle_prets_int"> InterPreTS</label>
@@ -168,7 +168,7 @@
         <div id=graph_box style="position:relative; height:600px">
           <div id="cy" class="cytoscape_container"></div>
           <script type="text/javascript">
-            var elements_json ="{{ url_for('static',filename=elements_json) }}";
+            var graph_json = "{{ url_for('static',filename=elements_json) }}";
             var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
           </script>
           <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>

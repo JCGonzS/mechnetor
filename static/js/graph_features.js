@@ -7,29 +7,17 @@ $(document).ready(function(){
 	//set original position
 	cy.nodes().forEach(function(n){
 		var positions = n.position();
-		//~ console.log( positions );
 
 		n.data("orgPos", {
 			x: positions.x,
 			y: positions.y
 			});
-		//console.log(n);
 	});
-
-	// // Lock PTM & Mutation nodes
-	// cy.$('node[role="domain"]').ungrabify();
-	// cy.$('node[role="elm"]').ungrabify();
-	// cy.$('node[role="phosphorylation"]').grabify();
-	// cy.$('node[role="acetylation"]').grabify();
-	// cy.$('node[role="mutation"]').grabify();
-	// cy.$('node[role="position"]').grabify();
 
 
   // MOUSEOVER
   cy.on('mouseover mouseout','node[role=\"whole\"]', function(event) {
     var node = event.target;
-		// var edges = node.connectedEdges();
-		// var neigh = node.neighborhood();
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
 		node.neighborhood().toggleClass("highlight2");
@@ -37,31 +25,34 @@ $(document).ready(function(){
 
 	cy.on('mouseover','node[role=\"domain\"]', function(event) {
 		var node = event.target;
-		var edges = node.connectedEdges();
-		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		edges.toggleClass("highlight");
-		neigh.toggleClass("highlight2");
+		node.connectedEdges().toggleClass("highlight");
+		node.neighborhood().toggleClass("highlight2");
 		node.ungrabify();
 	});
 
 	cy.on('mouseout','node[role=\"domain\"]', function(event) {
 		var node = event.target;
-		var edges = node.connectedEdges();
-		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		edges.toggleClass("highlight");
-		neigh.toggleClass("highlight2");
+		node.connectedEdges().toggleClass("highlight");
+		node.neighborhood().toggleClass("highlight2");
 		node.grabify();
 	});
 
-	cy.on('mouseover mouseout','node[role=\"elm\"]', function(event) {
+	cy.on('mouseover','node[role=\"elm\"]', function(event) {
 		var node = event.target;
-		var edges = node.connectedEdges();
-		var neigh = node.neighborhood();
 		node.toggleClass("highlight");
-		edges.toggleClass("highlight");
-		neigh.toggleClass("highlight2");
+		node.connectedEdges().toggleClass("highlight");
+		node.neighborhood().toggleClass("highlight2");
+		node.ungrabify();
+	});
+
+	cy.on('mouseout','node[role=\"elm\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+		node.connectedEdges().toggleClass("highlight");
+		node.neighborhood().toggleClass("highlight2");
+		node.grabify();
 	});
 
 	cy.on('mouseover','node[role=\"iprets\"]', function(event) {
@@ -110,30 +101,26 @@ $(document).ready(function(){
 
 	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
 		var edge = event.target;
-		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
-		nodes.toggleClass("highlight2");
+		edge.connectedNodes().toggleClass("highlight2");
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"DOM_interaction\"]', function(event) {
 		var edge = event.target;
-		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
-		nodes.toggleClass("highlight2");
+		edge.connectedNodes().toggleClass("highlight2");
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"iDOM_interaction\"]', function(event) {
 		var edge = event.target;
-		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
-		nodes.toggleClass("highlight2");
+		edge.connectedNodes().toggleClass("highlight2");
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"ELM_interaction\"]', function(event) {
 		var edge = event.target;
-		var nodes = edge.connectedNodes();
 		edge.toggleClass("highlight");
-		nodes.toggleClass("highlight2");
+		edge.connectedNodes().toggleClass("highlight2");
 	});
 
 	// CLICKS
