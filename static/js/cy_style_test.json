@@ -135,6 +135,29 @@
     }
   },
   {
+    "selector": "node[role=\"iprets\"]",
+    "style": {
+      "shape": "ellipse",
+      "min-height": "18px",
+      "width": "data(length)",
+      "background-opacity": "0",
+      "border-width": "1",
+      "border-style": "dashed",
+      "border-color": "data(color)",
+      "label": "data(label)",
+      "font-size": "10",
+      "min-zoomed-font-size": "15",
+      "color": "#000",
+      "text-outline-color": "data(color)",
+      "text-outline-width": "1",
+      "text-valign": "bottom",
+      "text-margin-y": "2px",
+      "events": "yes",
+      "text-events": "yes",
+      "visibility": "hidden"
+    }
+  },
+  {
     "selector": "node[role=\"mutation\"]",
     "style": {
       "shape": "rectangle",
@@ -308,6 +331,17 @@
       "line-style": "dashed",
       "line-color": "#800080",
       "opacity": "0.7"
+    }
+  },
+  {
+    "selector": "edge[role=\"INT_interaction\"]",
+    "style": {
+      "width": "4px",
+      "line-color": "data(color)",
+      "line-style": "dashed",
+      "opacity": "0.7",
+      "events": "no",
+      "visibility": "hidden"
     }
   }
 ]

@@ -64,6 +64,16 @@ $(document).ready(function(){
 		neigh.toggleClass("highlight2");
 	});
 
+	cy.on('mouseover','node[role=\"iprets\"]', function(event) {
+		var node = event.target;
+		// node.toggleClass("highlight");
+		node.ungrabify();
+	});
+	cy.on('mouseout','node[role=\"iprets\"]', function(event) {
+		var node = event.target;
+		// node.toggleClass("highlight");
+		node.grabify();
+	});
 
 	cy.on('mouseover','node[role=\"phosphorylation\"]', function(event) {
 		var node = event.target;
@@ -233,11 +243,38 @@ $(document).ready(function(){
 		var des = node.data("des");
 		var start = node.data("start");
 		var end = node.data("end");
+		var prot = node.data("protein");
 		node.qtip({
 		  content: "<span style='color:#074987;'><b><i>"+name+"</i></b> "+
 							 "(<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+"</a>)</span><br>"+
 							 "<span style='background-color:#074987; color:white;'><b> "+des+" </b></span><br>"+
-							 "<b><i>"+start+"-"+end+"</b></i><br>",
+							 prot+" | <i>"+start+"-"+end+"</i>",
+
+		  position: {
+		    my: 'top center',
+		    at: 'bottom center'
+		  },
+		  style: {
+				classes: 'qtip-bootstrap',
+		    tip: {
+		      width: 16,
+		      height: 8
+		    }
+		  }
+		});
+	});
+
+	cy.on('click','node[role=\"elm\"]', function(event) {
+		var node = event.target;
+		var name = node.data("label");
+		var acc = node.data("acc");
+		var start = node.data("start");
+		var end = node.data("end");
+		var prot = node.data("protein");
+		node.qtip({
+		  content: "<span style='color:#7f7c7b;'><b>ELM</b> | </span>"+
+							 "<a style='color:#7f7c7b;' href=\"http://elm.eu.org/elms/"+name+"\">"+name+"</a><br>"+
+							 prot+" | <i>"+start+"-"+end+"</i>",
 
 		  position: {
 		    my: 'top center',

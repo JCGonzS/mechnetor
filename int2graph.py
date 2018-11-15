@@ -219,7 +219,7 @@ def add_mutations(prot_acc, parent_id, cursor, mutations, start_x, start_y,
 def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
              nodes, id_counter):
 
-    for ptm_type in ["phosphorylation", "acetylation"]:
+    for ptm_type, x in zip(["phosphorylation", "acetylation"], ["p","ac"]):
         for ptm in cursor[ptm_type]:
             pos = ptm["pos"]
             res = ptm["res"]
@@ -230,7 +230,7 @@ def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
                     "id" : id_counter,
                     "parent" : parent_id,
                     "role" : ptm_type,
-                    "label" : res + str(pos),
+                    "label" : res+x+str(pos),
                     "protein" : prot_acc
                 },
                 "position" : {
@@ -312,6 +312,25 @@ def get_elm_dom_from_MongoDB(data, elm, pfam):
     if cursor:
         return cursor["Only in these genes"].split(",")
 
+
+def get_Interprets_from_MongoDB(data, gene_a, gene_b):
+
+    hits = set()
+    for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
+                 {"#Gene1": gene_b, "Gene2": gene_a} ]},
+                 {"_id": 0, "PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
+                 "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
+                 "Z": 1}):
+
+        hit = (d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
+               d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
+               d["Z"])
+
+        hits.add(hit)
+
+    return hits
+
+
 def pfams_of_acc_from_MongoDB(protein_data, acc):
 
     cursor = protein_data.find_one( { "uniprot_acc": acc },
@@ -384,10 +403,25 @@ def color_regions(nodes, palette=""):
 
     return nodes
 
+def color_from_zvalue(z_score):
+    color = "grey"
+    if z_score < 0 and z_score > -999999:
+        color = "LightSkyBlue"
+    elif z_score >= 0 and z_score < 1.65:
+        color = "blue"
+    elif z_score >= 1.65 and z_score < 2.33:
+        color = "yellow"
+    elif z_score >= 2.33 and z_score < 3.0:
+        color = "orange"
+    elif z_score >= 3.0:
+        color = "red"
+
+    return color
+
 # @line_profile
 def main(target_prots, protein_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
-        max_prots="", tsv_table="table.tsv", graph_file="graph.json"):
+        max_prots="", graph_out="graph.json", ints_out="table.tsv"):
 
     print target_prots
     central_pos = central_positions_layout(target_prots)
@@ -431,8 +465,8 @@ def main(target_prots, protein_data, mutations,
                             })
             id_counter += 1
 
-            line = "\t".join([gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
-                              "; ".join(list(biogrid_ids)), "BioGRID"])
+            line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
+                    "; ".join(list(biogrid_ids)), "BioGRID"]
             lines.append(line)
 
 
@@ -460,8 +494,8 @@ def main(target_prots, protein_data, mutations,
                                     })
                         id_counter += 1
 
-                line = "\t".join([gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
-                                  pfam_a, pfam_b, pdbs, "3did"])
+                line = [gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
+                                  pfam_a, pfam_b, pdbs, "3did"]
                 lines.append(line)
 
             ## domain propensities
@@ -482,9 +516,9 @@ def main(target_prots, protein_data, mutations,
                                     })
                         id_counter += 1
 
-                line = "\t".join([gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
+                line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
                                   pfam_a, pfam_b,
-                                  str(prop_lo), "Statistical Prediction"])
+                                  str(prop_lo), "Statistical Prediction"]
                 lines.append(line)
 
 
@@ -546,19 +580,86 @@ def main(target_prots, protein_data, mutations,
                                             })
                                     id_counter += 1
 
-                            line = "\t".join([gene1, ac1, gene2, ac2, "ELM::DOM",
-                                              elm_name, pfam, "", "ELM"])
+                            line = [gene1, ac1, gene2, ac2, "ELM::DOM",
+                                              elm_name, pfam, "", "ELM"]
                             lines.append(line)
 
+        ## InterPreTS interactions
+        for hit in get_Interprets_from_MongoDB(iprets_data, gene_a, gene_b):
+            pdb_a, start_a, end_a, eval_a, pcid_a = hit[:5]
+            pdb_b, start_b, end_b, eval_b, pcid_b, z = hit[5:]
+            label_a = pdb_a+":"+str(start_a)+"-"+str(end_a)
+            label_b = pdb_b+":"+str(start_b)+"-"+str(end_b)
+
+            eval_avg = (float(eval_a)+float(eval_b)) / 2
+            eval_diff = abs(float(eval_a)-float(eval_b))
+
+            color = color_from_zvalue(z)
+
+            ## Add homology region node
+            for ac, label, start, end, e_val, pcid in zip(pair, [label_a, label_b],
+                                            [start_a, start_b], [end_a, end_b],
+                                            [eval_a, eval_b], [pcid_a, pcid_b]):
+                length = end-start
+                nodes.append(
+                    { "group" : "nodes",
+                      "data" :
+                          { "id" : id_counter,
+                            "parent" : id_dict[ac]["main"],
+                            "role" : "iprets",
+                            "label" : label,
+                            "start" : str(start),
+                            "end" : str(end),
+                            "length": str(length),
+                            "eval": str(e_val),
+                            "pcid": str(pcid),
+                            "color": color,
+                            "protein": ac
+                          },
+                            "position" : {
+                                "x" : start_pos[ac][0]+start+(length/2),
+                                "y" : start_pos[ac][1]
+                          }
+                })
+                id_dict[ac][label] = id_counter
+                id_counter += 1
+
+            ## Add interaction edge
+            edges.append(
+                    { "group" : "edges",
+                      "data" :
+                        { "id" : id_counter,
+                          "source" : id_dict[ac_a][label_a],
+                          "target" : id_dict[ac_b][label_b],
+                          "role" : "INT_interaction",
+                          "color": color,
+                          "z-score": z
+                        }
+                    })
+            id_counter += 1
+
+            line = [gene_a, ac_a, gene_b, ac_b, "InterPreTS",
+                   label_a, label_b, str(z), "InterPreTS prediction"]
+
+            lines.append(line)
 
     ## Color domain & LMs nodes
     nodes = color_regions(nodes, palette="custom1")
 
     ## Print graph as JSON file
     graph_elements = nodes + edges
-    with open(graph_file, "w") as output:
+    with open(graph_out, "w") as output:
         json.dump(graph_elements, output, indent=4)
 
-    ## Print interaction list (should be a JSON as well)
-    for l in lines:
-        print l
+    ## Print interactions as JSON file
+    # for l in lines:
+    #     print l
+    int_table = {}
+    int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
+                            "F(A)","F(B)","Info", "Source"]
+    int_table["index"] = range(len(lines))
+    int_table["data"] = lines
+
+    with open(ints_out,"w") as output:
+        json.dump(int_table, output)
+        # output.write(str(int_table))

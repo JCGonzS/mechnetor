@@ -27,37 +27,6 @@ def open_file(input_file, mode="r"):
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)
 
-def parse_fasta(proteome_file):
-    """Get protein sequences from FASTA file
-    and the convertion between the protein IDs: accession, uniprot ID and gene
-    """
-
-    D = defaultdict(dict)
-    seqs, masks = {}, {}
-
-    with open_file(proteome_file) as f:
-        for line in f:
-            if line[0] == ">":
-                uni_ac, uni_id = line.split()[0].split("|")[1:]
-                gn = uni_id
-                if "GN=" in line:
-                    gn = re.search(r"GN=([^\s]*)\s",line).group(1)
-
-                D["AC"][uni_ac], D["AC"][uni_id], D["AC"][gn] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
-                D["AC"][uni_ac.upper()], D["AC"][uni_id.upper()], D["AC"][gn.upper()] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
-                D["ID"][uni_ac], D["ID"][uni_id], D["ID"][gn] = uni_id.upper(), uni_id.upper(), uni_id.upper()
-                D["ID"][uni_ac.upper()], D["ID"][uni_id.upper()], D["ID"][gn.upper()] = uni_id.upper(), uni_id.upper(), uni_id.upper()
-                D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn.upper(), gn.upper(), gn.upper()
-                D["GN"][uni_ac.upper()], D["GN"][uni_id.upper()], D["GN"][gn.upper()] = gn.upper(), gn.upper(), gn.upper()
-
-                seqs[uni_ac.upper()] = ""
-                # masks[uni_ac] = ""
-
-            else:
-                seqs[uni_ac.upper()] += line.rstrip()
-                # masks[uni_ac] += "0" * len(line.rstrip())
-
-    return D, seqs #, masks
 
 def get_protein_ids(prot_data_file):
     D = defaultdict(dict)
@@ -74,14 +43,7 @@ def get_protein_ids(prot_data_file):
             D["ID"][uni_ac.upper()], D["ID"][uni_id.upper()], D["ID"][gn.upper()] = uni_id.upper(), uni_id.upper(), uni_id.upper()
             D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn.upper(), gn.upper(), gn.upper()
             D["GN"][uni_ac.upper()], D["GN"][uni_id.upper()], D["GN"][gn.upper()] = gn.upper(), gn.upper(), gn.upper()
-            # D["len"][uni_ac] = length
 
-            # if "domains" in line:
-            #     for dom in t[-1].rstrip().split("//")[:-1]:
-            #         coor,name = dom.split(":")
-            #         start, end = coor.split("-")
-            #         start, end = int(start), int(end)
-            #         D["doms"][uni_ac][(start,end)] = name
     return D
 
 def parse_input(input_text, prot_dict, max_prots):
@@ -129,8 +91,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     else:
         max_prots = 20
 
-    ## Set MongoDB databases & collections
-    #  client[database][collection]
+    ## Set MongoDB databases & collections ( client[database][collection] )
     protein_data = client['protein_data'][sps]
     biogrid_data = client['interactions_'+sps]['biogrid_'+sps]
     iprets_data = client['interactions_'+sps]['iprets_'+sps]
@@ -154,7 +115,6 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     prot_ids = get_protein_ids(protein_data_file)
 
     ## Read Input/Query Values & Check Format
-
     # 1. Name of the query
     # if query_name == "":
     #     query_name = "Untitled Graph"
@@ -166,9 +126,11 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
         #FIX: I could render a template for an error html where this message is printed.
         # better yet would be to check the input before submission (no idea how)
 
-    example = 0
-    if "#Example" in query_prots:
-        example = 1
+    ### One protein only-input option.
+    # 1. Get all possible interactors for this protein in BioGRID.
+    # 2. Sort them by evidence (number of publications)
+    # 3. Use only "max_prots" of those.
+    ########
 
     # 3. Query Mutations
     input_mutations = parse_mutation_input(query_muts, prot_ids, input_proteins)
@@ -178,30 +140,22 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 
     ## Get output file names
     number = "_test"
-    outfile_int = "interactions"+number+".tsv"
     outfile_json = "graph_elements"+number+".json"
     outfile_table_json = "interaction_table"+number+".json"
 
 
     ## Run int2graph
-    int_file = main_dir+output_dir+outfile_int
-    output_file= main_dir+output_dir+outfile_json
+    graph_out= main_dir+output_dir+outfile_json
+    ints_out = main_dir+output_dir+outfile_table_json
 
     int2graph.main(input_proteins, protein_data, input_mutations,
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
-            max_prots, int_file, output_file)
-
-    tsv_file = "output/" + outfile_int
-
-
-    # Create JSON file from TSV interaction file
-    # data = pd.read_csv(int_file, sep='\t', index_col=False)
-    # data.to_json(main_dir+output_dir+outfile_table_json, orient='split')
+            max_prots, graph_out, ints_out)
 
     return
 
 if __name__ == "__main__":
-    query_prots = "TCF3\nID3\nCBFA2T3\nPAK1\nDLG5"
+    query_prots = "TCF3\nID3\nCBFA2T3\nPAK1\nDLG5\nSMARCA4\nSMARCA2"
     query_muts = "TCF3/T23C\nID3/S15P"
     client = MongoClient('localhost', 27017)
     main(client, query_prots, query_muts, max_prots="", query_lmd2="",
