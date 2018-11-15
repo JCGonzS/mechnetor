@@ -166,7 +166,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
             max_prots, graph_path, ints_path)
 
-	print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, int_file,
+    print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, int_file,
                                                                    output_file)
 
     ## Print HTML
