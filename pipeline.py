@@ -153,9 +153,9 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     for i in range(0, 500):
       number = "0"*(4-len(str(i)))+str(i)
       graph_json = "graph_elements"+number+".json"
-      graph_path = main_dir+output_dir+outfile_int
+      graph_path = main_dir+output_dir+graph_json
       ints_json = "interaction_table"+number+".json"
-      ints_path = main_dir+output_dir+outfile_json
+      ints_path = main_dir+output_dir+ints_json
       if not os.path.isfile(graph_path):
         break
 
@@ -166,8 +166,8 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
             max_prots, graph_path, ints_path)
 
-    print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, int_file,
-                                                                   output_file)
+    print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, graph_json,
+                                                                   ints_json)
 
     ## Print HTML
     print "[{}] Printing HTML output".format(st)

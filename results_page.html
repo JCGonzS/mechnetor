@@ -168,7 +168,7 @@
         <div id=graph_box style="position:relative; height:600px">
           <div id="cy" class="cytoscape_container"></div>
           <script type="text/javascript">
-            var graph_json = "{{ url_for('static',filename=elements_json) }}";
+            var graph_json = "{{ url_for('static',filename=graph_json) }}";
             var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
           </script>
           <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>

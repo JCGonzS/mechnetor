@@ -22,11 +22,11 @@ from bson.binary import Binary
 client = MongoClient('localhost', 27017)
 
 # Get database #
-db = client['protein_data']
+db = client['interactions_common']
 # Get collection #
-data = db['Hsa']
+data = db['elm_dom']
 
-cursor = data.find({"gene":"TP53"})
+cursor = data.find()
 
 # pfam_a = "XkdN"
 # pfam_b = "SH3_9"
