@@ -305,13 +305,22 @@ def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
         return cursor["LO"]
 
 
-def get_elm_dom_from_MongoDB(data, elm, pfam):
-    cursor = data.find_one({"#ELM identifier": elm, "Domain Name": pfam},
-                           {"_id": 0, "Only in these genes": 1})
+# def get_elm_dom_from_MongoDB(data, elm, pfam):
+#     cursor = data.find_one({"#ELM identifier": elm, "Domain Name": pfam},
+#                            {"_id": 0, "Only in these genes": 1})
+#
+#     if cursor:
+#         return cursor["Only in these genes"].split(",")
 
-    if cursor:
-        return cursor["Only in these genes"].split(",")
-
+def get_elm_dom_from_MongoDB(data):
+    d = defaultdict(dict)
+    cursor = data.find_one()
+    for c in cursor:
+        elm = c["#ELM identifier"]
+        pfam = c["Domain Name"]
+        only_genes = c["Only in these genes"]
+        d[elm][pfam] = only_genes
+    return d
 
 def get_Interprets_from_MongoDB(data, gene_a, gene_b):
 
@@ -438,6 +447,7 @@ def main(target_prots, protein_data, mutations,
         edges, id_counter = connect_protein_sequence(prot_acc, nodes, edges,
                                                      id_counter)
 
+    elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
 
     elm_nodes = defaultdict(list)
     lines = []
@@ -529,10 +539,12 @@ def main(target_prots, protein_data, mutations,
             elms = elms_of_acc_from_MongoDB(protein_data, ac1)
             for elm_name in elms:
                 for pfam in pfams:
-                    only_prts = get_elm_dom_from_MongoDB(elm_int_data, elm_name, pfam)
-                    if only_prts:
-                        if only_prts[0].strip() and gene2 not in only_prts:
-                            continue
+                    # only_prts = get_elm_dom_from_MongoDB(elm_int_data, elm_name, pfam)
+                    # if only_prts:
+                    #     if only_prts[0].strip() and gene2 not in only_prts:
+                    #         continue
+                    if elm in elm_dom and dom in elm_dom[elm]:
+                        only_prts = elm_dom[elm][pfam]
 
                         ## Add ELM nodes if they don't exist
                         if elm_name not in id_dict[ac1]:
