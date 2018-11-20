@@ -5,7 +5,7 @@ import sys, re, os
 import math, random, copy, pprint, json
 import gzip, itertools, pymongo
 from collections import defaultdict
-# from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 def central_positions_layout(proteins):
     """Creates x/y coordinates of proteins to be displayed
@@ -115,13 +115,6 @@ def add_protein(protein_data, prot_acc, central_pos, mutations,
 
     nodes, id_counter = add_ptms(prot_acc, protein_id, cursor,
                                  start_x, start_y, nodes, id_counter)
-
-    # start_found, end_found, graph_elements, id_counter = add_interprets(
-    #                                 prot_acc, protein_data, protein_id,
-    #                                 start_x, start_y, start_found, end_found,
-    #                                 graph_elements, id_counter)
-    #
-
 
     return nodes, id_counter, id_dict, start_pos
 
@@ -305,16 +298,9 @@ def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
         return cursor["LO"]
 
 
-# def get_elm_dom_from_MongoDB(data, elm, pfam):
-#     cursor = data.find_one({"#ELM identifier": elm, "Domain Name": pfam},
-#                            {"_id": 0, "Only in these genes": 1})
-#
-#     if cursor:
-#         return cursor["Only in these genes"].split(",")
-
 def get_elm_dom_from_MongoDB(data):
     d = defaultdict(dict)
-    cursor = data.find_one()
+    cursor = data.find()
     for c in cursor:
         elm = c["#ELM identifier"]
         pfam = c["Domain Name"]
@@ -427,7 +413,7 @@ def color_from_zvalue(z_score):
 
     return color
 
-# @line_profile
+@line_profile
 def main(target_prots, protein_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
         max_prots, graph_out, ints_out):
@@ -437,6 +423,7 @@ def main(target_prots, protein_data, mutations,
     nodes, edges = [], []
     id_counter = 0
     id_dict = {}
+    pfams, elms = {}, {}
     for prot_acc in sorted(list(target_prots)):
         nodes, id_counter, id_dict, start_pos = add_protein( protein_data, prot_acc,
                                                   central_pos[prot_acc],
@@ -447,17 +434,20 @@ def main(target_prots, protein_data, mutations,
         edges, id_counter = connect_protein_sequence(prot_acc, nodes, edges,
                                                      id_counter)
 
+        pfams[prot_acc] = pfams_of_acc_from_MongoDB(protein_data, prot_acc)
+        elms[prot_acc] = elms_of_acc_from_MongoDB(protein_data, prot_acc)
+
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
 
     elm_nodes = defaultdict(list)
     lines = []
     for pair in itertools.combinations(target_prots, 2):
-        print pair
         ac_a, ac_b = pair
         gene_a = protein_data.find_one({"uniprot_acc": ac_a},
                                        {"_id": 0, "gene": 1})["gene"]
         gene_b = protein_data.find_one({"uniprot_acc": ac_b},
                                        {"_id": 0, "gene": 1})["gene"]
+
 
         ## BioGRID interactions
         biogrid_ids = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
@@ -479,9 +469,7 @@ def main(target_prots, protein_data, mutations,
             lines.append(line)
 
 
-        pfams_a = pfams_of_acc_from_MongoDB(protein_data, ac_a)
-        pfams_b = pfams_of_acc_from_MongoDB(protein_data, ac_b)
-        for pfam_pair in itertools.product(pfams_a, pfams_b):
+        for pfam_pair in itertools.product(pfams[ac_a], pfams[ac_b]):
             pfam_a, pfam_b = pfam_pair
 
             ## 3did interactions
@@ -530,26 +518,23 @@ def main(target_prots, protein_data, mutations,
                                   str(prop_lo), "Statistical Prediction"]
                 lines.append(line)
 
-
         ## ELM-domain interactions
-        for ac1, gene1, ac2, gene2, pfams in zip([ac_a, ac_b], [gene_a, gene_b],
-                                                 [ac_b, ac_a], [gene_b, gene_a],
-                                                 [pfams_b, pfams_a]):
+        for ac1, gene1, ac2, gene2 in zip([ac_a, ac_b], [gene_a, gene_b],
+                                          [ac_b, ac_a], [gene_b, gene_a]):
 
-            elms = elms_of_acc_from_MongoDB(protein_data, ac1)
-            for elm_name in elms:
-                for pfam in pfams:
+            for elm_name in elms[ac1]:
+                for pfam in pfams[ac2]:
                     # only_prts = get_elm_dom_from_MongoDB(elm_int_data, elm_name, pfam)
                     # if only_prts:
                     #     if only_prts[0].strip() and gene2 not in only_prts:
                     #         continue
-                    if elm in elm_dom and dom in elm_dom[elm]:
-                        only_prts = elm_dom[elm][pfam]
+                    if elm_name in elm_dom and pfam in elm_dom[elm_name]:
+                        only_prts = elm_dom[elm_name][pfam]
 
                         ## Add ELM nodes if they don't exist
                         if elm_name not in id_dict[ac1]:
 
-                            for elm in elms[elm_name]:
+                            for elm in elms[ac1][elm_name]:
                                 elm_acc = elm["acc"]
                                 start = elm["start"]
                                 end = elm["end"]
