@@ -263,6 +263,7 @@ def connect_protein_sequence(prot_acc, nodes, edges, id_counter):
 
     return edges, id_counter
 
+
 def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
 
     info = set()
@@ -278,6 +279,7 @@ def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
 
     return info
 
+
 def get_3did_from_MongoDB(data, pfam_a, pfam_b):
 
     cursor = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
@@ -286,8 +288,10 @@ def get_3did_from_MongoDB(data, pfam_a, pfam_b):
     if cursor:
         return cursor["PDBs"]
 
+
 def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
                                      obs_min, lo_min, ndom_min):
+
     cursor = data.find_one({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
     					   {"#DOM1": pfam_b, "DOM2": pfam_a}],
     				  	   "OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
@@ -299,6 +303,7 @@ def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
 
 
 def get_elm_dom_from_MongoDB(data):
+
     d = defaultdict(dict)
     cursor = data.find()
     for c in cursor:
@@ -308,21 +313,24 @@ def get_elm_dom_from_MongoDB(data):
         d[elm][pfam] = only_genes
     return d
 
-def get_Interprets_from_MongoDB(data, gene_a, gene_b):
 
+def get_Interprets_from_MongoDB(data, gene_a, gene_b):
     hits = set()
     for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
                  {"#Gene1": gene_b, "Gene2": gene_a} ]},
-                 {"_id": 0, "PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
+                 {"_id": 0,"#Gene1":1, "PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
                  "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
                  "Z": 1}):
 
-        hit = (d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
-               d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
-               d["Z"])
-
+        if d["#Gene1"] == gene_a:
+            hit = (d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
+                   d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
+                   d["Z"])
+        else:
+            hit = (d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
+                   d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
+                   d["Z"])
         hits.add(hit)
-
     return hits
 
 
@@ -589,7 +597,6 @@ def main(target_prots, protein_data, mutations,
 
             eval_avg = (float(eval_a)+float(eval_b)) / 2
             eval_diff = abs(float(eval_a)-float(eval_b))
-
             color = color_from_zvalue(z)
 
             ## Add homology region node
