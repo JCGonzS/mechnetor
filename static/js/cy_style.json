@@ -270,6 +270,21 @@
     }
   },
   {
+    "selector": "edge[role=\"user_interaction\"]",
+    "style": {
+      "width": "14px",
+      "line-color": "#460dd4",
+      "line-style": "solid",
+      "opacity": "1",
+      "source-arrow-shape": "circle",
+      "source-arrow-color": "#460dd4",
+      "target-arrow-shape": "circle",
+      "target-arrow-color": "#460dd4",
+      "arrow-scale": "0.8",
+      "events": "yes"
+    }
+  },
+  {
     "selector": "edge[role=\"DOM_interaction\"]",
     "style": {
       "width": "3px",

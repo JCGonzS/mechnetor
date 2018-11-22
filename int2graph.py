@@ -268,11 +268,11 @@ def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
 
     info = set()
     for cursor in data.find( {"$or":
-            [{"Official Symbol Interactor A": gene_a,
-             "Official Symbol Interactor B": gene_b},
-             {"Official Symbol Interactor A": gene_b,
-              "Official Symbol Interactor B": gene_a}]},
-            {"_id": 0, "#BioGRID Interaction ID": 1}):
+                                [{"Official Symbol Interactor A": gene_a,
+                                 "Official Symbol Interactor B": gene_b},
+                                 {"Official Symbol Interactor A": gene_b,
+                                  "Official Symbol Interactor B": gene_a}]},
+                                {"_id": 0, "#BioGRID Interaction ID": 1}):
 
         bio_id = cursor["#BioGRID Interaction ID"]
         info.add(str(bio_id))
@@ -422,7 +422,7 @@ def color_from_zvalue(z_score):
     return color
 
 @line_profile
-def main(target_prots, protein_data, mutations,
+def main(target_prots, custom_pairs, protein_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
         max_prots, graph_out, ints_out):
 
@@ -456,7 +456,16 @@ def main(target_prots, protein_data, mutations,
         gene_b = protein_data.find_one({"uniprot_acc": ac_b},
                                        {"_id": 0, "gene": 1})["gene"]
 
-
+        if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
+            edges.append(   {"group" : "edges",
+                             "data" : {  "id" : id_counter,
+                                         "source" : id_dict[ac_a]["main"],
+                                         "target" : id_dict[ac_b]["main"],
+                                         "role" : "user_interaction",
+                                         "ds": "User input"
+                                      }
+                            })
+            id_counter += 1
         ## BioGRID interactions
         biogrid_ids = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
 
@@ -542,7 +551,7 @@ def main(target_prots, protein_data, mutations,
                             only_prts = only_prts.split(",")
                             if only_prts[0].strip() and gene2 not in only_prts:
                                     continue
-                        
+
                         ## Add ELM nodes if they don't exist
                         if elm_name not in id_dict[ac1]:
 
