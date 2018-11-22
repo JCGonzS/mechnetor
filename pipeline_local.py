@@ -156,7 +156,8 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 
 if __name__ == "__main__":
     # query_prots = "TCF3\nID3\nCBFA2T3\nPAK1\nDLG5\nSMARCA4\nSMARCA2"
-    query_prots = "SMARCA4\nTP53"
+    query_prots = "PAK1\nDLG5"
+    # query_prots = "SMARCA4\nTP53"
     query_muts = "TCF3/T23C\nID3/S15P"
     client = MongoClient('localhost', 27017)
     main(client, query_prots, query_muts, max_prots="", query_lmd2="",

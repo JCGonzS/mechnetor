@@ -538,7 +538,11 @@ def main(target_prots, protein_data, mutations,
                     #         continue
                     if elm_name in elm_dom and pfam in elm_dom[elm_name]:
                         only_prts = elm_dom[elm_name][pfam]
-
+                        if only_prts:
+                            only_prts = only_prts.split(",")
+                            if only_prts[0].strip() and gene2 not in only_prts:
+                                    continue
+                        
                         ## Add ELM nodes if they don't exist
                         if elm_name not in id_dict[ac1]:
 
