@@ -152,4 +152,6 @@ VI. ELM (interactions)- Eukaryotic LM - domain interactions
 * Source file: "common/elm_interaction_domains_edited_Jan18.tsv"
   This file has been manually edited to add an additional column that contains
   the name of the proteins where the domain has to be to consider the interaction
-  
+1. Use 'create_mongo_dbs.sh' to create collection in the Mongo interactions database
+2. No need to create indexes, since the db is read and store in a dictionary,
+  every time the tool runs.
