@@ -47,28 +47,29 @@ def get_protein_ids(prot_data_file):
     return D
 
 def parse_input(input_text, prot_dict, max_prots):
-    # interaction_pairs = set()
     protein_set = set()
+    custom_pairs = []
     for line in input_text.split("\n"):
 
         if line.strip() and line[0] != "#":
             vals = line.rstrip().upper().split()
-
+            prots = []
             for v in vals:
                 if v in prot_dict["AC"]:
-                    prot = prot_dict["AC"][v]
+                    prots.append(prot_dict["AC"][v])
 
-                    if len(protein_set) < max_prots:
-                        protein_set.add(prot)
+            # Types of input:
+            # 1. Single protein
+            if len(prots) == 1:
+                if len(protein_set) < max_prots:
+                    protein_set.add(prot)
 
-    # for prot_a in protein_set:
-    #     for prot_b in protein_set:
-    #         if prot_a != prot_b:
-    #             if prot_a < prot_b:
-    #                 interaction_pairs.add((prot_a,prot_b))
-    #             else:
-    #                 interaction_pairs.add((prot_b,prot_a))
-    # return interaction_pairs, protein_set
+
+            # 2. Pair of proteins
+            elif len(prots) == 2:
+                custom_pairs.append( prots )
+
+
     return protein_set
 
 def parse_mutation_input(input_text, prot_dict, protein_set):
