@@ -3,6 +3,21 @@
 $(document).ready(function(){
 
 	//// CYTOSCAPE.JS FEATURES /////////////////////////////////////////////////
+	var tappedBefore;
+	var tappedTimeout;
+	cy.on('tap', function(event) {
+	  var tappedNow = event.target;
+	  if (tappedTimeout && tappedBefore) {
+	    clearTimeout(tappedTimeout);
+	  }
+	  if(tappedBefore === tappedNow) {
+	    tappedNow.trigger('doubleTap');
+	    tappedBefore = null;
+	  } else {
+	    tappedTimeout = setTimeout(function(){ tappedBefore = null; }, 300);
+	    tappedBefore = tappedNow;
+	  }
+	});
 
 	//set original position
 	cy.nodes().forEach(function(n){
@@ -19,20 +34,23 @@ $(document).ready(function(){
 		var node = cy.$('node[role="whole"]');
 		var dim = 16/cy.zoom();
 		var maxDim = Math.max(dim,30);
-		console.log("zoom level:", cy.zoom(), dim, maxDim, "\n",
-								"font size: " + maxDim+"\n",
-								"text-outline-width:" + maxDim/10+"\n",
-								"border-width", maxDim/18)
 		node.style({"font-size": maxDim,
 								"text-outline-width": maxDim/10,
 								"border-width": maxDim/18,
 								"text-margin-y": maxDim/-4
-		});
-
+							});
 	// if (cy.zoom() <= 0.5){
 	// 	node.style("visibility", "hidden")
 	// }
-});
+	});
+
+	cy.on('doubleTap', 'node[role=\"whole\"]', function(event) {
+	  var node = event.target;
+		cy.animate({
+			fit: { eles: node,
+						 padding: 100}
+		})
+	});
 
 
 	// MOUSEOVER
