@@ -14,14 +14,35 @@ $(document).ready(function(){
 			});
 	});
 
+	// ZOOM VARIATIONS
+	cy.on('render zoom', function(event) {
+		var node = cy.$('node[role="whole"]');
+		var dim = 16/cy.zoom();
+		var maxDim = Math.max(dim,30);
+		console.log("zoom level:", cy.zoom(), dim, maxDim, "\n",
+								"font size: " + maxDim+"\n",
+								"text-outline-width:" + maxDim/10+"\n",
+								"border-width", maxDim/18)
+		node.style({"font-size": maxDim,
+								"text-outline-width": maxDim/10,
+								"border-width": maxDim/18,
+								"text-margin-y": maxDim/-4
+		});
 
-  // MOUSEOVER
+	// if (cy.zoom() <= 0.5){
+	// 	node.style("visibility", "hidden")
+	// }
+});
+
+
+	// MOUSEOVER
   cy.on('mouseover mouseout','node[role=\"whole\"]', function(event) {
     var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
 		node.neighborhood().toggleClass("highlight2");
   });
+
 
 	cy.on('mouseover','node[role=\"domain\"]', function(event) {
 		var node = event.target;
