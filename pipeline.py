@@ -49,30 +49,58 @@ def get_protein_ids(prot_data_file):
 
     return D
 
-def parse_input(input_text, prot_dict, max_prots):
-    # interaction_pairs = set()
+def get_all_BioGrid_ints(data, gene):
+    ints = defaultdict(set)
+    for cursor in data.find( {"$or":
+                                [{"Official Symbol Interactor A": gene},
+                                {"Official Symbol Interactor B": gene}]},
+                                {"_id": 0, "#BioGRID Interaction ID": 1,
+                                "Pubmed ID": 1,
+                                "Official Symbol Interactor A": 1,
+                                "Official Symbol Interactor B": 1}):
+
+        if gene == cursor["Official Symbol Interactor A"]:
+            interactor = cursor["Official Symbol Interactor B"]
+        else:
+            interactor = cursor["Official Symbol Interactor A"]
+
+        ints[interactor].add(cursor["Pubmed ID"])
+
+    return ints
+
+def parse_input(input_text, prot_dict, max_prots, biogrid_data):
     protein_set = set()
+    custom_pairs = []
     for line in input_text.split("\n"):
 
         if line.strip() and line[0] != "#":
             vals = line.rstrip().upper().split()
-
+            prots = []
             for v in vals:
                 if v in prot_dict["AC"]:
-                    prot = prot_dict["AC"][v]
+                    prots.append(prot_dict["AC"][v])
 
-                    if len(protein_set) < max_prots:
-                        protein_set.add(prot)
+            # Types of input:
+            # 1. Single protein
+            if len(prots) == 1:
+                prot = prots[0]
+                gene = prot_dict["GN"][prot]
+                protein_set.add(prot)
+                interactors = []
+                ints = get_all_BioGrid_ints(biogrid_data, gene)
+                for int in sorted(ints, key=lambda int: len(ints[int]),
+                                                                reverse=True):
+                    if len(interactors) < max_prots and int in prot_dict["AC"]:
+                        interactors.append(prot_dict["AC"][int])
+                protein_set = protein_set | set(interactors)
 
-    # for prot_a in protein_set:
-    #     for prot_b in protein_set:
-    #         if prot_a != prot_b:
-    #             if prot_a < prot_b:
-    #                 interaction_pairs.add((prot_a,prot_b))
-    #             else:
-    #                 interaction_pairs.add((prot_b,prot_a))
-    # return interaction_pairs, protein_set
-    return protein_set
+            # 2. Pair of proteins
+            elif len(prots) == 2:
+                custom_pairs.append( prots )
+                for prot in prots:
+                    protein_set.add(prot)
+
+    return protein_set, custom_pairs
 
 def parse_mutation_input(input_text, prot_dict, protein_set):
     mutations = defaultdict(lambda: defaultdict(set))
@@ -93,7 +121,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     if hasNumbers(max_prots):
         max_prots = int(re.search("(\d+)", max_prots).group(1))
     else:
-        max_prots = 20
+        max_prots = 5
 
     ## Set MongoDB databases & collections ( client[database][collection] )
     protein_data = client['protein_data'][sps]
@@ -126,7 +154,8 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     #     query_name = "Untitled Graph"
 
     # 2. Query proteins
-    input_proteins = parse_input(query_prots, prot_ids, max_prots)
+    input_proteins, custom_pairs = parse_input(query_prots, prot_ids, max_prots,
+                                                                biogrid_data)
     if len(input_proteins) == 0:
         sys.exit("ERROR: no proteins were found in your input!")
         #FIX: I could render a template for an error html where this message is printed.
@@ -162,7 +191,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     ## Run int2graph
 	print "[{}] Running int2graph...".format(st)
 
-    int2graph.main(input_proteins, protein_data, input_mutations,
+    int2graph.main(input_proteins, custom_pairs, protein_data, input_mutations,
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
             max_prots, graph_path, ints_path)
 
