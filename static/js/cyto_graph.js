@@ -33,12 +33,14 @@ document.addEventListener("DOMContentLoaded", function() {
   cy = cytoscape({
   	container: document.getElementById("cy"),
   	elements: json_elements,
+    style: json_style,
   	layout: {
     	name: 'preset',
     	fit: true
   	},
     // motionBlur: true,
-    style: json_style,
+    minZoom: 0.05,
+    maxZoom : 3.0,
     selectionType: 'single',
     wheelSensitivity: 0.3
 	});
