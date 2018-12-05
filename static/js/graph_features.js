@@ -294,12 +294,16 @@ $(document).ready(function(){
 		var node = event.target;
 		var name = node.data("label");
 		var acc = node.data("acc");
+		var des = node.data("des");
+		var regex = node.data("regex");
 		var start = node.data("start");
 		var end = node.data("end");
 		var prot = node.data("protein");
 		node.qtip({
 		  content: "<span style='color:#7f7c7b;'><b>ELM</b> | </span>"+
 							 "<a style='color:#7f7c7b;' href=\"http://elm.eu.org/elms/"+name+"\">"+name+"</a><br>"+
+							 "<span style='background-color:#7f7c7b; color:white;'><b> "+des+" </b></span><br>"+
+							 "Regex | <i>"+regex+"</i><br>"+
 							 prot+" | <i>"+start+"-"+end+"</i>",
 
 		  position: {

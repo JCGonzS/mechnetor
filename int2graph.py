@@ -313,6 +313,17 @@ def get_elm_dom_from_MongoDB(data):
         d[elm][pfam] = only_genes
     return d
 
+def get_elm_info(data):
+## Collection fields:
+#    Accession       ELMIdentifier   FunctionalSiteName      Description
+#    Regex   Probability     #Instances      #Instances_in_PDB
+    d = {}
+    cursor = data.find()
+    for c in cursor:
+        d[c["ELMIdentifier"]] = (c["Accession"], c["FunctionalSiteName"],
+                                 c["Regex"])
+
+    return d
 
 def get_Interprets_from_MongoDB(data, gene_a, gene_b):
     hits = set()
@@ -346,7 +357,7 @@ def pfams_of_acc_from_MongoDB(protein_data, acc):
 def elms_of_acc_from_MongoDB(protein_data, acc):
 
     cursor = protein_data.find_one( { "uniprot_acc": acc },
-                            { "_id": 0} )
+                            { "_id": 0, "elms": 1 } )
 
     # elm_names = sorted(list(set([c["name"] for c in cursor["elms"]])))
     elms = defaultdict(list)
@@ -424,6 +435,7 @@ def color_from_zvalue(z_score):
 @line_profile
 def main(target_prots, custom_pairs, protein_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
+        elm_classes,
         max_prots, graph_out, ints_out):
 
     central_pos = central_positions_layout(target_prots)
@@ -446,6 +458,7 @@ def main(target_prots, custom_pairs, protein_data, mutations,
         elms[prot_acc] = elms_of_acc_from_MongoDB(protein_data, prot_acc)
 
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
+    elm_info = get_elm_info(elm_classes)
 
     elm_nodes = defaultdict(list)
     lines = []
@@ -554,6 +567,9 @@ def main(target_prots, custom_pairs, protein_data, mutations,
 
                         ## Add ELM nodes if they don't exist
                         if elm_name not in id_dict[ac1]:
+                            elm_des, elm_regex = "", ""
+                            if elm_name in elm_info:
+                                elm_des, elm_regex = elm_info[elm_name][1:]
 
                             for elm in elms[ac1][elm_name]:
                                 elm_acc = elm["acc"]
@@ -569,6 +585,8 @@ def main(target_prots, custom_pairs, protein_data, mutations,
                                             "role" : "elm",
                                             "label" : elm_name,
                                             "acc" : elm_acc,
+                                            "des" : elm_des,
+                                            "regex" : elm_regex,
                                             "start" : str(start),
                                             "end" : str(end),
                                             "length": str(length),

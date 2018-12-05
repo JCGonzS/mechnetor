@@ -130,7 +130,8 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     dom_prop_data = client['interactions_'+sps]['domain_propensities_'+sps]
     db3did_data = client['interactions_common']['db3did']
     elm_int_data = client['interactions_common']['elm_dom']
-
+    elm_classes = client['other_data']['elm_classes']
+    
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
     sps_dir = data_dir+"species/"+sps+"/"
@@ -192,7 +193,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 	print "[{}] Running int2graph...".format(st)
 
     int2graph.main(input_proteins, custom_pairs, protein_data, input_mutations,
-            biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
+            biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data, elm_classes,
             max_prots, graph_path, ints_path)
 
     print "[{}] ...done!. Created files \"{}\" and \"{}\"".format(st, graph_json,

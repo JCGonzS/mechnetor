@@ -126,6 +126,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     dom_prop_data = client['interactions_'+sps]['domain_propensities_'+sps]
     db3did_data = client['interactions_common']['db3did']
     elm_int_data = client['interactions_common']['elm_dom']
+    elm_classes = client['other_data']['elm_classes']
 
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
@@ -178,6 +179,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     ints_out = main_dir+output_dir+outfile_table_json
     int2graph.main(input_proteins, custom_pairs, protein_data, input_mutations,
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
+            elm_classes,
             max_prots, graph_out, ints_out)
 
     return
