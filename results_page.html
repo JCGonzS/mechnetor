@@ -175,6 +175,7 @@
 
           <div id="quick-tools" class="col-sm-2">
             <div>
+              <button class="btn" id="helpBtn"><i class="far fa-question-circle"></i></button>
               <button class="btn" id="center"><i class="fa fa-align-center"></i></button>
               <button class="btn" id="lock"><i class="fa fa-unlock"></i></button>
               <button class="btn" id="reset"><i class="fa fa-sync"></i></button>
@@ -188,6 +189,16 @@
           </div>
         </div> <!--close graph_box-->
       </div> <!--close graph-->
+      <div id="helpBox" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p><b>How to use:</b></p>
+          <p>(soon™)</p>
+          <p>Hovering over elements will change the color of connected nodes & edges.</p>
+          <p>Clicking on nodes & edges triggers a pop-up box with information.</p>
+          <p>Double-click within a protein box to quickly zoom in on it.</p>
+        </div>
+      </div>
     </div> <!--close main-->
 
     <br>
@@ -237,24 +248,6 @@
   </div>	<!--close main_container-->
 
   <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
-  <script>
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById("goToTop").style.display = "block";
-        } else {
-            document.getElementById("goToTop").style.display = "none";
-        }
-    }
-
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
-  </script>
 
   <br><br>
 
@@ -264,6 +257,47 @@
       Rob Russell at the <a href="http://www.russelllab.org/">Russell Lab</a></p>
     <p style="margin:0; padding:0">University of Heidelberg, 2017</p>
   </div>
+
+  <script>
+  ///// MODAL (Help pop-up)
+  // Get the modal
+  var modal = document.getElementById('helpBox');
+  // Get the button that opens the modal
+  var btn = document.getElementById("helpBtn");
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+  // When the user clicks the button, open the modal
+  btn.onclick = function() {
+      modal.style.display = "block";
+  }
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+
+  ///// Go-to-Top Button
+  // When the user scrolls down 20px from the top of the document, show the button
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      document.getElementById("goToTop").style.display = "block";
+    } else {
+      document.getElementById("goToTop").style.display = "none";
+    }
+  }
+  // When the user clicks on the button, scroll to the top of the document
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+  </script>
 
 </body>
 </html>
