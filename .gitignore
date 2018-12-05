@@ -3,4 +3,5 @@ data/species
 static/data/common
 static/data/species
 static/output
+static/examples
 *.pyc
