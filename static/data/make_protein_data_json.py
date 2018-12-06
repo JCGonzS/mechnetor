@@ -214,7 +214,7 @@ ptms = get_ptms(psp_file, prot_dict["AC"])
 
 ## 4. Output
 pp = pprint.PrettyPrinter(indent=4)
-outfile_name = sp_data_dir+"protein_data_new_"+species+"_"+mode+".json.gz"
+outfile_name = sp_data_dir+"protein_data_"+species+"_"+mode+".json.gz"
 if mode == "normal":
     protein_data = {}
     for uni_ac in prot_dict["seq"]:
@@ -224,6 +224,7 @@ if mode == "normal":
                 "description" : prot_dict["des"][uni_ac],
                 "data_class" : prot_dict["dc"][uni_ac],
                 "length" : len(prot_dict["seq"][uni_ac]),
+                "sequence" : prot_dict["seq"][uni_ac],
                 "pfams" : {},
                 "elms": {},
                 "phosphorylation" : {},
@@ -288,6 +289,7 @@ elif mode == "mongo":
                     "description" : prot_dict["des"][uni_ac],
                     "data_class" : prot_dict["dc"][uni_ac],
                     "length" : len(prot_dict["seq"][uni_ac]),
+                    "sequence" : prot_dict["seq"][uni_ac],
                     "pfams" : [],
                     "elms" : [],
                     "phosphorylation" : [],
@@ -324,6 +326,7 @@ elif mode == "mongo":
                                 "name" : elm_name,
                                 "start" : int(start),
                                 "end" : int(end),
+                                "seq" : prot_dict["seq"][uni_ac][start-1:end],
                                 "score" : float(score)
                             })
 
