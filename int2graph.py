@@ -576,6 +576,7 @@ def main(target_prots, custom_pairs, protein_data, mutations,
                                 start = elm["start"]
                                 end = elm["end"]
                                 length = end-start
+                                elm_seq = elm["seq"]
 
                                 nodes.append(
                                     { "group" : "nodes",
@@ -589,6 +590,7 @@ def main(target_prots, custom_pairs, protein_data, mutations,
                                             "regex" : elm_regex,
                                             "start" : str(start),
                                             "end" : str(end),
+                                            "seq" : elm_seq,
                                             "length": str(length),
                                             "protein" : ac1
                                           },
