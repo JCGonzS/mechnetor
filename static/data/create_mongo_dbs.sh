@@ -5,9 +5,9 @@ sp="Hsa"
 biogrid = "BIOGRID-ORGANISM-3.5.165.tab2.txt.gz"
 #
 #
-gunzip species/Hsa/protein_data_new_Hsa_mongo.json.gz
-mongoimport --db protein_data --collection Hsa --file species/Hsa/protein_data_new_Hsa_mongo.json --type json
-gzip species/Hsa/protein_data_new_Hsa_mongo.json
+gunzip species/Hsa/protein_data_Hsa_mongo.json.gz
+mongoimport --db protein_data --collection Hsa --file species/Hsa/protein_data_Hsa_mongo.json --type json
+gzip species/Hsa/protein_data_Hsa_mongo.json
 #
 #
 gunzip species/Hsa/BIOGRID-ORGANISM-3.5.165.tab2.txt.gz
