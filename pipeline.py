@@ -131,7 +131,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     db3did_data = client['interactions_common']['db3did']
     elm_int_data = client['interactions_common']['elm_dom']
     elm_classes = client['other_data']['elm_classes']
-    
+
     ## Data Directories & Files
     data_dir = main_dir+"static/data/"
     sps_dir = data_dir+"species/"+sps+"/"
@@ -158,8 +158,8 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     input_proteins, custom_pairs = parse_input(query_prots, prot_ids, max_prots,
                                                                 biogrid_data)
     if len(input_proteins) == 0:
-        sys.exit("ERROR: no proteins were found in your input!")
-        #FIX: I could render a template for an error html where this message is printed.
+        print "ERROR: no proteins were found in input!"
+        return render_template("input_error.html")
 
     ### One protein only-input option.
     # 1. Get all possible interactors for this protein in BioGRID.
