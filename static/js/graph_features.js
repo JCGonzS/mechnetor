@@ -241,13 +241,14 @@ $(document).ready(function(){
 		var acc = node.data("protein");
 		var length = node.data("length");
 		node.qtip({
-		  content: "<a style=\"color:#17A589;\">Gene</a> | " +
-								"<b>"+gene+"</b><br>" +
-								"<a style=\"color:#17A589;\">Protein</a> | " +
-								"<b>"+des+"</b><br>" +
-								"<a style=\"color:#17A589;\">UniProt</a> | " +
-								"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">"+acc+"</a>"+
-								"<br><a style=\"color:#17A589;\">Length</a> | "+length+"<br>",
+		  content: "<span class=\"tip\"><span class=\"tipProt\">Gene</span> | <b>"+gene+"</b></span><br>" +
+							 "<span class=\"tip\"><span class=\"tipProt\">Protein</span> | <b>"+des+"</b></span><br>" +
+							 "<span class=\"tip\"><span class=\"tipProt\">Accession</span> | " +
+								 	"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">" +
+										acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i>" +
+									"</a>" +
+							 "</span><br>" +
+							 "<span class=\"tip\"><span class=\"tipProt\">Length</span> | "+length+"</span>",
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'
@@ -255,8 +256,8 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 16,
-		      height: 8
+		      width: 50,
+		      height: 10
 		    }
 		  }
 		});
@@ -271,11 +272,21 @@ $(document).ready(function(){
 		var end = node.data("end");
 		var prot = node.data("protein");
 		node.qtip({
-		  content: "<span style='color:#074987;'><b><i>"+name+"</i></b> "+
-							 "(<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+"</a>)</span><br>"+
-							 "<span style='background-color:#074987; color:white;'><b> "+des+" </b></span><br>"+
-							 prot+" | <i>"+start+"-"+end+"</i>",
-
+		  content:
+			 "<span class=\"tip\" style=\"color: #074987;\">" +
+			 		"<b>Source: <a href=\"https://pfam.xfam.org\">Pfam</a></b>" +
+				"</span><br>" +
+			 "<span class=\"tip\">" +
+			 		"<span class=\"tipPfam\">Family</span> | " +
+					"<b><i>"+name+"</i></b> (<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)" +
+			 "</span><br>" +
+			 "<span class=\"tip\">" +
+			 		"<span class=\"tipPfam\">Description</span> | <b>"+des+"</b>" +
+			 "</span><br>" +
+			 "<span class=\"tip\">" +
+			 		"<span class=\"tipPfam\">Coordinates</span> | " +
+					"<b>"+start+"</b> - <b>"+end+"</b>" +
+					" (<a href=\"https://pfam.xfam.org/protein/"+prot+"\">"+prot+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)",
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'
@@ -298,13 +309,26 @@ $(document).ready(function(){
 		var regex = node.data("regex");
 		var start = node.data("start");
 		var end = node.data("end");
+		var seq = node.data("seq");
 		var prot = node.data("protein");
 		node.qtip({
-		  content: "<span style='color:#7f7c7b;'><b>ELM</b> | </span>"+
-							 "<a style='color:#7f7c7b;' href=\"http://elm.eu.org/elms/"+name+"\">"+name+"</a><br>"+
+		  content: "<span style='color:#7f7c7b;'><b>ELM</b> | <a style=\"text-decoration: inherit; \" href=\"http://elm.eu.org/elms/"+name+"\">"+name+"</a></span><br>"+
 							 "<span style='background-color:#7f7c7b; color:white;'><b> "+des+" </b></span><br>"+
-							 "Regex | <i>"+regex+"</i><br>"+
-							 prot+" | <i>"+start+"-"+end+"</i>",
+							 "<br><table>"+
+							 	"<tr>"+
+							 		"<th>Prot. Acc.</th>"+
+							 		"<th>Start</th>"+
+							 		"<th>End</th>"+
+							 		"<th>Subsequence</th>"+
+							 	"</tr>"+
+								"<tr>"+
+									"<td>"+prot+"</td>"+
+									"<td>"+start+"</td>"+
+									"<td>"+end+"</td>"+
+									"<td>"+seq+"</td>"+
+								"</tr>"+
+							 "</table>",
+							//  prot+" | "+start+" <i>"+seq+"</i> "+end,
 
 		  position: {
 		    my: 'top center',
@@ -313,7 +337,7 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 16,
+		      width: 26,
 		      height: 8
 		    }
 		  }

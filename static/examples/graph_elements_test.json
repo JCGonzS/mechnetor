@@ -561,7 +561,7 @@
     {
         "data": {
             "parent": 36, 
-            "color": "#C49A46", 
+            "color": "#7848B2", 
             "protein": "P38398", 
             "id": 40, 
             "acc": "PF00533", 
@@ -581,7 +581,7 @@
     {
         "data": {
             "parent": 36, 
-            "color": "#C49A46", 
+            "color": "#7848B2", 
             "protein": "P38398", 
             "id": 41, 
             "acc": "PF00533", 
@@ -601,7 +601,7 @@
     {
         "data": {
             "parent": 36, 
-            "color": "#592B75", 
+            "color": "#7486AD", 
             "protein": "P38398", 
             "id": 42, 
             "acc": "PF12820", 
@@ -1936,7 +1936,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 138, 
             "acc": "PF00634", 
@@ -1956,7 +1956,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 139, 
             "acc": "PF00634", 
@@ -1976,7 +1976,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 140, 
             "acc": "PF00634", 
@@ -1996,7 +1996,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 141, 
             "acc": "PF00634", 
@@ -2016,7 +2016,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 142, 
             "acc": "PF00634", 
@@ -2036,7 +2036,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 143, 
             "acc": "PF00634", 
@@ -2056,7 +2056,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 144, 
             "acc": "PF00634", 
@@ -2076,7 +2076,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#5CD9B7", 
+            "color": "#7B8269", 
             "protein": "P51587", 
             "id": 145, 
             "acc": "PF00634", 
@@ -2096,7 +2096,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#4B25CC", 
+            "color": "#556362", 
             "protein": "P51587", 
             "id": 146, 
             "acc": "PF09103", 
@@ -2116,7 +2116,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#B86E19", 
+            "color": "#A1B57C", 
             "protein": "P51587", 
             "id": 147, 
             "acc": "PF09104", 
@@ -2136,7 +2136,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#4796D3", 
+            "color": "#7DB322", 
             "protein": "P51587", 
             "id": 148, 
             "acc": "PF09121", 
@@ -2156,7 +2156,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#97A72A", 
+            "color": "#772997", 
             "protein": "P51587", 
             "id": 149, 
             "acc": "PF09169", 
@@ -2176,7 +2176,7 @@
     {
         "data": {
             "parent": 135, 
-            "color": "#97A72A", 
+            "color": "#772997", 
             "protein": "P51587", 
             "id": 150, 
             "acc": "PF09169", 
@@ -3385,7 +3385,7 @@
     {
         "data": {
             "parent": 234, 
-            "color": "#672C46", 
+            "color": "#73A9D3", 
             "protein": "Q00597", 
             "id": 237, 
             "acc": "PF02106", 
@@ -3460,7 +3460,7 @@
     {
         "data": {
             "parent": 240, 
-            "color": "#D3C3A1", 
+            "color": "#A56E88", 
             "protein": "Q06609", 
             "id": 243, 
             "acc": "PF08423", 
@@ -3480,7 +3480,7 @@
     {
         "data": {
             "parent": 240, 
-            "color": "#3BE39B", 
+            "color": "#6456C3", 
             "protein": "Q06609", 
             "id": 244, 
             "acc": "PF14520", 
@@ -3625,7 +3625,7 @@
     {
         "data": {
             "parent": 252, 
-            "color": "#553161", 
+            "color": "#94C469", 
             "protein": "Q86YC2", 
             "id": 255, 
             "acc": "PF16756", 
@@ -4162,7 +4162,7 @@
     {
         "data": {
             "parent": 291, 
-            "color": "#23E7D1", 
+            "color": "#3C5852", 
             "protein": "Q8IYD8", 
             "id": 294, 
             "acc": "PF00271", 
@@ -4182,7 +4182,7 @@
     {
         "data": {
             "parent": 291, 
-            "color": "#98A7C9", 
+            "color": "#2879D3", 
             "protein": "Q8IYD8", 
             "id": 295, 
             "acc": "PF02732", 
@@ -4202,7 +4202,7 @@
     {
         "data": {
             "parent": 291, 
-            "color": "#33865B", 
+            "color": "#DA3842", 
             "protein": "Q8IYD8", 
             "id": 296, 
             "acc": "PF04851", 
@@ -4222,7 +4222,7 @@
     {
         "data": {
             "parent": 291, 
-            "color": "#389AE3", 
+            "color": "#DBD2AB", 
             "protein": "Q8IYD8", 
             "id": 297, 
             "acc": "PF12826", 
@@ -4242,7 +4242,7 @@
     {
         "data": {
             "parent": 291, 
-            "color": "#4B991D", 
+            "color": "#8B9A48", 
             "protein": "Q8IYD8", 
             "id": 298, 
             "acc": "PF16783", 
@@ -4751,7 +4751,7 @@
     {
         "data": {
             "parent": 332, 
-            "color": "#C49A46", 
+            "color": "#7848B2", 
             "protein": "Q99728", 
             "id": 335, 
             "acc": "PF00533", 
@@ -4771,7 +4771,7 @@
     {
         "data": {
             "parent": 332, 
-            "color": "#BA2847", 
+            "color": "#3CC7B5", 
             "protein": "Q99728", 
             "id": 336, 
             "acc": "PF12796", 
@@ -4791,7 +4791,7 @@
     {
         "data": {
             "parent": 332, 
-            "color": "#7C3D93", 
+            "color": "#D4B181", 
             "protein": "Q99728", 
             "id": 337, 
             "acc": "PF14835", 
@@ -4811,7 +4811,7 @@
     {
         "data": {
             "parent": 332, 
-            "color": "#1A9794", 
+            "color": "#A99623", 
             "protein": "Q99728", 
             "id": 338, 
             "acc": "PF16589", 
@@ -5292,7 +5292,7 @@
     {
         "data": {
             "parent": 370, 
-            "color": "#85529D", 
+            "color": "#84E3B8", 
             "protein": "Q9BXW9", 
             "id": 373, 
             "acc": "PF14631", 
@@ -5871,7 +5871,7 @@
     {
         "data": {
             "parent": 412, 
-            "color": "#37CA47", 
+            "color": "#E58775", 
             "protein": "Q9HB96", 
             "id": 415, 
             "acc": "PF11510", 
@@ -6086,7 +6086,7 @@
     {
         "data": {
             "parent": 428, 
-            "color": "#ABAB2D", 
+            "color": "#D94C89", 
             "protein": "Q9NPI8", 
             "id": 431, 
             "acc": "PF11107", 
@@ -6175,7 +6175,7 @@
     {
         "data": {
             "parent": 435, 
-            "color": "#CD9755", 
+            "color": "#624ABE", 
             "protein": "Q9NW38", 
             "id": 438, 
             "acc": "PF09765", 
@@ -6195,7 +6195,7 @@
     {
         "data": {
             "parent": 435, 
-            "color": "#EB7D22", 
+            "color": "#5DCD6D", 
             "protein": "Q9NW38", 
             "id": 439, 
             "acc": "PF11793", 
@@ -6271,12 +6271,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 10, 
-            "color": "#C3D625", 
+            "seq": "HSSSF", 
+            "color": "#97CAB7", 
             "protein": "O15360", 
             "id": 445, 
             "acc": "ELME000197", 
             "end": "93", 
+            "parent": 10, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "89", 
@@ -6292,12 +6293,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 10, 
-            "color": "#C3D625", 
+            "seq": "DSLFF", 
+            "color": "#97CAB7", 
             "protein": "O15360", 
             "id": 446, 
             "acc": "ELME000197", 
             "end": "832", 
+            "parent": 10, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "828", 
@@ -6313,12 +6315,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 428, 
-            "color": "#35444B", 
+            "seq": "RSGAFRK", 
+            "color": "#3464D5", 
             "protein": "Q9NPI8", 
             "id": 449, 
             "acc": "ELME000198", 
             "end": "361", 
+            "parent": 428, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "355", 
@@ -6334,12 +6337,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 428, 
-            "color": "#C3D625", 
+            "seq": "RSGAF", 
+            "color": "#97CAB7", 
             "protein": "Q9NPI8", 
             "id": 451, 
             "acc": "ELME000197", 
             "end": "359", 
+            "parent": 428, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "355", 
@@ -6355,12 +6359,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 291, 
-            "color": "#35444B", 
+            "seq": "ESENFPK", 
+            "color": "#3464D5", 
             "protein": "Q8IYD8", 
             "id": 457, 
             "acc": "ELME000198", 
             "end": "1476", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "1470", 
@@ -6376,12 +6381,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "RSLYF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 459, 
             "acc": "ELME000197", 
             "end": "384", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "380", 
@@ -6397,12 +6403,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "KSSIF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 460, 
             "acc": "ELME000197", 
             "end": "663", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "659", 
@@ -6418,12 +6425,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "ASDTF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 461, 
             "acc": "ELME000197", 
             "end": "809", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "805", 
@@ -6439,12 +6447,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "SSNLF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 462, 
             "acc": "ELME000197", 
             "end": "960", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "956", 
@@ -6460,12 +6469,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "FSVTF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 463, 
             "acc": "ELME000197", 
             "end": "1232", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1228", 
@@ -6481,12 +6491,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "HSKNF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 464, 
             "acc": "ELME000197", 
             "end": "1289", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1285", 
@@ -6502,12 +6513,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 291, 
-            "color": "#C3D625", 
+            "seq": "ESENF", 
+            "color": "#97CAB7", 
             "protein": "Q8IYD8", 
             "id": 465, 
             "acc": "ELME000197", 
             "end": "1474", 
+            "parent": 291, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1470", 
@@ -6523,12 +6535,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "ASHGF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 474, 
             "acc": "ELME000197", 
             "end": "266", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "262", 
@@ -6544,12 +6557,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "FSLCF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 475, 
             "acc": "ELME000197", 
             "end": "312", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "308", 
@@ -6565,12 +6579,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "CSAQF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 476, 
             "acc": "ELME000197", 
             "end": "620", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "616", 
@@ -6586,12 +6601,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "SSKQF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 477, 
             "acc": "ELME000197", 
             "end": "1182", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1178", 
@@ -6607,12 +6623,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "LSGQF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 478, 
             "acc": "ELME000197", 
             "end": "1372", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1368", 
@@ -6628,12 +6645,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "NSNNF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 479, 
             "acc": "ELME000197", 
             "end": "1837", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1833", 
@@ -6649,12 +6667,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "NSSAF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 480, 
             "acc": "ELME000197", 
             "end": "2055", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "2051", 
@@ -6670,12 +6689,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 135, 
-            "color": "#C3D625", 
+            "seq": "CSKEF", 
+            "color": "#97CAB7", 
             "protein": "P51587", 
             "id": 481, 
             "acc": "ELME000197", 
             "end": "2130", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "2126", 
@@ -6691,12 +6711,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 135, 
-            "color": "#35444B", 
+            "seq": "ASHGFGK", 
+            "color": "#3464D5", 
             "protein": "P51587", 
             "id": 490, 
             "acc": "ELME000198", 
             "end": "268", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "262", 
@@ -6712,12 +6733,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 135, 
-            "color": "#35444B", 
+            "seq": "FSLCFSK", 
+            "color": "#3464D5", 
             "protein": "P51587", 
             "id": 491, 
             "acc": "ELME000198", 
             "end": "314", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "308", 
@@ -6733,12 +6755,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 135, 
-            "color": "#35444B", 
+            "seq": "LSGQFMK", 
+            "color": "#3464D5", 
             "protein": "P51587", 
             "id": 492, 
             "acc": "ELME000198", 
             "end": "1374", 
+            "parent": 135, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "1368", 
@@ -6754,12 +6777,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 252, 
-            "color": "#C3D625", 
+            "seq": "ESKMF", 
+            "color": "#97CAB7", 
             "protein": "Q86YC2", 
             "id": 496, 
             "acc": "ELME000197", 
             "end": "643", 
+            "parent": 252, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "639", 
@@ -6775,12 +6799,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 252, 
-            "color": "#C3D625", 
+            "seq": "GSCIF", 
+            "color": "#97CAB7", 
             "protein": "Q86YC2", 
             "id": 497, 
             "acc": "ELME000197", 
             "end": "655", 
+            "parent": 252, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "651", 
@@ -6796,12 +6821,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 252, 
-            "color": "#C3D625", 
+            "seq": "CSPAF", 
+            "color": "#97CAB7", 
             "protein": "Q86YC2", 
             "id": 498, 
             "acc": "ELME000197", 
             "end": "728", 
+            "parent": 252, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "724", 
@@ -6817,12 +6843,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 252, 
-            "color": "#C3D625", 
+            "seq": "ESFTF", 
+            "color": "#97CAB7", 
             "protein": "Q86YC2", 
             "id": 499, 
             "acc": "ELME000197", 
             "end": "818", 
+            "parent": 252, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "814", 
@@ -6838,12 +6865,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 332, 
-            "color": "#35444B", 
+            "seq": "TSGDFVK", 
+            "color": "#3464D5", 
             "protein": "Q99728", 
             "id": 514, 
             "acc": "ELME000198", 
             "end": "349", 
+            "parent": 332, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "343", 
@@ -6859,12 +6887,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 332, 
-            "color": "#C3D625", 
+            "seq": "DSYEF", 
+            "color": "#97CAB7", 
             "protein": "Q99728", 
             "id": 517, 
             "acc": "ELME000197", 
             "end": "182", 
+            "parent": 332, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "178", 
@@ -6880,12 +6909,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 332, 
-            "color": "#C3D625", 
+            "seq": "ESECF", 
+            "color": "#97CAB7", 
             "protein": "Q99728", 
             "id": 518, 
             "acc": "ELME000197", 
             "end": "272", 
+            "parent": 332, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "268", 
@@ -6901,12 +6931,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 332, 
-            "color": "#C3D625", 
+            "seq": "TSGDF", 
+            "color": "#97CAB7", 
             "protein": "Q99728", 
             "id": 519, 
             "acc": "ELME000197", 
             "end": "347", 
+            "parent": 332, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "343", 
@@ -6922,12 +6953,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 332, 
-            "color": "#C3D625", 
+            "seq": "MSDEF", 
+            "color": "#97CAB7", 
             "protein": "Q99728", 
             "id": 520, 
             "acc": "ELME000197", 
             "end": "387", 
+            "parent": 332, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "383", 
@@ -6943,12 +6975,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 36, 
-            "color": "#C3D625", 
+            "seq": "ESTRF", 
+            "color": "#97CAB7", 
             "protein": "P38398", 
             "id": 529, 
             "acc": "ELME000197", 
             "end": "79", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "75", 
@@ -6964,12 +6997,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 36, 
-            "color": "#C3D625", 
+            "seq": "NSYNF", 
+            "color": "#97CAB7", 
             "protein": "P38398", 
             "id": 530, 
             "acc": "ELME000197", 
             "end": "107", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "103", 
@@ -6985,12 +7019,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 36, 
-            "color": "#C3D625", 
+            "seq": "DSDTF", 
+            "color": "#97CAB7", 
             "protein": "P38398", 
             "id": 531, 
             "acc": "ELME000197", 
             "end": "697", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "693", 
@@ -7006,12 +7041,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 36, 
-            "color": "#C3D625", 
+            "seq": "LSSQF", 
+            "color": "#97CAB7", 
             "protein": "P38398", 
             "id": 532, 
             "acc": "ELME000197", 
             "end": "958", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "954", 
@@ -7027,12 +7063,13 @@
     {
         "data": {
             "regex": ".(S)..F", 
-            "parent": 36, 
-            "color": "#C3D625", 
+            "seq": "SSAVF", 
+            "color": "#97CAB7", 
             "protein": "P38398", 
             "id": 533, 
             "acc": "ELME000197", 
             "end": "1177", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_1", 
             "start": "1173", 
@@ -7048,12 +7085,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 36, 
-            "color": "#35444B", 
+            "seq": "NSYNFAK", 
+            "color": "#3464D5", 
             "protein": "P38398", 
             "id": 539, 
             "acc": "ELME000198", 
             "end": "109", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "103", 
@@ -7069,12 +7107,13 @@
     {
         "data": {
             "regex": ".(S)..F.K", 
-            "parent": 36, 
-            "color": "#35444B", 
+            "seq": "SSAVFSK", 
+            "color": "#3464D5", 
             "protein": "P38398", 
             "id": 540, 
             "acc": "ELME000198", 
             "end": "1179", 
+            "parent": 36, 
             "des": "BRCT phosphopeptide ligands", 
             "label": "LIG_BRCT_BRCA1_2", 
             "start": "1173", 
@@ -7250,12 +7289,13 @@
     {
         "data": {
             "regex": "....WF..L", 
-            "parent": 135, 
-            "color": "#A16A69", 
+            "seq": "ISLNWFEEL", 
+            "color": "#AE96B4", 
             "protein": "P51587", 
             "id": 605, 
             "acc": "ELME000413", 
             "end": "35", 
+            "parent": 135, 
             "des": "PALB2 WD40 repeat binding motif in BRCA2", 
             "label": "LIG_PALB2_WD40_1", 
             "start": "27", 
