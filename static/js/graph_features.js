@@ -286,7 +286,8 @@ $(document).ready(function(){
 			 "<span class=\"tip\">" +
 			 		"<span class=\"tipPfam\">Coordinates</span> | " +
 					"<b>"+start+"</b> - <b>"+end+"</b>" +
-					" (<a href=\"https://pfam.xfam.org/protein/"+prot+"\">"+prot+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)",
+					" (<a href=\"https://pfam.xfam.org/protein/"+prot+"\">"+prot+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)"+
+				"</span>",
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'
@@ -312,23 +313,28 @@ $(document).ready(function(){
 		var seq = node.data("seq");
 		var prot = node.data("protein");
 		node.qtip({
-		  content: "<span style='color:#7f7c7b;'><b>ELM</b> | <a style=\"text-decoration: inherit; \" href=\"http://elm.eu.org/elms/"+name+"\">"+name+"</a></span><br>"+
-							 "<span style='background-color:#7f7c7b; color:white;'><b> "+des+" </b></span><br>"+
-							 "<br><table>"+
-							 	"<tr>"+
-							 		"<th>Prot. Acc.</th>"+
-							 		"<th>Start</th>"+
-							 		"<th>End</th>"+
-							 		"<th>Subsequence</th>"+
-							 	"</tr>"+
-								"<tr>"+
-									"<td>"+prot+"</td>"+
-									"<td>"+start+"</td>"+
-									"<td>"+end+"</td>"+
-									"<td>"+seq+"</td>"+
-								"</tr>"+
-							 "</table>",
-							//  prot+" | "+start+" <i>"+seq+"</i> "+end,
+		  content:
+				"<span class='tip' style='color: #7f7c7b;'>" +
+					 "<b>Source: <a href='https://elm.eu.org'>ELM</a></b>" +
+				"</span><br>" +
+				"<span class='tip'>"+
+					"<span class='tipELM'>Identifier</span> | "+
+					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a>"+
+				"</span><br>"+
+				"<span class='tip'>"+
+					"<span class='tipELM'>Accession</span> | "+ acc +
+				"</span><br>"+
+				"<span class='tip'>"+
+					"<span class='tipELM'>Description</span> | <b>"+des+"</b>"+
+				"</span><br>"+
+				"<span class='tip'>" +
+					 "<span class=tipELM>Coordinates</span> | " +
+					 "<b>"+start+"</b> - <b>"+end+"</b>" +
+					 " (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+				"</span><br>" +
+				"<span class='tip'>" +
+				 	 "<span class=tipELM>Subsequence</span> | <i>"+seq+"</i>" +
+				"</span>",
 
 		  position: {
 		    my: 'top center',
@@ -337,8 +343,8 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 26,
-		      height: 8
+		      width: 50,
+		      height: 10
 		    }
 		  }
 		});
