@@ -29,7 +29,7 @@ def central_positions_layout(proteins):
     return central_pos
 
 
-def add_protein(protein_data, prot_acc, central_pos, mutations,
+def add_protein(protein_data, biogrid_data, prot_acc, central_pos, mutations,
                 nodes, id_counter, id_dict, start_pos):
 
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
@@ -48,6 +48,7 @@ def add_protein(protein_data, prot_acc, central_pos, mutations,
     cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
                         { "_id": 0, "cosmic_muts": 0, "data_class": 0 })
 
+    biogrid_id = get_interactor_biogrid_id(biogrid_data, cursor["gene"])
     ## Add protein central node
     nodes.append({
         "group" : "nodes",
@@ -57,6 +58,7 @@ def add_protein(protein_data, prot_acc, central_pos, mutations,
             "role" : "whole",
             "label" : cursor["gene"],
             "uni_id" : cursor["uniprot_id"],
+            "biogrid_id" : biogrid_id,
             "des": cursor["description"],
             "length": cursor["length"],
             "protein" : prot_acc
@@ -265,19 +267,38 @@ def connect_protein_sequence(prot_acc, nodes, edges, id_counter):
 
 
 def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
-
-    info = set()
+    evidence = defaultdict(set)
     for cursor in data.find( {"$or":
                                 [{"Official Symbol Interactor A": gene_a,
                                  "Official Symbol Interactor B": gene_b},
                                  {"Official Symbol Interactor A": gene_b,
                                   "Official Symbol Interactor B": gene_a}]},
-                                {"_id": 0, "#BioGRID Interaction ID": 1}):
+                                {"_id": 0, "#BioGRID Interaction ID": 1,
+                                 "Throughput": 1}):
 
+        thrput = cursor["Throughput"].split()[0]
         bio_id = cursor["#BioGRID Interaction ID"]
-        info.add(str(bio_id))
+        evidence[thrput].add(str(bio_id))
 
-    return info
+    return evidence
+
+def get_interactor_biogrid_id(data, gene):
+    bio_id = ""
+    cursor = data.find_one( {"$or":
+                            [{"Official Symbol Interactor A": gene},
+                             {"Official Symbol Interactor B": gene}]},
+                             {"_id": 0,
+                              "Official Symbol Interactor A": 1,
+                              "Official Symbol Interactor B": 1,
+                              "BioGRID ID Interactor A": 1,
+                              "BioGRID ID Interactor B": 1 })
+
+    if cursor["Official Symbol Interactor A"] == gene:
+        bio_id = cursor["BioGRID ID Interactor A"]
+    else:
+        bio_id = cursor["BioGRID ID Interactor B"]
+
+    return bio_id
 
 
 def get_3did_from_MongoDB(data, pfam_a, pfam_b):
@@ -445,7 +466,8 @@ def main(target_prots, custom_pairs, protein_data, mutations,
     id_dict = {}
     pfams, elms = {}, {}
     for prot_acc in sorted(list(target_prots)):
-        nodes, id_counter, id_dict, start_pos = add_protein( protein_data, prot_acc,
+        nodes, id_counter, id_dict, start_pos = add_protein( protein_data,
+                                                  biogrid_data, prot_acc,
                                                   central_pos[prot_acc],
                                                   mutations[prot_acc],
                                                   nodes, id_counter, id_dict,
@@ -479,23 +501,26 @@ def main(target_prots, custom_pairs, protein_data, mutations,
                                       }
                             })
             id_counter += 1
-        ## BioGRID interactions
-        biogrid_ids = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
 
-        if len(biogrid_ids) > 0:
+        ## BioGRID interactions
+        evidence = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
+        biogrid_ints = list(evidence["Low"])+list(evidence["High"])
+
+        if len(biogrid_ints) > 0:
             edges.append(   {"group" : "edges",
                              "data" : {  "id" : id_counter,
                                          "source" : id_dict[ac_a]["main"],
                                          "target" : id_dict[ac_b]["main"],
                                          "role" : "prot_prot_interaction",
                                          "ds": "BioGRID",
-                                         "links": ";".join(list(biogrid_ids))
+                                         "low": list(evidence["Low"]),
+                                         "high": list(evidence["High"])
                                       }
                             })
             id_counter += 1
 
             line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
-                    "; ".join(list(biogrid_ids)), "BioGRID"]
+                    "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
 
 

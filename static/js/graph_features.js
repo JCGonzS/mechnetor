@@ -167,21 +167,53 @@ $(document).ready(function(){
 			var edge = event.target;
 			var nodes = edge.connectedNodes();
 			var genes = []
+			var bioids = []
 			nodes.forEach(function(node) {
 				genes.push(node.data("label"));
+				bioids.push(node.data("biogrid_id"));
 			});
-
 			var ds = edge.data("ds");
-			var links = edge.data("links").split(";");
-			var all_links = []
-			links.forEach(function(link) {
-				all_links.push("<a href=\"https://thebiogrid.org/interaction/"+link+"\">"+link+"</a>");
+			var low = edge.data("low");
+			var low_len = low.length;
+			var high = edge.data("high");
+			var high_len = high.length;
+			var low_links = [];
+			var low_link = ""
+			low.slice(0,3).forEach(function(link) {
+				low_links.push("<a href='https://thebiogrid.org/interaction/"+link+"'>"+link+" <i class='fas fa-external-link-alt fa-xs'></i></a>");
 			});
-
+			if (low_links.length > 0){
+				low_link = " eg. ".concat(low_links.join(", "));
+				if (low_links.length > 3){
+					low_link = low_link.concat(" ...");
+				}
+			}
+			var high_links = [];
+			var high_link = ""
+			high.slice(0,3).forEach(function(link) {
+				high_links.push("<a href='https://thebiogrid.org/interaction/"+link+"'>"+link+" <i class='fas fa-external-link-alt fa-xs'></i></a>");
+			});
+			if (high_links.length > 0){
+				high_link = " eg. ".concat(high_links.join(", "));
+				if (high_links.length > 0){
+					high_link = high_link.concat(" ...");
+				}
+			}
 			edge.qtip({
-				content: "<b>"+ds+" interaction</b><br>"+
-								 "<b>"+genes.join(" - ")+"</b><br>"+
-								 all_links.join(", "),
+				content:
+					"<span class='tip' style='color: #33a1c2;'>" +
+					 	"Source: <a href='https://thebiogrid.org/'><b>BioGRID</b></a></b>" +
+					"</span><br>" +
+					"<span class='tip'>"+
+						"<span class='tipInt'>Interacting Proteins</span> | "+
+						"<a href='https://thebiogrid.org/"+bioids[0]+"'><b>"+genes[0]+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a> - "+
+						"<a href='https://thebiogrid.org/"+bioids[1]+"'><b>"+genes[1]+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a>"+
+					  "<br>"+
+						"<span class='tipInt'>LT evidence</span> | "+
+						"<b>"+low_len+"</b>"+low_link+"<br>"+
+						"<span class='tipInt'>HT evidence</span> | "+
+						"<b>"+high_len+"</b>"+high_link+
+					"</span><br>",
 				position: {
            my: 'top center',
            at: 'bottom center'
@@ -190,8 +222,8 @@ $(document).ready(function(){
 				style: {
 					classes: 'qtip-bootstrap',
 					tip: {
-						width: 16,
-						height: 8
+						width: 30,
+						height: 10
 			    }
 			  }
 			});
@@ -226,8 +258,8 @@ $(document).ready(function(){
 				style: {
 					classes: 'qtip-bootstrap',
 					tip: {
-						width: 16,
-						height: 8
+						width: 20,
+						height: 10
 			    }
 			  }
 			});
@@ -241,14 +273,16 @@ $(document).ready(function(){
 		var acc = node.data("protein");
 		var length = node.data("length");
 		node.qtip({
-		  content: "<span class=\"tip\"><span class=\"tipProt\">Gene</span> | <b>"+gene+"</b></span><br>" +
-							 "<span class=\"tip\"><span class=\"tipProt\">Protein</span> | <b>"+des+"</b></span><br>" +
-							 "<span class=\"tip\"><span class=\"tipProt\">Accession</span> | " +
-								 	"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">" +
-										acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i>" +
-									"</a>" +
-							 "</span><br>" +
-							 "<span class=\"tip\"><span class=\"tipProt\">Length</span> | "+length+"</span>",
+		  content:
+				"<span class=\"tip\">"+
+					"<span class=\"tipProt\">Gene</span> | <b>"+gene+"</b><br>" +
+				  "<span class=\"tipProt\">Protein</span> | <b>"+des+"</b><br>" +
+				  "<span class=\"tipProt\">Accession</span> | " +
+						"<a href=\"https://www.uniprot.org/uniprot/"+acc+"\">" +
+							acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i>" +
+						"</a><br>" +
+					"<span class=\"tip\"><span class=\"tipProt\">Length</span> | "+length+
+				"</span>",
 		  position: {
 		    my: 'top center',
 		    at: 'bottom center'
@@ -256,7 +290,7 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 50,
+		      width: 20,
 		      height: 10
 		    }
 		  }
@@ -278,12 +312,8 @@ $(document).ready(function(){
 				"</span><br>" +
 			 "<span class=\"tip\">" +
 			 		"<span class=\"tipPfam\">Family</span> | " +
-					"<b><i>"+name+"</i></b> (<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)" +
-			 "</span><br>" +
-			 "<span class=\"tip\">" +
-			 		"<span class=\"tipPfam\">Description</span> | <b>"+des+"</b>" +
-			 "</span><br>" +
-			 "<span class=\"tip\">" +
+					"<b><i>"+name+"</i></b> (<a href=\"https://pfam.xfam.org/family/"+acc+"\">"+acc+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)<br>" +
+			 		"<span class=\"tipPfam\">Description</span> | <b>"+des+"</b><br>" +
 			 		"<span class=\"tipPfam\">Coordinates</span> | " +
 					"<b>"+start+"</b> - <b>"+end+"</b>" +
 					" (<a href=\"https://pfam.xfam.org/protein/"+prot+"\">"+prot+" <i class=\"fas fa-external-link-alt fa-xs\"></i></a>)"+
@@ -295,8 +325,8 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 16,
-		      height: 8
+		      width: 20,
+		      height: 10
 		    }
 		  }
 		});
@@ -319,21 +349,13 @@ $(document).ready(function(){
 				"</span><br>" +
 				"<span class='tip'>"+
 					"<span class='tipELM'>Identifier</span> | "+
-					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a>"+
-				"</span><br>"+
-				"<span class='tip'>"+
-					"<span class='tipELM'>Accession</span> | "+ acc +
-				"</span><br>"+
-				"<span class='tip'>"+
-					"<span class='tipELM'>Description</span> | <b>"+des+"</b>"+
-				"</span><br>"+
-				"<span class='tip'>" +
-					 "<span class=tipELM>Coordinates</span> | " +
-					 "<b>"+start+"</b> - <b>"+end+"</b>" +
-					 " (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
-				"</span><br>" +
-				"<span class='tip'>" +
-				 	 "<span class=tipELM>Subsequence</span> | <i>"+seq+"</i>" +
+					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+					"<span class='tipELM'>Accession</span> | "+ acc + "<br>"+
+					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>"+
+					"<span class=tipELM>Coordinates</span> | " +
+						"<b>"+start+"</b> - <b>"+end+"</b>" +
+					  " (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>"+
+			 	  "<span class=tipELM>Subsequence</span> | <i>"+seq+"</i>" +
 				"</span>",
 
 		  position: {
@@ -343,7 +365,7 @@ $(document).ready(function(){
 		  style: {
 				classes: 'qtip-bootstrap',
 		    tip: {
-		      width: 50,
+		      width: 20,
 		      height: 10
 		    }
 		  }

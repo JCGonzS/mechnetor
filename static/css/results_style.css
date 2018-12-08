@@ -1,3 +1,33 @@
+.qtip {
+  max-width: none !important;
+}
+.qtip a {
+  /*text-decoration: inherit !important;*/
+  color: inherit !important;
+}
+span.tip {
+  line-height: 23px;
+}
+span.tipProt {
+  color: #17A589;
+  float: left;
+  width: 70px;
+}
+span.tipPfam {
+  color: #074987;
+  float: left;
+  width: 80px;
+}
+span.tipELM {
+  color: #7f7c7b;
+  float: left;
+  width: 90px;
+}
+span.tipInt {
+  color: #33a1c2;
+  float: left;
+  width: 130px;
+}
 
 #main_container{
   right: 0;
