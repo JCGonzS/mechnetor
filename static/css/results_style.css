@@ -1,3 +1,78 @@
+
+.container {
+    /* display: block; */
+    position: relative;
+    padding-left: 20px !important;
+    margin-bottom: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.container span{
+  font-size: 14px;
+  font-weight: bold;
+  padding-left: 0px;
+}
+/* .container div{
+  padding-left: 20px;
+} */
+/* Hide the browser's default checkbox */
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background-color: white;
+}
+.container:hover{
+  font-weight: bold;
+}
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+    background-color: #555555;
+}
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+    background-color: #555555;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+
 .qtip {
   max-width: none !important;
 }
@@ -23,8 +98,28 @@ span.tipELM {
   float: left;
   width: 90px;
 }
-span.tipInt {
+span.tipInP {
+  color: #7b241c;
+  float: left;
+  width: 130px;
+}
+span.tipBioG {
   color: #33a1c2;
+  float: left;
+  width: 130px;
+}
+span.tip3did {
+  color: #16a085;
+  float: left;
+  width: 130px;
+}
+span.tipIdom {
+  color: #d4ac0d;
+  float: left;
+  width: 130px;
+}
+span.tipELMint {
+  color: #b95db9;
   float: left;
   width: 130px;
 }
@@ -122,18 +217,7 @@ span.tipInt {
   color: #fff;
   background-color: #555555;
 }
-#mutation span {
-  font-weight: bold;
-  color: #FF0000;
-}
-#phospho span {
-  font-weight: bold;
-  color: #FFFF00;
-}
-#acet span {
-  font-weight: bold;
-  color: #008000;
-}
+
 
 #graph {
   background-color: transparent;

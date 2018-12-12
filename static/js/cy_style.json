@@ -119,6 +119,7 @@
       "font-size": "8",
       "min-zoomed-font-size": "17",
       "color": "data(color)",
+      "text-valign": "bottom",
       "events": "yes",
       "text-events": "yes",
       "visibility": "hidden"
@@ -130,7 +131,7 @@
       "background-opacity": "0.5",
       "background-color": "data(color)",
       "font-size": "12",
-      "text-valign": "bottom",
+      "text-valign": "top",
       "text-margin-y": "2px"
     }
   },
@@ -142,7 +143,6 @@
       "width": "data(length)",
       "background-opacity": "0",
       "border-width": "1",
-      "border-style": "dashed",
       "border-color": "data(color)",
       "label": "data(label)",
       "font-size": "10",
@@ -151,10 +151,26 @@
       "text-outline-color": "data(color)",
       "text-outline-width": "1",
       "text-valign": "bottom",
-      "text-margin-y": "2px",
       "events": "yes",
       "text-events": "yes",
       "visibility": "hidden"
+    }
+  },
+  {
+    "selector": "node[role=\"iprets\"].highlight",
+    "style": {
+      "background-opacity": "0.5",
+      "background-color": "data(color)",
+      "border-style": "dashed",
+      "border-width": "3",
+      "font-size": "12"
+    }
+  },
+  {
+    "selector": "node[role=\"iprets\"].highlight2",
+    "style": {
+      "border-style": "dashed",
+      "border-width": "3"
     }
   },
   {
@@ -352,11 +368,22 @@
     "selector": "edge[role=\"INT_interaction\"]",
     "style": {
       "width": "4px",
+      "line-style": "solid",
       "line-color": "data(color)",
-      "line-style": "dashed",
+      "curve-style": "bezier",
       "opacity": "0.7",
       "events": "no",
-      "visibility": "hidden"
+      "visibility": "hidden",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role=\"INT_interaction\"].highlight",
+    "style": {
+      "line-style": "dashed",
+      "line-width": "3",
+      "opacity": 1,
+      "z-index": 1000
     }
   }
 ]

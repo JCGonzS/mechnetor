@@ -47,8 +47,8 @@ def add_protein(protein_data, biogrid_data, prot_acc, central_pos, mutations,
     protein_id = copy.deepcopy(id_counter)
     cursor = protein_data.find_one( { "uniprot_acc": prot_acc },
                         { "_id": 0, "cosmic_muts": 0, "data_class": 0 })
-
-    biogrid_id = get_interactor_biogrid_id(biogrid_data, cursor["gene"])
+    gene = cursor["gene"]
+    biogrid_id = get_interactor_biogrid_id(biogrid_data, gene)
     ## Add protein central node
     nodes.append({
         "group" : "nodes",
@@ -687,16 +687,16 @@ def main(target_prots, custom_pairs, protein_data, mutations,
 
             ## Add interaction edge
             edges.append(
-                    { "group" : "edges",
-                      "data" :
-                        { "id" : id_counter,
-                          "source" : id_dict[ac_a][label_a],
-                          "target" : id_dict[ac_b][label_b],
-                          "role" : "INT_interaction",
-                          "color": color,
-                          "z-score": z
-                        }
-                    })
+                { "group" : "edges",
+                  "data" :
+                    { "id" : id_counter,
+                      "source" : id_dict[ac_a][label_a],
+                      "target" : id_dict[ac_b][label_b],
+                      "role" : "INT_interaction",
+                      "color": color,
+                      "z-score": z
+                    }
+                })
             id_counter += 1
 
             line = [gene_a, ac_a, gene_b, ac_b, "InterPreTS",
