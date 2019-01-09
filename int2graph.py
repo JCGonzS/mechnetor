@@ -350,17 +350,20 @@ def get_Interprets_from_MongoDB(data, gene_a, gene_b):
     hits = set()
     for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
                  {"#Gene1": gene_b, "Gene2": gene_a} ]},
-                 {"_id": 0,"#Gene1":1, "PDB1":1, "qstart1": 1, "qend1": 1, "Blast-E1": 1, "Blast-PCID1": 1,
-                 "PDB2":1, "qstart2": 1, "qend2": 1, "Blast-E2": 1, "Blast-PCID2": 1,
-                 "Z": 1}):
+                 {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
+                  "p-value": 0,	"not-sure1": 0,	"not-sure2": 0}):
 
         if d["#Gene1"] == gene_a:
-            hit = (d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
-                   d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
+            hit = (d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
+                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
+                   d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
+                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
                    d["Z"])
         else:
-            hit = (d["PDB2"], d["qstart2"], d["qend2"], d["Blast-E2"], d["Blast-PCID2"],
-                   d["PDB1"], d["qstart1"], d["qend1"], d["Blast-E1"], d["Blast-PCID1"],
+            hit = (d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
+                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
+                   d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
+                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
                    d["Z"])
         hits.add(hit)
     return hits
@@ -648,8 +651,8 @@ def main(target_prots, custom_pairs, protein_data, mutations,
 
         ## InterPreTS interactions
         for hit in get_Interprets_from_MongoDB(iprets_data, gene_a, gene_b):
-            pdb_a, start_a, end_a, eval_a, pcid_a = hit[:5]
-            pdb_b, start_b, end_b, eval_b, pcid_b, z = hit[5:]
+            pdb_a, eval_a, pcid_a, start_a, end_a, pdb_start_a, pdb_end_a = hit[:7]
+            pdb_b, eval_b, pcid_b, start_b, end_b, pdb_start_b, pdb_end_b, z = hit[7:]
             label_a = pdb_a+":"+str(start_a)+"-"+str(end_a)
             label_b = pdb_b+":"+str(start_b)+"-"+str(end_b)
 
@@ -658,22 +661,27 @@ def main(target_prots, custom_pairs, protein_data, mutations,
             color = color_from_zvalue(z)
 
             ## Add homology region node
-            for ac, label, start, end, e_val, pcid in zip(pair, [label_a, label_b],
-                                            [start_a, start_b], [end_a, end_b],
-                                            [eval_a, eval_b], [pcid_a, pcid_b]):
+            for ac, label, pdb, pdb_start, pdb_end, start, end, e_val, pcid in zip(pair,
+                                    [label_a, label_b], [pdb_a, pdb_b],
+                                    [pdb_start_a, pdb_start_b], [pdb_end_a, pdb_end_b],
+                                    [start_a, start_b], [end_a, end_b],
+                                    [eval_a, eval_b], [pcid_a, pcid_b]):
                 length = end-start
                 nodes.append(
                     { "group" : "nodes",
                       "data" :
-                          { "id" : id_counter,
-                            "parent" : id_dict[ac]["main"],
-                            "role" : "iprets",
-                            "label" : label,
-                            "start" : str(start),
-                            "end" : str(end),
-                            "length": str(length),
+                          { "id": id_counter,
+                            "parent": id_dict[ac]["main"],
+                            "role": "iprets",
+                            "label": label,
+                            "pdb": pdb,
+                            "pdb_start": pdb_start,
+                            "pdb_end": pdb_end,
+                            "start": start,
+                            "end": end,
+                            "length": length,
                             "eval": str(e_val),
-                            "pcid": str(pcid),
+                            "pcid": pcid,
                             "color": color,
                             "protein": ac
                           },
@@ -693,6 +701,7 @@ def main(target_prots, custom_pairs, protein_data, mutations,
                       "source" : id_dict[ac_a][label_a],
                       "target" : id_dict[ac_b][label_b],
                       "role" : "INT_interaction",
+                      "pdb": pdb,
                       "color": color,
                       "z-score": z
                     }
