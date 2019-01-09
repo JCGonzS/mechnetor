@@ -597,19 +597,27 @@ $(document).ready(function(){
 
 	cy.on('click','node[role=\"iprets\"]', function(event) {
 		var node = event.target;
-		var label = node.data("label");
+		var pdb = node.data("pdb").split("|")[1];
+		var chain = node.data("pdb").split("|")[2];
 		var prot = node.data("protein");
 		var start = node.data("start");
 		var end = node.data("end");
+		var pdb_start = node.data("pdb_start");
+		var pdb_end = node.data("pdb_end");
+		var ev = node.data("eval");
+		var pcid = node.data("pcid");
+
 		node.qtip({
 			content:
 				"<span class='tip' style='color: #7b241c;'>" +
 				"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
 				"</span><br>" +
 				"<span class='tip'>"+
-					"<span class='tipInP'>Template</span> | " +
-					"<span class='tipInP'>Protein Coordinates</span> | " +
-					"<b>"+start+"</b> - <b>"+end+"</b> ("+prot+")<br>"+
+					"<span class='tipInP'>PDB Template ID</span> | " +
+					"<a href='https://www.rcsb.org/structure/1JM7'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a> chain "+chain+"<br>"+
+					"<span class='tipInP'>Alignment</span> |  "+
+					"Protein/<b>"+start+"-"+end+"</b>; Template/"+pdb_start+"-"+pdb_end+"<br>"+
+					"<span class='tipInP'>Alignment score</span> | BLAST e-val=<i>"+ev+"</i>, <i>"+pcid+"%</i> id<br>"+
 				"</span>",
 			position: {
 				my: 'top center',
@@ -790,9 +798,7 @@ $(document).ready(function(){
 					"<span class='tip'>"+
 						"<span class='tipELMint'>Interacting Elements</span> | "+
 							doms.join(" - ")+
-						"</a>"+
-					"</span><br>"+
-					"<span class='tip'>"+
+						"</a><br>"+
 						"<span class='tipELMint'>Interacting Proteins</span> | "+prots.join(" - ")+
 					"</span>",
 				position: {
@@ -809,4 +815,41 @@ $(document).ready(function(){
 			});
 	});
 
+	cy.on('click','edge[role=\"INT_interaction\"]', function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		var pdb = edge.data("pdb").split("|")[1];
+		var z = edge.data("z-score");
+		var chains = [];
+		var prots = [];
+		nodes.forEach(function(node) {
+			chains.push(node.data("pdb").split("|")[2]);
+			prots.push(node.parent().data("label"));
+		});
+
+		edge.qtip({
+			content:
+			"<span class='tip' style='color: #7b241c;'>" +
+			"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
+			"</span><br>" +
+			"<span class='tip'>"+
+				"<span class='tipInP'>PDB Template ID</span> |  "+
+				"<a href='https://www.rcsb.org/structure/1JM7'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+				"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
+				"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+				"<span class='tipInP'>Z-score</span> | "+z+
+			"</span>",
+			position: {
+				 my: 'top center',
+				 at: 'bottom center'
+			},
+			style: {
+				classes: 'qtip-bootstrap',
+				tip: {
+					width: 20,
+					height: 10
+				}
+			}
+		});
+	});
 });
