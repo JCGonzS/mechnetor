@@ -26,8 +26,50 @@ textarea:focus {
 }
 
 #main_t2 {
-  color:  #99AABB;
+  color: #99AABB;
 }
+
+#feat_and_data {
+  color: #99AABB;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+}
+#feat_and_data a {
+  color: white;
+}
+#feat_and_data li {
+  list-style-type: circle;
+  color: white;
+}
+.title {
+  font-family: "Lato",sans-serif;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.subtitle {
+  font-family: "Lato",sans-serif;
+}
+.paragraph {
+  font-family: "Merriweather",serif;
+  font-size: 14px;
+  /*width: 800px;*/
+  white-space: normal;
+  line-height: 25px;
+}
+.db {
+  font-family: "Merriweather",serif;
+  font-size: 16px;
+}
+.info {
+  font-family: "Merriweather",serif;
+  font-weight: 300;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
 
 label {
   text-align: left;
