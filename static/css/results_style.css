@@ -124,16 +124,18 @@ span.tipELMint {
   width: 130px;
 }
 
-#main_container{
+/*#main_container{
   right: 0;
   left: 0;
   margin-right: auto;
   margin-left: auto;
   width: 100%;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
-}
+}*/
+
 #main_t1 {
   margin-top: 1em;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
   /*right: 0;
   left: 0;
@@ -148,6 +150,7 @@ span.tipELMint {
 #main_t2 {
   width: 98%;
   margin: auto;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
   /*right: 0;
   left: 0;

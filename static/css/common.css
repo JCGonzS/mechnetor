@@ -9,8 +9,17 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  padding-bottom: 100px;
+  /*padding-bottom: 100px;*/
   background-color: #272727 !important;
+}
+
+#container {
+   min-height:100%;
+   position:relative;
+}
+#body {
+   padding:10px;
+   padding-bottom:110px;   /* Height of the footer */
 }
 
 .header {
@@ -84,7 +93,9 @@ body {
 
 
 #footer {
-  /* height: 110px; */
+  position: absolute;
+  bottom: 0;
+  height: 110px;
   width: 100%;
   padding-top: 10px;
   padding-bottom: 0px;
