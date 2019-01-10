@@ -84,14 +84,24 @@ body {
 
 
 #footer {
-  height: 100px;
+  /* height: 110px; */
   width: 100%;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
   background-color: #404952;
   color: #99AABB;
   text-align: center;
   font-family: "Lato", sans-serif;
   font-size: 14px;
   line-height: 1.6;
+}
+#footer .section {
+  color: white;
+  font-family: 'Staatliches', cursive;
+  padding-bottom: 10px;
+}
+#cyto-logo a {
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
 }
