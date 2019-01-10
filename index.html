@@ -20,124 +20,128 @@
 
 <body>
 
-	<div class="header">
-		<div id="header-content">
-      <div id="header-title">Protein Interaction Visualization</div>
-			<div id="navbar">
-				<ul>
-					<li><a href="/" class="home-link">Home</a></li>
-					<li><a href="/help" class="help-link">Help</a></li>
-					<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-
-	<div id="main_t1" class="container">
-		<div id="intro">
-			<p>
-					This tool will display the interactions between your proteins of interest in a clear way,
-					including general protein-protein interactions or more specific domain-domain or
-					domain-linear motif interactions.
-			</p>
-		</div>
-	</div>
-
-	<br>
-
-	<div id="main_t2" class="container">
-		<div class="row">
-			<div class="col-sm-12">
-				<form name="myForm" action="/output" id="form" method="post" target="_blank" novalidate="novalidate">
-
-					<!-- <div class="form-group row">
-						<div class="col-sm">
-							<input id="name" name="query_name" placeholder="Name your query" type="text">
-						</div>
-					</div> -->
-
-					<div class="form-group row align-items-center">
-						<div class="col-sm">
-							<label for="query_prots"><b>Proteins</b></label>
-							<textarea id="query_prots" name="query_prots" aria-required="true" required=""
-								placeholder="Enter a list of interacting proteins"></textarea>
-
-							<label for="upload">Upload a protein file:</label>
-							<input type="file" id="uploadProtFile"/>
-							<button id="protLoadButton" type="button" onclick="prot_file_upload()">Upload</button>
-						</div>
-
-						<div class="col-sm">
-							<label for="query_muts"><b>Mutations (optional)</b><br></label>
-							<textarea id="query_muts" name="query_muts" aria-required="true"
-								placeholder="Enter a list of protein mutations"></textarea>
-
-							<label for="upload">Upload a mutation file:</label>
-							<input type="file" id="uploadMutFile"/>
-							<button id="mutLoadButton" type="button" onclick="mut_file_upload()">Upload</button>
-						</div>
-					</div>
-
-					<div class="form-group row align-items-center">
-						<div class="col-sm">
-							<input type="checkbox" id="show_max_prots"/>
-							<label for="max_prots">Limit the number of proteins:</label>
-							<input type="number" id="max_prots" name="max_prots" hidden />
-						</div>
-
-						<div class="col-sm">
-							<input id="cosmic" name="cosmic" type="checkbox">
-							<label for="cosmic">Use <a href="http://cancer.sanger.ac.uk/cosmic">COSMIC</a> mutations instead</label>
-						</div>
-					</div>
-
-					<div class="form-group row">
-						<div class="col-sm">
-							<div>
-								Examples:
-								<button class="ex_button" type="button" id="ex1">1</button>
-								<button class="ex_button" type="button" id="ex2">2</button>
-								<button class="ex_button" type="button" id="ex3">3</button>
-								<script type="text/javascript" src="{{ url_for('static',filename='js/index_examples.js') }}"></script>
-							</div>
-							<div>
-								<button class="res_button" type="submit" id="submit-button">Submit</button>
-								<button class="res_button" type="reset" id="reset-button">Reset</button>
-							</div>
-						</div>
-					</div>
-				</form>
-		    </div>
-	    </div>
-	</div>
-
-	<div class="container-fluid" id="footer">
-		<div class="row">
-			<div class="col-sm-5">
-				<div class="section">Developed by</div>
-				<p style="margin:0; padding:0;">
-					JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
-				</p>
-				<p>
-					at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
-					(University of Heidelberg, 2018)
-				</p>
-			</div>
-			<div class="col-sm-3">
-				<div class="section">Powered by</div>
-				<div id="cyto-logo">
-					<a href="http://js.cytoscape.org/">
-						<img src="static/images/cytoscape-logo2.png " alt="cyto-logo" width="35" height="40">Cytoscape.js
-					</a>
+	<div id="main_container">
+		<div class="header">
+			<div id="header-content">
+	      <div id="header-title">Protein Interaction Visualization</div>
+				<div id="navbar">
+					<ul>
+						<li><a href="/" class="home-link">Home</a></li>
+						<li><a href="/help" class="help-link">Help</a></li>
+						<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
+					</ul>
 				</div>
 			</div>
-			<div class="col-sm-4">
-				<div class="section">Contact</div>
-					<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
+		</div>
+
+		<div id="body">
+			<div id="body_t1" class="container">
+				<div id="intro">
+					<p>
+							This tool will display the interactions between your proteins of interest in a clear way,
+							including general protein-protein interactions or more specific domain-domain or
+							domain-linear motif interactions.
+					</p>
+				</div>
+			</div>
+
+			<br>
+
+			<div id="body_t2" class="container">
+				<div class="row">
+					<div class="col-sm-12">
+						<form name="myForm" action="/output" id="form" method="post" target="_blank" novalidate="novalidate">
+
+							<!-- <div class="form-group row">
+								<div class="col-sm">
+									<input id="name" name="query_name" placeholder="Name your query" type="text">
+								</div>
+							</div> -->
+
+							<div class="form-group row align-items-center">
+								<div class="col-sm">
+									<label for="query_prots"><b>Proteins</b></label>
+									<textarea id="query_prots" name="query_prots" aria-required="true" required=""
+										placeholder="Enter a list of interacting proteins"></textarea>
+
+									<label for="upload">Upload a protein file:</label>
+									<input type="file" id="uploadProtFile"/>
+									<button id="protLoadButton" type="button" onclick="prot_file_upload()">Upload</button>
+								</div>
+
+								<div class="col-sm">
+									<label for="query_muts"><b>Mutations (optional)</b><br></label>
+									<textarea id="query_muts" name="query_muts" aria-required="true"
+										placeholder="Enter a list of protein mutations"></textarea>
+
+									<label for="upload">Upload a mutation file:</label>
+									<input type="file" id="uploadMutFile"/>
+									<button id="mutLoadButton" type="button" onclick="mut_file_upload()">Upload</button>
+								</div>
+							</div>
+
+							<div class="form-group row align-items-center">
+								<div class="col-sm">
+									<input type="checkbox" id="show_max_prots"/>
+									<label for="max_prots">Limit the number of proteins:</label>
+									<input type="number" id="max_prots" name="max_prots" hidden />
+								</div>
+
+								<div class="col-sm">
+									<input id="cosmic" name="cosmic" type="checkbox">
+									<label for="cosmic">Use <a href="http://cancer.sanger.ac.uk/cosmic">COSMIC</a> mutations instead</label>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-sm">
+									<div>
+										Examples:
+										<button class="ex_button" type="button" id="ex1">1</button>
+										<button class="ex_button" type="button" id="ex2">2</button>
+										<button class="ex_button" type="button" id="ex3">3</button>
+										<script type="text/javascript" src="{{ url_for('static',filename='js/index_examples.js') }}"></script>
+									</div>
+									<div>
+										<button class="res_button" type="submit" id="submit-button">Submit</button>
+										<button class="res_button" type="reset" id="reset-button">Reset</button>
+									</div>
+								</div>
+							</div>
+						</form>
+				    </div>
+			    </div>
 			</div>
 		</div>
-		<!-- <hr style="padding:0;">
-		<div><i>University of Heidelberg, 2018</i></div> -->
+
+		<div class="container-fluid" id="footer">
+			<div class="row">
+				<div class="col-sm-5">
+					<div class="section">Developed by</div>
+					<p style="margin:0; padding:0;">
+						JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
+					</p>
+					<p>
+						at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
+						(University of Heidelberg, 2018)
+					</p>
+				</div>
+				<div class="col-sm-3">
+					<div class="section">Powered by</div>
+					<div id="cyto-logo">
+						<a href="http://js.cytoscape.org/">
+							<img src="{{ url_for('static',filename='images/cytoscape-logo-white.png') }}" alt="cyto-logo" width="35" height="40">Cytoscape.js
+						</a>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="section">Contact</div>
+						<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
+				</div>
+			</div>
+			<!-- <hr style="padding:0;">
+			<div><i>University of Heidelberg, 2018</i></div> -->
+		</div>
 	</div>
 
 </body>

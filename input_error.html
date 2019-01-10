@@ -9,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Merriweather:300,400|Montserrat|Lato">
 
 	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static',filename='js/index_validation.js') }}"></script>
@@ -20,37 +20,60 @@
 
 <body>
 
-	<div class="header">
-		<div id="header-content">
-	        	<div id="header-title">Protein Interaction Visualization</div>
-			<div id="navbar">
-				<ul>
-					<li><a href="/" class="home-link">Home</a></li>
-					<li><a href="/help" class="help-link">Help</a></li>
-					<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
-				</ul>
+	<div id="main_container">
+		<div class="header">
+			<div id="header-content">
+		        	<div id="header-title">Protein Interaction Visualization</div>
+				<div id="navbar">
+					<ul>
+						<li><a href="/" class="home-link">Home</a></li>
+						<li><a href="/help" class="help-link">Help</a></li>
+						<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div id="main_t1" class="container">
-		<div style="color:#C70039;">
-			<p><b>None of your input proteins could be identified!</b><br>
-			Please use a valid gene name (<i>TP53</i>), UniProt accession (<i>P04637</i>)
-			or UniProt identifier (<i>P53_HUMAN</i>).</p>
-			<a style="text-decoration: none;" href="/" class="fas fa-backward"> Try again</a>
+		<div id="main_t1" class="container">
+			<div style="color:#C70039;">
+				<p><b>None of your input proteins could be identified!</b><br>
+				Please use a valid gene name (<i>TP53</i>), UniProt accession (<i>P04637</i>)
+				or UniProt identifier (<i>P53_HUMAN</i>).</p>
+				<a style="text-decoration: none;" href="/" class="fas fa-backward"> Try again</a>
+			</div>
 		</div>
-	</div>
 
-	<br>
-
-
-
-	<div id="footer" style="position:absolute; bottom:0;">
 		<br>
-		<p style="margin:0; padding:0">This tool was developed by JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and
-		  Rob Russell at the <a href="http://www.russelllab.org/">Russell Lab</a></p>
-		<p style="margin:0; padding:0">University of Heidelberg, 2018</p>
+
+
+		<div id="footer">
+			<div class="row">
+				<div class="col-sm-5">
+					<div class="section">Developed by</div>
+					<p style="margin:0; padding:0;">
+						JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
+					</p>
+					<p>
+						at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
+						(University of Heidelberg, 2018)
+					</p>
+				</div>
+				<div class="col-sm-3">
+					<div class="section">Powered by</div>
+					<div id="cyto-logo">
+						<a href="http://js.cytoscape.org/">
+							<img src="{{ url_for('static',filename='images/cytoscape-logo-white.png') }}" alt="cyto-logo" width="35" height="40">Cytoscape.js
+						</a>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="section">Contact</div>
+						<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
+				</div>
+			</div>
+			<!-- <hr style="padding:0;">
+			<div><i>University of Heidelberg, 2018</i></div> -->
+		</div>
 	</div>
 
 </body>

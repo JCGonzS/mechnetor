@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css"/>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Roboto:400|Merriweather:300,400|Montserrat|Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Merriweather:300,400|Montserrat|Lato">
 
   <script type="text/javascript" src="static/js/jquery-3.3.1.js"></script>
   <script type="text/javascript" src="static/js/cytoscape.js"></script>
@@ -40,7 +40,7 @@
 
 <body>
 
-  <div id="container">
+  <div id="main_container">
     <div class="header">
   		<div id="header-content">
         <div id="header-title">Protein Interaction Visualization</div>
@@ -54,8 +54,8 @@
   		</div>
   	</div>
 
-    <div id="body" class="container-fluid">
-      <div id="main_t1" class="row">
+    <div id="body">
+      <div id="body_t1" class="row">
         <div class="col-sm-2">
           <div id="control_panel">
             <div id="control_panel_title">Toggle</div>
@@ -79,7 +79,7 @@
       				<fieldset>
                 <div>
                   <span style="font-size: 14px; font-weight: bold;">Regions</span>
-                  <label class="container" style="display:inline;left: 50px;"> all
+                  <label class="container" style="display:inline;left: 10px;"> all
                     <input type="checkbox" id="toggle_all_ele">
                     <span class="checkmark"></span>
                   </label>
@@ -106,7 +106,7 @@
       				<fieldset>
                 <div>
                   <span style="font-size: 14px; font-weight: bold;">Interactions</span>
-                  <label class="container" style="display:inline;left: 50px;"> all
+                  <label class="container" style="display:inline;left: 10px;"> all
                     <input type="checkbox" id="toggle_all_int">
                     <span class="checkmark"></span>
                   </label>
@@ -146,7 +146,7 @@
       				<fieldset>
                 <div>
                   <span style="font-size: 14px; font-weight: bold;">Modifications</span>
-                  <label class="container" style="display:inline;left: 50px;"> all
+                  <label class="container" style="display:inline;left: 10px;"> all
                     <input type="checkbox" id="toggle_all_mod">
                     <span class="checkmark"></span>
                   </label>
@@ -166,12 +166,6 @@
                 </label>
       				</fieldset>
       			</div>
-          </div>
-
-          <div style="padding-top:5px; text-align:center">
-            <button class="btn" id="dl_json"><i class="fa fa-download"></i> JSON </button><br>
-            <button class="btn" id="dl_jpg"><i class="fas fa-image"></i> JPG </button>
-            <button class="btn" id="dl_png"><i class="fas fa-image"></i> PNG </button>
           </div>
 
         </div>
@@ -200,8 +194,15 @@
                 <button class="btn" id="zoom_out"><i class="fas fa-search-minus"></i></button>
               </div>
             </div>
-          </div> <!--close graph_box-->
-        </div> <!--close graph-->
+          </div>
+
+          <div style="padding-top:5px; color: white;"> Download:
+            <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button>
+            <button class="btn" id="dl_jpg"><i class="fas fa-image"></i> JPG </button>
+            <button class="btn" id="dl_png"><i class="fas fa-image"></i> PNG </button>
+          </div>
+        </div>
+
         <div id="helpBox" class="modal">
           <div class="modal-content">
             <span class="close">&times;</span>
@@ -212,12 +213,13 @@
             <p>Double-click within a protein box to quickly zoom in on it.</p>
           </div>
         </div>
+
       </div> <!--close main-->
 
       <br>
       <br>
 
-      <div id="main_t2">
+      <div id="body_t2">
         <div id="table_title">
           <span> List of interactions</span>
         </div>
@@ -258,13 +260,11 @@
       	</table>
       </div>
 
-    </div>	<!--close main_container-->
+    </div>
 
     <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
 
-    <br><br>
-
-    <div class="container-fluid" id="footer">
+    <div id="footer">
   		<div class="row">
   			<div class="col-sm-5">
   				<div class="section">Developed by</div>
@@ -280,7 +280,7 @@
   				<div class="section">Powered by</div>
   				<div id="cyto-logo">
   					<a href="http://js.cytoscape.org/">
-  						<img src="static/images/cytoscape-logo2.png " alt="cyto-logo" width="35" height="40">Cytoscape.js
+  						<img src="static/images/cytoscape-logo-white.png " alt="cyto-logo" width="35" height="40">Cytoscape.js
   					</a>
   				</div>
   			</div>

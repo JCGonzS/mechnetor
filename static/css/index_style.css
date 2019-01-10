@@ -1,9 +1,11 @@
-#intro p{
+#body_t1 #intro p{
   width: 70%;
   top: 5em;
   padding: 10px;
   font-size: 14px;
-  line-height: 1.6;
+  font-family: "Merriweather",serif;
+  white-space: normal;
+  line-height: 25px;
   color: #99AABB;
 }
 
@@ -25,7 +27,7 @@ textarea:focus {
   border-color: #888;
 }
 
-#main_t2 {
+#body_t2 {
   color: #99AABB;
 }
 
@@ -61,12 +63,12 @@ textarea:focus {
 }
 .db {
   font-family: "Merriweather",serif;
-  font-size: 16px;
+  font-size: 14px;
 }
 .info {
   font-family: "Merriweather",serif;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 10px;
 }
 
