@@ -145,7 +145,8 @@ $(document).ready(function(){
 
   // BUTTON: Toggle ALL interactions
 	$("#toggle_all_int").click(function(){
-		var prot_edges = cy.$('edge[role="prot_prot_interaction"]')
+		var prot_edges = cy.$('edge[role="prot_prot_interaction"]');
+		var user_edges = cy.$('edge[role="user_interaction"]');
 		var dom_nodes = cy.$('node[role="domain"]');
 		var dom_edges = dom_nodes.connectedEdges();
 		var elm_nodes = cy.$('node[role="elm"]');
@@ -155,6 +156,7 @@ $(document).ready(function(){
 		var checked = document.getElementById("toggle_all_int").checked;
 		if (checked) {
 			prot_edges.style("visibility", "visible");
+			user_edges.style("visibility", "visible");
 			dom_nodes.style("visibility", "visible");
 			dom_edges.style("visibility", "visible");
 			elm_nodes.style("visibility", "visible");
@@ -165,22 +167,36 @@ $(document).ready(function(){
 			$("#toggle_elms").prop("checked", true);
 			$("#toggle_iprets").prop("checked", true);
 			$("#toggle_pp_int").prop("checked", true);
+			$("#toggle_user_int").prop("checked", true);
 			$("#toggle_dom_int").prop("checked", true);
 			$("#toggle_idom_int").prop("checked", true);
 			$("#toggle_elmdom_int").prop("checked", true);
 			$("#toggle_prets_int").prop("checked", true);
 		} else {
 			prot_edges.style("visibility", "hidden");
+			user_edges.style("visibility", "hidden");
 			dom_edges.style("visibility", "hidden");
 			elm_edges.style("visibility", "hidden");
 			ip_edges.style("visibility", "hidden");
 			$("#toggle_pp_int").prop("checked", false);
+			$("#toggle_user_int").prop("checked", false);
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
 			$("#toggle_elmdom_int").prop("checked", false);
 			$("#toggle_prets_int").prop("checked", false);
 		}
 	});
+
+	// BUTTON: Toggle user-input interactions
+  $("#toggle_user_int").click(function(){
+    var edges = cy.$('edge[role="user_interaction"]');
+    var checked = document.getElementById("toggle_user_int").checked;
+		if (checked) {
+      edges.style("visibility", "visible");
+    } else {
+      edges.style("visibility", "hidden");
+    }
+  });
 
   // BUTTON: Toggle protein-protein interactions
   $("#toggle_pp_int").click(function(){
