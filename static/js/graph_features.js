@@ -269,29 +269,44 @@ $(document).ready(function(){
 	$("#toggle_all_mod").click(function(){
 		var phos = cy.$('node[role="phosphorylation"]');
 		var ace = cy.$('node[role="acetylation"]');
-		var mut = cy.$('node[role="mutation"]');
+		var input_mut = cy.$('node[role="input_mut"]');
+		var cosmic_mut = cy.$('node[role="cosmic_mut"]');
 		var checked = document.getElementById("toggle_all_mod").checked;
 		if (checked) {
 			phos.style("visibility", "visible");
 			ace.style("visibility", "visible");
-			mut.style("visibility", "visible");
+			input_mut.style("visibility", "visible");
+			cosmic_mut.style("visibility", "visible");
 			$("#toggle_phos").prop("checked", true);
 			$("#toggle_acet").prop("checked", true);
-			$("#toggle_mut").prop("checked", true);
+			$("#toggle_input_mut").prop("checked", true);
+			$("#toggle_cosmic_mut").prop("checked", true);
 		} else {
 			phos.style("visibility", "hidden");
 			ace.style("visibility", "hidden");
-			mut.style("visibility", "hidden");
+			input_mut.style("visibility", "hidden");
+			cosmic_mut.style("visibility", "hidden");
 			$("#toggle_phos").prop("checked", false);
 			$("#toggle_acet").prop("checked", false);
-			$("#toggle_mut").prop("checked", false);
+			$("#toggle_input_mut").prop("checked", false);
+			$("#toggle_cosmic_mut").prop("checked", true);
 		}
 	});
 
 	// BUTTON: Toggle mutations
-	$("#toggle_mut").click(function(){
-		var eles = cy.$('node[role="mutation"]');
-		var checked = document.getElementById("toggle_mut").checked;
+	$("#toggle_input_mut").click(function(){
+		var eles = cy.$('node[role="input_mut"]');
+		var checked = document.getElementById("toggle_input_mut").checked;
+		if (checked) {
+			eles.style("visibility", "visible");
+		} else {
+			eles.style("visibility", "hidden");
+		}
+	});
+
+	$("#toggle_cosmic_mut").click(function(){
+		var eles = cy.$('node[role="cosmic_mut"]');
+		var checked = document.getElementById("toggle_cosmic_mut").checked;
 		if (checked) {
 			eles.style("visibility", "visible");
 		} else {
@@ -455,7 +470,17 @@ $(document).ready(function(){
 		}
 	});
 
-	cy.on('mouseover mouseout','node[role=\"mutation\"]', function(event) {
+	cy.on('mouseover mouseout','node[role=\"input_mut\"]', function(event) {
+		var node = event.target;
+		node.toggleClass("highlight");
+		if (event.type=="mouseover"){
+			node.ungrabify();
+		} else if (event.type=="mouseout") {
+			node.grabify();
+		}
+	});
+
+	cy.on('mouseover mouseout','node[role=\"cosmic_mut\"]', function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
 		if (event.type=="mouseover"){

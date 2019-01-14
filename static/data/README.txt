@@ -155,3 +155,8 @@ VI. ELM (interactions)- Eukaryotic LM - domain interactions
 1. Use 'create_mongo_dbs.sh' to create collection in the Mongo interactions database
 2. No need to create indexes, since the db is read and store in a dictionary,
   every time the tool runs.
+
+
+others:
+COSMIC v87
+indexed by 'uni_ac'

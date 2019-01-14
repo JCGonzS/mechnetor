@@ -174,7 +174,7 @@
     }
   },
   {
-    "selector": "node[role=\"mutation\"]",
+    "selector": "node[role=\"input_mut\"]",
     "style": {
       "shape": "rectangle",
       "width": "2",
@@ -190,10 +190,37 @@
     }
   },
   {
-    "selector": "node[role=\"mutation\"].highlight",
+    "selector": "node[role=\"input_mut\"].highlight",
     "style": {
       "height": "12",
       "background-color": "#971031",
+      "font-size": "8",
+      "min-zoomed-font-size": "14",
+      "z-index": 1000
+    }
+  },
+  {
+    "selector": "node[role=\"cosmic_mut\"]",
+    "style": {
+      "shape": "polygon",
+      "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
+      "width": "3",
+      "height": "12",
+      "background-color": "#145283",
+      "border-width": "0.3",
+      "border-color": "#000000",
+      "label": "data(label)",
+      "font-size": "3",
+      "min-zoomed-font-size": "24",
+      "visibility" : "hidden",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "node[role=\"cosmic_mut\"].highlight",
+    "style": {
+      "height": "14",
+      "background-color": "#2389af",
       "font-size": "8",
       "min-zoomed-font-size": "14",
       "z-index": 1000

@@ -29,8 +29,8 @@ def central_positions_layout(proteins):
     return central_pos
 
 
-def add_protein(protein_data, biogrid_data, prot_acc, central_pos, mutations,
-                nodes, id_counter, id_dict, start_pos):
+def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
+                mutations, nodes, id_counter, id_dict, start_pos):
 
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
 
@@ -112,11 +112,15 @@ def add_protein(protein_data, biogrid_data, prot_acc, central_pos, mutations,
     nodes, id_counter, id_dict = add_domains(prot_acc, protein_id, cursor,
                                     start_x, start_y, nodes, id_counter, id_dict)
 
-    nodes, id_counter = add_mutations(prot_acc, protein_id, cursor,
-                                mutations, start_x, start_y, nodes, id_counter)
-
     nodes, id_counter = add_ptms(prot_acc, protein_id, cursor,
                                  start_x, start_y, nodes, id_counter)
+
+    nodes, id_counter = add_custom_mutations(prot_acc, protein_id,
+                                mutations, start_x, start_y, nodes, id_counter)
+
+    nodes, id_counter = add_cosmic_mutations(prot_acc, protein_id,cosmic_data,
+                                            start_x, start_y, nodes, id_counter)
+
 
     return nodes, id_counter, id_dict, start_pos
 
@@ -160,57 +164,6 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
     return nodes, id_counter, id_dict
 
 
-def add_mutations(prot_acc, parent_id, cursor, mutations, start_x, start_y,
-                  nodes, id_counter):
-    """
-    """
-
-    # for mut in cursor["cosmic_muts"]:
-    #     pos = mut["pos"]
-    #     res = mut["res"]
-    #
-    #     if int(pos)== 0:
-    #         start_found = True
-    #     if int(pos) == int(cursor["length"]):
-    #         end_found = True
-    #
-    #     graph_elements.append({
-    #         "group" : "nodes",
-    #         "data" : {
-    #             "id" : id_counter,
-    #             "parent" : parent_id,
-    #             "role" : "mutation",
-    #             "label" : label,
-    #             "protein" : prot_acc
-    #         },
-    #         "position" : {
-    #             "x" : start_x + int(pos),
-    #             "y" : start_y
-    #         }
-    #     })
-    #     id_counter += 1
-
-    for pos in mutations:
-        label = ";".join(list(mutations[pos]))
-
-        nodes.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "parent" : parent_id,
-                "role" : "mutation",
-                "label" : label,
-                "protein" : prot_acc
-            },
-            "position" : {
-                "x" : start_x + int(pos),
-                "y" : start_y
-            }
-        })
-        id_counter += 1
-
-    return nodes, id_counter
-
 def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
              nodes, id_counter):
 
@@ -236,6 +189,74 @@ def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
             id_counter += 1
 
     return nodes, id_counter
+
+
+def add_custom_mutations(prot_acc, parent_id, mutations,
+                         start_x, start_y, nodes, id_counter):
+    """
+    Adds user-input mutations as nodes within the proteins
+    """
+
+    for pos in mutations:
+        label = ";".join(list(mutations[pos]))
+
+        nodes.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : parent_id,
+                "role" : "input_mut",
+                "label" : label,
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + int(pos),
+                "y" : start_y
+            }
+        })
+        id_counter += 1
+
+    return nodes, id_counter
+
+def add_cosmic_mutations(prot_acc, parent_id, cosmic_data,
+                         start_x, start_y, nodes, id_counter):
+
+    """
+    Adds COSMIC mutations as nodes within the proteins
+    Data extracted from internal MongoDB
+    """
+    muts = defaultdict(dict)
+    for cursor in cosmic_data.find( {"uni_ac": prot_acc}, { "_id": 0 }):
+        pos = re.search("(\d+)",cursor["aa_mut"]).group(1)
+        if int(cursor["samples"]) > 1:
+            muts[pos][cursor["aa_mut"]] = (cursor["cds_mut"], str(cursor["samples"]))
+
+    for pos in muts:
+        label = []
+        count = []
+        for aa_mut in muts[pos]:
+            label.append(aa_mut)
+            count.append(muts[pos][aa_mut][1])
+
+        nodes.append({
+            "group" : "nodes",
+            "data" : {
+                "id" : id_counter,
+                "parent" : parent_id,
+                "role" : "cosmic_mut",
+                "label" : ";".join(label),
+                "count" : ";".join(count),
+                "protein" : prot_acc
+            },
+            "position" : {
+                "x" : start_x + int(pos),
+                "y" : start_y
+            }
+        })
+        id_counter += 1
+
+    return nodes, id_counter
+
 
 def connect_protein_sequence(prot_acc, nodes, edges, id_counter):
 
@@ -457,7 +478,7 @@ def color_from_zvalue(z_score):
     return color
 
 @line_profile
-def main(target_prots, custom_pairs, protein_data, mutations,
+def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
         biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
         elm_classes,
         max_prots, graph_out, ints_out):
@@ -470,8 +491,8 @@ def main(target_prots, custom_pairs, protein_data, mutations,
     pfams, elms = {}, {}
     for prot_acc in sorted(list(target_prots)):
         nodes, id_counter, id_dict, start_pos = add_protein( protein_data,
-                                                  biogrid_data, prot_acc,
-                                                  central_pos[prot_acc],
+                                                  cosmic_data, biogrid_data,
+                                                  prot_acc, central_pos[prot_acc],
                                                   mutations[prot_acc],
                                                   nodes, id_counter, id_dict,
                                                   start_pos)
@@ -481,6 +502,7 @@ def main(target_prots, custom_pairs, protein_data, mutations,
 
         pfams[prot_acc] = pfams_of_acc_from_MongoDB(protein_data, prot_acc)
         elms[prot_acc] = elms_of_acc_from_MongoDB(protein_data, prot_acc)
+
 
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
     elm_info = get_elm_info(elm_classes)

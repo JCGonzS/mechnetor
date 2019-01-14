@@ -121,6 +121,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
 
     ## Set MongoDB databases & collections ( client[database][collection] )
     protein_data = client['protein_data'][sps]
+    cosmic_data = client['cosmicv87']['genome_screens']
     biogrid_data = client['interactions_'+sps]['biogrid_'+sps]
     iprets_data = client['interactions_'+sps]['iprets_'+sps]
     dom_prop_data = client['interactions_'+sps]['domain_propensities_'+sps]
@@ -177,7 +178,7 @@ def main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     ## Run int2graph
     graph_out= main_dir+output_dir+outfile_json
     ints_out = main_dir+output_dir+outfile_table_json
-    int2graph.main(input_proteins, custom_pairs, protein_data, input_mutations,
+    int2graph.main(input_proteins, custom_pairs, protein_data, cosmic_data, input_mutations,
             biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
             elm_classes,
             max_prots, graph_out, ints_out)
@@ -188,7 +189,7 @@ if __name__ == "__main__":
     # query_prots = "TCF3\nID3\nCBFA2T3\nPAK1\nDLG5\nSMARCA4\nSMARCA2"
     query_prots = "BRCA2\nFANCA\nFANCM"
     # query_prots = "SMARCA4\nTP53"
-    query_muts = "TCF3/T23C\nID3/S15P"
+    query_muts = "BRCA2/T23C\nFANCA/S15P"
     client = MongoClient('localhost', 27017)
     main(client, query_prots, query_muts, max_prots="", query_lmd2="",
     		 sps="Hsa", max_pval=999, main_dir="")
