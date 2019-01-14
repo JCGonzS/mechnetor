@@ -6,33 +6,33 @@ document.getElementById("ex1").addEventListener('click', function () {
 CBFA2T3
 ID3`;
       var text2 = document.getElementById('query_muts');
-      text2.value = `O75081/D105G CBFA2T3
-P15923/N554K TCF3
-P15923/N555D TCF3
-P15923/N555T TCF3
-P15923/V560L TCF3
-P15923/V560E TCF3
-P15923/D564V TCF3
-P15923/D564E TCF3
-P15923/E624G TCF3
-Q02535/C10STOP ID3
-Q02535/M44V ID3
-Q02535/C47STOP ID3
-Q02535/Y48C ID3
-Q02535/Y48STOP ID3
-Q02535/L54M ID3
-Q02535/P56S ID3
-Q02535/P56A ID3
-Q02535/P56L ID3
-Q02535/P56H ID3
-Q02535/L64F ID3
-Q02535/L64V ID3
-Q02535/L70V ID3
-Q02535/Y76D ID3
-Q02535/Q81STOP ID3
-Q02535/Q81H ID3
-Q02535/V82A ID3
-Q02535/Q100STOP ID3`;
+      text2.value = `CBFA2T3/D105G
+TCF3/N554K
+TCF3/N555D
+TCF3/N555T
+TCF3/V560L
+TCF3/V560E
+TCF3/D564V
+TCF3/D564E
+TCF3/E624G
+ID3/C10STOP
+ID3/M44V
+ID3/C47STOP
+ID3/Y48C
+ID3/Y48STOP
+ID3/L54M
+ID3/P56S
+ID3/P56A
+ID3/P56L
+ID3/P56H
+ID3/L64F
+ID3/L64V
+ID3/L70V
+ID3/Y76D
+ID3/Q81STOP
+ID3/Q81H
+ID3/V82A
+ID3/Q100STOP`;
   });
 
 document.getElementById("ex2").addEventListener('click', function () {
@@ -60,9 +60,9 @@ POLR2A
 SMARCD3
 TAT`;
       var text2 = document.getElementById('query_muts');
-      text2.value = `P51532/T308M SMARCA4
-P51532/V1404I SMARCA4
-P51532/V1552I SMARCA4`;
+      text2.value = `SMARCA4/T308M
+SMARCA4/V1404I
+SMARCA4/V1552I`;
 });
 
 document.getElementById("ex3").addEventListener('click', function () {
@@ -75,6 +75,9 @@ CBL
 SYP
 DLG5
 WASL`;
+      var text2 = document.getElementById('query_muts');
+      text2.value = "";
+
 //       var text3 = document.getElementById('query_lmd2');
 //       text3.value = `#Example
 // #AC(a)	ID(a)	GN(a)	AC(b)	ID(b)	GN(b)	Type	F(a):F(b)	start	end
