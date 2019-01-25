@@ -114,6 +114,11 @@ span.tipInP {
   float: left;
   width: 140px;
 }
+span.tipCos {
+  color: #28446f;
+  float: left;
+  width: 110px;
+}
 span.tipBioG {
   color: #33a1c2;
   float: left;
@@ -133,6 +138,30 @@ span.tipELMint {
   color: #b95db9;
   float: left;
   width: 130px;
+}
+
+.qtip table, th, td {
+  border: 0px 0px 1px 0px solid black;
+  border-collapse: collapse;
+}
+.qtip tr {
+  border-bottom: 1px solid #fff;
+}
+.qtip th {
+  padding: 10px;
+  color: #28446f;
+}
+.qtip td {
+  padding: 5px;
+  background-color: #28446f;
+  color: #fff;
+  text-align: center;
+}
+.qtip td span {
+  text-decoration: underline;
+}
+.qtip td span:hover {
+  color: lightgrey;
 }
 
 #control_panel {

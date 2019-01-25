@@ -406,88 +406,34 @@ $(document).ready(function(){
 	// }
 	});
 
+	cy.autoungrabify(true);
+
 	// MOUSEOVER/MOUSEOUT changes
-  cy.on('mouseover mouseout','node[role=\"whole\"]', function(event) {
+  cy.on('tapdragover tapdragout','node[role=\"whole\"]', function(event) {
     var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
 		node.neighborhood().toggleClass("highlight2");
+		if (event.type=="tapdragover"){
+			cy.autoungrabify(false);
+		} else if (event.type=="tapdragout"){
+			cy.autoungrabify(true);
+		}
   });
 
-	cy.on('mouseover mouseout','node[role=\"domain\"]', function(event) {
+	cy.on('tapdragover tapdragout',
+				'node[role=\"domain\"], node[role=\"elm\"], node[role=\"iprets\"], '+
+				'node[role=\"phosphorylation\"], node[role=\"acetylation\"], '+
+				'node[role=\"input_mut\"], node[role=\"cosmic_mut\"]', function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
 		node.neighborhood().toggleClass("highlight2");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"elm\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		node.connectedEdges().toggleClass("highlight");
-		node.neighborhood().toggleClass("highlight2");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"iprets\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		node.connectedEdges().toggleClass("highlight");
-		node.neighborhood().toggleClass("highlight2");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"phosphorylation\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"acetylation\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"input_mut\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
-	});
-
-	cy.on('mouseover mouseout','node[role=\"cosmic_mut\"]', function(event) {
-		var node = event.target;
-		node.toggleClass("highlight");
-		if (event.type=="mouseover"){
-			node.ungrabify();
-		} else if (event.type=="mouseout") {
-			node.grabify();
-		}
+		// if (event.type=="tapdragover"){
+		// 	node.ungrabify();
+		// } else if (event.type=="tapdragout") {
+		// 	node.grabify();
+		// }
 	});
 
 	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
@@ -672,6 +618,53 @@ $(document).ready(function(){
 				}
 			}
 		});
+	});
+
+	cy.on('click','node[role=\"cosmic_mut\"]', function(event) {
+		var node = event.target;
+		var cos_id = node.data("cos_id").split(";");
+		var mut_aas = node.data("aa_mut").split(";");
+		var mut_cds = node.data("cds").split(";");
+		var counts = node.data("count").split(";");
+		var html = "<table style='width:100%'>\n";
+		html += "\t<tr>\n";
+		html += "\t\t<th>COSMIC ID</th>\n";
+		html += "\t\t<th>AA mutation</th>\n";
+		html += "\t\t<th>CDS mutation</th>\n";
+		html += "\t\t<th>Samples</th>\n";
+		html += "\t</tr>\n";
+		for (var i = 0; i < mut_aas.length; i++){
+			html += "\t<tr>\n";
+			html += "\t\t<td><a href='https://cancer.sanger.ac.uk/cosmic/mutation/overview?id="+cos_id[i].split("COSM")[1]+"'><span>"+cos_id[i]+"</span></a></td>\n";
+			html += "\t\t<td>"+mut_aas[i]+"</td>\n";
+			html += "\t\t<td>"+mut_cds[i]+"</td>\n";
+			html += "\t\t<td>"+counts[i]+"</td>\n";
+			html += "\t</tr>\n";
+		};
+		html += "</table>\n";
+		// console.log(html);
+		var gene = node.parent().data("label");
+		var gene_link = "https://cancer.sanger.ac.uk/cosmic/gene/analysis?ln="+gene
+
+		node.qtip({
+			content:
+				"<span class='tip' style='color: #28446f;'>" +
+					"<b><a href='https://cancer.sanger.ac.uk/cosmic'>COSMIC <i class='fas fa-external-link-alt fa-xs'></i></a></b><br>" +
+					"<a href="+gene_link+">View gene "+gene+" <i class='fas fa-external-link-alt fa-xs'></i></a>"+
+				"</span><br>\n"+html,
+			position: {
+				my: 'top center',
+				at: 'bottom center'
+			},
+			style: {
+				classes: 'qtip-bootstrap',
+				tip: {
+					width: 20,
+					height: 10
+				}
+			}
+		});
+
 	});
 
 	cy.on('click','edge[role=\"prot_prot_interaction\"]', function(event) {

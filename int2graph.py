@@ -226,31 +226,36 @@ def add_cosmic_mutations(prot_acc, parent_id, cosmic_data,
     Data extracted from internal MongoDB
     """
     muts = defaultdict(dict)
-    for cursor in cosmic_data.find( {"uni_ac": prot_acc}, { "_id": 0 }):
-        pos = re.search("(\d+)",cursor["aa_mut"]).group(1)
-        if int(cursor["samples"]) > 1:
-            muts[pos][cursor["aa_mut"]] = (cursor["cds_mut"], str(cursor["samples"]))
+    for c in cosmic_data.find( {"uni_ac": prot_acc},
+                                    { "_id": 0, "enst": 0 }):
+        pos = re.search("(\d+)",c["aa_mut"]).group(1)
+        if int(c["samples"]) > 1:
+            muts[pos][c["aa_mut"]] = (c["cosmic_id"], c["cds_mut"], str(c["samples"]))
 
     for pos in muts:
-        label = []
-        count = []
-        for aa_mut in muts[pos]:
-            label.append(aa_mut)
-            count.append(muts[pos][aa_mut][1])
+        cosmic_ids, aa_muts, cds_muts, count = [], [], [], []
+
+        for aa_mut, (cosmic_id, cds_mut, samples) in muts[pos].iteritems():
+            cosmic_ids.append("COSM"+str(cosmic_id))
+            aa_muts.append(aa_mut)
+            cds_muts.append(cds_mut)
+            count.append(samples)
 
         nodes.append({
-            "group" : "nodes",
-            "data" : {
-                "id" : id_counter,
-                "parent" : parent_id,
-                "role" : "cosmic_mut",
-                "label" : ";".join(label),
-                "count" : ";".join(count),
-                "protein" : prot_acc
+            "group": "nodes",
+            "data": {
+                "id": id_counter,
+                "parent": parent_id,
+                "role": "cosmic_mut",
+                "cos_id": "; ".join(cosmic_ids),
+                "aa_mut": "; ".join(aa_muts),
+                "cds": "; ".join(cds_muts),
+                "count": "; ".join(count),
+                "protein": prot_acc
             },
-            "position" : {
-                "x" : start_x + int(pos),
-                "y" : start_y
+            "position": {
+                "x": start_x + int(pos),
+                "y": start_y
             }
         })
         id_counter += 1
@@ -265,9 +270,9 @@ def connect_protein_sequence(prot_acc, nodes, edges, id_counter):
     for ele in nodes:
         role = ele["data"]["role"]
         parent_prot = ele["data"]["protein"]
-        position = ele["data"]["label"]
-        ele_id = ele["data"]["id"]
         if (role == "start-end" and parent_prot == prot_acc):
+            position = ele["data"]["label"]
+            ele_id = ele["data"]["id"]
             prot_positions.append((ele_id, int(position)))
 
     # 2. Join those nodes by edges
@@ -449,8 +454,8 @@ def color_regions(nodes, palette=""):
     for node in nodes:
         if node["group"] == "nodes":
             role = node["data"]["role"]
-            label = node["data"]["label"]
             if role in ["domain", "elm"]:
+                label = node["data"]["label"]
                 if label not in color_map:
                     if palette != "" and counter < len(custom_colors):
                         color_map[label] = custom_colors[counter]

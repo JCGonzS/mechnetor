@@ -183,6 +183,20 @@ def get_ptms(psp_file, prot_id):
                     done_pos[(uni_ac,mod)].add(pos)
     return psp
 
+def get_ppi_pairs(biogrid_file):
+	with open_file(biogrid_file) as f:
+		for line in f:
+			t = line.rstrip().split("\t")
+			if line[0] != "#":
+				a = [t[7]] + t[9].split("|")
+				b = [t[8]] + t[10].split("|")
+
+	return
+
+biogrid_file = sp_data_dir + "BIOGRID-ORGANISM-3.5.165.tab2.txt.gz"
+get_ppi_pairs(biogrid_file)
+sys.exit
+####
 error_msg = """
 ERROR
 Usage:
@@ -205,6 +219,7 @@ prot_dict = get_protein_data_from_uniprot_text(uniprot_text_file)
 ## 2. Get Pfam domains and ELMs
 pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_hits_file,
                                                 prot_dict["AC"])
+
 pfam_des = pfam_descriptions(pfam_data_file)
 
 elms, elm_sets, elm_names = get_linear_motifs(elm_hits_file,
