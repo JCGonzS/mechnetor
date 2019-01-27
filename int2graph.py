@@ -30,7 +30,7 @@ def central_positions_layout(proteins):
 
 
 def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
-                mutations, nodes, id_counter, id_dict, start_pos):
+                mutations, nodes, id_counter, id_dict, id_coords, start_pos):
 
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
 
@@ -109,8 +109,9 @@ def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
     id_counter += 1
 
     ## Add other protein elements:
-    nodes, id_counter, id_dict = add_domains(prot_acc, protein_id, cursor,
-                                    start_x, start_y, nodes, id_counter, id_dict)
+    nodes, id_counter, id_dict, id_coords = add_domains(prot_acc, protein_id, cursor,
+                                    start_x, start_y, nodes, id_counter, id_dict,
+                                    id_coords)
 
     nodes, id_counter = add_ptms(prot_acc, protein_id, cursor,
                                  start_x, start_y, nodes, id_counter)
@@ -122,11 +123,11 @@ def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
                                             start_x, start_y, nodes, id_counter)
 
 
-    return nodes, id_counter, id_dict, start_pos
+    return nodes, id_counter, id_dict, id_coords, start_pos
 
 
 def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
-                nodes, id_counter, id_dict):
+                nodes, id_counter, id_dict, id_coords):
 
     """Add protein's Pfam domains
 
@@ -158,10 +159,10 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
             }
         })
         id_dict[prot_acc][domain["name"]].append(id_counter)
+        id_coords[id_counter] = (str(start), str(end))
         id_counter += 1
 
-
-    return nodes, id_counter, id_dict
+    return nodes, id_counter, id_dict, id_coords
 
 
 def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
@@ -493,21 +494,22 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     nodes, edges = [], []
     id_counter = 0
     id_dict = {}
+    id_coords = {}
     pfams, elms = {}, {}
     for prot_acc in sorted(list(target_prots)):
-        nodes, id_counter, id_dict, start_pos = add_protein( protein_data,
+        nodes, id_counter, id_dict, id_coords, start_pos = add_protein(
+                                                  protein_data,
                                                   cosmic_data, biogrid_data,
                                                   prot_acc, central_pos[prot_acc],
                                                   mutations[prot_acc],
                                                   nodes, id_counter, id_dict,
-                                                  start_pos)
+                                                  id_coords, start_pos)
 
         edges, id_counter = connect_protein_sequence(prot_acc, nodes, edges,
                                                      id_counter)
 
         pfams[prot_acc] = pfams_of_acc_from_MongoDB(protein_data, prot_acc)
         elms[prot_acc] = elms_of_acc_from_MongoDB(protein_data, prot_acc)
-
 
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
     elm_info = get_elm_info(elm_classes)
@@ -550,7 +552,7 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
             id_counter += 1
 
             line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
-                    "; ".join(list(biogrid_ints)), "BioGRID"]
+                    "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
 
 
@@ -561,8 +563,8 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
             pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
 
             if pdbs:
-                for source in id_dict[ac_a][pfam_a]:
-                    for target in id_dict[ac_b][pfam_b]:
+                for i, source in enumerate(id_dict[ac_a][pfam_a]):
+                    for j, target in enumerate(id_dict[ac_b][pfam_b]):
                         if source == target:
                             continue
                         edges.append({ "group" : "edges",
@@ -576,9 +578,20 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                     })
                         id_counter += 1
 
-                line = [gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
-                                  pfam_a, pfam_b, pdbs, "3did"]
-                lines.append(line)
+                        i =+ 1
+                        j =+ 1
+                        domA = pfam_a
+                        domB = pfam_b
+                        if len(id_dict[ac_a][pfam_a]) > 1:
+                            domA = pfam_a+" ("+str(i)+")"
+                        if len(id_dict[ac_b][pfam_b]) > 1:
+                            domB = pfam_b+" ("+str(j)+")"
+                        line = [gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
+                                domA, "-".join(id_coords[source]),
+				domB, "-".join(id_coords[target]),
+                                pdbs, "3did"]
+
+                	lines.append(line)
 
             ## domain propensities
             prop_lo = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
@@ -598,10 +611,11 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                     })
                         id_counter += 1
 
-                line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
-                                  pfam_a, pfam_b,
-                                  str(prop_lo), "Statistical Prediction"]
-                lines.append(line)
+                	line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
+                        	pfam_a, "-".join(id_coords[source]),
+				pfam_b, "-".join(id_coords[target]),
+				str(prop_lo), "Statistical Prediction"]
+                	lines.append(line)
 
         ## ELM-domain interactions
         for ac1, gene1, ac2, gene2 in zip([ac_a, ac_b], [gene_a, gene_b],
@@ -752,8 +766,8 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     # for l in lines:
     #     print l
     int_table = {}
-    int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)","Type",
-                            "F(A)","F(B)","Info", "Source"]
+    int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
+                            "Type", "F(A)","F(B)","Info", "Source"]
     int_table["index"] = range(len(lines))
     int_table["data"] = lines
 
