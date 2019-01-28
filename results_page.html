@@ -155,8 +155,12 @@
                   </label>
                 </div><br>
 
-                <label class="container"><div style="color:#FF0000;">Mutations
-                  <input type="checkbox" id="toggle_mut">
+                <label class="container"><div style="color:#FF0000;">User-input mutations
+                  <input type="checkbox" id="toggle_input_mut">
+                  <span class="checkmark"></div>
+                </label></br>
+                <label class="container"><div style="color:#28446f;">COSMIC mutations
+                  <input type="checkbox" id="toggle_cosmic_mut">
                   <span class="checkmark"></div>
                 </label></br>
                 <label class="container"><div style="color:#FFFF00;">Phosphorylations
@@ -198,12 +202,12 @@
               </div>
             </div>
           </div>
-          <div style="padding-top:5px; color: white;"> Download:
+
+          <div style="padding-top:5px; color: white;"> Download as
             <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button>
             <button class="btn" id="dl_jpg"><i class="fas fa-image"></i> JPG </button>
             <button class="btn" id="dl_png"><i class="fas fa-image"></i> PNG </button>
           </div>
-
         </div>
 
         <div id="helpBox" class="modal">
@@ -216,6 +220,7 @@
             <p>Double-click within a protein box to quickly zoom in on it.</p>
           </div>
         </div>
+
       </div> <!--close main-->
 
       <br>
@@ -234,16 +239,20 @@
         </script>
         <table id="interactionTable" class="display">
       		<thead>
-      			<tr>
+            <tr>
       				<th>Protein (A)</th>
               <th>Accession (A)</th>
       				<th>Protein (B)</th>
               <th>Accession (B)</th>
-      				<th>Type of <br>Interaction</th>
+      				<th>Interaction<br>Type</th>
       				<th>F (A)</th>
+              <th>Start-End (A)</th>
+              <th>Mutations (A)</th>
       				<th>F (B)</th>
+              <th>Start-End (B)</th>
+              <th>Mutations (B)</th>
       				<th>Info</th>
-              <th>Source</th>
+              <th>Data<br>Source</th>
       			</tr>
       		</thead>
       		<tfoot>
@@ -252,11 +261,15 @@
               <th>Accession (A)</th>
       				<th>Protein (B)</th>
               <th>Accession (B)</th>
-      				<th>Type of <br>Interaction</th>
-      				<th>F (A)</th>
+      				<th>Interaction<br>Type</th>
+              <th>F (A)</th>
+              <th>Start-End  (A)</th>
+              <th>Mutations (A)</th>
       				<th>F (B)</th>
+              <th>Start-End (B)</th>
+              <th>Mutations (B)</th>
       				<th>Info</th>
-              <th>Source</th>
+              <th>Data<br>Source</th>
       			</tr>
       		</tfoot>
       	</table>
@@ -266,9 +279,7 @@
 
     <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
 
-    <br><br>
-
-    <div class="container-fluid" id="footer">
+    <div id="footer">
   		<div class="row">
   			<div class="col-sm-5">
   				<div class="section">Developed by</div>
@@ -299,44 +310,44 @@
   </div>
 
   <script>
-  ///// MODAL (Help pop-up)
-  // Get the modal
-  var modal = document.getElementById('helpBox');
-  // Get the button that opens the modal
-  var btn = document.getElementById("helpBtn");
-  // Get the <span> element that closes the modal
-  var span = document.getElementsByClassName("close")[0];
-  // When the user clicks the button, open the modal
-  btn.onclick = function() {
+    ///// MODAL (Help pop-up)
+    // Get the modal
+    var modal = document.getElementById('helpBox');
+    // Get the button that opens the modal
+    var btn = document.getElementById("helpBtn");
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
       modal.style.display = "block";
-  }
-  // When the user clicks on <span> (x), close the modal
-  span.onclick = function() {
-      modal.style.display = "none";
-  }
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function(event) {
-      if (event.target == modal) {
-          modal.style.display = "none";
-      }
-  }
-
-  ///// Go-to-Top Button
-  // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function() {scrollFunction()};
-
-  function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      document.getElementById("goToTop").style.display = "block";
-    } else {
-      document.getElementById("goToTop").style.display = "none";
     }
-  }
-  // When the user clicks on the button, scroll to the top of the document
-  function topFunction() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  }
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    ///// Go-to-Top Button
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("goToTop").style.display = "block";
+      } else {
+        document.getElementById("goToTop").style.display = "none";
+      }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
   </script>
 
 </body>

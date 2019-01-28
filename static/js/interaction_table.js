@@ -43,11 +43,15 @@ $(document).ready(function(){
 			   if ( headerText == "Protein (A)" ) headerTitle =  "Gene Name of Interacting Protein A";
 				 else if ( headerText == "Accession (A)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
 				 else if ( headerText == "Protein (B)" ) headerTitle =  "Gene Name of Interacting Protein B";
-				 else if ( headerText == "Accession (A)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
-			   else if ( headerText == "Type" ) headerTitle =  "Type of Interaction";
+				 else if ( headerText == "Accession (B)" ) headerTitle =  "UniProt Accession of Interacting Protein A";
+			   else if ( headerText == "InteractionType" ) headerTitle =  "Type of Interaction";
 			   else if ( headerText == "F (A)" ) headerTitle =  "Interacting Element of Protein A";
+				 else if ( headerText == "Start-End (A)" ) headerTitle =  "Start and End Positions of Element of Protein A";
+				 else if ( headerText == "Mutations (A)" ) headerTitle =  "User Input-Mutations within Element of Protein A";
 				 else if ( headerText == "F (B)" ) headerTitle =  "Interacting Element of Protein B";
-				 else if ( headerText == "Source" ) headerTitle =  "Source of interaction information (DB, tool, etc)";
+				 else if ( headerText == "Start-End (B)" ) headerTitle =  "Start and End Positions of Element of Protein B";
+				 else if ( headerText == "Mutations (B)" ) headerTitle =  "User Input-Mutations within Element of Protein B";
+				 else if ( headerText == "DataSource" ) headerTitle =  "Source of interaction information (DB, tool, etc)";
 			   td.attr('title', headerTitle);
 			});
 

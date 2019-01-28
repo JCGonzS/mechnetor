@@ -28,9 +28,18 @@ def central_positions_layout(proteins):
 
     return central_pos
 
+def muts_within_coords(mutations, start, end):
+    l = []
+    for mut_pos in sorted(mutations):
+        if mut_pos >= start and mut_pos <= end:
+            for mut in mutations[mut_pos]:
+                if mut not in l:
+                    l.append(mut)
+    return l
 
 def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
-                mutations, nodes, id_counter, id_dict, id_coords, start_pos):
+                mutations, nodes, id_counter, id_dict, id_coords, id_muts,
+                start_pos):
 
     """Adds a protein to the graph elements dictionary in "cytoscape-format"
 
@@ -109,9 +118,10 @@ def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
     id_counter += 1
 
     ## Add other protein elements:
-    nodes, id_counter, id_dict, id_coords = add_domains(prot_acc, protein_id, cursor,
-                                    start_x, start_y, nodes, id_counter, id_dict,
-                                    id_coords)
+    nodes, id_counter, id_dict, id_coords, id_muts = add_domains(prot_acc,
+                                    protein_id, cursor,
+                                    start_x, start_y, nodes, mutations,
+                                    id_counter, id_dict, id_coords, id_muts)
 
     nodes, id_counter = add_ptms(prot_acc, protein_id, cursor,
                                  start_x, start_y, nodes, id_counter)
@@ -123,11 +133,11 @@ def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
                                             start_x, start_y, nodes, id_counter)
 
 
-    return nodes, id_counter, id_dict, id_coords, start_pos
+    return nodes, id_counter, id_dict, id_coords, id_muts, start_pos
 
 
 def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
-                nodes, id_counter, id_dict, id_coords):
+                nodes, mutations, id_counter, id_dict, id_coords, id_muts):
 
     """Add protein's Pfam domains
 
@@ -160,9 +170,11 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
         })
         id_dict[prot_acc][domain["name"]].append(id_counter)
         id_coords[id_counter] = (str(start), str(end))
+        id_muts[id_counter] = muts_within_coords(mutations, start, end)
         id_counter += 1
 
-    return nodes, id_counter, id_dict, id_coords
+    return nodes, id_counter, id_dict, id_coords, id_muts
+
 
 
 def add_ptms(prot_acc, parent_id, cursor, start_x, start_y,
@@ -495,15 +507,17 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     id_counter = 0
     id_dict = {}
     id_coords = {}
+    id_muts = defaultdict(list)
     pfams, elms = {}, {}
     for prot_acc in sorted(list(target_prots)):
-        nodes, id_counter, id_dict, id_coords, start_pos = add_protein(
+        nodes, id_counter, id_dict, id_coords, id_muts, start_pos = add_protein(
                                                   protein_data,
                                                   cosmic_data, biogrid_data,
                                                   prot_acc, central_pos[prot_acc],
                                                   mutations[prot_acc],
                                                   nodes, id_counter, id_dict,
-                                                  id_coords, start_pos)
+                                                  id_coords, id_muts,
+                                                  start_pos)
 
         edges, id_counter = connect_protein_sequence(prot_acc, nodes, edges,
                                                      id_counter)
@@ -551,8 +565,8 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                             })
             id_counter += 1
 
-            line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "",
-                    "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
+            line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "", "",
+                    "", "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
 
 
@@ -563,8 +577,8 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
             pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
 
             if pdbs:
-                for i, source in enumerate(id_dict[ac_a][pfam_a]):
-                    for j, target in enumerate(id_dict[ac_b][pfam_b]):
+                for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
+                    for j, target in enumerate(id_dict[ac_b][pfam_b], 1):
                         if source == target:
                             continue
                         edges.append({ "group" : "edges",
@@ -578,27 +592,26 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                     })
                         id_counter += 1
 
-                        i =+ 1
-                        j =+ 1
                         domA = pfam_a
                         domB = pfam_b
                         if len(id_dict[ac_a][pfam_a]) > 1:
-                            domA = pfam_a+" ("+str(i)+")"
+                            domA += " ("+str(i)+")"
                         if len(id_dict[ac_b][pfam_b]) > 1:
-                            domB = pfam_b+" ("+str(j)+")"
+                            domB += " ("+str(j)+")"
                         line = [gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
                                 domA, "-".join(id_coords[source]),
-				domB, "-".join(id_coords[target]),
+                                "; ".join(id_muts[source]),
+                				domB, "-".join(id_coords[target]),
+                                "; ".join(id_muts[target]),
                                 pdbs, "3did"]
-
-                	lines.append(line)
+                        lines.append(line)
 
             ## domain propensities
             prop_lo = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
                                              obs_min=4, lo_min=2.0, ndom_min=4)
             if prop_lo:
-                for source in id_dict[ac_a][pfam_a]:
-                    for target in id_dict[ac_b][pfam_b]:
+                for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
+                    for j, target in enumerate(id_dict[ac_b][pfam_b], 1):
                         if source == target:
                             continue
                         edges.append({ "group" : "edges",
@@ -611,11 +624,19 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                     })
                         id_counter += 1
 
-                	line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
-                        	pfam_a, "-".join(id_coords[source]),
-				pfam_b, "-".join(id_coords[target]),
-				str(prop_lo), "Statistical Prediction"]
-                	lines.append(line)
+                        domA = pfam_a
+                        domB = pfam_b
+                        if len(id_dict[ac_a][pfam_a]) > 1:
+                            domA += " ("+str(i)+")"
+                        if len(id_dict[ac_b][pfam_b]) > 1:
+                            domB += " ("+str(j)+")"
+                        line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
+                            domA, "-".join(id_coords[source]),
+                            "; ".join(id_muts[source]),
+                            domB, "-".join(id_coords[target]),
+                            "; ".join(id_muts[target]),
+                            str(prop_lo), "Statistical Prediction"]
+                        lines.append(line)
 
         ## ELM-domain interactions
         for ac1, gene1, ac2, gene2 in zip([ac_a, ac_b], [gene_a, gene_b],
@@ -669,11 +690,13 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                           }
                                 })
                                 id_dict[ac1][elm_name].append(id_counter)
+                                id_coords[id_counter] = (str(start), str(end))
+                                id_muts[id_counter] = muts_within_coords(mutations[ac1], start, end)
                                 id_counter += 1
 
                             ## Add interaction edge
-                            for source in id_dict[ac1][elm_name]:
-                                for target in id_dict[ac2][pfam]:
+                            for i, source in enumerate(id_dict[ac1][elm_name], 1):
+                                for j, target in enumerate(id_dict[ac2][pfam], 1):
                                     edges.append(
                                             { "group" : "edges",
                                               "data" :
@@ -686,9 +709,19 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                             })
                                     id_counter += 1
 
-                            line = [gene1, ac1, gene2, ac2, "ELM::DOM",
-                                              elm_name, pfam, "", "ELM"]
-                            lines.append(line)
+                                    elmA = elm_name
+                                    domB = pfam
+                                    if len(id_dict[ac1][elm_name]) > 1:
+                                        elmA += " ("+str(i)+")"
+                                    if len(id_dict[ac2][pfam]) > 1:
+                                        domB += " ("+str(j)+")"
+                                    line = [gene1, ac1, gene2, ac2, "ELM::DOM",
+                                             elmA, "-".join(id_coords[source]),
+                                             "; ".join(id_muts[source]),
+                                             domB, "-".join(id_coords[target]),
+                                             "; ".join(id_muts[target]),
+                                             "", "ELM"]
+                                    lines.append(line)
 
         ## InterPreTS interactions
         for hit in get_Interprets_from_MongoDB(iprets_data, gene_a, gene_b):
@@ -732,15 +765,18 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                           }
                 })
                 id_dict[ac][label] = id_counter
+                id_muts[id_counter] = muts_within_coords(mutations[ac], start, end)
                 id_counter += 1
 
             ## Add interaction edge
+            source = id_dict[ac_a][label_a]
+            target = id_dict[ac_b][label_b]
             edges.append(
                 { "group" : "edges",
                   "data" :
                     { "id" : id_counter,
-                      "source" : id_dict[ac_a][label_a],
-                      "target" : id_dict[ac_b][label_b],
+                      "source" : source,
+                      "target" : target,
                       "role" : "INT_interaction",
                       "pdb": pdb,
                       "color": color,
@@ -750,7 +786,9 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
             id_counter += 1
 
             line = [gene_a, ac_a, gene_b, ac_b, "InterPreTS",
-                   label_a, label_b, str(z), "InterPreTS prediction"]
+                   label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
+                   label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
+                   str(z), "InterPreTS prediction"]
 
             lines.append(line)
 
@@ -763,11 +801,13 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
         json.dump(graph_elements, output, indent=4)
 
     ## Print interactions as JSON file
-    # for l in lines:
-    #     print l
+    for l in lines:
+        print "\t".join(l)
     int_table = {}
     int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
-                            "Type", "F(A)","F(B)","Info", "Source"]
+                            "Type", "F(A)","Start-End(A)", "Mutations(A)",
+                            "F(B)", "Start-End(B)", "Mutations(B)",
+                            "Info", "Source"]
     int_table["index"] = range(len(lines))
     int_table["data"] = lines
 
