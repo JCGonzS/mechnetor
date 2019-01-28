@@ -525,7 +525,7 @@ $(document).ready(function(){
 				"<span class='tipPfam'>Family</span> | " +
 				"<b><i>"+name+"</i></b> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
 				"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>" +
-				"<span class='tipPfam'>Coordinates</span> | " +
+				"<span class='tipPfam'>Start - End</span> | " +
 				"<b>"+start+"</b> - <b>"+end+"</b>" +
 				" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
 				"</span>",
@@ -563,7 +563,7 @@ $(document).ready(function(){
 					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
 					"<span class='tipELM'>Accession</span> | "+ acc + "<br>"+
 					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>"+
-					"<span class='tipELM'>Coordinates</span> | " +
+					"<span class='tipELM'>Start - End</span> | " +
 					"<b>"+start+"</b> - <b>"+end+"</b>" +
 					" (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>"+
 					"<span class=tipELM>Subsequence</span> | <i>"+seq+"</i>" +
