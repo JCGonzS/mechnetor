@@ -21,12 +21,12 @@ from Bio import SwissProt
 ## Data Files
 data_dir = ""
 common_data_dir = data_dir+"common/"
+pfam_data_file = common_data_dir + "Pfam-A.hmm_r32.0.dat.gz"
 species = "Hsa"
 sp_data_dir = data_dir+"species/"+species+"/"
 proteome_file =     sp_data_dir + "uniprot_sprot_human_complete_20303prts_March_2018.fasta.gz"
 uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
-pfam_hits_file =    sp_data_dir + "pfam_parsed_info.tsv.gz"
-pfam_data_file = common_data_dir + "Pfam-A.hmm_r32.0.dat.gz"
+pfam_matches_file = sp_data_dir + "pfamA_matches_9606.tsv.gz"
 elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
 psp_file =          sp_data_dir + "PSP_ptms_human.tsv.gz"
 
@@ -96,27 +96,50 @@ def get_protein_data_from_uniprot_text(uniprot_file):
                     D["doms"][uni_ac][(start,end)] = name
     return D
 
-def get_pfam_doms(pfam_hits_file, prot_id, max_eval=1):
-    """ Reads pre-generated file with domains already filtered
-        (best E-value and avoiding overlapping)
+def get_pfam_doms(pfam_file, prot_id, max_eval=1):
+    """Pfam-A matches in species proteome. File downloaded from PFAM.
     """
     pfams = defaultdict(lambda: defaultdict(set) )
     pfam_sets = defaultdict(set)
     pfam_names = {}
-    with open_file(pfam_hits_file) as f:
-        for line in f:
-            if line[0] != "#" and line.strip():
-                t = line.rstrip().split("\t")
-                uni_ac = t[0].split("|")[0].upper()
-                pfam_ac, pfam_name = t[1].split("|")
-                start, end, e_val = int(t[2]), int(t[3]), float(t[4])
 
-                if e_val <= max_eval and uni_ac in prot_id:
+    with open_file(pfam_file) as f:
+        for line in f:
+            if line[0] != "#":
+                t = line.rstrip().split("\t")
+                uni_ac = t[0].upper()
+                start, end = int(t[3]), int(t[4])
+                pfam_ac, pfam_name, domain_e_val = t[5], t[6], float(t[12])
+
+                if uni_ac in prot_id and domain_e_val <= max_eval:
                     uni_ac = prot_id[uni_ac]
-                    pfams[uni_ac][pfam_ac].add((start, end, e_val))
+                    pfams[uni_ac][pfam_ac].add((start, end, domain_e_val))
                     pfam_sets[pfam_ac].add(uni_ac)
                     pfam_names[pfam_ac] = pfam_name
+
     return pfams, pfam_sets, pfam_names
+
+# def get_pfam_doms(pfam_hits_file, prot_id, max_eval=1):
+#     """ Reads pre-generated file with domains already filtered
+#         (best E-value and avoiding overlapping)
+#     """
+#     pfams = defaultdict(lambda: defaultdict(set) )
+#     pfam_sets = defaultdict(set)
+#     pfam_names = {}
+#     with open_file(pfam_hits_file) as f:
+#         for line in f:
+#             if line[0] != "#" and line.strip():
+#                 t = line.rstrip().split("\t")
+#                 uni_ac = t[0].split("|")[0].upper()
+#                 pfam_ac, pfam_name = t[1].split("|")
+#                 start, end, e_val = int(t[2]), int(t[3]), float(t[4])
+#
+#                 if e_val <= max_eval and uni_ac in prot_id:
+#                     uni_ac = prot_id[uni_ac]
+#                     pfams[uni_ac][pfam_ac].add((start, end, e_val))
+#                     pfam_sets[pfam_ac].add(uni_ac)
+#                     pfam_names[pfam_ac] = pfam_name
+#     return pfams, pfam_sets, pfam_names
 
 def pfam_descriptions(pfam_data_file):
     d = {}
@@ -217,7 +240,7 @@ if mode not in ["mongo", "normal"]:
 prot_dict = get_protein_data_from_uniprot_text(uniprot_text_file)
 
 ## 2. Get Pfam domains and ELMs
-pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_hits_file,
+pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_matches_file,
                                                 prot_dict["AC"])
 
 pfam_des = pfam_descriptions(pfam_data_file)

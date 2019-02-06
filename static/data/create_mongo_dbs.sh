@@ -25,6 +25,11 @@ mongoimport --db interactions_Hsa --collection iprets_Hsa --file species/Hsa/hum
 gzip species/Hsa/human_aaa_biogrid_i2.txt
 #
 #
+gunzip species/Hsa/dom_dom_association.tsv.gz
+mongoimport --db interactions_Hsa --collection dom_dom_ass --file species/Hsa/dom_dom_association.tsv --type tsv --headerline
+gzip species/Hsa/dom_dom_association.tsv
+#
+#
 gunzip species/Hsa/dom_dom_lo.csv.gz
 mongoimport --db interactions_Hsa --collection domain_propensities_Hsa --file species/Hsa/dom_dom_lo.txt --type tsv --headerline
 gzip species/Hsa/dom_dom_lo.csv

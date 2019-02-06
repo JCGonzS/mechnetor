@@ -340,26 +340,49 @@ def get_interactor_biogrid_id(data, gene):
     return bio_id
 
 
-def get_3did_from_MongoDB(data, pfam_a, pfam_b):
+# def get_3did_from_MongoDB(data, pfam_a, pfam_b):
+#
+#     cursor = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
+#                  {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]},
+#                  {"_id": 0, "PDBs": 1})
+#     if cursor:
+#         return cursor["PDBs"]
 
-    cursor = data.find_one( {"$or": [{"Pfam_Name_A": pfam_a, "Pfam_Name_B": pfam_b},
-                 {"Pfam_Name_A": pfam_b, "Pfam_Name_B": pfam_a}]},
-                 {"_id": 0, "PDBs": 1})
-    if cursor:
-        return cursor["PDBs"]
+def get_3did_from_MongoDB(data, all_pfams):
+    d = defaultdict(dict)
+    cursor = data.find()
+    for c in cursor:
+        pfam_a = c["Pfam_Name_A"]
+        pfam_b = c["Pfam_Name_B"]
+        pdbs = c["PDBs"]
+        if pfam_a in all_pfams and pfam_b in all_pfams:
+            d[pfam_a][pfam_b]=pdbs
+    return d
 
 
-def domain_propensities_from_MongoDB(data, pfam_a, pfam_b,
+def dom_dom_association_from_MongoDB(data, pfam_a, pfam_b,
                                      obs_min, lo_min, ndom_min):
 
-    cursor = data.find_one({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
-    					   {"#DOM1": pfam_b, "DOM2": pfam_a}],
-    				  	   "OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
-    				  	   "N_DOM1": {"$gte": ndom_min},
-                           "N_DOM2": {"$gte": ndom_min}},
-    					    { "_id": 0, "LO": 1 })
+    cursor = data.find_one({"$or": [{"dom_name_a": pfam_a, "dom_name_b": pfam_b},
+    					   {"dom_name_a": pfam_b, "dom_name_b": pfam_a}],
+    				  	   "obs": {"$gte": obs_min}, "lo": {"$gte": lo_min},
+    				  	   "dom_n_a": {"$gte": ndom_min},
+                           "dom_n_b": {"$gte": ndom_min}},
+    					    { "_id": 0, "lo": 1 })
     if cursor:
-        return cursor["LO"]
+        return cursor["lo"]
+
+# def dom_dom_association_from_MongoDB(data, all_pfams, obs_min, lo_min, ndom_min):
+#     d = defaultdict(dict)
+#     cursor = data.find()
+#     for c in cursor:
+#         dom_a = c["dom_name_a"]
+#         dom_b = c["dom_name_b"]
+#         if (c["obs"]>=obs_min and c["lo"]>=lo_min
+#         and c["dom_n_a"]>=ndom_min and c["dom_n_b"]>=ndom_min):
+#             if (dom_a in all_pfams and dom_b in all_pfams):
+#                 d[dom_a][dom_b] = c["lo"]
+#     return d
 
 
 def get_elm_dom_from_MongoDB(data):
@@ -497,9 +520,8 @@ def color_from_zvalue(z_score):
 
 @line_profile
 def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
-        biogrid_data, iprets_data, db3did_data, dom_prop_data, elm_int_data,
-        elm_classes,
-        max_prots, graph_out, ints_out):
+        biogrid_data, iprets_data, db3did_data, dd_ass_data, elm_int_data,
+        elm_classes, max_prots):
 
     central_pos = central_positions_layout(target_prots)
     start_pos = {}
@@ -509,6 +531,7 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     id_coords = {}
     id_muts = defaultdict(list)
     pfams, elms = {}, {}
+    all_pfams = set()
     for prot_acc in sorted(list(target_prots)):
         nodes, id_counter, id_dict, id_coords, id_muts, start_pos = add_protein(
                                                   protein_data,
@@ -523,11 +546,17 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                                      id_counter)
 
         pfams[prot_acc] = pfams_of_acc_from_MongoDB(protein_data, prot_acc)
+        all_pfams.update(pfams[prot_acc])
         elms[prot_acc] = elms_of_acc_from_MongoDB(protein_data, prot_acc)
 
+
+    dd_3did = get_3did_from_MongoDB(db3did_data, all_pfams)
+    # dd_ass = dom_dom_association_from_MongoDB(dd_ass_data, all_pfams,
+    #                                         obs_min=4, lo_min=2.0, ndom_min=4)
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
     elm_info = get_elm_info(elm_classes)
 
+    ass_dict = defaultdict(dict)
     elm_nodes = defaultdict(list)
     lines = []
     for pair in itertools.combinations(target_prots, 2):
@@ -574,7 +603,12 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
             pfam_a, pfam_b = pfam_pair
 
             ## 3did interactions
-            pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
+            # pdbs = get_3did_from_MongoDB(db3did_data, pfam_a, pfam_b)
+            pdbs = ""
+            if pfam_a in dd_3did and pfam_b in dd_3did[pfam_a]:
+                pdbs = dd_3did[pfam_a][pfam_b]
+            elif pfam_b in dd_3did and pfam_a in dd_3did[pfam_b]:
+                pdbs = dd_3did[pfam_b][pfam_a]
 
             if pdbs:
                 for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
@@ -606,10 +640,22 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                 pdbs, "3did"]
                         lines.append(line)
 
-            ## domain propensities
-            prop_lo = domain_propensities_from_MongoDB(dom_prop_data, pfam_a, pfam_b,
-                                             obs_min=4, lo_min=2.0, ndom_min=4)
-            if prop_lo:
+            ## Inferred Domain-Domain interactions
+            if pfam_a in ass_dict and pfam_b in ass_dict[pfam_a]:
+                ass_lo = ass_dict[pfam_a][pfam_b]
+            else:
+                ass_lo = dom_dom_association_from_MongoDB(dd_ass_data, pfam_a, pfam_b,
+                                                 obs_min=5, lo_min=2.0, ndom_min=4)
+                ass_dict[pfam_a][pfam_b] = ass_lo
+                ass_dict[pfam_b][pfam_a] = ass_lo
+
+            # ass_lo = ""
+            # if pfam_a in dd_ass and pfam_b in dd_ass[pfam_a]:
+            #     ass_lo = dd_ass[pfam_a][pfam_b]
+            # elif pfam_b in dd_ass and pfam_a in dd_ass[pfam_b]:
+            #     ass_lo = dd_ass[pfam_b][pfam_a]
+
+            if ass_lo:
                 for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
                     for j, target in enumerate(id_dict[ac_b][pfam_b], 1):
                         if source == target:
@@ -618,8 +664,9 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                                        "data" : { "id" : id_counter,
                                                   "source" : source,
                                                   "target" : target,
+                                                  "lo": "{:.3f}".format(ass_lo),
                                                   "role" : "iDOM_interaction",
-                                                  "ds": "Statistical Prediction"
+                                                  "ds": "Association Method"
                                                  }
                                     })
                         id_counter += 1
@@ -635,7 +682,7 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                             "; ".join(id_muts[source]),
                             domB, "-".join(id_coords[target]),
                             "; ".join(id_muts[target]),
-                            str(prop_lo), "Statistical Prediction"]
+                            str(ass_lo), "Association Method"]
                         lines.append(line)
 
         ## ELM-domain interactions
@@ -795,22 +842,26 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     ## Color domain & LMs nodes
     nodes = color_regions(nodes, palette="custom1")
 
-    ## Print graph as JSON file
     graph_elements = nodes + edges
-    with open(graph_out, "w") as output:
-        json.dump(graph_elements, output, indent=4)
 
-    ## Print interactions as JSON file
-    for l in lines:
-        print "\t".join(l)
-    int_table = {}
-    int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
-                            "Type", "F(A)","Start-End(A)", "Mutations(A)",
-                            "F(B)", "Start-End(B)", "Mutations(B)",
-                            "Info", "Source"]
-    int_table["index"] = range(len(lines))
-    int_table["data"] = lines
+    return  graph_elements, lines
 
-    with open(ints_out,"w") as output:
-        json.dump(int_table, output)
-        # output.write(str(int_table))
+    # ## Print graph as JSON file
+    # graph_elements = nodes + edges
+    # with open(graph_out, "w") as output:
+    #     json.dump(graph_elements, output, indent=4)
+    #
+    # ## Print interactions as JSON file
+    # for l in lines:
+    #     print "\t".join(l)
+    # int_table = {}
+    # int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
+    #                         "Type", "F(A)","Start-End(A)", "Mutations(A)",
+    #                         "F(B)", "Start-End(B)", "Mutations(B)",
+    #                         "Info", "Source"]
+    # int_table["index"] = range(len(lines))
+    # int_table["data"] = lines
+    #
+    # with open(ints_out,"w") as output:
+    #     json.dump(int_table, output)
+    #     # output.write(str(int_table))

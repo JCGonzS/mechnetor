@@ -784,19 +784,24 @@ $(document).ready(function(){
 				doms.push("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
 				prots.push(node.parent().data("label"));
 			});
+			var lo = edge.data("lo");
 			var ds = edge.data("ds");
 
 			edge.qtip({
 				content:
 					"<span class='tip' style='color: #d4ac0d;'>" +
-						"<b>statistical prediction</b>" +
+						"<b>Inferred Domain-Domain ("+ds+")</b>" +
 					"</span><br>" +
 					"<span class='tip'>"+
 						"<span class='tipIdom'>Interacting Domains</span> | "+doms.join(" - ")+
 					"</span><br>"+
 					"<span class='tip'>"+
 						"<span class='tipIdom'>Interacting Proteins</span> | "+prots.join(" - ")+
+					"</span><br>" +
+					"<span class='tip'>"+
+						"<span class='tipIdom'>Association Score</span> | "+lo+
 					"</span>",
+
 				position: {
            my: 'top center',
            at: 'bottom center'

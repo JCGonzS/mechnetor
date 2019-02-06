@@ -17,10 +17,10 @@ $(document).ready(function(){
 						return '<a href=http://www.uniprot.org/uniprot/'+data+'  target="_blank">'+data+'</a>';
 						}
 				},
-				{
-					targets: [0, 1, 2, 3],
-					"width": "120px"
-				},
+				// {
+				// 	targets: [0, 1, 2, 3],
+				// 	"width": "120px"
+				// },
 				//gives text wrap width
 				{
 					targets: [-2],

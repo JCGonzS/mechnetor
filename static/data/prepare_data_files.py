@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-import sys, re
-import gzip
+import sys, re, os
+import gzip, math
+import os.path
 from collections import defaultdict
+from Bio import SwissProt
 
 
 def open_file(input_file, mode="r"):
@@ -14,37 +16,44 @@ def open_file(input_file, mode="r"):
         infile = open(input_file, mode)
     return infile
 
-def parse_fasta(proteome_file):
-    """Get protein sequences from FASTA file
-    and the convertion between the protein IDs (accession,gene name, uniprot ID)
-    """
-
+def parse_uniprot_data(data_file, db="sp,tr"):
     D = defaultdict(dict)
-    seqs, masks = {}, {}
+    sequences, masks = {}, {}
+    ref_proteome = set()
 
-    with open_file(proteome_file) as f:
-        for line in f:
-            if line[0] == ">":
-                uni_ac, uni_id = line.split()[0].split("|")[1:]
-                gn = uni_id
-                if "GN=" in line:
-                    gn = re.search(r"GN=([^\s]*)\s",line).group(1)
+    for record in SwissProt.parse(open_file(data_file)):
+        uni_id = record.entry_name
+        accs = record.accessions
+        uni_ac = accs[0]
+        gn = record.gene_name
+        if gn != "":
+            gn = re.search("Name[s]?=([^;]+)", record.gene_name).group(1).split()[0]
+        seq = record.sequence
+        dc = record.data_class
+        if dc == "Reviewed":
+            dc = "sp"
+        elif dc == "Unreviewed":
+            dc = "tr"
 
-                D["AC"][uni_ac], D["AC"][uni_id], D["AC"][gn] = uni_ac, uni_ac, uni_ac
-                D["ID"][uni_ac], D["ID"][uni_id], D["ID"][gn] = uni_id, uni_id, uni_id
-                D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn, gn, gn
-                D["AC"][uni_ac.upper()] = uni_ac
-                D["ID"][uni_ac.upper()] = uni_id
-                D["GN"][uni_ac.upper()] = gn
+        if dc in db.split(","):
+            D["AC"][uni_ac], D["AC"][uni_id], D["AC"][gn] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
+            D["AC"][uni_ac.upper()], D["AC"][uni_id.upper()], D["AC"][gn.upper()] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
+            D["ID"][uni_ac], D["ID"][uni_id], D["ID"][gn] = uni_id.upper(), uni_id.upper(), uni_id.upper()
+            D["ID"][uni_ac.upper()], D["ID"][uni_id.upper()], D["ID"][gn.upper()] = uni_id.upper(), uni_id.upper(), uni_id.upper()
+            D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn.upper(), gn.upper(), gn.upper()
+            D["GN"][uni_ac.upper()], D["GN"][uni_id.upper()], D["GN"][gn.upper()] = gn.upper(), gn.upper(), gn.upper()
+            for acc in accs:
+                D["AC"][acc], D["ID"][acc], D["GN"][acc] = uni_ac.upper(), uni_id.upper(), gn.upper()
+                D["AC"][acc.upper()], D["ID"][acc.upper()], D["GN"][acc.upper()] = uni_ac.upper(), uni_id.upper(), gn.upper()
 
-                seqs[uni_ac] = ""
-                masks[uni_ac] = ""
+            sequences[uni_ac.upper()] = seq
+            masks[uni_ac.upper()] = "0" * len(seq)
 
-            else:
-                seqs[uni_ac] += line.rstrip()
-                masks[uni_ac] += "0" * len(line.rstrip())
+        if dc == "sp":
+            ref_proteome.add(uni_ac.upper())
 
-    return D, seqs, masks
+    return D, sequences, masks, ref_proteome
+
 
 def calculate_overlap(start, end, mask):
     length = end - start + 1
@@ -58,12 +67,12 @@ def fill_mask(start, end, mask):
     mask = mask[:start] + ("1" * length) + mask[end-1:]
     return mask
 
-def parse_pfam_doms(pfam_hits_file, prot_dict, masks,
+def parse_pfam_doms(pfam_hmm_file, prot_dict, masks,
                     max_eval=0.1, max_overlap=0.2):
     """ Reads hmmsearch v. Pfam database results to extract the Pfam domains
         found in each protein
 
-    pfam_hits_file = "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
+    pfam_hmm_file = "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
     ac_dict = dictionary with conversion of any protein ID to UniProt accession
     sequences = dictionary containing the protein sequences per UniProt accession
     masks = = dictionary containing the sequence mask per UniProt accession
@@ -75,7 +84,7 @@ def parse_pfam_doms(pfam_hits_file, prot_dict, masks,
 
     domains = defaultdict(lambda: defaultdict(set) )
     domain_sets = defaultdict(set)
-    with open_file(pfam_hits_file) as f:
+    with open_file(pfam_hmm_file) as f:
         #: The entries of this file are already sorted by E-value (?), in ascending order,
         #: this means we can use a "first come, first served" to get the domains for each protein
         #:
@@ -108,7 +117,29 @@ def parse_pfam_doms(pfam_hits_file, prot_dict, masks,
 
     return domains, domain_sets, masks
 
-def get_pfam_doms(pfam_hits_file, prot_id, max_eval=1):                                                                                              """ Reads pre-generated file with domains already filtered                                                                                           (best E-value and avoiding overlapping)                                                                                                      """                                                                                                                                              pfams = defaultdict(lambda: defaultdict(set) )                                                                                                   pfam_sets = defaultdict(set)                                                                                                                     pfam_names = {}                                                                                                                                  with open_file(pfam_hits_file) as f:                                                                                                                 for line in f:                                                                                                                                       if line[0] != "#" and line.strip():                                                                                                                  t = line.rstrip().split("\t")                                                                                                                    uni_ac = t[0].split("|")[0].upper()                                                                                                              pfam_ac, pfam_name = t[1].split("|")                                                                                                             start, end, e_val = int(t[2]), int(t[3]), float(t[4])                                                                                                                                                                                                                                             if e_val <= max_eval and uni_ac in prot_id:                                                                                                          uni_ac = prot_id[uni_ac]                                                                                                                         pfams[uni_ac][pfam_ac].add((start, end, e_val))                                                                                                  pfam_sets[pfam_ac].add(uni_ac)                                                                                                                   pfam_names[pfam_ac] = pfam_name                                                                                                  return pfams, pfam_sets, pfam_names  
+def get_pfam_doms(pfam_file, prot_id, max_eval=1):
+    """Pfam-A matches in species proteome. File downloaded from PFAM.
+    """
+    pfams = defaultdict(lambda: defaultdict(set) )
+    pfam_sets = defaultdict(set)
+    pfam_names = {}
+
+    with open_file(pfam_file) as f:
+        for line in f:
+            if line[0] != "#":
+                t = line.rstrip().split("\t")
+                uni_ac = t[0].upper()
+                start, end = int(t[3]), int(t[4])
+                pfam_ac, pfam_name, domain_e_val = t[5], t[6], float(t[12])
+
+                if uni_ac in prot_id and domain_e_val <= max_eval:
+                    uni_ac = prot_id[uni_ac]
+                    pfams[uni_ac][pfam_ac].add((start, end, domain_e_val))
+                    pfam_sets[pfam_ac].add(uni_ac)
+                    pfam_names[pfam_ac] = pfam_name
+
+    return pfams, pfam_sets, pfam_names
+
 
 def parse_linear_motifs(elm_hits_file, prot_dict, masks,
                         max_eval=10, max_overlap=0.2):
@@ -211,57 +242,177 @@ def main( data_dir="",
         ):
 
     # Common files:
-    gen_dir = data_dir + "common/"
-    db_3did_file = com_dir + "3did_flat-2018_04.gz"
+    com_dir = data_dir+"common/"
+    db_3did_file = com_dir+"3did_flat-2018_04.gz"
 
     # Species Files
-    sp_data_dir = data_dir+"species/"+species+"/"
-    iprets_file = sp_data_dir + "human_aaa_biogrid_i2.txt.gz"
-    # proteome_file = sp_data_dir + "uniprot_sprot_species.fasta.gz"
-    # pfam_hits_file = sp_data_dir + "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
-    # elm_hits_file = sp_data_dir + "elm_hits.tsv.gz"
+    sp_data_dir   = data_dir+"species/"+species+"/"
+    uniprot_file  = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
+    pfam_matches_file = sp_data_dir + "pfamA_matches_9606.tsv.gz"
+    # pfam_hmm_file = sp_data_dir + "uniprot_v_Pfam_hmmsearch_sum.txt.gz"
+    iprets_file   = sp_data_dir+"human_aaa_biogrid_i2.txt.gz"
+    elm_hits_file = sp_data_dir + "elm_hits.tsv.gz"
+    hippie_file   = sp_data_dir+"hippie_v2-1_July2018.tsv.gz"
+    hippie_uniprot_mapping = sp_data_dir+"hippie_v2-1_uniprot_mapping_table.tsv.gz"
 
-    ## Editing Files
+    # Output Files
+    # pfam_parsed_file = sp_data_dir + "pfam_parsed_info.tsv.gz"
+    pfam_assoc_file = sp_data_dir + "dom_dom_association.tsv.gz"
+    elm_parsed_file = sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
     edited_3did_file = com_dir + "3did_flat_edited-2018_04.tsv.gz"
-    reduce_3did(db_3did_file, edited_3did_file)
 
-    # #: Output Files
-    pfam_parsed_file = sp_data_dir + "pfam_parsed_info.tsv.gz"
-    # elm_parsed_file = sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
-    #
-    # #: Get protein ID-dictionary, sequences and masks
-    # prot_id_dict, sequences, masks = parse_fasta(proteome_file)
-    #
-    # #: Get Pfam domains per protein from hmmsearch result file
-    # domains, domain_sets, ms = parse_pfam_doms(pfam_hits_file, prot_id_dict,
-    #                                    masks, max_overlap=max_overlap)
-    #
-    # #: Print them in TSV file
-    # with gzip.open(pfam_parsed_file, "wb") as out:
-    #     c = ["#UniProt_acc|Gene", "Pfam_ID|Name", "Start", "End", "E-val"]
-    #     out.write("\t".join(c) + "\n")
-    #     for uni_ac in sorted(domains):
-    #         for e_val in sorted(domains[uni_ac]):
-    #             for dom in domains[uni_ac][e_val]:
-    #                 out.write(dom + "\n")
-    #
-    # if no_overlap_between_doms_and_lms == "y":
-    #     masks = ms
-    #
-    # #: Get Linear Motifs per protein from hmmsearch result file
-    # lms, lm_sets = parse_linear_motifs(elm_hits_file, prot_id_dict, masks,
-    #                                 max_overlap=max_overlap)
-    # #: Print them in TSV file
-    # with gzip.open(elm_parsed_file, "wb") as out:
-    #     c = ["#UniProt_acc|Gene", "ELM_ID|Name", "Start", "End", "Some_Score"]
-    #     out.write("\t".join(c) + "\n")
-    #     for uni_ac in sorted(lms):
-    #         for lm in sorted(lms[uni_ac]):
-    #             for instance in lms[uni_ac][lm]:
-    #                 out.write(instance + "\n")
-    return
+    #1: Get protein ID-dictionary, sequences and masks
+    prot_id_dict, sequences, masks, ref_prot = parse_uniprot_data(uniprot_file)
 
-##USE dom2dom.py FOR CALCULATING DOM-DOM PROPENSITIES!!!!!!!!!
+    #2: Parse Pfam domains per protein from hmmsearch result file
+    # if not os.path.isfile(pfam_parsed_file):
+    #     domains, domain_sets, ms = parse_pfam_doms(pfam_hmm_file, prot_id_dict,
+    #                                        masks, max_overlap=max_overlap)
+    #
+    #     #: Print them in TSV file
+    #     with gzip.open(pfam_parsed_file, "wb") as out:
+    #         c = ["#UniProt_acc|Gene", "Pfam_ID|Name", "Start", "End", "E-val"]
+    #         out.write("\t".join(c) + "\n")
+    #         for uni_ac in sorted(domains):
+    #             for e_val in sorted(domains[uni_ac]):
+    #                 for dom in domains[uni_ac][e_val]:
+    #                     out.write(dom + "\n")
+
+    #3: Get Linear Motifs per protein from hmmsearch result file
+    if not os.path.isfile(elm_parsed_file):
+        lms, lm_sets = parse_linear_motifs(elm_hits_file, prot_id_dict, masks,
+                                        max_overlap=max_overlap)
+        #: Print them in TSV file
+        with gzip.open(elm_parsed_file, "wb") as out:
+            c = ["#UniProt_acc|Gene", "ELM_ID|Name", "Start", "End", "Some_Score"]
+            out.write("\t".join(c) + "\n")
+            for uni_ac in sorted(lms):
+                for lm in sorted(lms[uni_ac]):
+                    for instance in lms[uni_ac][lm]:
+                        out.write(instance + "\n")
+
+    #4: Editing Files
+    if not os.path.isfile(edited_3did_file):
+        reduce_3did(db_3did_file, edited_3did_file)
+
+    ## Calculating Dom-Dom Interactions (Association Method)
+    ## using Swissprot proteins as reference set
+    ## Parameters:
+    ## (from HIPPIE) Medium confidence = 0.63 / High confidence = 0.73
+    hippie_score = 0.63
+    ## Minimum number of protein pairs with the domain-domain signature
+    min_npair = 1
+    ## domain count could be another parameter
+
+    pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_matches_file,
+                                                prot_id_dict["AC"])
+
+    # Source of PPI: HIPPIE (until I find something better)
+    # not all ids from the hippie db matched a uniprot_ac, thus Uniprot mapping
+    # tool was used and the results need to be read before:
+    hippie_map = {}
+    with open_file(hippie_uniprot_mapping) as f:
+        for line in f:
+            t = line.rstrip().split("\t")
+            for x in t[0].split(","):
+                hippie_map[x] = t[1]
+
+    ppi = defaultdict(dict)
+    with open_file(hippie_file) as f:
+        for line in f:
+            t = line.rstrip().split("\t")
+            protsA = t[0].split(",")
+            protsB = t[2].split(",")
+            score = float(t[4])
+            pmids = 0
+            ## Score threshold to keep PPI
+            ## (from HIPPIE) Medium confidence = 0.63 / High confidence = 0.73
+            if score < hippie_score:
+                continue
+            info = t[5]
+            if "pmids" in info:
+                pmids = len(info.split(";")[1].split(":")[1].split(","))
+
+            for protA in protsA:
+                for protB in protsB:
+                    if protA!="" and protB!="":
+                        a = hippie_map[protA]
+                        b = hippie_map[protB]
+                        if a < b:
+                            a = hippie_map[protB]
+                            b = hippie_map[protA]
+                        if (a in prot_id_dict["AC"] and b in prot_id_dict["AC"]):
+                            a = prot_id_dict["AC"][a]
+                            b = prot_id_dict["AC"][b]
+                            # if a!=b:
+                            if (a in ref_prot and b in ref_prot):
+                                if (a in ppi and b in ppi[a]):
+                                    if pmids > ppi[a][b][1]:
+                                        ppi[a][b] = (score, pmids)
+                                else:
+                                    ppi[a][b] = (score, pmids)
+
+    # Count domain individual and pair frequencies in non redundant protein pairs
+    # (domains are counted only once when they are repeated in the same protein)
+    pfam_pair_count = defaultdict(lambda: defaultdict(int))
+    total_prts = set()
+    total_pp_pairs = 0
+    for a in ppi:
+        total_prts.add(a)
+        for b in ppi[a]:
+            total_prts.add(b)
+            total_pp_pairs += 1
+
+            if a in pfams and b in pfams:
+                # Count domain pair frequency
+                for pfam_a in pfams[a]:
+                    for pfam_b in pfams[b]:
+                        if pfam_a >= pfam_b:
+                            pfam_pair_count[pfam_a][pfam_b] += 1
+                        else:
+                            pfam_pair_count[pfam_b][pfam_a] += 1
+
+    # Count individual domain frequency
+    pfam_count = defaultdict(int)
+    # for prot in total_prts:
+    #     for pfam in pfams[prot]:
+    #         pfam_count[pfam] += 1
+
+    ref_pfam = set()
+    for uni_ac in ref_prot:
+        if uni_ac in pfams:
+            ref_pfam.add(uni_ac)
+            for pfam in pfams[uni_ac]:
+                pfam_count[pfam] += 1
+
+
+    ## Compute domain-domain statistics
+    ## (only those appearing in some PPI. To the rest we can assign the lowest
+    ## LO score)
+    lo = set()
+    with gzip.open(pfam_assoc_file, "wb") as out:
+        out.write("\t".join(["dom_ac_a","dom_ac_b","dom_name_a",
+            "dom_name_b","dom_n_a","dom_n_b","obs","exp","or","lo"])+"\n")
+        for pfam_a in sorted(pfam_pair_count):
+            for pfam_b in sorted(pfam_pair_count[pfam_a]):
+                n_pair = pfam_pair_count[pfam_a][pfam_b]
+                n_a = pfam_count[pfam_a]
+                n_b = pfam_count[pfam_b]
+                exp = (n_a * n_b) / float(len(ref_prot) * len(ref_prot)) * total_pp_pairs
+                oddsratio = float(n_pair) / exp
+                log2 = math.log(oddsratio, 2)
+                if n_pair >= min_npair:
+                    out.write("\t".join([pfam_a, pfam_b,
+                                    pfam_names[pfam_a], pfam_names[pfam_b],
+                                    str(n_a), str(n_b), str(n_pair), str(exp),
+                                    str(oddsratio), str(log2)])+"\n")
+
+                    lo.add(log2)
+
+    # print "#Reference proteome =",len(ref_prot),"with pfams =",len(ref_pfam)
+    # print "#Total PPI pairs =", total_pp_pairs, "- involving", len(total_prts)
+    # print "#Lowest / highest LO =",sorted(list(lo))[0],"/", sorted(list(lo))[-1]
+
 
 if __name__ == "__main__":
     main()
