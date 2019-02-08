@@ -132,7 +132,7 @@ def get_pfam_doms(pfam_file, prot_id, max_eval=1):
                 start, end = int(t[3]), int(t[4])
                 pfam_ac, pfam_name, domain_e_val = t[5], t[6], float(t[12])
 
-                if uni_ac in prot_id and domain_e_val <= max_eval:
+                if uni_ac in prot_id:# and domain_e_val <= max_eval:
                     uni_ac = prot_id[uni_ac]
                     pfams[uni_ac][pfam_ac].add((start, end, domain_e_val))
                     pfam_sets[pfam_ac].add(uni_ac)

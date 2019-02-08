@@ -52,11 +52,6 @@ def assign_Number(inputString):
 def get_protein_data_from_uniprot_text(uniprot_file):
     """From SwissProt"""
 
-    ## this funcion should also print the
-    ## "parsed_swissprot" version that pipeline_v2 uses
-    ##
-    ## !!!!
-
     D = defaultdict(dict)
     D["doms"] = defaultdict(dict)
     for record in SwissProt.parse(open_file(uniprot_file)):
@@ -96,7 +91,7 @@ def get_protein_data_from_uniprot_text(uniprot_file):
                     D["doms"][uni_ac][(start,end)] = name
     return D
 
-def get_pfam_doms(pfam_file, prot_id, max_eval=1):
+def get_pfam_doms(pfam_file, prot_id, max_eval=999):
     """Pfam-A matches in species proteome. File downloaded from PFAM.
     """
     pfams = defaultdict(lambda: defaultdict(set) )
@@ -111,7 +106,7 @@ def get_pfam_doms(pfam_file, prot_id, max_eval=1):
                 start, end = int(t[3]), int(t[4])
                 pfam_ac, pfam_name, domain_e_val = t[5], t[6], float(t[12])
 
-                if uni_ac in prot_id and domain_e_val <= max_eval:
+                if uni_ac in prot_id:# and domain_e_val <= max_eval:
                     uni_ac = prot_id[uni_ac]
                     pfams[uni_ac][pfam_ac].add((start, end, domain_e_val))
                     pfam_sets[pfam_ac].add(uni_ac)
