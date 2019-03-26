@@ -17,17 +17,49 @@ import json
 import bson
 import base64
 from bson.binary import Binary
+from sshtunnel import SSHTunnelForwarder
+import pymongo
+import pprint
 
+server = SSHTunnelForwarder(
+    "pevolution2@bioquant.uni-heidelberg.de",
+    ssh_username="bq_jgonzalez",
+    ssh_password=sys.argv[1],
+    remote_bind_address=('127.0.0.1', 27017)
+)
+server.start()
+
+client = pymongo.MongoClient('127.0.0.1', server.local_bind_port) # server.local_bind_port is assigned local port
+db = client["string"]
+
+pprint.pprint(db.collection_names())
+
+server.stop()
+sys.exit()
 # connection to MongoDB database #
-client = MongoClient('localhost', 27017)
+# client = MongoClient('localhost', 27017)
+client = MongoClient("mongodb://131.111.5.153:27017/string")
 
+print client
 # Get database #
-db = client['interactions_common']
+db = client['string']
 # Get collection #
-data = db['elm_dom']
+data = db['human_uniprot2string']
+data2 = db["human_protein_links"]
 
-cursor = data.find()
+d,d2 = {}, {}
+for doc in data.find():
+	print doc
+	# d[doc["uni_ac"]] = doc["string_id"]
+	# d2[doc["string_id"]] = doc["uni_ac"]
+sys.exit()
+prot = "P04637"
 
+for doc in data2.find({"protein1": d[prot]}, {"_id": 0}):
+	if doc["protein2"] in d2:
+		print d2[doc["protein2"]]
+
+sys.exit()
 # pfam_a = "XkdN"
 # pfam_b = "SH3_9"
 # obs_min=1
@@ -35,11 +67,11 @@ cursor = data.find()
 # ndom_min=1
 #
 #
-# cursor = data.find({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
-# 					{"#DOM1": pfam_b, "DOM2": pfam_a}],
-# 					"OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
-# 					"N_DOM1": {"$gte": ndom_min}, "N_DOM2": {"$gte": ndom_min}},
-# 					{ "_id": 0})
+cursor = data.find({"$or": [{"#DOM1": pfam_a, "DOM2": pfam_b},
+					{"#DOM1": pfam_b, "DOM2": pfam_a}],
+					"OBS": {"$gte": obs_min}, "LO": {"$gte": lo_min},
+					"N_DOM1": {"$gte": ndom_min}, "N_DOM2": {"$gte": ndom_min}},
+					{ "_id": 0})
 #
 for c in cursor:
 	pprint.pprint(c)
