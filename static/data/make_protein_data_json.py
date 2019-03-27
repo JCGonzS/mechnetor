@@ -24,10 +24,11 @@ common_data_dir = data_dir+"common/"
 pfam_data_file = common_data_dir + "Pfam-A.hmm.dat.gz"
 species = "Hsa"
 sp_data_dir = data_dir+"species/"+species+"/"
-# uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
 uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73928prts_Mar2019_data.txt.gz"
 pfam_matches_file = sp_data_dir + "pfamA_matches_9606_Aug18.tsv.gz"
-elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
+# elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
+elm_hits_file =     sp_data_dir + "elm_parsed_info_Overlapping.tsv.gz"
+elm_dom_file = common_data_dir +  "elm_interaction_domains_edited_Jan18.tsv"
 psp_file =          sp_data_dir + "PSP_ptms_human_Mar2019.tsv.gz"
 
 
@@ -79,7 +80,6 @@ def get_protein_data_from_uniprot_text(uniprot_file):
     """
 
     D = defaultdict(lambda: defaultdict(set))
-    # D["doms"] = defaultdict(dict)
     for record in SwissProt.parse(open_file(uniprot_file)):
         dc  = record.data_class
         uni_id = record.entry_name
@@ -126,14 +126,6 @@ def get_protein_data_from_uniprot_text(uniprot_file):
         for g in gns[1:]:
             D["AC"][g].add(uni_ac.upper())
             D["AC"][g.upper()].add(uni_ac.upper())
-
-        # for feat in record.features:
-        #     if feat[0] == "DOMAIN":
-        #         name = feat[-2].split(".")[0]
-        #         if re.search("([\d]+)", str(feat[1])) and re.search("([\d]+)", str(feat[2])):
-        #             start = int(re.search("([\d]+)", str(feat[1])).group(1))
-        #             end = int(re.search("([\d]+)", str(feat[2])).group(1))
-        #             D["doms"][uni_ac][(start,end)] = name
 
     return D
 
@@ -206,11 +198,19 @@ def pfam_descriptions(pfam_data_file):
                 d[ac] = des
     return d
 
-def get_linear_motifs(elm_hits_file, prot_dict, max_eval=1):
+def get_interacting_linear_motifs(elm_hits_file, elm_dom_file, prot_dict, max_eval=1):
     """ Reads pre-generated file with ELMs annotated for each protein
         If there's any filtering for these, it has already been done. All the
         info of this file is considered equally valid (take all)
     """
+    # Restrict to elms apearing in the elm_dom interaction file. PIV won't use any other
+    int_elms = []
+    with open_file(elm_dom_file) as f:
+        for line in f:
+            t = line.rstrip().split("\t")
+            if line[0]!="#":
+                int_elms.append(t[0])
+
     elms = defaultdict(lambda: defaultdict(set) )
     elms_temp = defaultdict(lambda: defaultdict(set) )
     elm_sets = defaultdict(set)
@@ -225,7 +225,7 @@ def get_linear_motifs(elm_hits_file, prot_dict, max_eval=1):
                 elm_start, elm_end = int(t[2]), int(t[3])
                 some_score = float(t[4])
 
-                if some_score <= max_eval:
+                if elm_name in int_elms and some_score <= max_eval:
                     if uni_ac in prot_dict["seq"]:
                         elms[uni_ac][elm_ac].add((elm_start, elm_end, some_score))
                         elm_sets[elm_ac].add(uni_ac)
@@ -317,14 +317,15 @@ prot_dict = get_protein_data_from_uniprot_text(uniprot_text_file)
 ## 2. Get Pfam domains and ELMs
 pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_matches_file, prot_dict)
 pfam_des = pfam_descriptions(pfam_data_file)
-elms, elm_sets, elm_names = get_linear_motifs(elm_hits_file, prot_dict)
+elms, elm_sets, elm_names = get_interacting_linear_motifs(elm_hits_file,
+                                                        elm_dom_file, prot_dict)
 
 ## 3. Get PTMs
 ptms = get_ptms(psp_file, prot_dict)
 
 ## 4. Output
 pp = pprint.PrettyPrinter(indent=4)
-outfile_name = sp_data_dir+"protein_data_"+species+"_"+mode+"3.json.gz"
+outfile_name = sp_data_dir+"protein_data_"+species+"_"+mode+".json.gz"
 
 if mode == "json":
     protein_data = {}
