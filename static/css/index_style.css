@@ -1,90 +1,50 @@
-#body_t1 #intro p{
+body {
+  color: #99AABB;
+}
+#main_container {
+  margin: auto;
+}
+#body_t2{
+  /* background-color: green; */
+}
+#intro {
   width: 70%;
   top: 5em;
   padding: 10px;
   font-size: 14px;
-  font-family: "Merriweather",serif;
+  /* font-family: "Merriweather",serif; */
   white-space: normal;
   line-height: 25px;
-  color: #99AABB;
 }
 
 textarea {
-  width: 30em;
-  height: 200px;
+  width: 20em;
+  height: 100px;
   resize:vertical;
-  font: 1em Helvetica, arial, sans-serif;
   overflow: auto;
-  /*font-style: oblique;
-  color: grey;*/
   box-sizing: border-box;
   border: 2px solid #ccc;
   border-radius: 6px;
   background-color: #f8f8f8;
   padding: 7px 7px;
+  /* font: 1em Helvetica, arial, sans-serif; */
+  /* font-style: oblique;
+  color: grey; */
 }
 textarea:focus {
   border-color: #888;
 }
 
-#body_t2 {
-  color: #99AABB;
-}
-
-#feat_and_data {
-  color: #99AABB;
-  right: 0;
-  left: 0;
-  margin-right: auto;
-  margin-left: auto;
-  width: 100%;
-}
-#feat_and_data a {
-  color: white;
-}
-#feat_and_data li {
-  list-style-type: circle;
-  color: white;
-}
-.title {
-  font-family: "Lato",sans-serif;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.subtitle {
-  font-family: "Lato",sans-serif;
-}
-.paragraph {
-  font-family: "Merriweather",serif;
-  font-size: 14px;
-  /*width: 800px;*/
-  white-space: normal;
-  line-height: 25px;
-}
-.db {
-  font-family: "Merriweather",serif;
-  font-size: 14px;
-}
-.info {
-  font-family: "Merriweather",serif;
-  font-weight: 300;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-
 label {
-  text-align: left;
+  font-size: 13px;
 }
-label[for=query_prots]{
+label[for=prots_input], label[for=muts_input]{
   color: white;
+  font-size: 15px;
 }
-label[for=query_muts]{
-  color: white;
-}
-label[for=upload]{
-  font-size: 12px;
-}
+/* label[for=prots_input_file], label[for=muts_input_file], label[for=max_prots]{
+  font-size: 13px;
+} */
 label.error {
   width: 303px;
   color: #a94442;
@@ -98,20 +58,27 @@ input {
   font-size: 13px;
 }
 
-button {
-  display: inline-block;
-  border-radius: 6px;
-  background-color: #C5C6C7;
-  border: none;
-  padding: 5px;
-  width: 120px;
-  margin: 2px;
-  color: #1F2833;
-  font-size: 1em;
-  /* text-align: center; */
-  vertical-align: middle;
-  cursor: pointer;
+hr{
+  border-width: 1px;
+  border-color: white;
+  color: white;
+}
 
+#max_prots {
+  width: 30px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+button {
   /* GROW EFFECT */
   -webkit-transform: perspective(1px) translateZ(0);
   transform: perspective(1px) translateZ(0);
@@ -125,6 +92,23 @@ button:hover {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+
+.button1 {
+  display: inline-block;
+  border-radius: 6px;
+  background-color: #C5C6C7;
+  border: none;
+  padding: 5px;
+
+  margin: 2px;
+  color: #1F2833;
+  font-size: 1em;
+  /* text-align: center; */
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+
 
 .ex_button {
   width: 60px;
@@ -150,6 +134,11 @@ button:hover {
   color: white;
 }
 
+.button2 {
+  width: 120px;
+  background-color: #34495e;
+  color: white;
+}
 #submit-button {
   padding-left: 15px;
   border-radius: 6px;
