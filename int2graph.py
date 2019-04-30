@@ -28,13 +28,13 @@ def central_positions_layout(proteins):
 
     return central_pos
 
-def muts_within_coords(mutations, start, end):
+def muts_within_coords(ac, mutations, start, end):
     l = []
     for mut_pos in sorted(mutations):
         if mut_pos >= start and mut_pos <= end:
             for mut in mutations[mut_pos]:
                 if mut not in l:
-                    l.append(mut)
+                    l.append(ac+"/"+mut)
     return l
 
 def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
@@ -169,7 +169,7 @@ def add_domains(prot_acc, parent_id, cursor, start_x, start_y,
         })
         id_dict[prot_acc][domain["name"]].append(id_counter)
         id_coords[id_counter] = (str(start), str(end))
-        id_muts[id_counter] = muts_within_coords(mutations, start, end)
+        id_muts[id_counter] = muts_within_coords(prot_acc, mutations, start, end)
         id_counter += 1
 
     return nodes, id_counter, id_dict, id_coords, id_muts
@@ -742,7 +742,7 @@ def main(mode,
                                 })
                                 id_dict[ac1][elm_name].append(id_counter)
                                 id_coords[id_counter] = (str(start), str(end))
-                                id_muts[id_counter] = muts_within_coords(mutations[ac1], start, end)
+                                id_muts[id_counter] = muts_within_coords(ac1, mutations[ac1], start, end)
                                 id_counter += 1
 
                             ## Add interaction edge
@@ -816,7 +816,7 @@ def main(mode,
                           }
                 })
                 id_dict[ac][label] = id_counter
-                id_muts[id_counter] = muts_within_coords(mutations[ac], start, end)
+                id_muts[id_counter] = muts_within_coords(ac, mutations[ac], start, end)
                 id_counter += 1
 
             ## Add interaction edge
