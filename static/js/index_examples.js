@@ -1,11 +1,11 @@
 document.getElementById("ex1").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 1";
-      var text1 = document.getElementById('query_prots');
+      var text1 = document.getElementById('prots_input');
       text1.value = `TCF3
 CBFA2T3
 ID3`;
-      var text2 = document.getElementById('query_muts');
+      var text2 = document.getElementById('muts_input');
       text2.value = `CBFA2T3/D105G
 TCF3/N554K
 TCF3/N555D
@@ -38,7 +38,7 @@ ID3/Q100STOP`;
 document.getElementById("ex2").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 2"
-      var text1 = document.getElementById('query_prots');
+      var text1 = document.getElementById('prots_input');
       text1.value = `SMARCA4
 SMARCA2
 WWOX
@@ -59,7 +59,7 @@ TP53
 POLR2A
 SMARCD3
 TAT`;
-      var text2 = document.getElementById('query_muts');
+      var text2 = document.getElementById('muts_input');
       text2.value = `SMARCA4/T308M
 SMARCA4/V1404I
 SMARCA4/V1552I`;
@@ -68,14 +68,14 @@ SMARCA4/V1552I`;
 document.getElementById("ex3").addEventListener('click', function () {
       // var name = document.getElementById('name');
       // name.value = "Example 3 with LMD2 data"
-      var text1 = document.getElementById('query_prots');
+      var text1 = document.getElementById('prots_input');
       text1.value = `SORBS3
 PAK1
 CBL
 SYP
 DLG5
 WASL`;
-      var text2 = document.getElementById('query_muts');
+      var text2 = document.getElementById('muts_input');
       text2.value = "";
 
 //       var text3 = document.getElementById('query_lmd2');
