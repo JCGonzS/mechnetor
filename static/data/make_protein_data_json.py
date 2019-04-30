@@ -26,8 +26,8 @@ species = "Hsa"
 sp_data_dir = data_dir+"species/"+species+"/"
 uniprot_text_file = sp_data_dir + "uniprot_homo_sapiens_proteome_73928prts_Mar2019_data.txt.gz"
 pfam_matches_file = sp_data_dir + "pfamA_matches_9606_Aug18.tsv.gz"
-# elm_hits_file =     sp_data_dir + "elm_parsed_info_noOverlap.tsv.gz"
-elm_hits_file =     sp_data_dir + "elm_parsed_info_Overlapping.tsv.gz"
+elm_hits_file =     sp_data_dir + "elm_hits.tsv.gz"
+# elm_hits_file =     sp_data_dir + "elm_parsed_info_Overlapping.tsv.gz"
 elm_dom_file = common_data_dir +  "elm_interaction_domains_edited_Jan18.tsv"
 psp_file =          sp_data_dir + "PSP_ptms_human_Mar2019.tsv.gz"
 
@@ -80,6 +80,7 @@ def get_protein_data_from_uniprot_text(uniprot_file):
     """
 
     D = defaultdict(lambda: defaultdict(set))
+    masks = {}
     for record in SwissProt.parse(open_file(uniprot_file)):
         dc  = record.data_class
         uni_id = record.entry_name
@@ -114,10 +115,6 @@ def get_protein_data_from_uniprot_text(uniprot_file):
                 D[dic][key].add(val.upper())
                 D[dic][key.upper()].add(val.upper())
 
-        D["des"][uni_ac.upper()] = des
-        D["dc"][uni_ac.upper()] = dc
-        D["seq"][uni_ac.upper()] = record.sequence
-
         for ac in accs[1:]:
             # if ac!=uni_ac and ac in D["AC"]:
             #     print uni_ac, ac, D["AC"][ac]
@@ -127,7 +124,12 @@ def get_protein_data_from_uniprot_text(uniprot_file):
             D["AC"][g].add(uni_ac.upper())
             D["AC"][g.upper()].add(uni_ac.upper())
 
-    return D
+        D["des"][uni_ac.upper()] = des
+        D["dc"][uni_ac.upper()] = dc
+        D["seq"][uni_ac.upper()] = record.sequence
+        masks[uni_ac] = "0" * len(record.sequence)
+
+    return D, masks
 
 def get_pfam_doms(pfam_file, prot_dict, max_eval=999):
     """Pfam-A matches in species proteome. File downloaded from PFAM.
@@ -136,7 +138,6 @@ def get_pfam_doms(pfam_file, prot_dict, max_eval=999):
     pfams_temp = defaultdict(lambda: defaultdict(set) )
     pfam_sets = defaultdict(set)
     pfam_names = {}
-    d = {}
     with open_file(pfam_file) as f:
         for line in f:
             if line[0] != "#":
@@ -198,7 +199,8 @@ def pfam_descriptions(pfam_data_file):
                 d[ac] = des
     return d
 
-def get_interacting_linear_motifs(elm_hits_file, elm_dom_file, prot_dict, max_eval=1):
+def get_interacting_linear_motifs(elm_dom_file, elm_hits_file, prot_dict, masks,
+                                  max_overlap, max_eval=1):
     """ Reads pre-generated file with ELMs annotated for each protein
         If there's any filtering for these, it has already been done. All the
         info of this file is considered equally valid (take all)
@@ -213,33 +215,35 @@ def get_interacting_linear_motifs(elm_hits_file, elm_dom_file, prot_dict, max_ev
 
     elms = defaultdict(lambda: defaultdict(set) )
     elms_temp = defaultdict(lambda: defaultdict(set) )
-    elm_sets = defaultdict(set)
     elm_names = {}
-    s = set()
     with open_file(elm_hits_file) as f:
         for line in f:
             if line[0] != "#" and line.strip():
                 t = line.rstrip().split("\t")
-                uni_ac = t[0].split("|")[0].upper()
-                elm_ac, elm_name = t[1].split("|")
-                elm_start, elm_end = int(t[2]), int(t[3])
-                some_score = float(t[4])
+                elm_name, elm_ac = t[0], t[1]
+                uni_ac, uni_id = t[2].split("|")[1:]
+                elm_start, elm_end = int(t[4]), int(t[5])
+                prob_score = float(t[6]) # probability score based on the combined expected frequencies of the AAs in the regular expression
 
-                if elm_name in int_elms and some_score <= max_eval:
+                if elm_name in int_elms:
                     if uni_ac in prot_dict["seq"]:
-                        elms[uni_ac][elm_ac].add((elm_start, elm_end, some_score))
-                        elm_sets[elm_ac].add(uni_ac)
-                        elm_names[elm_ac] = elm_name
+                        overlap = calculate_overlap(elm_start, elm_end, masks[uni_ac])
+                        if overlap <= max_overlap:
+                            masks[uni_ac] = fill_mask(elm_start, elm_end, masks[uni_ac])
+                            elms[uni_ac][elm_ac].add((elm_start, elm_end, prob_score))
+                            elm_names[elm_ac] = elm_name
                     elif uni_ac in prot_dict["AC"]:
-                        elms_temp[uni_ac][elm_ac].add((elm_start, elm_end, some_score))
+                        elms_temp[uni_ac][elm_ac].add((elm_start, elm_end, prob_score))
 
     for alt_ac in elms_temp:
         for uni_ac in prot_dict["AC"][alt_ac]:
             if uni_ac not in elms:
-                elms[uni_ac] = elms_temp[alt_ac]
-                elm_sets[elm_ac].add(uni_ac)
-                elm_names[elm_ac] = elm_name
-    return elms, elm_sets, elm_names
+                overlap = calculate_overlap(elm_start, elm_end, masks[uni_ac])
+                if overlap <= max_overlap:
+                    masks[uni_ac] = fill_mask(elm_start, elm_end, masks[uni_ac])
+                    elms[uni_ac] = elms_temp[alt_ac]
+                    elm_names[elm_ac] = elm_name
+    return elms, elm_names
 
 def get_ptms(psp_file, prot_id):
     psp = defaultdict(set)
@@ -291,6 +295,18 @@ def get_ppi_pairs(biogrid_file):
 
 	return
 
+def calculate_overlap(start, end, mask):
+    length = end - start + 1
+    sub_mask = mask[start-1:end]
+    n1 = len(sub_mask) - len(sub_mask.replace("1", ""))
+    overlap = n1 / float(length)
+    return overlap
+
+def fill_mask(start, end, mask):
+    length = end - start + 1
+    mask = mask[:start] + ("1" * length) + mask[end-1:]
+    return mask
+
 # biogrid_file = sp_data_dir + "BIOGRID-ORGANISM-3.5.165.tab2.txt.gz"
 # get_ppi_pairs(biogrid_file)
 # sys.exit
@@ -312,13 +328,14 @@ if mode not in ["mongo", "normal"]:
 
 
 ## 1. Get Uniprot Accession, IDs and Gene names conversions ###
-prot_dict = get_protein_data_from_uniprot_text(uniprot_text_file)
+prot_dict, masks = get_protein_data_from_uniprot_text(uniprot_text_file)
 
 ## 2. Get Pfam domains and ELMs
 pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_matches_file, prot_dict)
 pfam_des = pfam_descriptions(pfam_data_file)
-elms, elm_sets, elm_names = get_interacting_linear_motifs(elm_hits_file,
-                                                        elm_dom_file, prot_dict)
+elms, elm_names = get_interacting_linear_motifs(elm_dom_file, elm_hits_file,
+                                                          prot_dict, masks,
+                                                          max_overlap=2)
 
 ## 3. Get PTMs
 ptms = get_ptms(psp_file, prot_dict)

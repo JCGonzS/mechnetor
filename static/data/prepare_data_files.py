@@ -39,44 +39,6 @@ def merge_gene_names(genes):
 
     return pattern+"("+",".join(var)+")"
 
-def parse_uniprot_data(data_file, db="sp,tr"):
-    D = defaultdict(dict)
-    sequences, masks = {}, {}
-    ref_proteome = set()
-
-    for record in SwissProt.parse(open_file(data_file)):
-        uni_id = record.entry_name
-        accs = record.accessions
-        uni_ac = accs[0]
-        gn = record.gene_name
-        if gn != "":
-            gn = re.search("Name[s]?=([^;]+)", record.gene_name).group(1).split()[0]
-        seq = record.sequence
-        dc = record.data_class
-        if dc == "Reviewed":
-            dc = "sp"
-        elif dc == "Unreviewed":
-            dc = "tr"
-
-        if dc in db.split(","):
-            D["AC"][uni_ac], D["AC"][uni_id], D["AC"][gn] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
-            D["AC"][uni_ac.upper()], D["AC"][uni_id.upper()], D["AC"][gn.upper()] = uni_ac.upper(), uni_ac.upper(), uni_ac.upper()
-            D["ID"][uni_ac], D["ID"][uni_id], D["ID"][gn] = uni_id.upper(), uni_id.upper(), uni_id.upper()
-            D["ID"][uni_ac.upper()], D["ID"][uni_id.upper()], D["ID"][gn.upper()] = uni_id.upper(), uni_id.upper(), uni_id.upper()
-            D["GN"][uni_ac], D["GN"][uni_id], D["GN"][gn] = gn.upper(), gn.upper(), gn.upper()
-            D["GN"][uni_ac.upper()], D["GN"][uni_id.upper()], D["GN"][gn.upper()] = gn.upper(), gn.upper(), gn.upper()
-            for acc in accs:
-                D["AC"][acc], D["ID"][acc], D["GN"][acc] = uni_ac.upper(), uni_id.upper(), gn.upper()
-                D["AC"][acc.upper()], D["ID"][acc.upper()], D["GN"][acc.upper()] = uni_ac.upper(), uni_id.upper(), gn.upper()
-
-            sequences[uni_ac.upper()] = seq
-            masks[uni_ac.upper()] = "0" * len(seq)
-
-        if dc == "sp":
-            ref_proteome.add(uni_ac.upper())
-
-    return D, sequences, masks, ref_proteome
-
 def get_protein_data_from_uniprot_text(uniprot_file):
     """Extracts information from a UniProt text file.
     Requires Bio::SwissProt module
@@ -85,7 +47,7 @@ def get_protein_data_from_uniprot_text(uniprot_file):
     D = defaultdict(lambda: defaultdict(set))
     masks = {}
     ref_proteome = set()
-
+    pdb2uni = defaultdict(set)
     for record in SwissProt.parse(open_file(uniprot_file)):
         dc  = record.data_class
         uni_id = record.entry_name
@@ -113,6 +75,12 @@ def get_protein_data_from_uniprot_text(uniprot_file):
             for key in [uni_ac, uni_id, gn]:
                 D[dic][key].add(val.upper())
                 D[dic][key.upper()].add(val.upper())
+        for ac in accs[1:]:
+            D["AC"][ac].add(uni_ac.upper())
+            D["AC"][ac.upper()].add(uni_ac.upper())
+        for g in gns[1:]:
+            D["AC"][g].add(uni_ac.upper())
+            D["AC"][g.upper()].add(uni_ac.upper())
 
         D["des"][uni_ac] = des
         D["dc"][uni_ac]  = dc
@@ -121,14 +89,16 @@ def get_protein_data_from_uniprot_text(uniprot_file):
         if dc == "Reviewed":
             ref_proteome.add(uni_ac)
 
-        for ac in accs[1:]:
-            D["AC"][ac].add(uni_ac.upper())
-            D["AC"][ac.upper()].add(uni_ac.upper())
-        for g in gns[1:]:
-            D["AC"][g].add(uni_ac.upper())
-            D["AC"][g.upper()].add(uni_ac.upper())
-
-    return D, masks, ref_proteome
+        for ref in record.cross_references:
+            if "PDB" in ref:
+                chains = set()
+                for x in ref[-1].split(", "):
+                    for y in x.split("=")[0].split("/"):
+                        chains.add(y)
+                # print uni_id, chains
+                for c in chains:
+                    pdb2uni["pdb|"+ref[1]+"|"+c].add(uni_ac)
+    return D, masks, ref_proteome, pdb2uni
 
 def calculate_overlap(start, end, mask):
     length = end - start + 1
@@ -195,71 +165,35 @@ def parse_pfam_doms(pfam_hmm_file, prot_dict, masks,
 
     return domains, domain_sets, masks
 
-def get_pfam_doms(pfam_file, prot_id, max_eval=1):
+def get_pfam_doms(pfam_file, prot_dict, max_eval=999):
     """Pfam-A matches in species proteome. File downloaded from PFAM.
     """
     pfams = defaultdict(lambda: defaultdict(set) )
-    pfam_sets = defaultdict(set)
+    pfams_temp = defaultdict(lambda: defaultdict(set) )
     pfam_names = {}
-
     with open_file(pfam_file) as f:
         for line in f:
             if line[0] != "#":
                 t = line.rstrip().split("\t")
                 uni_ac = t[0].upper()
-                start, end = int(t[3]), int(t[4])
-                pfam_ac, pfam_name, domain_e_val = t[5], t[6], float(t[12])
+                start, end = int(t[4]), int(t[5])
+                pfam_ac, pfam_name, domain_e_val = t[6], t[7], float(t[13])
 
-                if uni_ac in prot_id:# and domain_e_val <= max_eval:
-                    for main_ac in prot_id[uni_ac]:
-                        pfams[main_ac][pfam_ac].add((start, end, domain_e_val))
-                        pfam_sets[pfam_ac].add(main_ac)
-                        pfam_names[pfam_ac] = pfam_name
+                # if domain_e_val <= max_eval: ## No e-value cut-off. Just take what is annotated by Pfam
+                if uni_ac in prot_dict["seq"]: ## Keep annotation for primary UniProt accessions
+                    pfams[uni_ac][pfam_ac].add((start, end, domain_e_val))
+                    pfam_names[pfam_ac] = pfam_name
+                elif uni_ac in prot_dict["AC"]: ## Save annotation for secondary accessions in a different dictionary
+                    pfams_temp[uni_ac][pfam_ac].add((start, end, domain_e_val))
 
-    return pfams, pfam_sets, pfam_names
+    ## Transfer annotation to those main accessions which were not annotated
+    for alt_ac in pfams_temp:
+        for uni_ac in prot_dict["AC"][alt_ac]:
+            if uni_ac not in pfams: ## If the associated main accession is not annotated already:
+                pfams[uni_ac] = pfams_temp[alt_ac]
+                pfam_names[pfam_ac] = pfam_name
 
-
-def parse_linear_motifs(elm_hits_file, prot_dict, masks,
-                        max_eval=10, max_overlap=0.2):
-    """ Reads hmmsearch v. ELM database results to anotate linear motifs
-
-    elm_hits_file = "elm_hits.tsv.gz"
-    input_proteins = list of protein accessions given to the program as input
-    ac_dict = dictionary with conversion of any protein ID to UniProt accession
-    sequences = dictionary containing the protein sequences per UniProt accession
-    masks = dictionary containing the sequence mask per UniProt accession
-    max_eval = maximum E-value allowed to accept the match.
-    max_overlap = maximum overlap allowed between a new domain and previously
-                    accepted ones
-    """
-    lms = defaultdict(lambda: defaultdict(set) )
-    lm_sets = defaultdict(set)
-    with open_file(elm_hits_file) as f:
-        #: Line looks like this:
-        #: CLV_C14_Caspase3-7      ELME000321      sp|P30447|1A23_HUMAN    HLA-A   187     191     0.0030937403    -       !       TCVDG
-        for line in f:
-            if line[0] != "#" and line.strip():
-                t = line.rstrip().split("\t")
-                elm_name, elm_id = t[0], t[1]
-                uni_ac, uni_id = t[2].split("|")[1:]
-                elm_start, elm_end = int(t[4]), int(t[5])
-                some_score = float(t[6]) # conservation score?
-
-                if uni_ac in prot_dict["AC"]:
-                    for main_ac in prot_dict["AC"][uni_ac]:
-                        gene = list(prot_dict["GN"][main_ac])[0]
-
-                        #: determine the overlap with previously accepted LMs
-                        overlap = calculate_overlap(elm_start, elm_end, masks[main_ac])
-
-                        if overlap <= max_overlap:
-                            lms[main_ac][elm_id].add("\t".join([ main_ac+"|"+gene, elm_id+"|"+elm_name, str(elm_start), str(elm_end), str(some_score)]))
-                            lm_sets[elm_name].add(main_ac)
-                                #: if the LM is accepted, its region in the
-                                #: sequence mask is filled with "1"s
-                            masks[main_ac] = fill_mask(elm_start, elm_end,
-                                                        masks[main_ac])
-    return lms, lm_sets
+    return pfams, pfam_names
 
 def reduce_3did(db_file, out_file):
     """ Writes a simplified version in TSV format of the 3did flat file db
@@ -313,6 +247,35 @@ def edit_interprets(interprets_file, out_file):
 
     return
 
+def compare_ints(t, gene1, gene2, ints):
+    s1, e1 = int(t[4]), int(t[5])
+    s2, e2 = int(t[12]), int(t[13])
+    for info in ints[gene1][gene2]:
+        i = info.split("\t")
+        sA, eA = int(i[4]), int(i[5])
+        sB, eB = int(i[12]), int(i[13])
+
+        mask1 = [0 for _ in range(0,eA)]
+        mask2 = [0 for _ in range(0,eB)]
+        if e1 > eA:
+            mask1 = [0 for _ in range(0,e1)]
+        if e2 > eB:
+            mask2 = [0 for _ in range(0,e2)]
+
+        mask1 = mask1[:sA-1]+[n+1 for n in mask1[sA-1:eA]]+mask1[eA:]
+        mask1 = mask1[:s1-1]+[n+1 for n in mask1[s1-1:e1]]+mask1[e1:]
+        overlap1 = mask1.count(2)
+
+        mask2 = mask2[:sB-1]+[n+1 for n in mask2[sB-1:eB]]+mask2[eB:]
+        mask2 = mask2[:sB-1]+[n+1 for n in mask2[sB-1:eB]]+mask2[eB:]
+        overlap2 = mask2.count(2)
+
+
+        print "OLD",gene1,":",sA,"-",eA,"\t",gene2,":",sB,"-",eB
+        print "NEW",gene1,":",s1,"-",e1,"\t",gene2,":",s2,"-",e2,"\n"
+        # if overlap1 == 0 and overlap2 == 0:
+        #
+        #     sys.exit()
 def main( data_dir="",
           species="Hsa",
           max_overlap=0.2,
@@ -322,10 +285,10 @@ def main( data_dir="",
     # Common files:
     com_dir = data_dir+"common/"
     db_3did_file = com_dir+"3did_flat-2018_04.gz"
+    pdbchain2uniprot = com_dir+"pdbsws_chain.txt.gz"
 
     # Species Files
     sp_data_dir   = data_dir+"species/"+species+"/"
-    # uniprot_file  = sp_data_dir+"uniprot_homo_sapiens_proteome_73112prts_Aug2018_data.txt.gz"
     uniprot_file  = sp_data_dir+"uniprot_homo_sapiens_proteome_73928prts_Mar2019_data.txt.gz"
     pfam_matches_file = sp_data_dir+"pfamA_matches_9606_Aug18.tsv.gz"
     # pfam_hmm_file = sp_data_dir+"uniprot_v_Pfam_hmmsearch_sum.txt.gz"
@@ -341,9 +304,10 @@ def main( data_dir="",
     edited_3did_file = com_dir+"3did_flat_edited-2018_04.tsv.gz"
 
     #1: Get protein ID-dictionary, sequences and masks
-    prot_id_dict, masks, ref_prot = get_protein_data_from_uniprot_text(uniprot_file)
+    # prot_id_dict, masks, ref_prot, chain2uni = get_protein_data_from_uniprot_text(uniprot_file)
 
-    # #2: Parse Pfam domains per protein from hmmsearch result file
+    #2: Parse Pfam domains per protein from hmmsearch result file
+    # pfams, pfam_names = get_pfam_doms(pfam_matches_file, prot_id_dict)
            ### Deprecated: using pfamA_matches from now on. ###
     # if not os.path.isfile(pfam_parsed_file):
     #     domains, domain_sets, ms = parse_pfam_doms(pfam_hmm_file, prot_id_dict,
@@ -358,23 +322,60 @@ def main( data_dir="",
     #                 for dom in domains[uni_ac][e_val]:
     #                     out.write(dom + "\n")
 
-    #3: Get Linear Motifs per protein from hmmsearch result file
-    if not os.path.isfile(elm_parsed_file):
-        lms, lm_sets = parse_linear_motifs(elm_hits_file, prot_id_dict, masks,
-                                        max_overlap=2)
-        #: Print them in TSV file
-        with gzip.open(elm_parsed_file, "wb") as out:
-            c = ["#UniProt_acc|Gene", "ELM_ID|Name", "Start", "End", "Some_Score"]
-            out.write("\t".join(c) + "\n")
-            for uni_ac in sorted(lms):
-                for lm in sorted(lms[uni_ac]):
-                    for instance in lms[uni_ac][lm]:
-                        out.write(instance + "\n")
+
+    ## Preprocessing InterPreTS info
+    # chain2uni = {}
+    ## WRONG
+    ## I cant use fixed PDB-UniAcc conversion because InterPreTS uses homology
+    ## to find templates!
+    ## Don't do anything for the moment
+    # s = set()
+    # with open_file(pdbchain2uniprot) as f:
+    #     for line in f:
+    #         t = line.upper().rstrip().split()
+    #         if len(t) == 3:
+    #             pdb = t[0]
+    #             chain = t[1]
+    #             uni_ac = t[2]
+    #             if uni_ac in prot_id_dict["AC"]:
+    #                 for ac in prot_id_dict["AC"][uni_ac]:
+    #                     chain2uni["pdb|"+pdb+"|"+chain].add(ac)
+    #
+    ints = defaultdict(lambda: defaultdict(list))
+    with open_file(iprets_file) as f: ## lines in this file are already sorted from highest-to-lowest Z-score!!
+        for line in f:
+            t = line.rstrip().split("\t")
+            if line[0] == "#":
+                columns = t
+            else:
+                # pdb1 = t[1]
+                # pdb2 = t[9]
+                # if pdb1 not in chain2uni:
+                #     s.add(pdb1)
+                # if pdb2 not in chain2uni:
+                #     s.add(pdb2)
+                # if pdb1 in chain2uni and pdb2 in chain2uni:
+                #     for uni_ac1 in chain2uni[pdb1]:
+                #         for uni_ac2 in chain2uni[pdb2]:
+                #             print t[0]+"\t"+uni_ac1+"\t"+"\t".join(t[1:9])+"\t"+uni_ac2+"\t"+"\t".join(t[9:])
+
+                gene1, gene2 = t[0], t[8]
+                if len(ints[gene1][gene2])>0:
+                    compare_ints(t, gene1, gene2, ints)
+                else:
+                    ints[gene1][gene2].append("\t".join(t))
+
+
+    # print  "# not found:", len(s)
+    # for pdb in s:
+    #     print pdb
+    sys.exit()
+
     #4: Editing Files
     if not os.path.isfile(edited_3did_file):
         reduce_3did(db_3did_file, edited_3did_file)
 
-    ## Calculating Dom-Dom Interactions (Association Method)
+    #5: Calculating Dom-Dom Interactions (Association Method)
     ## using Swissprot proteins as reference set
     ## Parameters:
     ## (from HIPPIE) Medium confidence = 0.63 / High confidence = 0.73
@@ -383,18 +384,20 @@ def main( data_dir="",
     min_npair = 1
     ## domain count could be another parameter
 
-    pfams, pfam_sets, pfam_names = get_pfam_doms(pfam_matches_file,
-                                                prot_id_dict["AC"])
-
     # Source of PPI: HIPPIE (until I find something better)
     # not all ids from the hippie db matched a uniprot_ac, thus Uniprot mapping
     # tool was used and the results need to be read before:
-    hippie_map = {}
+    hippie_map = defaultdict(set)
+    hippie_pfams = {}
     with open_file(hippie_uniprot_mapping) as f:
         for line in f:
             t = line.rstrip().split("\t")
-            for x in t[0].split(","):
-                hippie_map[x] = t[1]
+            uni_ac = t[1]
+            if uni_ac in prot_id_dict["AC"]:
+                uni_ac = list(prot_id_dict["AC"][uni_ac])[0] ## always only 1. I checked
+                for x in t[0].split(","):
+                    hippie_map[x].add(uni_ac)
+                    hippie_pfams[x] = pfams[uni_ac].keys()
 
     ppi = defaultdict(dict)
     with open_file(hippie_file) as f:
@@ -403,34 +406,28 @@ def main( data_dir="",
             protsA = t[0].split(",")
             protsB = t[2].split(",")
             score = float(t[4])
-            pmids = 0
             ## Score threshold to keep PPI
             ## (from HIPPIE) Medium confidence = 0.63 / High confidence = 0.73
             if score < hippie_score:
                 continue
-            info = t[5]
-            if "pmids" in info:
-                pmids = len(info.split(";")[1].split(":")[1].split(","))
+            pmids = 0
+            if "pmids" in t[5]:
+                pmids = len(t[5].split(";")[1].split(":")[1].split(","))
 
             for protA in protsA:
                 for protB in protsB:
                     if protA!="" and protB!="":
-                        a = hippie_map[protA]
-                        b = hippie_map[protB]
-                        if a < b:
-                            a = hippie_map[protB]
-                            b = hippie_map[protA]
-                        if (a in prot_id_dict["AC"] and b in prot_id_dict["AC"]):
-                            a2 = prot_id_dict["AC"][a]
-                            b2 = prot_id_dict["AC"][b]
-                            for a in a2:
-                                for b in b2:
-                                    if (a in ref_prot and b in ref_prot):
-                                        if (a in ppi and b in ppi[a]):
-                                            if pmids > ppi[a][b][1]:
-                                                ppi[a][b] = (score, pmids)
-                                        else:
-                                            ppi[a][b] = (score, pmids)
+                        if protA < protB:
+                            a = protA
+                            b = protB
+                        else:
+                            a = protB
+                            b = protA
+                        if (a in ppi and b in ppi[a]):
+                            if pmids > ppi[a][b][1]:
+                                ppi[a][b] = (score, pmids)
+                        else:
+                            ppi[a][b] = (score, pmids)
 
     # Count domain individual and pair frequencies in non redundant protein pairs
     # (domains are counted only once when they are repeated in the same protein)
@@ -438,33 +435,29 @@ def main( data_dir="",
     total_prts = set()
     total_pp_pairs = 0
     for a in ppi:
-        total_prts.add(a)
         for b in ppi[a]:
-            total_prts.add(b)
-            total_pp_pairs += 1
+            if a in hippie_map and b in hippie_map:
+                total_prts.add(a)
+                total_prts.add(b)
+                total_pp_pairs += 1
 
-            if a in pfams and b in pfams:
                 # Count domain pair frequency
-                for pfam_a in pfams[a]:
-                    for pfam_b in pfams[b]:
+                for pfam_a in hippie_pfams[a]:
+                    for pfam_b in hippie_pfams[b]:
                         if pfam_a >= pfam_b:
                             pfam_pair_count[pfam_a][pfam_b] += 1
                         else:
                             pfam_pair_count[pfam_b][pfam_a] += 1
 
-    # Count individual domain frequency
+
+    ## Count individual domain frequency
     pfam_count = defaultdict(int)
-    # for prot in total_prts:
-    #     for pfam in pfams[prot]:
-    #         pfam_count[pfam] += 1
-
     ref_pfam = set()
-    for uni_ac in ref_prot:
-        if uni_ac in pfams:
-            ref_pfam.add(uni_ac)
-            for pfam in pfams[uni_ac]:
-                pfam_count[pfam] += 1
-
+    for prot in total_prts:
+        if len(hippie_pfams[prot])>1:
+            ref_pfam.add(prot)
+        for pfam in hippie_pfams[prot]:
+            pfam_count[pfam] += 1
 
     ## Compute domain-domain statistics
     ## (only those appearing in some PPI. To the rest we can assign the lowest
@@ -486,7 +479,10 @@ def main( data_dir="",
                                     pfam_names[pfam_a], pfam_names[pfam_b],
                                     str(n_a), str(n_b), str(n_pair), str(exp),
                                     str(oddsratio), str(log2)])+"\n")
-
+                    # out.write("\t".join([pfam_b, pfam_a,
+                    #                 pfam_names[pfam_b], pfam_names[pfam_a],
+                    #                 str(n_b), str(n_a), str(n_pair), str(exp),
+                    #                 str(oddsratio), str(log2)])+"\n")
                     lo.add(log2)
 
     # print "#Reference proteome =",len(ref_prot),"with pfams =",len(ref_pfam)
