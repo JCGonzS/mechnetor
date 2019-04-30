@@ -132,7 +132,6 @@ def add_protein(protein_data, cosmic_data, biogrid_data, prot_acc, central_pos,
     nodes, id_counter = add_cosmic_mutations(prot_acc, protein_id,cosmic_data,
                                             start_x, start_y, nodes, id_counter)
 
-
     return nodes, id_counter, id_dict, id_coords, id_muts, start_pos
 
 
@@ -322,7 +321,7 @@ def get_Biogrid_from_MongoDB(data, gene_a, gene_b):
     return evidence
 
 def get_interactor_biogrid_id(data, gene):
-    bio_id = ""
+    bio_id = "NA"
     cursor = data.find_one( {"$or":
                             [{"Official Symbol Interactor A": gene},
                              {"Official Symbol Interactor B": gene}]},
@@ -331,11 +330,11 @@ def get_interactor_biogrid_id(data, gene):
                               "Official Symbol Interactor B": 1,
                               "BioGRID ID Interactor A": 1,
                               "BioGRID ID Interactor B": 1 })
-
-    if cursor["Official Symbol Interactor A"] == gene:
-        bio_id = cursor["BioGRID ID Interactor A"]
-    else:
-        bio_id = cursor["BioGRID ID Interactor B"]
+    if cursor:
+        if cursor["Official Symbol Interactor A"] == gene:
+            bio_id = cursor["BioGRID ID Interactor A"]
+        else:
+            bio_id = cursor["BioGRID ID Interactor B"]
 
     return bio_id
 
@@ -356,21 +355,21 @@ def get_3did_from_MongoDB(data, all_pfams):
         pfam_b = c["Pfam_Name_B"]
         pdbs = c["PDBs"]
         if pfam_a in all_pfams and pfam_b in all_pfams:
-            d[pfam_a][pfam_b]=pdbs
+            d[pfam_a][pfam_b]=str(pdbs)
     return d
 
 
 def dom_dom_association_from_MongoDB(data, pfam_a, pfam_b,
-                                     obs_min, lo_min, ndom_min):
+                                     ndom_min, obs_min, lo_min):
 
-    cursor = data.find_one({"$or": [{"dom_name_a": pfam_a, "dom_name_b": pfam_b},
-    					   {"dom_name_a": pfam_b, "dom_name_b": pfam_a}],
-    				  	   "obs": {"$gte": obs_min}, "lo": {"$gte": lo_min},
-    				  	   "dom_n_a": {"$gte": ndom_min},
-                           "dom_n_b": {"$gte": ndom_min}},
-    					    { "_id": 0, "lo": 1 })
-    if cursor:
-        return cursor["lo"]
+    doc = data.find_one({"$or": [{"dom_name_a": pfam_a, "dom_name_b": pfam_b},
+    					   {"dom_name_a": pfam_b, "dom_name_b": pfam_a}]},
+    					    { "_id": 0, "dom_n_a":1, "dom_n_b":1,
+                                "obs":1, "lo": 1 })
+    if doc:
+        if (int(doc["dom_n_a"])>=ndom_min and int(doc["dom_n_b"])>=ndom_min and
+            int(doc["obs"])>=obs_min and float(doc["lo"])>=lo_min):
+            return doc["lo"]
 
 # def dom_dom_association_from_MongoDB(data, all_pfams, obs_min, lo_min, ndom_min):
 #     d = defaultdict(dict)
@@ -410,23 +409,30 @@ def get_elm_info(data):
 
 def get_Interprets_from_MongoDB(data, gene_a, gene_b):
     hits = set()
-    for d in data.find( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
+    # for d in data.find_( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
+    #              {"#Gene1": gene_b, "Gene2": gene_a} ]},
+    #              {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
+    #               "p-value": 0,	"not-sure1": 0,	"not-sure2": 0}):
+
+    d = data.find_one( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
                  {"#Gene1": gene_b, "Gene2": gene_a} ]},
                  {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
-                  "p-value": 0,	"not-sure1": 0,	"not-sure2": 0}):
+                  "p-value": 0,	"not-sure1": 0,	"not-sure2": 0})
+    if d:
+        z = 0
+        if "Z" in d:
+            z = d["Z"]
 
         if d["#Gene1"] == gene_a:
             hit = (d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
                    d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
                    d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
-                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
-                   d["Z"])
+                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"], z)
         else:
             hit = (d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
                    d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
                    d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
-                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
-                   d["Z"])
+                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"], z)
         hits.add(hit)
     return hits
 
@@ -519,9 +525,10 @@ def color_from_zvalue(z_score):
     return color
 
 @line_profile
-def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
-        biogrid_data, iprets_data, db3did_data, dd_ass_data, elm_int_data,
-        elm_classes, max_prots):
+def main(mode,
+        target_prots, input_prots, custom_pairs, mutations,
+        protein_data, cosmic_data, biogrid_data, iprets_data,
+        db3did_data, dd_ass_data, elm_int_data, elm_classes):
 
     central_pos = central_positions_layout(target_prots)
     start_pos = {}
@@ -561,6 +568,9 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
     lines = []
     for pair in itertools.combinations(target_prots, 2):
         ac_a, ac_b = pair
+        if mode=="ints":
+            if ac_a not in input_prots and ac_b not in input_prots:
+                continue
         gene_a = protein_data.find_one({"uniprot_acc": ac_a},
                                        {"_id": 0, "gene": 1})["gene"]
         gene_b = protein_data.find_one({"uniprot_acc": ac_b},
@@ -645,15 +655,9 @@ def main(target_prots, custom_pairs, protein_data, cosmic_data, mutations,
                 ass_lo = ass_dict[pfam_a][pfam_b]
             else:
                 ass_lo = dom_dom_association_from_MongoDB(dd_ass_data, pfam_a, pfam_b,
-                                                 obs_min=5, lo_min=2.0, ndom_min=4)
+                                                 ndom_min=4, obs_min=5, lo_min=2.0)
                 ass_dict[pfam_a][pfam_b] = ass_lo
                 ass_dict[pfam_b][pfam_a] = ass_lo
-
-            # ass_lo = ""
-            # if pfam_a in dd_ass and pfam_b in dd_ass[pfam_a]:
-            #     ass_lo = dd_ass[pfam_a][pfam_b]
-            # elif pfam_b in dd_ass and pfam_a in dd_ass[pfam_b]:
-            #     ass_lo = dd_ass[pfam_b][pfam_a]
 
             if ass_lo:
                 for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
