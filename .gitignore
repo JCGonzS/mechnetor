@@ -4,4 +4,7 @@ static/data/common
 static/data/species
 static/output
 static/examples
+static/images
 *.pyc
+*test*
+interaction_table*
