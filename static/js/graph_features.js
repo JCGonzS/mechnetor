@@ -488,7 +488,7 @@ $(document).ready(function(){
 					"<a href='https://www.uniprot.org/uniprot/"+acc+"''>" +
 					acc+" <i class='fas fa-external-link-alt fa-xs'></i>" +
 					"</a><br>" +
-					"<span class='tip'><span class='tipProt'>Length</span> | "+length+
+					"<span class='tip'><span class='tipProt'>Length</span> | "+length+"AA"+
 					"</span>",
 				position: {
 					my: 'top center',
