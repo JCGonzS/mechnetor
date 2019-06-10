@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Protein Interaction Visualization</title>
+
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Merriweather:300,400|Montserrat|Lato">
+
+	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static',filename='js/index_validation.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static',filename='js/file_uploader.js') }}"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"></script>
+</head>
+
+<body>
+
+	<div id="main_container">
+	  <div class="header">
+			<div id="header-content">
+	      <div id="header-title">Protein Interaction Visualization</div>
+				<div id="navbar">
+					<ul>
+						<li><a href="/" class="home-link">Home</a></li>
+						<li><a href="/help" class="help-link">Help</a></li>
+						<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+	  <div id="body">
+	    <div class="row">
+	      <div id="feat_and_data" class="col-sm-5">
+	        <div class="title"><h2><i class="far fa-chart-bar"></i> Data</h2></div>
+	        <div class="subtitle"><h4>Protein info</h4></div>
+	        <div class="row">
+
+	          <div class="col-sm-6" style="padding-left:35px;">
+	            <li><div class="db"><a href="https://www.uniprot.org">UniProt</a></div></li>
+	            <div class="info">accession, description, gene name, length</div>
+	            <li><div class="db"><a href="https://pfam.xfam.org">Pfam</a></div></li>
+	            <div class="info">protein family domains</div>
+	            <li><div class="db"><a href="https://http://elm.eu.org">ELM</a></div></li>
+	            <div class="info">eukaryotic linear motifs</div>
+	          </div>
+	          <div class="col-sm-6" style="padding-left:35px;">
+	            <li><div class="db"><a href="https://www.phosphosite.org">PhosphoSitePlus</a></div></li>
+	            <div class="info">phosphorylation and acetylation sites</div>
+	            <li><div class="db"><a href="https://cancer.sanger.ac.uk/cosmic">COSMIC</a></div></li>
+	            <div class="info">human cancer mutations</div>
+	          </div>
+	        </div>
+	        <br>
+	        <div class="subtitle"><h4>Protein Interactions</h4></div>
+	        <div class="row">
+	          <div class="col-sm-6" style="padding-left:35px;">
+	            <li><div class="db"><a href="https://thebiogrid.org">BioGRID</a></div></li>
+	            <div class="info">protein-protein interactions</div>
+	            <li><div class="db"><a href="https://3did.irbbarcelona.org/">3did</a></div></li>
+	            <div class="info">domain-domain interactions</div>
+	          </div>
+	          <div class="col-sm-6" style="padding-left:35px;">
+	            <li><div class="db"><a href="https://http://elm.eu.org">ELM</a></div></li>
+	            <div class="info">linear motif-domain interactions</div>
+	            <li><div class="db"><a href="https://http://www.russelllab.org/cgi-bin/tools/interprets.pl">InterPreTS</a></div></li>
+	            <div class="info">3D-structure templates interactions</div>
+	          </div>
+	        </div>
+	        <br>
+	        <div class="title"><h2><i class="fas fa-exclamation-circle"></i> Features</h2></div>
+	    		<div class="subtitle"><h4>Single-protein input method:</h4></div>
+	        <div class="paragraph">
+	          A graph will be created with your gene and a number of known interactors.
+	          This method is useful when you don't know the interactors of your gene of
+	          interest, or you want to explore putable effects of mutations on any interaction.<br>
+	          It is triggered by entering a single gene name/identifier in the input box.
+	          Select the maximum number of interactors that will be displayed with the
+	          "Limit the number of proteins" slider.<br>
+	          Interactors for your gene are determined through BioGRID and sorted according
+	          to the evidence (# of publications where they've been reported).
+	    		</div>
+	        <br>
+	    	</div>
+	    </div>
+	  </div>
+
+		<div id="footer">
+  		<div class="row">
+  			<div class="col-sm-5">
+  				<div class="section">Developed by</div>
+  				<p style="margin:0; padding:0;">
+  					JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
+  				</p>
+  				<p>
+  					at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
+  					(University of Heidelberg, 2018)
+  				</p>
+  			</div>
+  			<div class="col-sm-3">
+  				<div class="section">Powered by</div>
+  				<div id="cyto-logo">
+  					<a href="http://js.cytoscape.org/">
+  						<img src="{{ url_for('static',filename='images/cytoscape-logo-white.png') }}" alt="cyto-logo" width="35" height="40">Cytoscape.js
+  					</a>
+  				</div>
+  			</div>
+  			<div class="col-sm-4">
+  				<div class="section">Contact</div>
+  					<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
+  			</div>
+  		</div>
+  		<!-- <hr style="padding:0;">
+  		<div><i>University of Heidelberg, 2018</i></div> -->
+  	</div>
+  </div>
+
+</body>
+</html>
