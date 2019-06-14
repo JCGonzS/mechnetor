@@ -10,3 +10,5 @@ static/images
 *test*
 interaction_table*
 test_pymongo.py
+i2_ras.script
+routes.py
