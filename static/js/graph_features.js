@@ -55,8 +55,8 @@ $(document).ready(function(){
 	/// TOGGLE TOOLS:
   // BUTTON: Toggle box surrounding the whole protein
   $("#toggle_box").click(function(){
-    var eles = cy.$('node[role="whole"]');
-    var eles2 = cy.$('node[role="whole"]:selected');
+    var eles = cy.$('node[role="whole"], node[role="user_seq"]');
+    var eles2 = cy.$('node[role="whole"]:selected, node[role="user_seq"]:selected');
     var checked = document.getElementById("toggle_box").checked;
     if (checked) {
       eles.style("border-opacity", "1");
@@ -382,7 +382,7 @@ $(document).ready(function(){
 	});
 
 	// FEATURE: Double-Tap on protein node to zoom-in
-	cy.on('doubleTap', 'node[role=\"whole\"]', function(event) {
+	cy.on('doubleTap', 'node[role=\"whole\"], node[role="user_seq"]', function(event) {
 	  var node = event.target;
 		cy.animate({
 			fit: { eles: node,
@@ -392,7 +392,7 @@ $(document).ready(function(){
 
 	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
 	cy.on('render zoom', function(event) {
-		var node = cy.$('node[role="whole"]');
+		var node = cy.$('node[role="whole"], node[role="user_seq"]');
 		var edges = node.connectedEdges();
 		var dim = 16/cy.zoom();
 		var maxDim = Math.max(dim,30);
@@ -409,7 +409,7 @@ $(document).ready(function(){
 	cy.autoungrabify(true);
 
 	// MOUSEOVER/MOUSEOUT changes
-  cy.on('tapdragover tapdragout','node[role=\"whole\"]', function(event) {
+  cy.on('tapdragover tapdragout','node[role="whole"], node[role="user_seq"]', function(event) {
     var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
@@ -485,10 +485,59 @@ $(document).ready(function(){
 					"<span class='tipProt'>Gene</span> | <b>"+gene+"</b><br>" +
 					"<span class='tipProt'>Protein</span> | <b>"+des+"</b><br>" +
 					"<span class='tipProt'>Accession</span> | " +
-					"<a href='https://www.uniprot.org/uniprot/"+acc+"''>" +
+					"<a href='https://www.uniprot.org/uniprot/"+acc+"'>" +
 					acc+" <i class='fas fa-external-link-alt fa-xs'></i>" +
 					"</a><br>" +
-					"<span class='tip'><span class='tipProt'>Length</span> | "+length+" AA"+
+					"<span class='tipProt'>Length</span> | "+
+					"<a href='https://www.uniprot.org/uniprot/"+acc+".fasta'>" +
+					length+" AA <i class='fas fa-external-link-alt fa-xs'></i>"+
+					"</span>",
+				position: {
+					my: 'top center',
+					at: 'bottom center'
+				},
+				style: {
+					classes: 'qtip-bootstrap',
+					tip: {
+						width: 20,
+						height: 10
+					}
+				},
+				show: { event: 'directtap' }
+			});
+
+			this.trigger('directtap');
+		}
+	});
+
+	cy.nodes().on("tap", function( e ){
+		var node = e.target;
+		var role = node.data("role");
+		if( role == "user_seq" ){
+			var label = node.data("label");
+			var length = node.data("length");
+			var link = node.data("link");
+			var blast = node.data("blast");
+			var blast_hits = "<span class='tipProt'>Blast hits:</span><br>\n";
+			blast_hits += "<div style='margin: 0 auto;'>";
+			blast.forEach(function(hit) {
+				var coor = hit.split("|")[0]
+				var acc = hit.split("|")[1]
+				var gene = hit.split("|")[2]
+				var info = hit.split("|")[3]
+				blast_hits+="\t<span style='float:left;width:80px;'><b>"+coor+"</b></span>"
+				blast_hits+=" | <a href='https://www.uniprot.org/uniprot/"+acc+"'>"+acc+"</a>"
+				blast_hits+=" <b>"+gene+"</b> "+info+"<br>\n"
+			});
+			blast_hits += "</div>"
+			node.qtip({
+				content:
+					"<span class='tip'>User-input sequence<br>"+
+					"\t<span class='tipProt'>Label</span> | <b>"+label+"</b><br>" +
+					"\t<span class='tipProt'>Length</span> | "+
+					"<a href='"+link+"' target='_blank'_>" +
+					length+" AA <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+					blast_hits+
 					"</span>",
 				position: {
 					my: 'top center',
@@ -601,7 +650,7 @@ $(document).ready(function(){
 				"</span><br>" +
 				"<span class='tip'>"+
 					"<span class='tipInP'>PDB Template ID</span> | " +
-					"<a href='https://www.rcsb.org/structure/1JM7'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a> chain "+chain+"<br>"+
+					"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a> chain "+chain+"<br>"+
 					"<span class='tipInP'>Alignment</span> |  "+
 					"Protein/<b>"+start+"-"+end+"</b>; Template/"+pdb_start+"-"+pdb_end+"<br>"+
 					"<span class='tipInP'>Alignment score</span> | BLAST e-val=<i>"+ev+"</i>, <i>"+pcid+"%</i> id<br>"+
@@ -859,6 +908,7 @@ $(document).ready(function(){
 		var nodes = edge.connectedNodes();
 		var pdb = edge.data("pdb").split("|")[1];
 		var z = edge.data("z-score");
+		var pval = edge.data("p-value");
 		var chains = [];
 		var prots = [];
 		nodes.forEach(function(node) {
@@ -873,10 +923,11 @@ $(document).ready(function(){
 			"</span><br>" +
 			"<span class='tip'>"+
 				"<span class='tipInP'>PDB Template ID</span> |  "+
-				"<a href='https://www.rcsb.org/structure/1JM7'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+				"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
 				"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
 				"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
-				"<span class='tipInP'>Z-score</span> | "+z+
+				"<span class='tipInP'>Z-score</span> | "+z+"<br>"+
+				"<span class='tipInP'>P-value</span> | "+pval+
 			"</span>",
 			position: {
 				 my: 'top center',
