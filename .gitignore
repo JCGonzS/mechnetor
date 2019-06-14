@@ -8,3 +8,4 @@ static/images
 *.pyc
 *test*
 interaction_table*
+test_pymongo.py
