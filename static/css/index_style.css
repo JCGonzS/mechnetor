@@ -111,7 +111,7 @@ button:hover {
 
 
 .ex_button {
-  width: 60px;
+  width: 40px;
   -webkit-transform: perspective(1px) translateZ(0);
   transform: perspective(1px) translateZ(0);
   box-shadow: 0 0 1px transparent;
