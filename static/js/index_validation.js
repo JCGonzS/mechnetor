@@ -19,7 +19,7 @@ $(document).ready(function() {
 			// }
 		},
 		messages: {
-			prots_input: "Please enter your proteins in the input box.\nIf you selected a local file, you need to upload it first, the submit.",
+			prots_input: "Please enter your proteins in the input box.\nIf you selected a local file, you need to upload it first, then submit.",
 			max_prots: "The maximum number of interactors will be defaulted to 5.",
 			// query_lmd2: "Please enter your LMD2 data."
 		}
