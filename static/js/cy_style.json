@@ -14,7 +14,7 @@
     }
   },
   {
-    "selector": "node[role=\"whole\"]",
+    "selector": "node[role=\"whole\"], node[role=\"user_seq\"]",
     "style": {
       "shape": "roundrectangle",
       "padding": "40px",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "selector": "node[role=\"whole\"].highlight",
+    "selector": "node[role=\"whole\"].highlight, node[role=\"user_seq\"].highlight",
     "style": {
       "border-color": "#33a1c2",
       "border-width": "3px",
@@ -50,7 +50,7 @@
     }
   },
   {
-    "selector": "node[role=\"whole\"].highlight2",
+    "selector": "node[role=\"whole\"].highlight2, node[role=\"user_seq\"].highlight2",
     "style": {
       "border-color": "#ff5733",
       "border-width": "3px",
@@ -64,7 +64,6 @@
     "selector": "node[role=\"domain\"]",
     "style": {
       "shape": "roundrectangle",
-      "min-height": "18px",
       "width": "data(length)",
       "background-color": "data(color)",
       "label": "data(label)",
@@ -81,7 +80,6 @@
   {
     "selector": "node[role=\"domain\"].highlight",
     "style": {
-      "min-height": "23px",
       "background-color": "#5d6d7e",
       "border-style": "dashed",
       "border-color": "#b03a2e",
@@ -96,7 +94,6 @@
   {
     "selector": "node[role=\"domain\"].highlight2",
     "style": {
-      "min-height": "23px",
       "border-style": "dashed",
       "border-color": "#b03a2e",
       "border-width": "2px",
@@ -110,7 +107,6 @@
     "selector": "node[role=\"elm\"]",
     "style": {
       "shape": "roundrectangle",
-      "min-height": "18px",
       "width": "data(length)",
       "background-opacity": "0",
       "border-width": "1",
@@ -139,14 +135,13 @@
     "selector": "node[role=\"iprets\"]",
     "style": {
       "shape": "ellipse",
-      "min-height": "18px",
       "width": "data(length)",
       "background-opacity": "0",
       "border-width": "1",
       "border-color": "data(color)",
       "label": "data(label)",
-      "font-size": "10",
-      "min-zoomed-font-size": "15",
+      "font-size": "3",
+      "min-zoomed-font-size": "24",
       "color": "#000",
       "text-outline-color": "data(color)",
       "text-outline-width": "1",
@@ -159,11 +154,13 @@
   {
     "selector": "node[role=\"iprets\"].highlight",
     "style": {
+      "height": "40px",
       "background-opacity": "0.5",
       "background-color": "data(color)",
       "border-style": "dashed",
       "border-width": "3",
-      "font-size": "12"
+      "font-size": "12",
+      "min-zoomed-font-size": "15"
     }
   },
   {
@@ -216,7 +213,6 @@
       "border-color": "#000000",
       "label": "data(aa_mut)",
       "font-size": "3",
-      "font-weight": "bold",
       "min-zoomed-font-size": "24",
       "visibility" : "hidden",
       "events": "yes"
@@ -227,6 +223,37 @@
     "style": {
       "height": "16",
       "background-color": "#2389af",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "roundrectangle",
+      "text-background-padding": "0",
+      "font-size": "8",
+      "min-zoomed-font-size": "14",
+      "z-index": 1000
+    }
+  },
+  {
+    "selector": "node[role=\"mutagen\"]",
+    "style": {
+      "shape": "vee",
+      "width": "3",
+      "height": "12",
+      "background-color": "#FFF",
+      "border-width": "0.3",
+      "border-color": "#000000",
+      "label": "data(info)",
+      "font-size": "3",
+      "font-weight": "bold",
+      "min-zoomed-font-size": "24",
+      "visibility" : "hidden",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "node[role=\"mutagen\"].highlight",
+    "style": {
+      "height": "16",
+      "background-color": "#000000",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
@@ -257,6 +284,10 @@
     "style": {
       "height": "12",
       "background-color": "#ffb533",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "roundrectangle",
+      "text-background-padding": "0",
       "font-size": "8",
       "min-zoomed-font-size": "14",
       "z-index": 1000
@@ -283,6 +314,10 @@
     "style": {
       "height": "12",
       "background-color": "#10972b",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "roundrectangle",
+      "text-background-padding": "0",
       "font-size": "8",
       "min-zoomed-font-size": "14",
       "z-index": 1000
