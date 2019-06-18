@@ -178,8 +178,9 @@ def main( input_seqs, output_dir, i2sum_file, ide,
                         pairs[q1][q2][pdb+":"+c1+":"+c2] = ele1+"\t"+ele2
 
     # 5: Run InterPreTS
+    results = {}
     if len(pairs)==0:
-        return ""
+        return results
 
     if print_output=="True" and not os.path.isfile(i2sum_file):
         with open_file(i2sum_file, "w") as out:
@@ -190,7 +191,6 @@ def main( input_seqs, output_dir, i2sum_file, ide,
 
     already = set()
     i = 0
-    hits = {}
     os.environ["I2DIR"] = "/net/home.isilon/ag-russell/code/interprets/data"
     for q1 in sorted(pairs):
         for q2 in sorted(pairs[q1]):
@@ -285,12 +285,12 @@ def main( input_seqs, output_dir, i2sum_file, ide,
                                 i2_sum = "\t".join(t[5:])
 
                     if n_template == 0: # only the first (and best) hit per pair
-                        hits[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
-                        hits[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
-                        hits[(q1, q2)] += i2_sum.split("\t")[4:6]
-                        hits[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
-                        hits[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
-                        hits[(q1, q2)] += i2_sum.split("\t")[4:6]
+                        results[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
+                        results[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
+                        results[(q1, q2)] += i2_sum.split("\t")[4:6]
+                        results[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
+                        results[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
+                        results[(q1, q2)] += i2_sum.split("\t")[4:6]
 
                     if print_output==True:
                         with open_file(i2sum_file, "a") as out:
@@ -307,7 +307,7 @@ def main( input_seqs, output_dir, i2sum_file, ide,
                 else:
                     for fl in [dfile, cfile]:
                         os.unlink(fl)
-    return hits
+    return results
 
 if __name__ == "__main__":
     fasta_file = sys.argv[1]
