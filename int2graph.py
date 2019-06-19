@@ -894,7 +894,8 @@ def main(make_graph, sps,
             lines.append(line)
 
     ## Color domain & LMs nodes
-    nodes = color_regions(nodes, palette="custom1")
+    nodes = color_regions(nodes)
+    # nodes = color_regions(nodes, palette="custom1")
 
     graph_elements = nodes + edges
 
