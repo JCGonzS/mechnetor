@@ -104,7 +104,7 @@ def get_protein_data_from_uniprot_text(uniprot_file):
         D["des"][uni_ac] = des
         D["dc"][uni_ac]  = dc
         D["seq"][uni_ac] = seq
-        masks[uni_ac] = "0" * len(record.sequence)
+        masks[uni_ac] = ["0"] * len(record.sequence)
 
         if dc == "Reviewed":
             ref_proteome.add(uni_ac)
@@ -150,15 +150,14 @@ def get_protein_data_from_uniprot_text(uniprot_file):
     return D, masks, ref_proteome, modres, mutagen, region #,pdb2uni
 
 def calculate_overlap(start, end, mask):
-    length = end - start + 1
     sub_mask = mask[start-1:end]
-    n1 = len(sub_mask) - len(sub_mask.replace("1", ""))
-    overlap = n1 / float(length)
+    overlap = sub_mask.count("1") / float(len(sub_mask))
     return overlap
 
 def fill_mask(start, end, mask):
     length = end - start + 1
-    mask = mask[:start] + ("1" * length) + mask[end-1:]
+    for i in range(start-1, end):
+        mask[i] = "1"
     return mask
 
 def parse_pfam_doms(pfam_hmm_file, prot_dict, masks,

@@ -55,7 +55,8 @@ def add_protein_main(nodes, id_n, id_dict, uni_ac, data, biogrid_data):
             "biogrid_id" : biogrid_id,
             "des": data["description"],
             "length": data["length"],
-            "protein" : uni_ac
+            "protein" : uni_ac,
+            "display": "element"
             }
         })
 
@@ -77,7 +78,9 @@ def add_fasta_main(nodes, id_n, id_dict, header, seq, link, blast):
             "label" : header,
             "link": link,
             "length": len(seq),
-            "blast": blast
+            "blast": blast,
+            "protein": header,
+            "display": "element"
             }
         })
 
@@ -480,18 +483,17 @@ def color_regions(nodes, palette=""):
     color_map = {}
     counter = 0
     for node in nodes:
-        if node["group"] == "nodes":
-            role = node["data"]["role"]
-            if role in ["domain", "elm"]:
-                label = node["data"]["label"]
-                if label not in color_map:
-                    if palette != "" and counter < len(custom_colors):
-                        color_map[label] = custom_colors[counter]
-                        counter += 1
-                    else:
-                        color_map[label] = get_random_color(color_map.values())
+        role = node["data"]["role"]
+        if role in ["domain", "elm"]:
+            label = node["data"]["label"]
+            if label not in color_map:
+                if palette != "" and counter < len(custom_colors):
+                    color_map[label] = custom_colors[counter]
+                    counter += 1
+                else:
+                    color_map[label] = get_random_color(color_map.values())
 
-                node["data"]["color"] = color_map[label]
+            node["data"]["color"] = color_map[label]
 
     return nodes
 
@@ -511,11 +513,11 @@ def color_from_zvalue(z_score):
     return color
 
 @line_profile
-def main(make_graph, sps,
-        target_prots, input_prots, custom_pairs, input_seqs, mutations,
+def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
         fasta_data, fasta_link, protein_data, cosmic_data, biogrid_data,
         iprets_data, fasta_iprets, db3did_data, dd_ass_data, elm_int_data,
-        pfam_info, elm_info):
+        pfam_info, elm_info,
+        make_graph=True, hide_no_int=True):
 
     cpos = central_positions_layout(target_prots | set(input_seqs.keys()))
     start_pos = {}
@@ -597,6 +599,7 @@ def main(make_graph, sps,
     elm_nodes = defaultdict(list)
     lines = []
     target_prots = target_prots | set(input_seqs.keys())
+    n_ints = defaultdict(int)
     for pair in itertools.combinations(target_prots, 2):
 
         ac_a, ac_b = pair
@@ -606,17 +609,19 @@ def main(make_graph, sps,
         gene_a = genes[ac_a]
         gene_b = genes[ac_b]
 
-        if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
-            id_n += 1
-            edges.append(   {"group" : "edges",
-                             "data" : {  "id" : id_n,
-                                         "source" : id_dict[ac_a]["main"],
-                                         "target" : id_dict[ac_b]["main"],
-                                         "role" : "user_interaction",
-                                         "ds": "User input"
-                                      }
-                            })
-
+        if len(custom_pairs)>0:
+            if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
+                id_n += 1
+                edges.append(   {"group" : "edges",
+                                 "data" : {  "id" : id_n,
+                                             "source" : id_dict[ac_a]["main"],
+                                             "target" : id_dict[ac_b]["main"],
+                                             "role" : "user_interaction",
+                                             "ds": "User input"
+                                          }
+                                })
+            else:
+                continue
         ## BioGRID interactions
         evidence = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
         biogrid_ints = list(evidence["Low"])+list(evidence["High"])
@@ -637,6 +642,8 @@ def main(make_graph, sps,
             line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "", "",
                     "", "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
+            n_ints[ac_a]+=1
+            n_ints[ac_b]+=1
 
 
         for pfam_pair in itertools.product(pfams[ac_a], pfams[ac_b]):
@@ -678,6 +685,8 @@ def main(make_graph, sps,
                                 "; ".join(id_muts[target]),
                                 pdbs, "3did"]
                         lines.append(line)
+                        n_ints[ac_a]+=1
+                        n_ints[ac_b]+=1
 
             ## Inferred Domain-Domain interactions
             if dd_ass_data != "no":
@@ -718,6 +727,8 @@ def main(make_graph, sps,
                                     "; ".join(id_muts[target]),
                                     str(ass_lo), "Association Method"]
                             lines.append(line)
+                            n_ints[ac_a]+=1
+                            n_ints[ac_b]+=1
 
         ## ELM-domain interactions
         for ac1, gene1, ac2, gene2 in zip([ac_a, ac_b], [gene_a, gene_b],
@@ -807,6 +818,8 @@ def main(make_graph, sps,
                                          "; ".join(id_muts[target]),
                                          "", "ELM"]
                                 lines.append(line)
+                                n_ints[ac_a]+=1
+                                n_ints[ac_b]+=1
 
         if iprets_data == "no":
             continue
@@ -890,33 +903,23 @@ def main(make_graph, sps,
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
                    str(z), "InterPreTS prediction"]
-
             lines.append(line)
+            n_ints[ac_a]+=1
+            n_ints[ac_b]+=1
 
     ## Color domain & LMs nodes
     nodes = color_regions(nodes)
     # nodes = color_regions(nodes, palette="custom1")
 
+    ## Do not display proteins without interactions
+    no_int_prots = []
+    if hide_no_int:
+        for node in nodes:
+            if node["data"]["role"] in ["whole", "user_seq"]:
+                if node["data"]["protein"] not in n_ints:
+                    node["data"]["display"]="none"
+                    no_int_prots.append(node["data"]["label"])
+
     graph_elements = nodes + edges
 
-    return  graph_elements, lines
-
-    # ## Print graph as JSON file
-    # graph_elements = nodes + edges
-    # with open(graph_out, "w") as output:
-    #     json.dump(graph_elements, output, indent=4)
-    #
-    # ## Print interactions as JSON file
-    # for l in lines:
-    #     print "\t".join(l)
-    # int_table = {}
-    # int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
-    #                         "Type", "F(A)","Start-End(A)", "Mutations(A)",
-    #                         "F(B)", "Start-End(B)", "Mutations(B)",
-    #                         "Info", "Source"]
-    # int_table["index"] = range(len(lines))
-    # int_table["data"] = lines
-    #
-    # with open(ints_out,"w") as output:
-    #     json.dump(int_table, output)
-    #     # output.write(str(int_table))
+    return  graph_elements, lines, no_int_prots

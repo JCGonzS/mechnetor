@@ -105,10 +105,12 @@ $(document).ready(function(){
 		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_doms").checked;
     if (checked) {
-			nodes.style("visibility", "visible");
+			// nodes.style("visibility", "visible");
+			nodes.style("display", "element");
     } else {
-			nodes.style("visibility", "hidden");
-			edges.style("visibility", "hidden");
+			nodes.style("display", "none");
+			// nodes.style("visibility", "hidden");
+			// edges.style("visibility", "hidden");
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
 			$("#toggle_elmdom_int").prop("checked", false);

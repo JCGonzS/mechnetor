@@ -315,9 +315,11 @@ def fill_mask(start, end, mask):
     return mask
 
 @line_profile
-def main(client, query_prots, query_muts, make_graph,
-         sps="Hsa", max_prots="",
-         main_output_dir="", temp_dir="temp/", blastdb_dir=""):
+def main(client, query_prots, query_muts, sps="Hsa",
+         make_graph=True, hide_no_int=True, max_prots="",
+         main_output_dir="", temp_dir="temp/", blastdb_dir="",
+         error_template="templates/input_error.html.jinja2",
+         results_template="templates/results.html.jinja2"):
 
     log_file = main_output_dir+"log.txt"
     sys.stdout = open(log_file, 'a')
@@ -389,8 +391,8 @@ def main(client, query_prots, query_muts, make_graph,
     total_n_prots = len(input_prots)+len(input_seqs.keys())
     if total_n_prots == 0:
         st = datetime.datetime.now()
-        print "[{}] ERROR: no proteins found in input!".format(st)
-        return render_template("input_error.html")
+        print "[{}] ERROR: no valid proteins found in input!".format(st)
+        return render_template(error_template)
 
     # 3. If sequence(s) in input -> compute data:
     fasta_data = defaultdict(lambda: defaultdict(list))
@@ -462,11 +464,16 @@ def main(client, query_prots, query_muts, make_graph,
                                       protein_data)
 
     ## Run int2graph
-    graph_ele, lines = int2graph.main(make_graph, sps, all_prots,
+    graph_ele, lines, no_int_prots = int2graph.main(sps, all_prots,
                     input_prots, custom_pairs, input_seqs, input_muts,
                     fasta_data, fasta_link, protein_data, cosmic_data, biogrid_data,
                     iprets_data, fasta_iprets, db3did_data, dd_ass_data, elm_int_data,
-                    pfam_info, elm_info)
+                    pfam_info, elm_info,
+                    make_graph=make_graph, hide_no_int=hide_no_int)
+
+    if len(no_int_prots)>0:
+        st = datetime.datetime.now()
+        print "[{}] No interactions found for: {}".format(st, "; ".join(no_int_prots))
 
     st = datetime.datetime.now()
     print "[{}] int2graph.py run successfully".format(st)
@@ -494,6 +501,8 @@ def main(client, query_prots, query_muts, make_graph,
     ## Print HTML
     sys.stdout = sys.__stdout__
 
-    return render_template("results_page.html",
-                           graph_json = "jobs/"+"job_"+ide+"/"+graph_json,
-                           ints_json = "jobs/"+"job_"+ide+"/"+table_json)
+    return render_template(results_template,
+                           graph_json="jobs/"+"job_"+ide+"/"+graph_json,
+                           ints_json="jobs/"+"job_"+ide+"/"+table_json,
+                           not_identified=not_found,
+                           no_int_prots=no_int_prots)

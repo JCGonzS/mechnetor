@@ -35,7 +35,8 @@
       "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
       "events": "yes",
-      "text-events": "yes"
+      "text-events": "yes",
+      "display": "data(display)"
     }
   },
   {
