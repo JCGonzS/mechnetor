@@ -94,15 +94,6 @@
 
 							<div class="form-group row align-items-center">
 								<div class="col-sm">
-									<label for="max_prots">Maximum number of interactors per protein: </label>
-									<input type="number" id="max_prots" name="max_prots" value="5">
-									<label for=""> or show all</label>
-									<input type="checkbox" id="all_prots">
-								</div>
-							</div>
-
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
 									<label for="species">Organism:</label>
 									<!-- <input type="text" list="species"> -->
 									<select name="species" id="species">
@@ -110,6 +101,20 @@
 											<option value="Mmu">Mouse (Mus musculus, taxID: 10090)</option>
 											<option value="Dme">Fruit Fly (Drosophila melanogaster, taxID: 7227)</option>
 									</select>
+								</div>
+							</div>
+							<div class="form-group row align-items-center">
+								<div class="col-sm">
+									<label for="hide_no_int">Hide proteins for which no interactions are found</label>
+									<input type="checkbox" id="hide_no_int" name="hide_no_int" checked>
+								</div>
+							</div>
+							<div class="form-group row align-items-center">
+								<div class="col-sm">
+									<label for="max_prots">Maximum number of interactors per protein: </label>
+									<input type="number" id="max_prots" name="max_prots" value="0">
+									<label for="all_prots"> or show all</label>
+									<input type="checkbox" id="all_prots">
 								</div>
 							</div>
 

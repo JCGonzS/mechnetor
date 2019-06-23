@@ -208,6 +208,28 @@
             <button class="btn" id="dl_jpg"><i class="fas fa-image"></i> JPG </button>
             <button class="btn" id="dl_png"><i class="fas fa-image"></i> PNG </button>
           </div>
+
+          {% if not_identified|length > 0 %}
+            <div style="padding-top:5px; color: orange;">
+              The following could not be identified as proteins for the specified organism:
+              <ul class="comma-list">
+              {% for prot in not_identified %}
+                <li><b>{{ prot }}</b></li>
+              {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if no_int_prots|length > 0 %}
+            <div style="padding-top:5px; color: white;">
+              No interactions found for:
+              <ul class="comma-list">
+              {% for prot in no_int_prots %}
+                <li><button class="txt-btn"><b>{{ prot }}</b></button></li>
+              {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         </div>
 
         <div id="helpBox" class="modal">
