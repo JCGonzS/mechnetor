@@ -225,7 +225,7 @@
               No interactions found for:
               <ul class="comma-list">
               {% for prot in no_int_prots %}
-                <li><button class="txt-btn"><b>{{ prot }}</b></button></li>
+                <li><button class="txt-btn" onclick=showProt("{{ prot }}") title="Click to toggle protein"><b>{{ prot }}</b></button></li>
               {% endfor %}
               </ul>
             </div>
@@ -370,6 +370,7 @@
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
     }
+
   </script>
 
 </body>

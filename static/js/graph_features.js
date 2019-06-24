@@ -1,5 +1,16 @@
 "use strict";
 
+function showProt(prot) {
+	var node = cy.$("node[role='whole'][label='"+prot+"'], node[role='user_seq'][label='"+prot+"']");
+	var display = node.style("display");
+	if (display=="none"){
+		node.style("display", "element");
+		// cy.center(node);
+	} else {
+		node.style("display", "none");
+	}
+}
+
 $(document).ready(function(){
 
 	// BUTTON: reset graphic
@@ -19,13 +30,13 @@ $(document).ready(function(){
 	 n.position({ x: p.x, y: p.y });
 	 });
 	 cy.reset();
-	 cy.fit();
+	 cy.fit( cy.$("node:visible") );
 	});
 
 	// BUTTON: Center the graph on the page
   $("#center").click(function(){
     // cy.center();
-		cy.fit();
+		cy.fit( cy.$("node:visible") );
   });
 
   // BUTTON: Enables/Disables the option of draggin the graph elements
