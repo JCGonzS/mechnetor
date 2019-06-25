@@ -50,7 +50,7 @@ def add_protein_main(nodes, id_n, id_dict, uni_ac, data, biogrid_data):
             "id" : prot_id,
             "parent" : prot_id,
             "role" : "whole",
-            "label" : data["gene"],
+            "label" : data["gene"][:20],
             "uni_id" : data["uni_id"],
             "biogrid_id" : biogrid_id,
             "des": data["description"],
@@ -622,6 +622,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                 })
             else:
                 continue
+
         ## BioGRID interactions
         evidence = get_Biogrid_from_MongoDB(biogrid_data, gene_a, gene_b)
         biogrid_ints = list(evidence["Low"])+list(evidence["High"])
@@ -639,7 +640,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                       }
                             })
 
-            line = [gene_a, ac_a, gene_b, ac_b, "PROT::PROT", "", "", "",
+            line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "PROT::PROT", "", "", "",
                     "", "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
             n_ints[ac_a]+=1
@@ -678,7 +679,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                             domA += " ("+str(i)+")"
                         if len(id_dict[ac_b][pfam_b]) > 1:
                             domB += " ("+str(j)+")"
-                        line = [gene_a, ac_a, gene_b, ac_b, "DOM::DOM",
+                        line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "DOM::DOM",
                                 domA, "-".join(id_coords[source]),
                                 "; ".join(id_muts[source]),
                 				domB, "-".join(id_coords[target]),
@@ -720,7 +721,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                 domA += " ("+str(i)+")"
                             if len(id_dict[ac_b][pfam_b]) > 1:
                                 domB += " ("+str(j)+")"
-                            line = [gene_a, ac_a, gene_b, ac_b, "iDOM::iDOM",
+                            line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "iDOM::iDOM",
                                     domA, "-".join(id_coords[source]),
                                     "; ".join(id_muts[source]),
                                     domB, "-".join(id_coords[target]),
@@ -811,7 +812,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                     elmA += " ("+str(i)+")"
                                 if len(id_dict[ac2][pfam_acc]) > 1:
                                     domB += " ("+str(j)+")"
-                                line = [gene1, ac1, gene2, ac2, "ELM::DOM",
+                                line = [gene1[:20], ac1, gene2[:20], ac2, "ELM::DOM",
                                          elmA, "-".join(id_coords[source]),
                                          "; ".join(id_muts[source]),
                                          domB, "-".join(id_coords[target]),
@@ -899,7 +900,7 @@ def main(sps, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                     }
                 })
 
-            line = [gene_a, ac_a, gene_b, ac_b, "InterPreTS",
+            line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "InterPreTS",
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
                    str(z), "InterPreTS prediction"]
