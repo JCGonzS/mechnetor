@@ -44,4 +44,6 @@ document.addEventListener("DOMContentLoaded", function() {
     selectionType: 'single',
     wheelSensitivity: 0.3
 	});
+
+  cy.fit( cy.$("node:visible") );
 });
