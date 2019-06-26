@@ -1,7 +1,8 @@
 "use strict";
 
-function showProt(prot) {
-	var node = cy.$("node[role='whole'][label='"+prot+"'], node[role='user_seq'][label='"+prot+"']");
+// Show/Hide proteins without interactions
+function showProt(label) {
+	var node = cy.$("node[role='whole'][label='"+label+"'], node[role='user_seq'][label='"+label+"']");
 	var display = node.style("display");
 	if (display=="none"){
 		node.style("display", "element");
@@ -9,47 +10,64 @@ function showProt(prot) {
 	} else {
 		node.style("display", "none");
 	}
-}
+};
+
+function removeThisEle(id) {
+	var node = cy.$("node[id='"+id+"']");
+	cy.remove(node);
+};
+
+function removeAllinProt(label, protein) {
+	var node = cy.$("node[label='"+label+"'][protein='"+protein+"']");
+	cy.remove(node);
+};
+
+function removeAll(label) {
+	var node = cy.$("node[label='"+label+"']");
+	cy.remove(node);
+};
 
 $(document).ready(function(){
 
-	// BUTTON: reset graphic
-	// 1- Save original positions:
+	// Save original positions of all graph elements
 	cy.nodes().forEach(function(n){
-		var positions = n.position();
-
-		n.data("orgPos", {
-			x: positions.x,
-			y: positions.y
-			});
+		var pos = n.position();
+		n.data("orPos", {
+			x: pos.x,
+			y: pos.y
+		});
 	});
-	// 2 - Reset on click
+
+	// BUTTON: reset graph
 	$("#reset").click(function(){
-	 cy.nodes().forEach(function(n){
-	 var p = n.data('orgPos');
-	 n.position({ x: p.x, y: p.y });
-	 });
-	 cy.reset();
-	 cy.fit( cy.$("node:visible") );
+		// Set elements to original positions
+		cy.nodes().forEach(function(n){
+			var pos = n.data('orPos');
+			n.position({
+				x: pos.x,
+				y: pos.y
+		 	});
+		});
+		// Resets the zoom and pan.
+		cy.reset();
+		// Fit view to visible elements
+		cy.fit( cy.$("node:visible") );
 	});
 
 	// BUTTON: Center the graph on the page
   $("#center").click(function(){
-    // cy.center();
+		// cy.center();
 		cy.fit( cy.$("node:visible") );
   });
 
-  // BUTTON: Enables/Disables the option of draggin the graph elements
-  var lock_action = 0;
+  // BUTTON: Lock/Unlock element positions
   $("#lock").click(function(){
-    if ( lock_action == 0 ) {
-      cy.autolock(true);
+		if ( cy.autolock()==false ) {
+			cy.autolock(true);
       $("#lock i").toggleClass("fa-unlock fa-lock");
-      lock_action = 1;
-    } else {
+    } else if ( cy.autolock()==true ) {
       cy.autolock(false);
       $("#lock i").toggleClass("fa-lock fa-unlock");
-      lock_action = 0;
     }
   });
 
@@ -66,8 +84,8 @@ $(document).ready(function(){
 	/// TOGGLE TOOLS:
   // BUTTON: Toggle box surrounding the whole protein
   $("#toggle_box").click(function(){
-    var eles = cy.$('node[role="whole"], node[role="user_seq"]');
-    var eles2 = cy.$('node[role="whole"]:selected, node[role="user_seq"]:selected');
+		var eles = cy.$("node[role='whole'], node[role='user_seq']");
+    var eles2 = cy.$("node[role='whole']:selected, node[role='user_seq']:selected");
     var checked = document.getElementById("toggle_box").checked;
     if (checked) {
       eles.style("border-opacity", "1");
@@ -79,27 +97,27 @@ $(document).ready(function(){
 
   // BUTTON: Toggle ALL protein elements
 	$("#toggle_all_ele").click(function(){
-		var dom_nodes = cy.$('node[role="domain"]');
+		var dom_nodes = cy.$("node[role='domain']");
 		var dom_edges = dom_nodes.connectedEdges();
-		var elm_nodes = cy.$('node[role="elm"]');
+		var elm_nodes = cy.$("node[role='elm']");
 		var elm_edges = elm_nodes.connectedEdges();
-		var ip_nodes = cy.$('node[role="iprets"]');
+		var ip_nodes = cy.$("node[role='iprets']");
 		var ip_edges = ip_nodes.connectedEdges();
 		var checked = document.getElementById("toggle_all_ele").checked;
 		if (checked) {
-			dom_nodes.style("visibility", "visible");
-			elm_nodes.style("visibility", "visible");
-			ip_nodes.style("visibility", "visible");
+			dom_nodes.style("display", "element");
+			elm_nodes.style("display", "element");
+			ip_nodes.style("display", "element");
 			$("#toggle_doms").prop("checked", true);
 			$("#toggle_elms").prop("checked", true);
 			$("#toggle_iprets").prop("checked", true);
 		} else {
-			dom_nodes.style("visibility", "hidden");
-			dom_edges.style("visibility", "hidden");
-			elm_nodes.style("visibility", "hidden");
-			elm_edges.style("visibility", "hidden");
-			ip_nodes.style("visibility", "hidden");
-			ip_edges.style("visibility", "hidden");
+			dom_nodes.style("display", "none");
+			dom_edges.style("display", "none");
+			elm_nodes.style("display", "none");
+			elm_edges.style("display", "none");
+			ip_nodes.style("display", "none");
+			ip_edges.style("display", "none");
 			$("#toggle_doms").prop("checked", false);
 			$("#toggle_elms").prop("checked", false);
 			$("#toggle_iprets").prop("checked", false);
@@ -112,16 +130,14 @@ $(document).ready(function(){
 
   // BUTTON: Toggle domains
   $("#toggle_doms").click(function(){
-    var nodes = cy.$('node[role="domain"]');
+    var nodes = cy.$("node[role='domain']");
 		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_doms").checked;
     if (checked) {
-			// nodes.style("visibility", "visible");
 			nodes.style("display", "element");
     } else {
 			nodes.style("display", "none");
-			// nodes.style("visibility", "hidden");
-			// edges.style("visibility", "hidden");
+			edges.style("display", "none");
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
 			$("#toggle_elmdom_int").prop("checked", false);
@@ -130,52 +146,52 @@ $(document).ready(function(){
 
   // BUTTON: Toggle elms
   $("#toggle_elms").click(function(){
-    var nodes = cy.$('node[role="elm"]');
+    var nodes = cy.$("node[role='elm']");
 		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_elms").checked;
     if (checked) {
-      nodes.style("visibility", "visible");
+      nodes.style("display", "element");
     } else {
-			nodes.style("visibility", "hidden");
-			edges.style("visibility", "hidden");
+			nodes.style("display", "none");
+			edges.style("display", "none");
 			$("#toggle_elmdom_int").prop("checked", false);
     }
   });
 
   // BUTTON: Toggle InterPreTs regions
   $("#toggle_iprets").click(function(){
-    var nodes = cy.$('node[role="iprets"]');
+    var nodes = cy.$("node[role='iprets']");
 		var edges = nodes.connectedEdges();
     var checked = document.getElementById("toggle_iprets").checked;
     if (checked) {
-      nodes.style("visibility", "visible");
+      nodes.style("display", "element");
     } else {
-			nodes.style("visibility", "hidden");
-			edges.style("visibility", "hidden");
+			nodes.style("display", "none");
+			edges.style("display", "none");
 			$("#toggle_prets_int").prop("checked", false);
     }
   });
 
   // BUTTON: Toggle ALL interactions
 	$("#toggle_all_int").click(function(){
-		var prot_edges = cy.$('edge[role="prot_prot_interaction"]');
-		var user_edges = cy.$('edge[role="user_interaction"]');
-		var dom_nodes = cy.$('node[role="domain"]');
+		var prot_edges = cy.$("edge[role='prot_prot_interaction']");
+		var user_edges = cy.$("edge[role='user_interaction']");
+		var dom_nodes = cy.$("node[role='domain']");
 		var dom_edges = dom_nodes.connectedEdges();
-		var elm_nodes = cy.$('node[role="elm"]');
+		var elm_nodes = cy.$("node[role='elm']");
 		var elm_edges = elm_nodes.connectedEdges();
-		var ip_nodes = cy.$('node[role="iprets"]');
+		var ip_nodes = cy.$("node[role='iprets']");
 		var ip_edges = ip_nodes.connectedEdges();
 		var checked = document.getElementById("toggle_all_int").checked;
 		if (checked) {
-			prot_edges.style("visibility", "visible");
-			user_edges.style("visibility", "visible");
-			dom_nodes.style("visibility", "visible");
-			dom_edges.style("visibility", "visible");
-			elm_nodes.style("visibility", "visible");
-			elm_edges.style("visibility", "visible");
-			ip_nodes.style("visibility", "visible");
-			ip_edges.style("visibility", "visible");
+			prot_edges.style("display", "element");
+			user_edges.style("display", "element");
+			dom_nodes.style("display", "element");
+			dom_edges.style("display", "element");
+			elm_nodes.style("display", "element");
+			elm_edges.style("display", "element");
+			ip_nodes.style("display", "element");
+			ip_edges.style("display", "element");
 			$("#toggle_doms").prop("checked", true);
 			$("#toggle_elms").prop("checked", true);
 			$("#toggle_iprets").prop("checked", true);
@@ -186,11 +202,11 @@ $(document).ready(function(){
 			$("#toggle_elmdom_int").prop("checked", true);
 			$("#toggle_prets_int").prop("checked", true);
 		} else {
-			prot_edges.style("visibility", "hidden");
-			user_edges.style("visibility", "hidden");
-			dom_edges.style("visibility", "hidden");
-			elm_edges.style("visibility", "hidden");
-			ip_edges.style("visibility", "hidden");
+			prot_edges.style("display", "none");
+			user_edges.style("display", "none");
+			dom_edges.style("display", "none");
+			elm_edges.style("display", "none");
+			ip_edges.style("display", "none");
 			$("#toggle_pp_int").prop("checked", false);
 			$("#toggle_user_int").prop("checked", false);
 			$("#toggle_dom_int").prop("checked", false);
@@ -202,103 +218,103 @@ $(document).ready(function(){
 
 	// BUTTON: Toggle user-input interactions
   $("#toggle_user_int").click(function(){
-    var edges = cy.$('edge[role="user_interaction"]');
+		var edges = cy.$("edge[role='user_interaction']");
     var checked = document.getElementById("toggle_user_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
+      edges.style("display", "element");
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
   // BUTTON: Toggle protein-protein interactions
   $("#toggle_pp_int").click(function(){
-    var edges = cy.$('edge[role="prot_prot_interaction"]');
+    var edges = cy.$("edge[role='prot_prot_interaction']");
     var checked = document.getElementById("toggle_pp_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
+      edges.style("display", "element");
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
   // BUTTON: Toggle domain-domain interactions (3did)
   $("#toggle_dom_int").click(function(){
-    var edges = cy.$('edge[role="DOM_interaction"]');
+    var edges = cy.$("edge[role='DOM_interaction']");
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_dom_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
-			nodes.style("visibility", "visible");
+      edges.style("display", "element");
+			nodes.style("display", "element");
 			$("#toggle_doms").prop("checked", true);
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
   // BUTTON: Toggle domain-domain interactions (statistical prediction)
   $("#toggle_idom_int").click(function(){
-    var edges = cy.$('edge[role="iDOM_interaction"]');
+    var edges = cy.$("edge[role='iDOM_interaction']");
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_idom_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
-			nodes.style("visibility", "visible");
+      edges.style("display", "element");
+			nodes.style("display", "element");
 			$("#toggle_doms").prop("checked", true);
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
   // BUTTON: Toggle elm-domain interactions
   $("#toggle_elmdom_int").click(function(){
-    var edges = cy.$('edge[role="ELM_interaction"]');
+    var edges = cy.$("edge[role='ELM_interaction']");
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_elmdom_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
-			nodes.style("visibility", "visible");
+      edges.style("display", "element");
+			nodes.style("display", "element");
 			$("#toggle_elms").prop("checked", true);
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
   // BUTTON: Toggle InterPreTS interactions
   $("#toggle_prets_int").click(function(){
-    var edges = cy.$('edge[role="INT_interaction"]');
+    var edges = cy.$("edge[role='INT_interaction']");
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_prets_int").checked;
 		if (checked) {
-      edges.style("visibility", "visible");
-			nodes.style("visibility", "visible");
+      edges.style("display", "element");
+			nodes.style("display", "element");
 			$("#toggle_iprets").prop("checked", true);
     } else {
-      edges.style("visibility", "hidden");
+      edges.style("display", "none");
     }
   });
 
 	// BUTTON: Toggle ALL protein modifications
 	$("#toggle_all_mod").click(function(){
-		var phos = cy.$('node[role="phosphorylation"]');
-		var ace = cy.$('node[role="acetylation"]');
-		var input_mut = cy.$('node[role="input_mut"]');
-		var cosmic_mut = cy.$('node[role="cosmic_mut"]');
+		var phos = cy.$("node[role='phosphorylation']");
+		var ace = cy.$("node[role='acetylation']");
+		var input_mut = cy.$("node[role='input_mut']");
+		var cosmic_mut = cy.$("node[role='cosmic_mut']");
 		var checked = document.getElementById("toggle_all_mod").checked;
 		if (checked) {
-			phos.style("visibility", "visible");
-			ace.style("visibility", "visible");
-			input_mut.style("visibility", "visible");
-			cosmic_mut.style("visibility", "visible");
+			phos.style("display", "element");
+			ace.style("display", "element");
+			input_mut.style("display", "element");
+			cosmic_mut.style("display", "element");
 			$("#toggle_phos").prop("checked", true);
 			$("#toggle_acet").prop("checked", true);
 			$("#toggle_input_mut").prop("checked", true);
 			$("#toggle_cosmic_mut").prop("checked", true);
 		} else {
-			phos.style("visibility", "hidden");
-			ace.style("visibility", "hidden");
-			input_mut.style("visibility", "hidden");
-			cosmic_mut.style("visibility", "hidden");
+			phos.style("display", "none");
+			ace.style("display", "none");
+			input_mut.style("display", "none");
+			cosmic_mut.style("display", "none");
 			$("#toggle_phos").prop("checked", false);
 			$("#toggle_acet").prop("checked", false);
 			$("#toggle_input_mut").prop("checked", false);
@@ -308,44 +324,44 @@ $(document).ready(function(){
 
 	// BUTTON: Toggle mutations
 	$("#toggle_input_mut").click(function(){
-		var eles = cy.$('node[role="input_mut"]');
+		var eles = cy.$("node[role='input_mut']");
 		var checked = document.getElementById("toggle_input_mut").checked;
 		if (checked) {
-			eles.style("visibility", "visible");
+			eles.style("display", "element");
 		} else {
-			eles.style("visibility", "hidden");
+			eles.style("display", "none");
 		}
 	});
 
 	$("#toggle_cosmic_mut").click(function(){
-		var eles = cy.$('node[role="cosmic_mut"]');
+		var eles = cy.$("node[role='cosmic_mut']");
 		var checked = document.getElementById("toggle_cosmic_mut").checked;
 		if (checked) {
-			eles.style("visibility", "visible");
+			eles.style("display", "element");
 		} else {
-			eles.style("visibility", "hidden");
+			eles.style("display", "none");
 		}
 	});
 
 	// BUTTON: Toggle phosphorylations
   $("#toggle_phos").click(function(){
-    var eles = cy.$('node[role="phosphorylation"]');
+    var eles = cy.$("node[role='phosphorylation']");
     var checked = document.getElementById("toggle_phos").checked;
 		if (checked) {
-      eles.style("visibility", "visible");
+      eles.style("display", "element");
     } else {
-      eles.style("visibility", "hidden");
+      eles.style("display", "none");
     }
   });
 
   // BUTTON: Toggle acetylations
   $("#toggle_acet").click(function(){
-    var eles = cy.$('node[role="acetylation"]');
+    var eles = cy.$("node[role='acetylation']");
     var checked = document.getElementById("toggle_acet").checked;
-    if (checked) {
-      eles.style("visibility", "visible");
+		if (checked) {
+      eles.style("display", "element");
     } else {
-      eles.style("visibility", "hidden");
+      eles.style("display", "none");
     }
   });
 
@@ -373,20 +389,20 @@ $(document).ready(function(){
 
   // BUTTON: Download graph as JSON
   $("#dl_json").click(function(){
-	  var jsonBlob = new Blob([ JSON.stringify( cy.json() ) ], { type: 'application/javascript;charset=utf-8' });
-	  saveAs( jsonBlob, 'graph.json' );
+	  var jsonBlob = new Blob([ JSON.stringify( cy.json() ) ], { type: "application/javascript;charset=utf-8" });
+	  saveAs( jsonBlob, "graph.json" );
   });
 
 	// Create double-Tap event
 	var tappedBefore;
 	var tappedTimeout;
-	cy.on('tap', function(event) {
+	cy.on("tap", function(event) {
 	  var tappedNow = event.target;
 	  if (tappedTimeout && tappedBefore) {
 	    clearTimeout(tappedTimeout);
 	  }
 	  if(tappedBefore === tappedNow) {
-	    tappedNow.trigger('doubleTap');
+	    tappedNow.trigger("doubleTap");
 	    tappedBefore = null;
 	  } else {
 	    tappedTimeout = setTimeout(function(){ tappedBefore = null; }, 300);
@@ -395,7 +411,7 @@ $(document).ready(function(){
 	});
 
 	// FEATURE: Double-Tap on protein node to zoom-in
-	cy.on('doubleTap', 'node[role=\"whole\"], node[role="user_seq"]', function(event) {
+	cy.on("doubleTap", "node[role='whole'], node[role='user_seq']", function(event) {
 	  var node = event.target;
 		cy.animate({
 			fit: { eles: node,
@@ -404,8 +420,8 @@ $(document).ready(function(){
 	});
 
 	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
-	cy.on('render zoom', function(event) {
-		var node = cy.$('node[role="whole"], node[role="user_seq"]');
+	cy.on("render zoom", function(event) {
+		var node = cy.$("node[role='whole'], node[role='user_seq']");
 		var edges = node.connectedEdges();
 		var dim = 16/cy.zoom();
 		var maxDim = Math.max(dim,30);
@@ -419,10 +435,9 @@ $(document).ready(function(){
 	// }
 	});
 
-	cy.autoungrabify(true);
-
 	// MOUSEOVER/MOUSEOUT changes
-  cy.on('tapdragover tapdragout','node[role="whole"], node[role="user_seq"]', function(event) {
+	cy.autoungrabify(true);
+  cy.on("tapdragover tapdragout","node[role='whole'], node[role='user_seq']", function(event) {
     var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
@@ -434,10 +449,10 @@ $(document).ready(function(){
 		}
   });
 
-	cy.on('tapdragover tapdragout',
-				'node[role=\"domain\"], node[role=\"elm\"], node[role=\"iprets\"], '+
-				'node[role=\"phosphorylation\"], node[role=\"acetylation\"], '+
-				'node[role=\"input_mut\"], node[role=\"cosmic_mut\"]', function(event) {
+	cy.on("tapdragover tapdragout",
+				"node[role='domain'], node[role='elm'], node[role='iprets'], "+
+				"node[role='phosphorylation'], node[role='acetylation'], "+
+				"node[role='input_mut'], node[role='cosmic_mut']", function(event) {
 		var node = event.target;
 		node.toggleClass("highlight");
 		node.connectedEdges().toggleClass("highlight");
@@ -449,34 +464,34 @@ $(document).ready(function(){
 		// }
 	});
 
-	cy.on('mouseover mouseout','edge[role=\"prot_prot_interaction\"]', function(event) {
+	cy.on("mouseover mouseout", "edge[role='prot_prot_interaction']", function(event) {
 		var edge = event.target;
 		edge.toggleClass("highlight");
 		edge.connectedNodes().toggleClass("highlight2");
 	});
 
-	cy.on('mouseover mouseout','edge[role=\"DOM_interaction\"]', function(event) {
-		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
-		edge.connectedNodes().parent().toggleClass("highlight2");
-	});
-
-	cy.on('mouseover mouseout','edge[role=\"iDOM_interaction\"]', function(event) {
+	cy.on("mouseover mouseout", "edge[role='DOM_interaction']", function(event) {
 		var edge = event.target;
 		edge.toggleClass("highlight");
 		edge.connectedNodes().toggleClass("highlight2");
 		edge.connectedNodes().parent().toggleClass("highlight2");
 	});
 
-	cy.on('mouseover mouseout','edge[role=\"ELM_interaction\"]', function(event) {
+	cy.on("mouseover mouseout", "edge[role='iDOM_interaction']", function(event) {
 		var edge = event.target;
 		edge.toggleClass("highlight");
 		edge.connectedNodes().toggleClass("highlight2");
 		edge.connectedNodes().parent().toggleClass("highlight2");
 	});
 
-	cy.on('mouseover mouseout','edge[role=\"INT_interaction\"]', function(event) {
+	cy.on("mouseover mouseout", "edge[role='ELM_interaction']", function(event) {
+		var edge = event.target;
+		edge.toggleClass("highlight");
+		edge.connectedNodes().toggleClass("highlight2");
+		edge.connectedNodes().parent().toggleClass("highlight2");
+	});
+
+	cy.on("mouseover mouseout", "edge[role='INT_interaction']", function(event) {
 		var edge = event.target;
 		edge.toggleClass("highlight");
 		edge.connectedNodes().toggleClass("highlight2");
@@ -506,20 +521,20 @@ $(document).ready(function(){
 					length+" AA <i class='fas fa-external-link-alt fa-xs'></i>"+
 					"</span>",
 				position: {
-					my: 'top center',
-					at: 'bottom center'
+					my: "top center",
+					at: "bottom center"
 				},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
 					}
 				},
-				show: { event: 'directtap' }
+				show: { event: "directtap" }
 			});
 
-			this.trigger('directtap');
+			this.trigger("directtap");
 		}
 	});
 
@@ -545,32 +560,32 @@ $(document).ready(function(){
 			blast_hits += "</div>"
 			node.qtip({
 				content:
-					"<span class='tip'>User-input sequence<br>"+
-					"\t<span class='tipProt'>Label</span> | <b>"+label+"</b><br>" +
+					"<span class='tip'>User-input sequence<br>\n"+
+					"\t<span class='tipProt'>Label</span> | <b>"+label+"</b><br>\n" +
 					"\t<span class='tipProt'>Length</span> | "+
 					"<a href='"+link+"' target='_blank'_>" +
 					length+" AA <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
 					blast_hits+
 					"</span>",
 				position: {
-					my: 'top center',
-					at: 'bottom center'
+					my: "top center",
+					at: "bottom center"
 				},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
 					}
 				},
-				show: { event: 'directtap' }
+				show: { event: "directtap" }
 			});
 
-			this.trigger('directtap');
+			this.trigger("directtap");
 		}
 	});
 
-	cy.on('click','node[role=\"domain\"]', function(event) {
+	cy.on("click", "node[role='domain']", function(event) {
 		var node = event.target;
 		var name = node.data("label");
 		var acc = node.data("acc");
@@ -592,11 +607,11 @@ $(document).ready(function(){
 				" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
 				"</span>",
 			position: {
-				my: 'top center',
-				at: 'bottom center'
+				my: "top center",
+				at: "bottom center"
 			},
 			style: {
-				classes: 'qtip-bootstrap',
+				classes: "qtip-bootstrap",
 				tip: {
 					width: 20,
 					height: 10
@@ -605,11 +620,21 @@ $(document).ready(function(){
 		});
 	});
 
-	cy.on('click','node[role=\"elm\"]', function(event) {
+	cy.on("click","node[role='elm']", function(event) {
 		var node = event.target;
 		var name = node.data("label");
+		var id = node.data("id");
 		var acc = node.data("acc");
-		var des = node.data("des");
+		var i = 0;
+		var des = "";
+		node.data("des").split("").forEach(function(char) {
+			i += 1;
+			des += char;
+			if (i == 60) {
+				i = 0;
+				des += "<br>";
+			}
+		});
 		var regex = node.data("regex");
 		var start = node.data("start");
 		var end = node.data("end");
@@ -617,25 +642,42 @@ $(document).ready(function(){
 		var prot = node.data("protein");
 		node.qtip({
 			content:
-				"<span class='tip' style='color: #7f7c7b;'>" +
-					"<b>Source: <a href='https://elm.eu.org'>ELM</a></b>" +
-				"</span><br>" +
-				"<span class='tip'>"+
+				"<span class='tip' style='color: #7f7c7b;'>\n" +
+					"<b>Source: <a href='https://elm.eu.org'>ELM</a></b>\n" +
+				"</span><br>\n" +
+				"<span class='tip'>\n"+
 					"<span class='tipELM'>Identifier</span> | "+
-					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
-					"<span class='tipELM'>Accession</span> | "+ acc + "<br>"+
-					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>"+
+					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>\n"+
+					"<span class='tipELM'>Accession</span> | "+ acc + "<br>\n"+
+					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>\n"+
 					"<span class='tipELM'>Start - End</span> | " +
 					"<b>"+start+"</b> - <b>"+end+"</b>" +
-					" (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>"+
-					"<span class=tipELM>Subsequence</span> | <i>"+seq+"</i>" +
-				"</span>",
+					" (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
+					"<span class=tipELM>Subsequence</span> | <i>"+seq+"</i><br>\n" +
+				"</span>\n"+
+				"<div class='row'>\n"+
+					"<div class='col-sm-4 text-center'>\n"+
+						"<button class='txt-btn' onclick=removeThisEle(\""+id+"\") >\n"+
+							"Remove\n"+
+						"</button>\n"+
+					"</div>\n"+
+					"<div class='col-sm-4 text-center'>\n"+
+						"<button class='txt-btn' onclick=removeAllinProt(\""+name+"\",\""+prot+"\") >\n"+
+							"Remove all in this protein\n"+
+						"</button>\n"+
+					"</div>\n"+
+					"<div class='col-sm-4 text-center'>\n"+
+						"<button class='txt-btn' onclick=removeAll(\""+name+"\") >\n"+
+							"Remove all in network\n"+
+						"</button>\n"+
+					"</div>\n"+
+				"</div>",
 			position: {
-				my: 'top center',
-				at: 'bottom center'
+				my: "top center",
+				at: "bottom center"
 			},
 			style: {
-				classes: 'qtip-bootstrap',
+				classes: "qtip-bootstrap",
 				tip: {
 					width: 20,
 					height: 10
@@ -644,7 +686,7 @@ $(document).ready(function(){
 		});
 	});
 
-	cy.on('click','node[role=\"iprets\"]', function(event) {
+	cy.on("click","node[role='iprets']", function(event) {
 		var node = event.target;
 		var pdb = node.data("pdb").split("|")[1];
 		var chain = node.data("pdb").split("|")[2];
@@ -669,11 +711,11 @@ $(document).ready(function(){
 					"<span class='tipInP'>Alignment score</span> | BLAST e-val=<i>"+ev+"</i>, <i>"+pcid+"%</i> id<br>"+
 				"</span>",
 			position: {
-				my: 'top center',
-				at: 'bottom center'
+				my: "top center",
+				at: "bottom center"
 			},
 			style: {
-				classes: 'qtip-bootstrap',
+				classes: "qtip-bootstrap",
 				tip: {
 					width: 20,
 					height: 10
@@ -682,7 +724,7 @@ $(document).ready(function(){
 		});
 	});
 
-	cy.on('click','node[role=\"cosmic_mut\"]', function(event) {
+	cy.on("click","node[role='cosmic_mut']", function(event) {
 		var node = event.target;
 		var cos_id = node.data("cos_id").split(";");
 		var mut_aas = node.data("aa_mut").split(";");
@@ -715,11 +757,11 @@ $(document).ready(function(){
 					"<a href="+gene_link+">View gene "+gene+" <i class='fas fa-external-link-alt fa-xs'></i></a>"+
 				"</span><br>\n"+html,
 			position: {
-				my: 'top center',
-				at: 'bottom center'
+				my: "top center",
+				at: "bottom center"
 			},
 			style: {
-				classes: 'qtip-bootstrap',
+				classes: "qtip-bootstrap",
 				tip: {
 					width: 20,
 					height: 10
@@ -729,7 +771,7 @@ $(document).ready(function(){
 
 	});
 
-	cy.on('click','edge[role=\"prot_prot_interaction\"]', function(event) {
+	cy.on("click","edge[role='prot_prot_interaction']", function(event) {
 			var edge = event.target;
 			var nodes = edge.connectedNodes();
 			var genes = []
@@ -781,11 +823,11 @@ $(document).ready(function(){
 						"<b>"+high_len+"</b><span style='font-size:12px;'>"+high_link+"</span>"+
 					"</span><br>",
 				position: {
-           my: 'top center',
-           at: 'bottom center'
-       	},
+					my: "top center",
+					at: "bottom center"
+				},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
@@ -794,7 +836,7 @@ $(document).ready(function(){
 			});
 	});
 
-	cy.on('click','edge[role=\"DOM_interaction\"]', function(event) {
+	cy.on("click","edge[role='DOM_interaction']", function(event) {
 			var edge = event.target;
 			var nodes = edge.connectedNodes();
 			var doms = [];
@@ -822,11 +864,11 @@ $(document).ready(function(){
 						"<span class='tip3did'>Interacting Proteins</span> | "+prots.join(" - ")+
 					"</span>",
 				position: {
-           my: 'top center',
-           at: 'bottom center'
-       	},
+					my: "top center",
+					at: "bottom center"
+				},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
@@ -835,7 +877,7 @@ $(document).ready(function(){
 			});
 	});
 
-	cy.on('click','edge[role=\"iDOM_interaction\"]', function(event) {
+	cy.on("click","edge[role='iDOM_interaction']", function(event) {
 			var edge = event.target;
 			var nodes = edge.connectedNodes();
 			var doms = [];
@@ -865,11 +907,11 @@ $(document).ready(function(){
 					"</span>",
 
 				position: {
-           my: 'top center',
-           at: 'bottom center'
-       	},
+					my: "top center",
+					at: "bottom center"
+				},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
@@ -878,7 +920,7 @@ $(document).ready(function(){
 			});
 	});
 
-	cy.on('click','edge[role=\"ELM_interaction\"]', function(event) {
+	cy.on("click","edge[role='ELM_interaction']", function(event) {
 			var edge = event.target;
 			var nodes = edge.connectedNodes();
 			var doms = [];
@@ -903,11 +945,11 @@ $(document).ready(function(){
 						"<span class='tipELMint'>Interacting Proteins</span> | "+prots.join(" - ")+
 					"</span>",
 				position: {
-           my: 'top center',
-           at: 'bottom center'
+           my: "top center",
+           at: "bottom center"
        	},
 				style: {
-					classes: 'qtip-bootstrap',
+					classes: "qtip-bootstrap",
 					tip: {
 						width: 20,
 						height: 10
@@ -916,7 +958,7 @@ $(document).ready(function(){
 			});
 	});
 
-	cy.on('click','edge[role=\"INT_interaction\"]', function(event) {
+	cy.on("click","edge[role='INT_interaction']", function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
 		var pdb = edge.data("pdb").split("|")[1];
@@ -931,28 +973,28 @@ $(document).ready(function(){
 
 		edge.qtip({
 			content:
-			"<span class='tip' style='color: #7b241c;'>" +
-			"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
-			"</span><br>" +
-			"<span class='tip'>"+
-				"<span class='tipInP'>PDB Template ID</span> |  "+
-				"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
-				"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
-				"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
-				"<span class='tipInP'>Z-score</span> | "+z+"<br>"+
-				"<span class='tipInP'>P-value</span> | "+pval+
-			"</span>",
-			position: {
-				 my: 'top center',
-				 at: 'bottom center'
-			},
-			style: {
-				classes: 'qtip-bootstrap',
-				tip: {
-					width: 20,
-					height: 10
+				"<span class='tip' style='color: #7b241c;'>" +
+				"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
+				"</span><br>" +
+				"<span class='tip'>"+
+					"<span class='tipInP'>PDB Template ID</span> |  "+
+					"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+					"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
+					"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+					"<span class='tipInP'>Z-score</span> | "+z+"<br>"+
+					"<span class='tipInP'>P-value</span> | "+pval+
+				"</span>",
+			 position: {
+					my: "top center",
+					at: "bottom center"
+			 },
+			 style: {
+				 classes: "qtip-bootstrap",
+					tip: {
+						width: 20,
+						height: 10
+					}
 				}
-			}
 		});
 	});
 });
