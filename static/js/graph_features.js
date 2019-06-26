@@ -40,6 +40,10 @@ $(document).ready(function(){
 
 	// BUTTON: reset graph
 	$("#reset").click(function(){
+		// Remove all elements
+		cy.elements().remove();
+		// Add elements again
+		cy.add( json_elements );
 		// Set elements to original positions
 		cy.nodes().forEach(function(n){
 			var pos = n.data('orPos');
@@ -52,6 +56,20 @@ $(document).ready(function(){
 		cy.reset();
 		// Fit view to visible elements
 		cy.fit( cy.$("node:visible") );
+		// Check/Uncheck to reflect default status
+		$("#toggle_box").prop("checked", true);
+		$("#toggle_doms").prop("checked", true);
+		$("#toggle_elms").prop("checked", false);
+		$("#toggle_iprets").prop("checked", false);
+		$("#toggle_pp_int").prop("checked", true);
+		$("#toggle_dom_int").prop("checked", false);
+		$("#toggle_idom_int").prop("checked", false);
+		$("#toggle_elmdom_int").prop("checked", false);
+		$("#toggle_prets_int").prop("checked", false);
+		$("#toggle_phos").prop("checked", false);
+		$("#toggle_acet").prop("checked", false);
+		$("#toggle_input_mut").prop("checked", false);
+		$("#toggle_cosmic_mut").prop("checked", false);
 	});
 
 	// BUTTON: Center the graph on the page
