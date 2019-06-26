@@ -411,7 +411,7 @@ $(document).ready(function(){
 		var svgContent = cy.svg({scale: 1, full: true});
 		var blob = new Blob([svgContent], {type:"image/svg+xml;charset=utf-8"});
 		saveAs(blob, "graph.svg");
-	};
+	});
 
 	// Create double-Tap event
 	var tappedBefore;
