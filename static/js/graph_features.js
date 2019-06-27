@@ -384,6 +384,11 @@ $(document).ready(function(){
   });
 
 	/// DOWNLOAD BUTTONS
+	// BUTTON: Download graph as JSON
+	$("#dl_json").click(function(){
+		var jsonBlob = new Blob([ JSON.stringify( cy.json() ) ], { type: "application/javascript;charset=utf-8" });
+		saveAs( jsonBlob, "graph.json" );
+	});
   // BUTTON: Get snapshot as PNG
   $("#dl_png").click(function(){
 		var image = cy.png()
@@ -392,9 +397,7 @@ $(document).ready(function(){
 			allowfullscreen></iframe>`;
   	var win = window.open();
 	  win.document.write(iframe);
-
   });
-
   // BUTTON: Get snapshot as JPG
   $("#dl_jpg").click(function(){
 		var image = cy.jpg()
@@ -404,12 +407,11 @@ $(document).ready(function(){
   	var win = window.open();
 	  win.document.write(iframe);
   });
-
-  // BUTTON: Download graph as JSON
-  $("#dl_json").click(function(){
-	  var jsonBlob = new Blob([ JSON.stringify( cy.json() ) ], { type: "application/javascript;charset=utf-8" });
-	  saveAs( jsonBlob, "graph.json" );
-  });
+  $("#dl_svg").click(function(filename) {
+		var svgContent = cy.svg({scale: 1, full: true});
+		var blob = new Blob([svgContent], {type:"image/svg+xml;charset=utf-8"});
+		saveAs(blob, "graph.svg");
+	});
 
 	// Create double-Tap event
 	var tappedBefore;
