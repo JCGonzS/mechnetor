@@ -642,19 +642,24 @@ $(document).ready(function(){
 
 	cy.on("click","node[role='elm']", function(event) {
 		var node = event.target;
-		var name = node.data("label");
 		var id = node.data("id");
+		var label = node.data("label");
 		var acc = node.data("acc");
+		var name = node.data("name");
 		var i = 0;
-		var des = "";
-		node.data("des").split("").forEach(function(char) {
-			i += 1;
-			des += char;
-			if (i == 60) {
+		var tot = 0;
+		var des0 = [];
+		node.data("des").split(" ").forEach(function(char) {
+			i += char.length+1;
+			tot += char.length+1;
+			if (i>=60 && tot<node.data("des").length) {
+				des0.push(char+"<br>");
 				i = 0;
-				des += "<br>";
+			} else {
+				des0.push(char);
 			}
 		});
+		var des = des0.join(" ");
 		var regex = node.data("regex");
 		var start = node.data("start");
 		var end = node.data("end");
@@ -667,12 +672,13 @@ $(document).ready(function(){
 				"</span><br>\n" +
 				"<span class='tip'>\n"+
 					"<span class='tipELM'>Identifier</span> | "+
-					"<a href='http://elm.eu.org/elms/"+name+"'>"+name+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>\n"+
+					"<a href='http://elm.eu.org/elms/"+label+"'>"+label+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>\n"+
 					"<span class='tipELM'>Accession</span> | "+ acc + "<br>\n"+
+					"<span class='tipELM'>Class</span> | "+ name + "<br>\n"+
 					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>\n"+
 					"<span class='tipELM'>Start - End</span> | " +
 					"<b>"+start+"</b> - <b>"+end+"</b>" +
-					" (<a href='http://elm.eu.org/instances/"+name+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
+					" (<a href='http://elm.eu.org/instances/"+label+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
 					"<span class=tipELM>Subsequence</span> | <i>"+seq+"</i><br>\n" +
 				"</span>\n"+
 				"<div class='row'>\n"+
@@ -682,12 +688,12 @@ $(document).ready(function(){
 						"</button>\n"+
 					"</div>\n"+
 					"<div class='col-sm-4 text-center'>\n"+
-						"<button class='txt-btn' onclick=removeAllinProt(\""+name+"\",\""+prot+"\") >\n"+
+						"<button class='txt-btn' onclick=removeAllinProt(\""+label+"\",\""+prot+"\") >\n"+
 							"Remove all in this protein\n"+
 						"</button>\n"+
 					"</div>\n"+
 					"<div class='col-sm-4 text-center'>\n"+
-						"<button class='txt-btn' onclick=removeAll(\""+name+"\") >\n"+
+						"<button class='txt-btn' onclick=removeAll(\""+label+"\") >\n"+
 							"Remove all in network\n"+
 						"</button>\n"+
 					"</div>\n"+
