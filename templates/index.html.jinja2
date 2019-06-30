@@ -22,18 +22,7 @@
 
 	<div id="main_container">
 
-		<div class="header">
-			<div id="header-content">
-	      <div id="header-title">Protein Interaction Visualization</div>
-				<div id="navbar">
-					<ul>
-						<li><a href="/" class="home-link">Home</a></li>
-						<li><a href="/help" class="help-link">Help</a></li>
-						<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
+		{% include "header.html" %}
 
 		<div id="body">
 			<div id="body_t1" class="container">
@@ -143,34 +132,7 @@
 			</div>
 		</div>
 
-		<div id="footer">
-			<div class="row">
-				<div class="col-sm-5">
-					<div class="section">Developed by</div>
-					<p style="margin:0; padding:0;">
-						JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
-					</p>
-					<p>
-						at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
-						(University of Heidelberg, 2018)
-					</p>
-				</div>
-				<div class="col-sm-3">
-					<div class="section">Powered by</div>
-					<div id="cyto-logo">
-						<a href="http://js.cytoscape.org/">
-							<img src="{{ url_for('static',filename='images/cytoscape-logo-white.png') }}" alt="cyto-logo" width="35" height="40">Cytoscape.js
-						</a>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="section">Contact</div>
-						<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
-				</div>
-			</div>
-			<!-- <hr style="padding:0;">
-			<div><i>University of Heidelberg, 2018</i></div> -->
-		</div>
+		{% include "footer.html" %}
 	</div>
 
 	<script>
