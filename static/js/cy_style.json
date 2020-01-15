@@ -1,35 +1,21 @@
 [
   {
-    "selector": "node[role=\"start-end\"]",
-    "style": {
-      "shape": "rectangle",
-      "width": "1",
-      "height": "6px",
-      "background-opacity": "1",
-      "background-color": "#5f6a6a",
-      "label": "data(label)",
-      "font-size": "5",
-      "text-opacity": "0",
-      "events": "no"
-    }
-  },
-  {
-    "selector": "node[role=\"whole\"], node[role=\"user_seq\"]",
+    "selector": "node[role='protein_main'], node[role='user_seq']",
     "style": {
       "shape": "roundrectangle",
       "padding": "40px",
       "background-opacity": "0",
+      "border-width": "2px",
       "border-color": "#424949",
-      "border-width": "1px",
       "border-opacity": "1",
       "label": "data(label)",
-      "font-size": "20",
+      "font-size": "30px",
+      "text-halign": "center",
+      "text-valign": "bottom",
+      "text-margin-y": "-8px",
       "color": "#FFF",
       "text-outline-color": "#424949",
-      "text-outline-width": "2",
-      "text-valign": "bottom",
-      "text-halign": "center",
-      "text-margin-y": "-8px",
+      "text-outline-width": "3px",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
@@ -40,405 +26,506 @@
     }
   },
   {
-    "selector": "node[role=\"whole\"].highlight, node[role=\"user_seq\"].highlight",
+    "selector": "node[role='protein_main'].hl, node[role='user_seq'].hl",
     "style": {
       "border-color": "#33a1c2",
-      "border-width": "3px",
-      "font-size": "30",
       "text-outline-color": "#33a1c2",
-      "text-outline-width": "3",
-      "z-index": 1000
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"whole\"].highlight2, node[role=\"user_seq\"].highlight2",
+    "selector": "node[role='protein_main'].hl2, node[role='user_seq'].hl2",
     "style": {
       "border-color": "#ff5733",
-      "border-width": "3px",
-      "font-size": "30",
-      "text-outline-color": "#ff5733",
-      "text-outline-width": "3"
+      "text-outline-color": "#ff5733"
     }
   },
-
   {
-    "selector": "node[role=\"domain\"]",
+    "selector": "node[role='protein_seq']",
+    "style": {
+      "shape": "rectangle",
+      "width": "data(length)",
+      "height": "6px",
+      "background-opacity": "1",
+      "background-color": "#AAB7B8",
+      "events": "no",
+      "z-index-compare": "manual",
+      "z-index": "1"
+    }
+  },
+  {
+    "selector": "node[role='domain']",
     "style": {
       "shape": "roundrectangle",
       "width": "data(length)",
+      "height": "20px",
       "background-color": "data(color)",
+      "background-opacity": "0.5",
+      "border-width": "1px",
+      "border-color": "data(color)",
       "label": "data(label)",
-      "font-size": "10",
-      "min-zoomed-font-size": "15",
+      "font-size": "10px",
+      "min-zoomed-font-size": "15px",
+      "text-margin-y": "2px",
       "color": "#FFF",
       "text-outline-color": "data(color)",
-      "text-outline-width": "2",
-      "text-margin-y": "2px",
+      "text-outline-width": "1px",
       "events": "yes",
       "text-events": "yes"
     }
   },
   {
-    "selector": "node[role=\"domain\"].highlight",
+    "selector": "node[role='domain'].hl",
     "style": {
-      "background-color": "#5d6d7e",
+      "background-color": "#5D6D7E",
       "border-style": "dashed",
-      "border-color": "#b03a2e",
-      "border-width": "2px",
+      "border-color": "#B03A2E",
+      "border-width": "1px",
+      "font-size": "15px",
+      "min-zoomed-font-size": "5px",
       "color": "#FFF",
-      "text-outline-color": "#b03a2e",
-      "text-outline-width": "2",
-      "font-size": "15",
-      "min-zoomed-font-size": "5"
+      "text-outline-color": "#B03A2E",
+      "text-outline-width": "2px"
     }
   },
   {
-    "selector": "node[role=\"domain\"].highlight2",
+    "selector": "node[role='domain'].hl2",
     "style": {
       "border-style": "dashed",
-      "border-color": "#b03a2e",
-      "border-width": "2px",
+      "border-color": "#B03A2E",
+      "border-width": "1px",
       "color": "#FFF",
-      "text-outline-color": "#b03a2e",
-      "text-outline-width": "2",
-      "min-zoomed-font-size": "5"
+      "text-outline-color": "#B03A2E",
+      "text-outline-width": "2px",
+      "min-zoomed-font-size": "5px",
+      "z-index": "999"
     }
   },
   {
-    "selector": "node[role=\"elm\"]",
+    "selector": "node[role='elm']",
     "style": {
       "shape": "roundrectangle",
       "width": "data(length)",
+      "height": "15px",
       "background-opacity": "0",
-      "border-width": "1",
+      "border-width": "1px",
       "border-color": "data(color)",
       "label": "data(label)",
-      "font-size": "8",
-      "min-zoomed-font-size": "17",
-      "color": "data(color)",
+      "font-size": "8px",
+      "min-zoomed-font-size": "17px",
       "text-valign": "bottom",
+      "color": "data(color)",
       "events": "yes",
       "text-events": "yes",
       "display": "none"
     }
   },
   {
-    "selector": "node[role=\"elm\"].highlight",
+    "selector": "node[role='elm'].hl",
     "style": {
       "background-opacity": "0.5",
       "background-color": "data(color)",
-      "font-size": "12",
+      "font-size": "12px",
       "text-valign": "top",
-      "text-margin-y": "2px"
+      "text-margin-y": "2px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"iprets\"]",
+    "selector": "node[role='elm'].hl2",
+    "style": {
+      "background-opacity": "0.5",
+      "background-color": "data(color)",
+      "font-size": "12px",
+      "text-valign": "top",
+      "text-margin-y": "2px",
+      "z-index": "1000"
+    }
+  },
+  {
+    "selector": "node[role ^='unifeat']",
+    "style": {
+      "display": "none",
+      "events": "yes",
+      "text-events": "yes"
+    }
+  },
+  {
+    "selector": "node[role='VARIANT']",
+    "style": {
+      "shape": "rectangle",
+      "width": "data(length)",
+      "background-color": "#DBCB67",
+      "label": "data(label)",
+      "font-size": "5px",
+      "min-zoomed-font-size": "20px",
+      "color": "#000"
+    }
+  },
+  {
+    "selector": "node[role='MUTAGEN']",
+    "style": {
+      "shape": "rectangle",
+      "width": "data(length)",
+      "background-color": "#C3821E",
+      "label": "data(label)",
+      "font-size": "5px",
+      "min-zoomed-font-size": "20px",
+      "color": "#000",
+      "events": "yes",
+      "text-events": "yes",
+      "display": "none"
+    }
+  },
+  {
+    "selector": "node[role='iprets']",
     "style": {
       "shape": "ellipse",
       "width": "data(length)",
       "background-opacity": "0",
-      "border-width": "1",
+      "border-width": "1px",
       "border-color": "data(color)",
       "label": "data(label)",
-      "font-size": "3",
-      "min-zoomed-font-size": "24",
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
+      "text-valign": "bottom",
       "color": "#000",
       "text-outline-color": "data(color)",
-      "text-outline-width": "1",
-      "text-valign": "bottom",
+      "text-outline-width": "1px",
       "events": "yes",
       "text-events": "yes",
       "display": "none"
     }
   },
   {
-    "selector": "node[role=\"iprets\"].highlight",
+    "selector": "node[role='iprets'].hl",
     "style": {
       "height": "40px",
       "background-opacity": "0.5",
       "background-color": "data(color)",
       "border-style": "dashed",
-      "border-width": "3",
-      "font-size": "12",
-      "min-zoomed-font-size": "15"
+      "border-width": "3px",
+      "font-size": "12px",
+      "min-zoomed-font-size": "15px"
     }
   },
   {
-    "selector": "node[role=\"iprets\"].highlight2",
+    "selector": "node[role='iprets'].hl2",
     "style": {
       "border-style": "dashed",
-      "border-width": "3"
+      "border-width": "3px"
     }
   },
   {
-    "selector": "node[role=\"input_mut\"]",
+    "selector": "node[role='input_mut']",
     "style": {
       "shape": "polygon",
       "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
-      "width": "3",
-      "height": "12",
+      "width": "3px",
+      "height": "12px",
       "background-color": "#FF0000",
-      "border-width": "0.3",
+      "border-width": "0.3px",
       "border-color": "#000000",
       "label": "data(label)",
-      "font-size": "3",
-      "min-zoomed-font-size": "24",
-      "display": "none",
-      "events": "yes"
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
+      "events": "yes",
+      "display": "none"
     }
   },
   {
-    "selector": "node[role=\"input_mut\"].highlight",
+    "selector": "node[role='input_mut_old']",
     "style": {
-      "height": "14",
+      "shape": "rectangle",
+      "width": "1px",
+      "height": "25px",
+      "background-color": "#FF0000",
+      "label": "data(label)",
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
+      "events": "yes",
+      "display": "none",
+      "z-index-compare": "manual",
+      "z-index": "0"
+    }
+  },
+  {
+    "selector": "node[role='input_mut'].hl",
+    "style": {
+      "height": "14px",
       "background-color": "#971031",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
-      "font-size": "8",
-      "min-zoomed-font-size": "14",
-      "z-index": 1000
+      "font-size": "8px",
+      "min-zoomed-font-size": "14px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"cosmic_mut\"]",
+    "selector": "node[role='cosmic_mut']",
     "style": {
       "shape": "polygon",
       "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
-      "width": "3",
-      "height": "12",
-      "background-color": "#28446f",
-      "border-width": "0.3",
-      "border-color": "#000000",
+      "width": "3px",
+      "height": "12px",
+      "background-color": "#28446F",
+      "border-width": "0.3px",
+      "border-color": "#000",
       "label": "data(aa_mut)",
-      "font-size": "3",
-      "min-zoomed-font-size": "24",
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
       "display": "none",
       "events": "yes"
     }
   },
   {
-    "selector": "node[role=\"cosmic_mut\"].highlight",
+    "selector": "node[role='cosmic_mut'].hl",
     "style": {
-      "height": "16",
-      "background-color": "#2389af",
+      "height": "16px",
+      "background-color": "#2389AF",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
-      "font-size": "8",
-      "min-zoomed-font-size": "14",
-      "z-index": 1000
+      "font-size": "8px",
+      "min-zoomed-font-size": "14px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"mutagen\"]",
+    "selector": "node[role='mutagen']",
     "style": {
       "shape": "vee",
-      "width": "3",
-      "height": "12",
+      "width": "3px",
+      "height": "12px",
       "background-color": "#FFF",
-      "border-width": "0.3",
-      "border-color": "#000000",
+      "border-width": "0.3px",
+      "border-color": "#000",
       "label": "data(info)",
-      "font-size": "3",
+      "font-size": "3px",
       "font-weight": "bold",
-      "min-zoomed-font-size": "24",
+      "min-zoomed-font-size": "24px",
       "display": "none",
       "events": "yes"
     }
   },
   {
-    "selector": "node[role=\"mutagen\"].highlight",
+    "selector": "node[role='mutagen'].hl",
     "style": {
-      "height": "16",
-      "background-color": "#000000",
+      "height": "16px",
+      "background-color": "#000",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
-      "font-size": "8",
-      "min-zoomed-font-size": "14",
-      "z-index": 1000
+      "font-size": "8px",
+      "min-zoomed-font-size": "14px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"phosphorylation\"]",
+    "selector": "node[role='phosphorylation']",
     "style": {
       "shape": "rectangle",
-      "width": "2",
-      "height": "8",
+      "width": "2px",
+      "height": "8px",
       "background-color": "#FFFF00",
-      "border-width": "0.3",
+      "border-width": "0.3px",
       "border-color": "#000000",
       "label": "data(label)",
-      "font-size": "3",
-      "min-zoomed-font-size": "24",
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
       "display": "none",
       "events": "yes"
     }
   },
   {
-    "selector": "node[role=\"phosphorylation\"].highlight",
+    "selector": "node[role='phosphorylation'].hl",
     "style": {
-      "height": "12",
-      "background-color": "#ffb533",
+      "height": "12px",
+      "background-color": "#FFB533",
+      "text-background-shape": "roundrectangle",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
-      "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
-      "font-size": "8",
-      "min-zoomed-font-size": "14",
-      "z-index": 1000
+      "font-size": "8px",
+      "min-zoomed-font-size": "14px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role=\"acetylation\"]",
+    "selector": "node[role='acetylation']",
     "style": {
       "shape": "rectangle",
-      "width": "2",
-      "height": "8",
+      "width": "2px",
+      "height": "8px",
       "background-color": "#008000",
-      "border-width": "0.3",
-      "border-color": "#000000",
+      "border-width": "0.3px",
+      "border-color": "#000",
       "label": "data(label)",
-      "font-size": "3",
-      "min-zoomed-font-size": "24",
+      "font-size": "3px",
+      "min-zoomed-font-size": "24px",
       "display": "none",
       "events": "yes"
     }
   },
   {
-    "selector": "node[role=\"acetylation\"].highlight",
+    "selector": "node[role='acetylation'].hl",
     "style": {
-      "height": "12",
-      "background-color": "#10972b",
+      "height": "12px",
+      "background-color": "#10972B",
+      "text-background-shape": "roundrectangle",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
-      "text-background-shape": "roundrectangle",
       "text-background-padding": "0",
-      "font-size": "8",
-      "min-zoomed-font-size": "14",
-      "z-index": 1000
+      "font-size": "8px",
+      "min-zoomed-font-size": "14px",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "edge[role=\"protein_sequence\"]",
+    "selector": "edge[role='protein_sequence']",
     "style": {
       "width": "6px",
-      "line-color": "#5f6a6a",
+      "line-color": "#5F6A6A",
       "events": "no",
       "z-index-compare": "manual",
       "z-index": "0"
     }
   },
   {
-    "selector": "edge[role=\"prot_prot_interaction\"]",
+    "selector": "edge[role='prot_prot_interaction']",
     "style": {
-      "width": "8px",
-      "line-color": "#aab7b8",
+      "width": "mapData(evidence_n, 1, 50, 4, 30)",
+      "line-color": "#5F6A6A",
       "line-style": "solid",
       "opacity": "1",
       "source-arrow-shape": "circle",
-      "source-arrow-color": "#aab7b8",
+      "source-arrow-color": "#5F6A6A",
       "target-arrow-shape": "circle",
-      "target-arrow-color": "#aab7b8",
+      "target-arrow-color": "#5F6A6A",
       "arrow-scale": "0.8",
-      "events": "yes"
+      "events": "yes",
+      "z-index-compare": "manual",
+      "z-index": "2500"
     }
   },
   {
-    "selector": "edge[role=\"prot_prot_interaction\"].highlight",
+    "selector": "edge[role='prot_prot_interaction'].hl",
     "style": {
-      "width": "10px",
-      "line-color": "#33a1c2",
-      "source-arrow-color": "#33a1c2",
-      "target-arrow-color": "#33a1c2"
+      "width": "mapData(evidence_n, 1, 50, 8, 35)",
+      "line-color": "#33A1C2",
+      "source-arrow-color": "#33A1C2",
+      "target-arrow-color": "#33A1C2"
     }
   },
   {
-    "selector": "edge[role=\"user_interaction\"]",
+    "selector": "edge[role='user_interaction']",
     "style": {
       "width": "14px",
-      "line-color": "#460dd4",
+      "line-color": "#460DD4",
       "line-style": "solid",
       "opacity": "1",
       "source-arrow-shape": "circle",
-      "source-arrow-color": "#460dd4",
+      "source-arrow-color": "#460DD4",
       "target-arrow-shape": "circle",
-      "target-arrow-color": "#460dd4",
+      "target-arrow-color": "#460DD4",
       "arrow-scale": "0.8",
       "events": "yes"
     }
   },
   {
-    "selector": "edge[role=\"DOM_interaction\"]",
+    "selector": "edge[role='DOM_interaction']",
     "style": {
-      "width": "3px",
+      "width": "mapData(pdb_n, 1, 50, 3, 20)",
       "curve-style": "bezier",
+      "line-color": "#16A085",
       "line-style": "solid",
-      "line-color": "#16a085",
       "opacity": "0.7",
       "display": "none",
       "events": "yes"
     }
   },
   {
-    "selector": "edge[role=\"DOM_interaction\"].highlight",
+    "selector": "edge[role='DOM_interaction'].hl",
     "style": {
-      "width": "6px",
       "line-style": "dashed",
-      "line-color": "#16a085",
+      "opacity": "1",
+      "overlay-padding": "mapData(pdb_n, 1, 50, 5, 22)",
+      "overlay-color": "#16A085",
+      "overlay-opacity": "0.2"
+    }
+  },
+  {
+    "selector": "edge[role='iDOM_interaction']",
+    "style": {
+      "width": "mapData(lo, 2, 10, 3, 20)",
+      "curve-style": "bezier",
+      "line-color": "#D4AC0D",
+      "line-style": "solid",
+      "opacity": "0.7",
+      "display": "none",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role='iDOM_interaction'].hl",
+    "style": {
+      "line-style": "dashed",
+      "opacity": "1",
+      "overlay-padding": "mapData(lo, 2, 10, 6, 23)",
+      "overlay-color": "#D4AC0D",
+      "overlay-opacity": "0.2"
+    }
+  },
+  {
+    "selector": "edge[role='ELM_interaction']",
+    "style": {
+      "width": "4px",
+      "curve-style": "bezier",
+      "line-color": "#AF7AC5",
+      "line-style": "solid",
+      "opacity": "0.7",
+      "display": "none",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role='ELM_interaction'].hl",
+    "style": {
+      "line-style": "dashed",
+      "line-color": "#884EA0",
+      "opacity": "1",
+      "overlay-padding": "6px",
+      "overlay-color": "#884EA0",
+      "overlay-opacity": "0.2"
+    }
+  },
+  {
+    "selector": "edge[role='iELM_interaction']",
+    "style": {
+      "width": "mapData(lo, 2, 10, 6, 23)",
+      "line-style": "solid",
+      "line-color": "#E74C3C",
+      "curve-style": "bezier",
+      "opacity": "0.7",
+      "display": "none",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role='iELM_interaction'].hl",
+    "style": {
+      "width": "mapData(lo, 2, 10, 3, 20)",
+      "line-style": "dashed",
+      "line-color": "#B03A2E",
       "opacity": "1"
     }
   },
   {
-    "selector": "edge[role=\"iDOM_interaction\"]",
-    "style": {
-      "width": "3px",
-      "line-style": "solid",
-      "line-color": "#d4ac0d",
-      "curve-style": "bezier",
-      "opacity": "0.7",
-      "display": "none",
-      "events": "yes"
-    }
-  },
-  {
-    "selector": "edge[role=\"iDOM_interaction\"].highlight",
-    "style": {
-      "width": "6px",
-      "line-style": "dashed",
-      "line-color": "#d4ac0d",
-      "opacity": "1"
-    }
-  },
-  {
-    "selector": "edge[role=\"ELM_interaction\"]",
-    "style": {
-      "width": "3px",
-      "line-style": "solid",
-      "line-color": "#b95db9",
-      "curve-style": "bezier",
-      "opacity": "0.7",
-      "events": "no",
-      "display": "none",
-      "events": "yes"
-    }
-  },
-  {
-    "selector": "edge[role=\"ELM_interaction\"].highlight",
-    "style": {
-      "width": "6px",
-      "line-style": "dashed",
-      "line-color": "#800080",
-      "opacity": "0.7"
-    }
-  },
-  {
-    "selector": "edge[role=\"INT_interaction\"]",
+    "selector": "edge[role='INT_interaction']",
     "style": {
       "width": "4px",
       "line-style": "solid",
@@ -451,12 +538,11 @@
     }
   },
   {
-    "selector": "edge[role=\"INT_interaction\"].highlight",
+    "selector": "edge[role='INT_interaction'].hl",
     "style": {
       "line-style": "dashed",
-      "line-width": "3",
-      "opacity": 1,
-      "z-index": 1000
+      "opacity": "1",
+      "z-index": "1000"
     }
   }
 ]

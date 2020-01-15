@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, re, math, gzip
+import sys, os, re, math, gzip, random, string
 from collections import defaultdict
 
 #Usage : ~$ python find_all_elms_fasta.py fasta_file
@@ -15,7 +15,8 @@ def open_file(input_file, mode="r"):
         infile = open(input_file, mode)
     return infile
 
-def main(fasta_file, elm_classes_file, print_out=True, outfile="elm_hits.tsv.gz"):
+def main(fasta_file, elm_classes_file, print_out=True,
+         outfile="elm_hits.tsv.gz"):
     fpm2_script = "fpm2.pl"
     to_print = []
     elms = defaultdict(lambda: defaultdict(list))
@@ -24,13 +25,16 @@ def main(fasta_file, elm_classes_file, print_out=True, outfile="elm_hits.tsv.gz"
             if line[0]!="#" and not line.startswith("Accession"):
                 elm_acc, elm_ide = line.split("\t")[:2]
                 elm_regex, elm_prob = line.split("\t")[4:6]
-
+                ide = ''.join(random.choice(string.ascii_uppercase +
+                                            string.ascii_lowercase +
+                                            string.digits) for _ in range(8))
+                tmp_file = "tmp_"+ide+".txt"
                 mode = "cat "
                 if ".gz" in fasta_file:
                     mode = "zcat "
-                os.system( mode+fasta_file+" | ./"+fpm2_script+" \""+elm_regex+"\" -m 1 > tmp.txt")
+                os.system( mode+fasta_file+" | ./"+fpm2_script+" \""+elm_regex+"\" -m 1 > "+tmp_file)
 
-                with open_file("tmp.txt") as f2:
+                with open_file(tmp_file) as f2:
                     for line2 in f2:
                         if line2[0]==">":
                             label = line2.split()[0].split("/")[0].replace(">","")
@@ -47,7 +51,7 @@ def main(fasta_file, elm_classes_file, print_out=True, outfile="elm_hits.tsv.gz"
                                  "end" :   int(end),
                                  "seq" :   seq,}
                                 )
-        os.unlink("tmp.txt")
+                os.unlink(tmp_file)
 
     if print_out:
         with open_file(outfile, "w") as out:

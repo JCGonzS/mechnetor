@@ -2,7 +2,7 @@
 
 // Show/Hide proteins without interactions
 function showProt(label) {
-	var node = cy.$("node[role='whole'][label='"+label+"'], node[role='user_seq'][label='"+label+"']");
+	var node = cy.$("node[role='protein_main'][label='"+label+"'], node[role='user_seq'][label='"+label+"']");
 	var display = node.style("display");
 	if (display=="none"){
 		node.style("display", "element");
@@ -38,6 +38,16 @@ $(document).ready(function(){
 		});
 	});
 
+	// Set initial zoom-dependent size for protein labels
+	var node = cy.$("node[role='protein_main'], node[role='user_seq']");
+	var dim = 16/cy.zoom();
+	var maxDim = Math.max(dim,30);
+	node.style({"font-size": maxDim,
+							"text-outline-width": maxDim/10,
+							"border-width": maxDim/18,
+							"text-margin-y": maxDim/-2.5
+						});
+
 	// BUTTON: reset graph
 	$("#reset").click(function(){
 		// Remove all elements
@@ -64,10 +74,15 @@ $(document).ready(function(){
 		$("#toggle_pp_int").prop("checked", true);
 		$("#toggle_dom_int").prop("checked", false);
 		$("#toggle_idom_int").prop("checked", false);
+		$("#lo_slider").prop("disabled", true);
+		$("#lo_slider_container").hide();
 		$("#toggle_elmdom_int").prop("checked", false);
+		$("#toggle_elmdom_pred_int").prop("checked", false);
 		$("#toggle_prets_int").prop("checked", false);
 		$("#toggle_phos").prop("checked", false);
 		$("#toggle_acet").prop("checked", false);
+		$("#toggleUniVariants").prop("checked", false);
+		$("#toggleUniMutagen").prop("checked", false);
 		$("#toggle_input_mut").prop("checked", false);
 		$("#toggle_cosmic_mut").prop("checked", false);
 	});
@@ -102,8 +117,8 @@ $(document).ready(function(){
 	/// TOGGLE TOOLS:
   // BUTTON: Toggle box surrounding the whole protein
   $("#toggle_box").click(function(){
-		var eles = cy.$("node[role='whole'], node[role='user_seq']");
-    var eles2 = cy.$("node[role='whole']:selected, node[role='user_seq']:selected");
+		var eles = cy.$("node[role='protein_main'], node[role='user_seq']");
+    var eles2 = cy.$("node[role='protein_main']:selected, node[role='user_seq']:selected");
     var checked = document.getElementById("toggle_box").checked;
     if (checked) {
       eles.style("border-opacity", "1");
@@ -141,7 +156,10 @@ $(document).ready(function(){
 			$("#toggle_iprets").prop("checked", false);
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
+			$("#lo_slider").prop("disabled", true);
+			$("#lo_slider_container").hide();
 			$("#toggle_elmdom_int").prop("checked", false);
+			$("#toggle_elmdom_pred_int").prop("checked", false);
 			$("#toggle_prets_int").prop("checked", false);
 		}
 	});
@@ -158,7 +176,10 @@ $(document).ready(function(){
 			edges.style("display", "none");
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
+			$("#lo_slider").prop("disabled", true);
+			$("#lo_slider_container").hide();
 			$("#toggle_elmdom_int").prop("checked", false);
+			$("#toggle_elmdom_pred_int").prop("checked", false);
     }
   });
 
@@ -173,6 +194,7 @@ $(document).ready(function(){
 			nodes.style("display", "none");
 			edges.style("display", "none");
 			$("#toggle_elmdom_int").prop("checked", false);
+			$("#toggle_elmdom_pred_int").prop("checked", false);
     }
   });
 
@@ -205,11 +227,12 @@ $(document).ready(function(){
 			prot_edges.style("display", "element");
 			user_edges.style("display", "element");
 			dom_nodes.style("display", "element");
-			dom_edges.style("display", "element");
 			elm_nodes.style("display", "element");
-			elm_edges.style("display", "element");
 			ip_nodes.style("display", "element");
 			ip_edges.style("display", "element");
+			toggle_int_above_pval("DOM_interaction");
+			toggle_int_above_pval("iDOM_interaction");
+			toggle_int_above_pval("ELM_interaction");
 			$("#toggle_doms").prop("checked", true);
 			$("#toggle_elms").prop("checked", true);
 			$("#toggle_iprets").prop("checked", true);
@@ -217,7 +240,10 @@ $(document).ready(function(){
 			$("#toggle_user_int").prop("checked", true);
 			$("#toggle_dom_int").prop("checked", true);
 			$("#toggle_idom_int").prop("checked", true);
+			$("#lo_slider").prop("disabled", false);
+			$("#lo_slider_container").show();
 			$("#toggle_elmdom_int").prop("checked", true);
+			$("#toggle_elmdom_pred_int").prop("checked", true);
 			$("#toggle_prets_int").prop("checked", true);
 		} else {
 			prot_edges.style("display", "none");
@@ -229,7 +255,10 @@ $(document).ready(function(){
 			$("#toggle_user_int").prop("checked", false);
 			$("#toggle_dom_int").prop("checked", false);
 			$("#toggle_idom_int").prop("checked", false);
+			$("#lo_slider").prop("disabled", true);
+			$("#lo_slider_container").hide();
 			$("#toggle_elmdom_int").prop("checked", false);
+			$("#toggle_elmdom_pred_int").prop("checked", false);
 			$("#toggle_prets_int").prop("checked", false);
 		}
 	});
@@ -262,8 +291,8 @@ $(document).ready(function(){
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_dom_int").checked;
 		if (checked) {
-      edges.style("display", "element");
 			nodes.style("display", "element");
+			toggle_int_above_pval("DOM_interaction");
 			$("#toggle_doms").prop("checked", true);
     } else {
       edges.style("display", "none");
@@ -276,19 +305,37 @@ $(document).ready(function(){
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_idom_int").checked;
 		if (checked) {
-      edges.style("display", "element");
 			nodes.style("display", "element");
+			toggle_int_above_pval("iDOM_interaction");
 			$("#toggle_doms").prop("checked", true);
+			$("#lo_slider").prop("disabled", false);
+			$("#lo_slider_container").show();
     } else {
       edges.style("display", "none");
+			$("#lo_slider").prop("disabled", true);
+			$("#lo_slider_container").hide();
     }
   });
+
 
   // BUTTON: Toggle elm-domain interactions
   $("#toggle_elmdom_int").click(function(){
     var edges = cy.$("edge[role='ELM_interaction']");
 		var nodes = edges.connectedNodes();
     var checked = document.getElementById("toggle_elmdom_int").checked;
+		if (checked) {
+			nodes.style("display", "element");
+			toggle_int_above_pval("ELM_interaction");
+			$("#toggle_elms").prop("checked", true);
+    } else {
+      edges.style("display", "none");
+    }
+  });
+
+	$("#toggle_elmdom_pred_int").click(function(){
+    var edges = cy.$("edge[role='iELM_interaction']");
+		var nodes = edges.connectedNodes();
+    var checked = document.getElementById("toggle_elmdom_pred_int").checked;
 		if (checked) {
       edges.style("display", "element");
 			nodes.style("display", "element");
@@ -383,6 +430,28 @@ $(document).ready(function(){
     }
   });
 
+	// BUTTON: Toggle UniProt Variants
+  $("#toggleUniVariants").click(function(){
+    var eles = cy.$("node[role='unifeat_VARIANT']");
+    var checked = document.getElementById("toggleUniVariants").checked;
+		if (checked) {
+      eles.style("display", "element");
+    } else {
+      eles.style("display", "none");
+    }
+  });
+
+	// BUTTON: Toggle UniProt Mutagenesis
+	$("#toggleUniMutagen").click(function(){
+		var eles = cy.$("node[role='unifeat_MUTAGEN']");
+		var checked = document.getElementById("toggleUniMutagen").checked;
+		if (checked) {
+			eles.style("display", "element");
+		} else {
+			eles.style("display", "none");
+		}
+	});
+
 	/// DOWNLOAD BUTTONS
 	// BUTTON: Download graph as JSON
 	$("#dl_json").click(function(){
@@ -413,6 +482,52 @@ $(document).ready(function(){
 		saveAs(blob, "graph.svg");
 	});
 
+	// SLIDERS
+	var sliderLO = document.getElementById("lo_slider");
+	var valueLO = document.getElementById("lo_value");
+	valueLO.innerHTML = sliderLO.value;
+	sliderLO.oninput = function() {
+	  valueLO.innerHTML = this.value;
+		var edges1 = cy.$("edge[role='iDOM_interaction'][lo>="+this.value+"]");
+		edges1.style("display", "element");
+		var edges2 = cy.$("edge[role='iDOM_interaction'][lo<"+this.value+"]");
+		edges2.style("display", "none");
+		$("#toggle_idom_int").prop("checked", true);
+	};
+
+	// var sliderPval = document.getElementById("pval_slider");
+	// var valuePval = document.getElementById("pval_value");
+	// valuePval.innerHTML = sliderPval.value;
+	// sliderPval.oninput = function() {
+	//   valuePval.innerHTML = this.value;
+	// 	var edges1 = cy.$("edge[role='iDOM_interaction'][p_val<="+this.value+"]");
+	// 	edges1.style("display", "element");
+	// 	var edges2 = cy.$("edge[role='iDOM_interaction'][p_val>"+this.value+"]");
+	// 	edges2.style("display", "none");
+	// 	$("#toggle_idom_int").prop("checked", true);
+	// };
+
+	function toggle_int_above_pval(role) {
+		var pval = document.getElementById("pval_cutoff").value;
+		cy.$("edge[role='"+role+"'][p_val<="+pval+"]").style("display", "element");
+	}
+
+	var cutoffPval = document.getElementById("pval_cutoff");
+	cutoffPval.oninput = function() {
+		if (document.getElementById("toggle_dom_int").checked) {
+			cy.$("edge[role='DOM_interaction'][p_val<="+this.value+"]").style("display", "element");
+			cy.$("edge[role='DOM_interaction'][p_val>"+this.value+"]").style("display", "none");
+		}
+		if (document.getElementById("toggle_idom_int").checked) {
+			cy.$("edge[role='iDOM_interaction'][p_val<="+this.value+"]").style("display", "element");
+			cy.$("edge[role='iDOM_interaction'][p_val>"+this.value+"]").style("display", "none");
+		}
+		if (document.getElementById("toggle_elmdom_int").checked) {
+			cy.$("edge[role='ELM_interaction'][p_val<="+this.value+"]").style("display", "element");
+			cy.$("edge[role='ELM_interaction'][p_val>"+this.value+"]").style("display", "none");
+		}
+	}
+
 	// Create double-Tap event
 	var tappedBefore;
 	var tappedTimeout;
@@ -431,7 +546,7 @@ $(document).ready(function(){
 	});
 
 	// FEATURE: Double-Tap on protein node to zoom-in
-	cy.on("doubleTap", "node[role='whole'], node[role='user_seq']", function(event) {
+	cy.on("doubleTap", "node[role='protein_main'], node[role='user_seq']", function(event) {
 	  var node = event.target;
 		cy.animate({
 			fit: { eles: node,
@@ -441,14 +556,13 @@ $(document).ready(function(){
 
 	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
 	cy.on("render zoom", function(event) {
-		var node = cy.$("node[role='whole'], node[role='user_seq']");
-		var edges = node.connectedEdges();
+		var node = cy.$("node[role='protein_main'], node[role='user_seq']");
 		var dim = 16/cy.zoom();
 		var maxDim = Math.max(dim,30);
 		node.style({"font-size": maxDim,
 								"text-outline-width": maxDim/10,
 								"border-width": maxDim/18,
-								"text-margin-y": maxDim/-4
+								"text-margin-y": maxDim/-2.5
 							});
 	// if (cy.zoom() <= 0.5){
 	// 	node.style("visibility", "hidden")
@@ -457,11 +571,11 @@ $(document).ready(function(){
 
 	// MOUSEOVER/MOUSEOUT changes
 	cy.autoungrabify(true);
-  cy.on("tapdragover tapdragout","node[role='whole'], node[role='user_seq']", function(event) {
+  cy.on("tapdragover tapdragout","node[role='protein_main'], node[role='user_seq']", function(event) {
     var node = event.target;
-		node.toggleClass("highlight");
-		node.connectedEdges().toggleClass("highlight");
-		node.neighborhood().toggleClass("highlight2");
+		node.toggleClass("hl");
+		node.connectedEdges().toggleClass("hl");
+		node.neighborhood().toggleClass("hl2");
 		if (event.type=="tapdragover"){
 			cy.autoungrabify(false);
 		} else if (event.type=="tapdragout"){
@@ -474,9 +588,9 @@ $(document).ready(function(){
 				"node[role='phosphorylation'], node[role='acetylation'], "+
 				"node[role='input_mut'], node[role='cosmic_mut']", function(event) {
 		var node = event.target;
-		node.toggleClass("highlight");
-		node.connectedEdges().toggleClass("highlight");
-		node.neighborhood().toggleClass("highlight2");
+		node.toggleClass("hl");
+		node.connectedEdges().toggleClass("hl");
+		node.neighborhood().toggleClass("hl2");
 		// if (event.type=="tapdragover"){
 		// 	node.ungrabify();
 		// } else if (event.type=="tapdragout") {
@@ -486,43 +600,43 @@ $(document).ready(function(){
 
 	cy.on("mouseover mouseout", "edge[role='prot_prot_interaction']", function(event) {
 		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
+		edge.toggleClass("hl");
+		edge.connectedNodes().toggleClass("hl2");
 	});
 
 	cy.on("mouseover mouseout", "edge[role='DOM_interaction']", function(event) {
 		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
-		edge.connectedNodes().parent().toggleClass("highlight2");
+		edge.toggleClass("hl");
+		edge.connectedNodes().toggleClass("hl2");
+		edge.connectedNodes().parent().toggleClass("hl2");
 	});
 
 	cy.on("mouseover mouseout", "edge[role='iDOM_interaction']", function(event) {
 		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
-		edge.connectedNodes().parent().toggleClass("highlight2");
+		edge.toggleClass("hl");
+		edge.connectedNodes().toggleClass("hl2");
+		edge.connectedNodes().parent().toggleClass("hl2");
 	});
 
 	cy.on("mouseover mouseout", "edge[role='ELM_interaction']", function(event) {
 		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
-		edge.connectedNodes().parent().toggleClass("highlight2");
+		edge.toggleClass("hl");
+		edge.connectedNodes().toggleClass("hl2");
+		edge.connectedNodes().parent().toggleClass("hl2");
 	});
 
 	cy.on("mouseover mouseout", "edge[role='INT_interaction']", function(event) {
 		var edge = event.target;
-		edge.toggleClass("highlight");
-		edge.connectedNodes().toggleClass("highlight2");
-		edge.connectedNodes().parent().toggleClass("highlight2");
+		edge.toggleClass("hl");
+		edge.connectedNodes().toggleClass("hl2");
+		edge.connectedNodes().parent().toggleClass("hl2");
 	});
 
 	// QTIPs on node/edge click
 	cy.nodes().on("tap", function( e ){
 		var node = e.target;
 		var role = node.data("role");
-		if( role == "whole" ){
+		if( role == "protein_main" ){
 			var gene = node.data("label");
 			var des = node.data("des");
 			var acc = node.data("protein");
@@ -616,15 +730,15 @@ $(document).ready(function(){
 		node.qtip({
 			content:
 				"<span class='tip' style='color: #074987;'>" +
-				"<b>Source: <a href='https://pfam.xfam.org'>Pfam</a></b>" +
+					"<b>Source: <a href='https://pfam.xfam.org'>Pfam</a></b>" +
 				"</span><br>" +
 				"<span class='tip'>" +
-				"<span class='tipPfam'>Family</span> | " +
-				"<b><i>"+name+"</i></b> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
-				"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>" +
-				"<span class='tipPfam'>Start - End</span> | " +
-				"<b>"+start+"</b> - <b>"+end+"</b>" +
-				" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+					"<span class='tipPfam'>Family</span> | " +
+						"<b><i>"+name+"</i></b> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
+					"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>" +
+					"<span class='tipPfam'>Start - End</span> | " +
+						"<b>"+start+"</b> - <b>"+end+"</b>" +
+						" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
 				"</span>",
 			position: {
 				my: "top center",
@@ -641,11 +755,16 @@ $(document).ready(function(){
 	});
 
 	cy.on("click","node[role='elm']", function(event) {
-		var node = event.target;
-		var id = node.data("id");
+		var node 	= event.target;
+		var id 		= node.data("id");
 		var label = node.data("label");
-		var acc = node.data("acc");
-		var name = node.data("name");
+		var acc 	= node.data("acc");
+		var name 	= node.data("name");
+		var regex = node.data("regex");
+		var start = node.data("start");
+		var end 	= node.data("end");
+		var seq 	= node.data("seq");
+		var prot 	= node.data("protein");
 		var i = 0;
 		var tot = 0;
 		var des0 = [];
@@ -660,11 +779,29 @@ $(document).ready(function(){
 			}
 		});
 		var des = des0.join(" ");
-		var regex = node.data("regex");
-		var start = node.data("start");
-		var end = node.data("end");
-		var seq = node.data("seq");
-		var prot = node.data("protein");
+		var phos = "";
+		var clas = "";
+		if (node.data("phos").includes("yes")) {
+			phos = "<span class='pos'><i class='fas fa-plus-circle'></i> "+
+							"Required phosphosites found in motif</span>";
+			clas = "pos";
+		} else if (node.data("phos").includes("no")) {
+			phos = "<span class='neg'><i class='fas fa-minus-circle'></i></i> "+
+							"Required phosphosites not found in motif</span>";
+			clas = "neg";
+		}
+
+		var edit_seq = "";
+		var pos = start;
+		seq.split("").forEach(function(res) {
+			if (node.data("phos").includes(pos)) {
+				edit_seq += "(<span class='"+clas+"'><b>"+res+"</b></span>)";
+			} else {
+				edit_seq += res;
+			}
+			pos += 1;
+		});
+
 		node.qtip({
 			content:
 				"<span class='tip' style='color: #7f7c7b;'>\n" +
@@ -672,15 +809,20 @@ $(document).ready(function(){
 				"</span><br>\n" +
 				"<span class='tip'>\n"+
 					"<span class='tipELM'>Identifier</span> | "+
-					"<a href='http://elm.eu.org/elms/"+label+"'>"+label+" <i class='fas fa-external-link-alt fa-xs'></i></a><br>\n"+
-					"<span class='tipELM'>Accession</span> | "+ acc + "<br>\n"+
-					"<span class='tipELM'>Class</span> | "+ name + "<br>\n"+
-					"<span class='tipELM'>Description</span> | <b>"+des+"</b><br>\n"+
-					"<span class='tipELM'>Start - End</span> | " +
-					"<b>"+start+"</b> - <b>"+end+"</b>" +
-					" (<a href='http://elm.eu.org/instances/"+label+"/"+prot+"/'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
-					"<span class=tipELM>Subsequence</span> | <i>"+seq+"</i><br>\n" +
-				"</span>\n"+
+						"<a href='http://elm.eu.org/elms/"+label+"'>"+
+								"<span style='color: #11249b;'>"+label+
+								"</span> <i class='fas fa-external-link-alt fa-xs'></i>"+
+						"</a><br>\n"+
+					"<span class='tipELM'>Accession</span> | "+acc+"<br>\n"+
+					"<span class='tipELM'>Class</span> | <b>"+name+"</b><br>\n"+
+					"<span class='tipELM'>Description</span> | "+des+"<br>\n"+
+					"<span class='tipELM'>Subsequence</span> | " +
+						"<b>"+start+"</b> - <i>"+edit_seq+"</i> - <b>"+end+"</b>" +
+						" (<a href='http://elm.eu.org/instances/"+label+"/"+prot+"/'>"+prot+
+						" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
+					"<span class='tipELM'>Observations</span> | "+phos+"<br>"+
+				"</span><br>\n"+
+
 				"<div class='row'>\n"+
 					"<div class='col-sm-4 text-center'>\n"+
 						"<button class='txt-btn' onclick=removeThisEle(\""+id+"\") >\n"+
@@ -870,10 +1012,14 @@ $(document).ready(function(){
 			var prots = [];
 			nodes.forEach(function(node) {
 				pfams.push(node.data("label"));
-				doms.push("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
+				doms.push("<span style='color: "+node.data("color")+";'>"+
+										"<b>"+node.data("label")
+									+"</b></span>");
 				prots.push(node.parent().data("label"));
 			});
-			var ds = edge.data("ds");
+			var ds    = edge.data("ds");
+			var pdb_n = edge.data("pdb_n");
+			var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
 
 			edge.qtip({
 				content:
@@ -888,7 +1034,14 @@ $(document).ready(function(){
 					"</span><br>"+
 					"<span class='tip'>"+
 						"<span class='tip3did'>Interacting Proteins</span> | "+prots.join(" - ")+
+					"</span><br>"+
+					"<span class='tip'>"+
+						"<span class='tip3did'># PDB structures</span> | "+pdb_n+
+					"</span><br>"+
+					"<span class='tip'>"+
+						"<span class='tip3did'>Interaction P-value</span> | "+p_val+
 					"</span>",
+
 				position: {
 					my: "top center",
 					at: "bottom center"
@@ -914,8 +1067,9 @@ $(document).ready(function(){
 				doms.push("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
 				prots.push(node.parent().data("label"));
 			});
-			var lo = edge.data("lo");
-			var ds = edge.data("ds");
+			var ds 		= edge.data("ds");
+			var lo 		= Number(edge.data("lo")).toFixed(2);
+			var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
 
 			edge.qtip({
 				content:
@@ -930,6 +1084,9 @@ $(document).ready(function(){
 					"</span><br>" +
 					"<span class='tip'>"+
 						"<span class='tipIdom'>Association Score</span> | "+lo+
+					"</span><br>"+
+					"<span class='tip'>"+
+						"<span class='tipIdom'>Interaction P-value</span> | "+p_val+
 					"</span>",
 
 				position: {
@@ -958,6 +1115,7 @@ $(document).ready(function(){
 				prots.push(node.parent().data("label"));
 			});
 			var ds = edge.data("ds");
+			var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
 
 			edge.qtip({
 				content:
@@ -967,8 +1125,10 @@ $(document).ready(function(){
 					"<span class='tip'>"+
 						"<span class='tipELMint'>Interacting Elements</span> | "+
 							doms.join(" - ")+
-						"</a><br>"+
-						"<span class='tipELMint'>Interacting Proteins</span> | "+prots.join(" - ")+
+						"</span><br>"+
+					"<span class='tipELMint'>Interacting Proteins</span> | "+prots.join(" - ")+
+					"</span><br>"+
+					"<span class='tipELMint'>Interaction P-value</span> | "+p_val+
 					"</span>",
 				position: {
            my: "top center",
