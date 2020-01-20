@@ -91,7 +91,7 @@ def main(input_seqs, output_dir, i2sum_file, ide,
     #  i2="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/interprets",
      i2="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/interprets",
      i2_opts=" -rand 100 -show_muts -mode 4 -q",
-     temp_dir="temp/"):
+     ):
 
     ### 1: Get input sequences (either dictionary or file)
     if fasta_as_input:
@@ -159,7 +159,6 @@ def main(input_seqs, output_dir, i2sum_file, ide,
     if len(these_pairs)==0:
         these_pairs = sorted(itertools.combinations(hits.keys(), 2))
     for (qA, qB) in these_pairs:
-        print qA, qB
         q1, q2 = qA, qB
         if q2 < q1:
             q1, q2 = qB, qA
