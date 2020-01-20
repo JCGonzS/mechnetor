@@ -7,7 +7,7 @@ JC Gonzalez Sanchez, 2018
 
 
 import os, sys, re
-import gzip, json, random, string, datetime, pymongo
+import gzip, json, csv, random, string, datetime, pymongo, argparse
 import pandas as pd
 import run_interprets, int2graph
 from collections import defaultdict
@@ -58,10 +58,9 @@ def make_protein_id_dictionary(prot_data):
 #
 #     return uni_id
 
-def parse_input(input_text, prot_dict, max_prots, protein_data):
+def parse_protein_input(input_text, prot_dict):
     input_prots = set()
     input_seqs = defaultdict(str)
-    all_proteins = set()
     not_found = set()
     custom_pairs = []
     flag = 0
@@ -70,52 +69,37 @@ def parse_input(input_text, prot_dict, max_prots, protein_data):
 
         ## Make proteins UniProtID centric
         if line.strip() and line[0] != "#":
+            ## Types of input:
+            ## 1. FASTA sequence
             if line[0] == ">":
+                flag = 1
                 header = str(line.rstrip().split()[0].split(">")[1])
                 header = header.replace("/","-")
-                flag = 1
             elif (flag == 1 and len(line.split()) == 1
-                  and not re.search("\d",line)):
-                input_seqs[header]+=line.rstrip()
+            and not re.search("\d",line)):
+                input_seqs[header] += line.rstrip()
             else:
+                ## 2. Protein identifier(s)
                 flag = 0
+                line = line.replace(","," ")
                 vals = line.rstrip().upper().split()
                 uni_acs = set()
                 for val in vals:
                     if val in prot_dict["AC"]:
-                        uni_ac = prot_dict["AC"][val][0]
-                        uni_acs.add(uni_ac)
+                        uni_acs.add( prot_dict["AC"][val][0] )
                     else:
                         not_found.add("'"+val+"'")
 
-                input_prots = input_prots|uni_acs
+                input_prots = input_prots | uni_acs
 
-                ## Types of input:
-                ## 1. Pair of proteins
+                ## If pair of proteins in line, save as custom pair.
                 if len(uni_acs) == 2:
                     custom_pairs.append( list(uni_acs) )
-                    for uni_ac in uni_acs:
-                        all_proteins.add(uni_ac)
 
-                ## 2. Single protein
-                elif len(uni_acs)>0:
-                    uni_ac = list(uni_acs)[0]
-                    all_proteins.add(uni_ac)
-                    gene = prot_dict["GN"][uni_ac][0]
-
-                    if max_prots > 0:
-                        ## Get X interactors
-                        doc = protein_data.find_one({"uni_ac": uni_ac},
-                                                {"_id":0, "biogrid_interactors":1})
-                        interactors = []
-                        for interactor_ac in doc["biogrid_interactors"]:
-                            if (len(interactors) < max_prots):
-                                interactors.append(interactor_ac)
-
-                        all_proteins = all_proteins | set(interactors)
         else:
             flag = 0
 
+    ## Remove FASTA headers with empty sequences
     remove_keys = []
     if len(input_seqs) > 0:
         for key in input_seqs:
@@ -124,17 +108,48 @@ def parse_input(input_text, prot_dict, max_prots, protein_data):
     for key in remove_keys:
         input_seqs.pop(key, "None")
 
-    return input_prots, input_seqs, all_proteins, custom_pairs, not_found
+    return input_prots, input_seqs, custom_pairs, not_found
 
-def parse_mutation_input(input_text, prot_dict, protein_set, protein_data):
+def get_additional_interactors(proteins, add_ints, protein_data):
+    all_proteins = proteins
+
+    add_all_ints = False
+    if add_ints in ["all", "All", "ALL"]:
+        add_all_ints = True
+    else:
+        try:
+            add_ints = int(add_ints)
+        except:
+            add_ints = 0
+
+    if (add_ints > 0 or add_all_ints == True):
+        for uni_ac in proteins:
+            doc = protein_data.find_one({"uni_ac": uni_ac},
+                                        {"_id":0, "biogrid_interactors":1})
+
+            if add_all_ints==True:
+                interactors = doc["biogrid_interactors"]
+            else:
+                interactors = []
+                for uni_ac2 in doc["biogrid_interactors"]:
+                    interactors.append(uni_ac2)
+                    if (len(interactors) >= int(add_ints)):
+                        break
+
+            all_proteins = all_proteins | set(interactors)
+
+    return all_proteins, add_ints
+
+def parse_mutation_input(input_text, prot_dict, proteins):
     mutations = defaultdict(lambda: defaultdict(set))
+
     for line in input_text.split("\n"):
         if line.strip() and line[0] != "#":
             prot, mut = line.rstrip().split()[0].split("/")
             pos = int(re.search("([\d]+)", mut).group(1))
             if prot in prot_dict["AC"]:
                 uni_ac = prot_dict["AC"][prot][0]
-            	if uni_ac in protein_set:
+            	if uni_ac in proteins:
                     mutations[uni_ac][pos].add(mut)
 
     return mutations
@@ -273,26 +288,16 @@ def fill_mask(start, end, mask):
         mask[i] = "1"
     return mask
 
+def print_log(ide, msg):
+    st = "[{}]".format(datetime.datetime.now())+" [JOB ID: "+ide+"]"
+    print st, msg
+
 @line_profile
-def main(CLIENT, query_prots, query_muts, SP="Hsa",
-         make_graph=True, hide_no_int=True, MAX_PROTS="",
-         MAIN_OUTPUT_DIR="", temp_dir="temp/", blastdb_dir="",
-         error_template="templates/input_error.html.jinja2",
-         results_template="templates/results.html.jinja2"):
-
-    LOG_FILE = MAIN_OUTPUT_DIR+"log.txt"
-    sys.stdout = open(LOG_FILE, 'a')
-
-    if make_graph == False:
-        MAX_PROTS = 9999
-    elif hasNumbers(MAX_PROTS):
-        MAX_PROTS = int(re.search("(\d+)", MAX_PROTS).group(1))
-    	# if MAX_PROTS > 50:
-        #     MAX_PROTS = 50
-    elif MAX_PROTS == "no":
-        MAX_PROTS = 999
-    else:
-        MAX_PROTS = 5
+def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
+         MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
+         BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
+         CLIENT=MongoClient('localhost', 27017),
+         MAKE_NETWORK=True, HIDE_NO_INT=True, TABLE_FORMAT="json"):
 
     ## DATA: Set MongoDB databases & collections (CLIENT[database][collection])
     PFAM_DATA       = CLIENT["common"]["pfamA_data"]
@@ -300,41 +305,43 @@ def main(CLIENT, query_prots, query_muts, SP="Hsa",
     ELM_INT_DATA    = CLIENT["common"]["elm_int_dom"]
     ELM_CLASSES     = CLIENT["common"]["elm_classes"]
     PROTEIN_DATA    = CLIENT[SP]["protein_data"]
-    # BIOGRID_DATA    = CLIENT[SP]["biogrid"]
     PPI_DATA        = CLIENT[SP]["ppi_db"]
     ASS_PROB_DATA   = CLIENT[SP]["association_probabilities"]
-    COSMIC_DATA, IPRETS_DATA = "no", "no"
-    # if SP in ["Hsa", "Dme"]:
+    COSMIC_DATA     = "no"
     IPRETS_DATA = CLIENT[SP]["interprets"]
     if SP == "Hsa":
         COSMIC_DATA = CLIENT["cosmic_v87"]["genome_screens"]
-    blastdb_uni = blastdb_dir+"uniprot_"+SP
-    blastdb_pdb = blastdb_dir+"pdbaa_2019"
+    blastdb_uni = BLASTDB_DIR+"uniprot_"+SP
+    blastdb_pdb = BLASTDB_DIR+"pdbaa_2019"
 
     ## Get output file names
-    IDE = get_unique_random_identifier(MAIN_OUTPUT_DIR)
+    if CUSTOM_ID:
+        IDE = CUSTOM_ID
+    else:
+        IDE = get_unique_random_identifier(MAIN_OUTPUT_DIR)
     output_dir = MAIN_OUTPUT_DIR+"job_"+IDE+"/"
     if not os.path.exists(output_dir):
         try:
             os.mkdir(output_dir)
         except OSError:
-            st = "[{}]".format(datetime.datetime.now())
-            print st, "Creation of the directory {} failed".format(output_dir)
-    # if not os.path.exists(temp_dir):
+            print_log(IDE,
+                      "Creation of the directory {} failed".format(output_dir))
+
+    # if not os.path.exists(TEMP_DIR):
     #     st = "[{}]".format(datetime.datetime.now())
     #     print st, "Error. The specified 'temp' directory"+
-    #           "'{}' does not exist'".format(temp_dir)
+    #           "'{}' does not exist'".format(TEMP_DIR)
 
-    fasta_file = output_dir+"seqs_"+IDE+".fasta"
-    blastout_file = output_dir+"blastout_"+IDE+".tsv.gz"
-    pfamout_file = output_dir+"pfamscan_"+IDE
-    iprets_file = output_dir+"i2_"+IDE+".tsv.gz"
-    graph_json = "graph_elements_"+IDE+".json"
-    table_json = "interaction_table_"+IDE+".json"
-    table_tsv  = "interaction_table_"+IDE+".tsv.gz"
+    fasta_file      = output_dir+"seqs_"+IDE+".fasta"
+    blastout_file   = output_dir+"blastout_"+IDE+".tsv.gz"
+    pfamout_file    = output_dir+"pfamscan_"+IDE
+    iprets_file     = output_dir+"i2_"+IDE+".tsv.gz"
+    graph_json      = "graph_elements_"+IDE+".json"
+    table_file      = "interaction_table_"+IDE+".json"
+    if TABLE_FORMAT == "tsv":
+        table_file = "interaction_table_"+IDE+".tsv.gz"
 
-    st = "[{}]".format(datetime.datetime.now())
-    print st, "Running PIV. Job identifier: {}".format(IDE)
+    print_log(IDE, "Running PIV")
 
     pfam_info = get_pfam_info(PFAM_DATA)
     elm_info = get_elm_info(ELM_CLASSES)
@@ -343,24 +350,32 @@ def main(CLIENT, query_prots, query_muts, SP="Hsa",
     prot_ids = make_protein_id_dictionary(PROTEIN_DATA)
 
     ### 2. Parse protein input
-    (input_prots, input_seqs, all_prots, custom_pairs,
-        not_found) = parse_input(query_prots, prot_ids, MAX_PROTS,
-                                 PROTEIN_DATA)
+    input_prots, input_seqs, custom_pairs, not_found = parse_protein_input(
+                                                                    INPUT_1,
+                                                                    prot_ids)
 
-    # print "input prots", input_prots
-    # print all_prots
+    total_n_prots = len(input_prots) + len(input_seqs)
+    if total_n_prots == 0:
+        print_log(IDE, "ERROR: no valid proteins found in input!")
+        return "Error1"
 
     if len(not_found) > 0:
-        st = "[{}]".format(datetime.datetime.now())
-        print st, "The following input protein(s) could not be identified:", "; ".join(not_found)
+        print_log(IDE,
+                 ("The following input protein(s) could not be identified: "+
+                 "; ".join(not_found)))
 
-    total_n_prots = len(input_prots)+len(input_seqs.keys())
-    if total_n_prots == 0:
-        st = "[{}]".format(datetime.datetime.now())
-        print st, "ERROR: no valid proteins found in input!"
-        return render_template(error_template)
+    print_log(IDE, "Your input contains {} proteins.".format(total_n_prots))
 
-    ### 3. If sequence(s) in input -> compute data:
+    ### 3. Add additional interaction partners
+    all_proteins, add = get_additional_interactors(input_prots,
+                                              ADDITIONAL_INTERACTORS,
+                                              PROTEIN_DATA)
+
+    print_log(IDE, ("Added {} additional interactors per protein ".format(add)+
+               "for a total of {} proteins".format(
+               len(all_proteins)+len(input_seqs))))
+
+    ### 4. If sequence(s) in input -> compute data:
     fasta_data = defaultdict(lambda: defaultdict(list))
     fasta_link = {}
     fasta_iprets = {}
@@ -368,7 +383,7 @@ def main(CLIENT, query_prots, query_muts, SP="Hsa",
     if len(input_seqs) > 0:
         mask = defaultdict(list)
 
-        ### 3-1. Print sequences in file
+        ### 4-1. Print sequences in file
         with open_file(fasta_file, "w") as out:
             for head in input_seqs:
                 fasta_link[head] = "static/jobs/job_"+IDE+"/seqs/"+head+".fa"
@@ -376,77 +391,83 @@ def main(CLIENT, query_prots, query_muts, SP="Hsa",
                 out.write(">"+head+"\n")
                 out.write(input_seqs[head]+"\n")
 
-        ### 3-2. Run BLAST to identify similar proteins to input sequence(s)
+        ### 4-2. Run BLAST to identify similar proteins to input sequence(s)
         ## Blast parameters:
         psiblast_path = "psiblast"
         e_val = "0.01" #Default = 10
         ite = "1"  #-num_iterations (Default = 1)
         outfmt = "7"
         ## Run blast through bash.
-        command = "{} -query {} -db {} -evalue {} -outfmt {} | gzip > {}".format(psiblast_path, fasta_file, blastdb_uni, e_val, outfmt, blastout_file)
-        st = "[{}]".format(datetime.datetime.now())
-        print st, "Running PSIBLAST: {}".format(command)
-        os.system(command)
+        cmd = "{} -query {} -db {} -evalue {} -outfmt {} | gzip > {}".format(
+              psiblast_path, fasta_file, blastdb_uni, e_val, outfmt,
+              blastout_file)
+        print_log(IDE, "Running PSIBLAST: {}".format(cmd))
+        os.system(cmd)
         ## Parse results
         fasta_data = parse_blast(blastout_file, mask, fasta_data, prot_ids)
 
-        ### 3-3. Run PfamScan to identify Pfam domains on input sequence(s).
+        ### 4-3. Run PfamScan to identify Pfam domains on input sequence(s).
         # pfamscan.py parameters:
         pfamscan_path = "/var/www/flask_apps/jc_test/jc_app/pfamscan.py"
-        evalue = "0.1"
+        evalue = "0.001"
         email = "juan-carlos.gonzalez@bioquant.uni-heidelberg.de"
-        command = "python {} --sequence {} --database pfam-a --evalue {} --format txt --outfile {} --email {} --quiet".format(pfamscan_path, fasta_file, evalue, pfamout_file, email)
-        st = "[{}]".format(datetime.datetime.now())
-        print st, "Running PfamScan: {}".format(command)
-        os.system(command)
+        cmd = ("python {} --sequence {} --database pfam-a --evalue {}".format(
+              pfamscan_path, fasta_file, evalue)+
+              " --format txt --outfile {} --email {} --quiet".format(
+              pfamout_file, email))
+        print_log(IDE,"Running PfamScan: {}".format(cmd))
+        os.system(cmd)
         os.system("gzip "+pfamout_file+".out.txt")
         os.unlink(pfamout_file+".sequence.txt")
         # os.system("gzip "+pfamout_file+".sequence.txt")
-        # Parse results
+        ## Parse results
         fasta_data = parse_pfamscan(pfamout_file+".out.txt.gz", fasta_data)
 
-        # 3-4. Run ELM search on input sequence(s).
+        ### 4-4. Run ELM search on input sequence(s).
         fpm2_path = "/var/www/flask_apps/jc_test/jc_app/fpm2.pl"
-        print "[{}]".format(datetime.datetime.now()), "Searching for ELMs"
+        print_log(IDE, "Searching for ELMs")
         fasta_data = find_all_elms(fasta_file, fasta_data, IDE, elm_info,
                                    fpm2_script=fpm2_path)
 
-        # 3-5. Run InterPreTS
+        # 4-5. Run InterPreTS
         all_seqs = input_seqs.copy()
         db_seqs = {}
-        for uni_ac in input_prots:
+        for uni_ac in all_proteins:
             db_seqs[uni_ac] = PROTEIN_DATA.find_one({"uni_ac": uni_ac},
                                          {"_id": 0, "sequence": 1})["sequence"]
         all_seqs.update(db_seqs)
-        print "[{}]".format(datetime.datetime.now()), "Running InterPrets"
+        print_log(IDE, "Running InterPrets")
         fasta_iprets = run_interprets.main(
                    all_seqs, output_dir, iprets_file, IDE,
                    mode="psiblast", psiblast=psiblast_path, blastdb=blastdb_pdb,
-                   print_output=True, temp_dir=temp_dir)
+                   print_output=True)
 
-    st = "[{}]".format(datetime.datetime.now())
-    print st, "Your input contains {} proteins.".format(total_n_prots)
-    # " Plus a maximum of {} interactors for each, the total is {} proteins and {} interactions".format(MAX_PROTS, len(all_prots), tot_ints)
+    ### 5. Parse Query Mutations
+    input_muts = parse_mutation_input(INPUT_2, prot_ids,
+                                      list(all_proteins)+input_seqs.keys())
 
-    # Query Mutations
-    input_muts = parse_mutation_input(query_muts, prot_ids, input_prots,
-                                      PROTEIN_DATA)
-
-    ## Run int2graph
-    graph_ele, lines, no_int_prots = int2graph.main(SP, all_prots,
-            input_prots, custom_pairs, input_seqs, input_muts,
+    ### 6. Run int2graph
+    graph_ele, lines, no_int_prots = int2graph.main(SP, all_proteins,
+            custom_pairs, input_seqs, input_muts,
             fasta_data, fasta_link, PROTEIN_DATA, COSMIC_DATA, PPI_DATA,
             IPRETS_DATA, fasta_iprets, DB3DID_DATA, ASS_PROB_DATA, ELM_INT_DATA,
             pfam_info, elm_info,
-            make_graph=make_graph, hide_no_int=hide_no_int)
+            make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
 
     if len(no_int_prots) > 0:
-        st = "[{}]".format(datetime.datetime.now())
-        print st,"No interactions found for: {}".format("; ".join(no_int_prots))
+        print_log(IDE,
+                "No interactions found for: {}".format("; ".join(no_int_prots)))
 
-    st = "[{}]".format(datetime.datetime.now())
-    print st, "int2graph.py run successfully"
+    print_log(IDE, "int2graph.py run successfully")
 
+    ## Print graph as JSON file
+    if MAKE_NETWORK:
+        with open(output_dir+graph_json, "w") as output:
+            json.dump(graph_ele, output, indent=4)
+
+        print_log(IDE, "Created \"{}\"".format(graph_json))
+
+    ## Print interactions
     int_table = {}
     int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
         "Type", "F(A)","Start-End(A)", "Mutations(A)",
@@ -455,22 +476,46 @@ def main(CLIENT, query_prots, query_muts, SP="Hsa",
     int_table["index"] = range(len(lines))
     int_table["data"] = lines
 
-    ## Print graph as JSON file
-    with open(output_dir+graph_json, "w") as output:
-        json.dump(graph_ele, output, indent=4)
+    ## as TSV
+    if TABLE_FORMAT=="tsv":
+        with open_file(output_dir+table_file, "w") as output:
+            tsvwriter = csv.writer(output, delimiter="\t")
+            tsvwriter.writerow(int_table["columns"])
+            for data in int_table["data"]:
+                tsvwriter.writerow(data)
+    ## as JSON
+    else:
+        with open(output_dir+table_file, "w") as output:
+            json.dump(int_table, output)
 
-    ## Print interactions as JSON file
-    with open(output_dir+table_json,"w") as output:
-        json.dump(int_table, output)
+    print_log(IDE, "Created \"{}\"".format(table_file))
+    print_log(IDE, "Job Done!")
 
-    st = "[{}]".format(datetime.datetime.now())
-    print st, "...done!. Created files \"{}\" and \"{}\"".format(graph_json,
-                                                                 table_json)
-    ## Print HTML
-    sys.stdout = sys.__stdout__
+    return IDE, graph_json, table_file, not_found, no_int_prots
 
-    return render_template(results_template,
-                           graph_json="jobs/"+"job_"+IDE+"/"+graph_json,
-                           ints_json="jobs/"+"job_"+IDE+"/"+table_json,
-                           not_identified=not_found,
-                           no_int_prots=no_int_prots)
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-p", "--prots", required=True,
+    	help="File with protein input as protein identifier or FASTA sequences (Required)")
+    ap.add_argument("-m", "--muts", required=False,
+    	help="File with mutation input in Mechismo format")
+    ap.add_argument("-sp", "--species", required=False, default="Hsa",
+        help="Organism (default: Hsa)")
+    ap.add_argument("-ai", "--add_ints", required=False, default=0,
+        help="Number of additional interactors per protein. Any number or 'all' (default: 0)")
+    ap.add_argument("-id", "--job_id", required=False, default=False,
+        help="Custom job name (random by default)")
+    args = vars(ap.parse_args())
+
+    prots = open_file(args["prots"]).read()
+    muts = ""
+    if args["muts"]:
+        muts = open_file(args["muts"]).read()
+
+    main(INPUT_1=prots, INPUT_2=muts, SP=args["species"],
+         ADDITIONAL_INTERACTORS=args["add_ints"],
+         CUSTOM_ID=args["job_id"],
+         MAKE_NETWORK=False, TABLE_FORMAT="tsv")
+
+    sys.exit()

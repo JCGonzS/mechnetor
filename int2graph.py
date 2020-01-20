@@ -116,38 +116,45 @@ def add_domains(nodes, id_n, id_dict, id_coords, id_muts, prot_id, uni_ac,
     Adds domain as a single node whose width is proportional to domain's length
     """
 
-    pfam_set = set()
+    pfams2 = defaultdict(list)
     for domain in pfams:
-        start = domain["start"]
-        end = domain["end"]
-        length = end - start
-        pfam_ac = domain["acc"].split(".")[0]
-        pfam_set.add(pfam_ac)
+        pfams2[domain["e-val"]].append(domain) # in case there are more
+                                               # than one match with same
+                                               # e-value (very unlikely)
+    pfam_set = set()
+    for e_val in sorted(pfams2, reverse=True):
+        for domain in pfams2[e_val]:
+            start = domain["start"]
+            end = domain["end"]
+            length = end - start
+            pfam_ac = domain["acc"].split(".")[0]
+            pfam_set.add(pfam_ac)
 
-        id_n += 1
-        nodes.append({
-            "group": "nodes",
-            "data": {
-                "id": id_n,
-                "role": "domain",
-                "label": pfam_info[pfam_ac][0],
-                "acc": pfam_ac,
-                "des": pfam_info[pfam_ac][1],
-                "start": start,
-                "end": end,
-                "length": length,
-                "parent": prot_id,
-                "protein": uni_ac
-            },
-            "position": {
-                "x": ini_pos[0] + start+(float(length)/2) - prot_center - 0.5,
-                "y": ini_pos[1]
-            }
-        })
+            id_n += 1
+            nodes.append({
+                "group": "nodes",
+                "data": {
+                    "id": id_n,
+                    "role": "domain",
+                    "label": pfam_info[pfam_ac][0],
+                    "acc": pfam_ac,
+                    "des": pfam_info[pfam_ac][1],
+                    "start": start,
+                    "end": end,
+                    "length": length,
+                    "e-val": domain["e-val"],
+                    "parent": prot_id,
+                    "protein": uni_ac
+                },
+                "position": {
+                    "x": ini_pos[0] + start+(float(length)/2) - prot_center - 0.5,
+                    "y": ini_pos[1]
+                }
+            })
 
-        id_dict[uni_ac][pfam_ac].append(id_n)
-        id_coords[id_n] = (str(start), str(end))
-        id_muts[id_n] = muts_within_coords(uni_ac, muts, start, end)
+            id_dict[uni_ac][pfam_ac].append(id_n)
+            id_coords[id_n] = (str(start), str(end))
+            id_muts[id_n] = muts_within_coords(uni_ac, muts, start, end)
 
     return nodes, id_n, id_dict, id_coords, id_muts, pfam_set
 
@@ -412,7 +419,6 @@ def get_Interprets_from_MongoDB(data, gene_a, ac_a, gene_b, ac_b):
     #              {"#Gene1": gene_b, "Gene2": gene_a} ]},
     #              {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
     #               "p-value": 0,	"not-sure1": 0,	"not-sure2": 0}):
-    print gene_a, ac_a, gene_b, ac_b
     d = data.find_one( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
                                 {"#Gene1": gene_b, "Gene2": gene_a},
                                 {"#Gene1": ac_a, "Gene2": ac_b},
@@ -425,14 +431,12 @@ def get_Interprets_from_MongoDB(data, gene_a, ac_a, gene_b, ac_b):
             z = d["Z"]
 
         if (d["#Gene1"] in [gene_a, ac_a]):
-            print "gene_1"
             hit = (d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
                    d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
                    d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
                    d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
                    z, d["p-value"])
-        elif (d["Gene2"] in [gene_b, ac_b]):
-            print "gene 2"
+        elif (d["Gene2"] in [gene_a, ac_a]):
             hit = (d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
                    d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
                    d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
@@ -618,12 +622,13 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
 
 
 @line_profile
-def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
+def main(sp, target_prots, custom_pairs, input_seqs, mutations,
         fasta_data, fasta_link, protein_data, cosmic_data, ppi_data,
         iprets_data, fasta_iprets, db3did_data, ass_prob_data, elm_int_data,
         pfam_info, elm_info,
-        make_graph=True, hide_no_int=True):
+        make_network=True, hide_no_int=True, inferred_elmdom_ints=False):
 
+    nw = make_network
     nodes, edges = [], []
     id_n = 0
     id_dict = {}
@@ -725,20 +730,16 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
     ass_dict = defaultdict(dict)
     elm_nodes = defaultdict(list)
     lines = []
-    target_prots = target_prots | set(input_seqs.keys())
     n_ints = defaultdict(int)
     mech_ints = defaultdict(int)
+    target_prots = target_prots | set(input_seqs.keys())
 
     for (ac_a, ac_b) in itertools.combinations(target_prots, 2):
-        # ac_a, ac_b = pair
-        # if make_graph==False: ## this is wrong. This is the option when you only want to see interactions between your input proteins (only to print)
-        #     if ac_a not in input_prots and ac_b not in input_prots:
-        #         continue
         gene_a = genes[ac_a]
         gene_b = genes[ac_b]
 
         ### User-Input interaction
-        if len(custom_pairs) > 0:
+        if make_network:
             if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
                 id_n += 1
                 edges.append(  { "group": "edges",
@@ -750,8 +751,6 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                       "ds": "User input"
                                 }
                 })
-            else:
-                continue # If there are user-input interactions, only display those???! #test this out
 
         ### Protein-Protein interaction
         evidence = get_PPI_from_MongoDB(ppi_data, ac_a, ac_b)
@@ -884,6 +883,17 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                 elm_ide = elm_info[elm_acc]["ide"]
                 for pfam_acc in pfams[ac2]:
 
+                    ## Annotated ELM-Domain Interaction
+                    (cont, phospho_hits,
+                    elms[ac1][elm_acc]) = check_ELM_domain_interaction(
+                                                elm_dom, elm_ide,
+                                                elms[ac1][elm_acc], pfam_acc,
+                                                gene1, gene2, sp, sp_tax,
+                                                phospho_positons[ac1])
+
+                    if not cont and not inferred_elmdom_ints:
+                        continue
+
                     ## Probabilities & association
                     ele_a, ele_b = elm_acc, pfam_acc
                     if ele_b < ele_a:
@@ -894,15 +904,6 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                                 ass_prob_data, ele_a, ele_b,
                                                 n_min=4, obs_min=5, lo_min=2.0)
                         ass_dict[ele_a][ele_b] = (p_value, lo)
-
-
-                    ## Annotated ELM-Domain Interaction
-                    (cont, phospho_hits,
-                    elms[ac1][elm_acc]) = check_ELM_domain_interaction(
-                                                elm_dom, elm_ide,
-                                                elms[ac1][elm_acc], pfam_acc,
-                                                gene1, gene2, sp, sp_tax,
-                                                phospho_positons[ac1])
 
                     if cont:
                         ## Add ELM nodes if they don't exist
@@ -951,54 +952,53 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                                 mech_ints[ac_b] += 1
 
                     ## Predicted ELM-DOM Interactions
-                    # if lo > 0:
-                    #     ## Add ELM nodes if they don't exist
-                    #     if elm_ide not in id_dict[ac1]:
-                    #         (nodes, id_n, id_dict, id_coords,
-                    #             id_muts) = add_elm_node(ac1, elm_acc, elms,
-                    #                                     elm_info, id_n, nodes,
-                    #                                     start_pos, id_dict,
-                    #                                     id_coords, id_muts,
-                    #                                     mutations, [])
-                    #
-                    #     ## Add interaction edge
-                    #     for i, source in enumerate(id_dict[ac1][elm_ide], 1):
-                    #         for j, target in enumerate(id_dict[ac2][pfam_acc], 1):
-                    #             id_n += 1
-                    #             edges.append(
-                    #                     { "group" : "edges",
-                    #                       "data" :
-                    #                         { "id"     : id_n,
-                    #                           "source" : source,
-                    #                           "target" : target,
-                    #                           "role"   : "iELM_interaction",
-                    #                           "ds"     : "Predicted",
-                    #                           "lo"     : lo,
-                    #                           "p_val"  : p_value
-                    #                         }
-                    #                     })
-                    #
-                    #             elmA = elm_acc+":"+elm_ide
-                    #             domB = pfam_acc+":"+pfam_info[pfam_acc][0]
-                    #             if len(id_dict[ac1][elm_ide]) > 1:
-                    #                 elmA += " ("+str(i)+")"
-                    #             if len(id_dict[ac2][pfam_acc]) > 1:
-                    #                 domB += " ("+str(j)+")"
-                    #             line = [gene1[:20], ac1, gene2[:20], ac2, "ELM::DOM",
-                    #                      elmA, "-".join(id_coords[source]),
-                    #                      "; ".join(id_muts[source]),
-                    #                      domB, "-".join(id_coords[target]),
-                    #                      "; ".join(id_muts[target]),
-                    #                      "", "ELM"]
-                    #             lines.append(line)
-                    #             n_ints[ac_a]+=1
-                    #             n_ints[ac_b]+=1
-                    #             mech_ints[ac_a]+=1
-                    #             mech_ints[ac_b]+=1
+                    if inferred_elmdom_ints and lo > 0:
+
+                        ## Add ELM nodes if they don't exist
+                        if elm_ide not in id_dict[ac1]:
+                            (nodes, id_n, id_dict, id_coords,
+                                id_muts) = add_elm_node(ac1, elm_acc, elms,
+                                                        elm_info, id_n, nodes,
+                                                        start_pos, id_dict,
+                                                        id_coords, id_muts,
+                                                        mutations, [])
+
+                        ## Add interaction edge
+                        for i, source in enumerate(id_dict[ac1][elm_ide], 1):
+                            for j, target in enumerate(id_dict[ac2][pfam_acc], 1):
+                                id_n += 1
+                                edges.append(
+                                        { "group" : "edges",
+                                          "data" :
+                                            { "id": id_n,
+                                              "source": source,
+                                              "target": target,
+                                              "role": "iELM_interaction",
+                                              "ds": "Predicted",
+                                              "lo": lo,
+                                              "p_val": p_value
+                                            }
+                                        })
+
+                                elmA = elm_acc+":"+elm_ide
+                                domB = pfam_acc+":"+pfam_info[pfam_acc][0]
+                                if len(id_dict[ac1][elm_ide]) > 1:
+                                    elmA += " ("+str(i)+")"
+                                if len(id_dict[ac2][pfam_acc]) > 1:
+                                    domB += " ("+str(j)+")"
+                                line = [gene1[:20], ac1, gene2[:20], ac2, "ELM::DOM",
+                                         elmA, "-".join(id_coords[source]),
+                                         "; ".join(id_muts[source]),
+                                         domB, "-".join(id_coords[target]),
+                                         "; ".join(id_muts[target]),
+                                         "", "ELM"]
+                                lines.append(line)
+                                n_ints[ac_a]+=1
+                                n_ints[ac_b]+=1
+                                mech_ints[ac_a]+=1
+                                mech_ints[ac_b]+=1
 
         ## InterPreTS interactions
-        if iprets_data == "no":
-            continue
         hits = []
         if ac_a in input_seqs or ac_b in input_seqs:
             if (ac_a, ac_b) in fasta_iprets:
@@ -1099,5 +1099,8 @@ def main(sp, target_prots, input_prots, custom_pairs, input_seqs, mutations,
                     no_int_prots.append(node["data"]["label"])
 
     graph_elements = nodes + edges
+
+    if not make_network:
+        graph_elements = []
 
     return  graph_elements, lines, no_int_prots
