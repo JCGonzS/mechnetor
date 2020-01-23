@@ -142,7 +142,7 @@ def add_domains(nodes, id_n, id_dict, id_coords, id_muts, prot_id, uni_ac,
                     "start": start,
                     "end": end,
                     "length": length,
-                    "e-val": domain["e-val"],
+                    "e_val": str(domain["e-val"]),
                     "parent": prot_id,
                     "protein": uni_ac
                 },

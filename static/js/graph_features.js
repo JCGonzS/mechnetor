@@ -727,6 +727,7 @@ $(document).ready(function(){
 		var start = node.data("start");
 		var end = node.data("end");
 		var prot = node.data("protein");
+		var e_val = Number.parseFloat(node.data("e_val")).toExponential(2);
 		node.qtip({
 			content:
 				"<span class='tip' style='color: #074987;'>" +
@@ -738,7 +739,8 @@ $(document).ready(function(){
 					"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>" +
 					"<span class='tipPfam'>Start - End</span> | " +
 						"<b>"+start+"</b> - <b>"+end+"</b>" +
-						" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+						" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>"+
+					"<span class='tipPfam'>E-value</span> | "+e_val+
 				"</span>",
 			position: {
 				my: "top center",
