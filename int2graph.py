@@ -160,7 +160,9 @@ def add_domains(nodes, id_n, id_dict, id_coords, id_muts, prot_id, uni_ac,
 
 def add_ptms(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos, data):
     phos = []
-    for ptm_type, x in zip(["phosphorylation", "acetylation"], ["p","ac"]):
+    for ptm_type, role, x in zip(["phosphorylation", "acetylation"],
+                                 ["mod_phos", "mod_acet"],
+                                 ["p","ac"]):
         for ptm in data[ptm_type]:
             pos = ptm["pos"]
             res = ptm["res"]
@@ -172,7 +174,7 @@ def add_ptms(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos, data):
                 "data": {
                     "id": id_n,
                     "parent": prot_id,
-                    "role": ptm_type,
+                    "role": role,
                     "label": res+x+str(pos),
                     "protein": uni_ac
                 },
@@ -185,24 +187,55 @@ def add_ptms(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos, data):
     return nodes, id_n, phos
 
 def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
-                     uni_feats):
+                     uni_feats, uni_regions):
 
-    for feat in uni_feats:
-        start = int(feat["pos"].split("-")[0])
-        end = int(feat["pos"].split("-")[1])
+    for region in uni_regions:
+        start, end = region["start"], region["end"]
         length = end - start
         id_n += 1
         nodes.append({
             "group": "nodes",
             "data": {
                 "id": id_n,
-                "role": "unifeat_"+feat["feat"],
-                "label": feat["info"],
-                "start": str(start),
-                "end": str(end),
-                "length": str(length),
                 "parent": prot_id,
-                "protein": uni_ac
+                "role": "uni_region",
+                "label": "("+str(start)+"-"+str(end)+") "+region["info"],
+                "start": start,
+                "end": end,
+                "length": length
+            },
+            "position": {
+                "x": ini_pos[0] + start+(float(length)/2) - prot_center - 0.5,
+                "y": ini_pos[1]
+            }
+        })
+
+    uni_roles = {"VARIANT": "uni_var",
+                 "MUTAGEN": "uni_mtg",
+                 "METAL": "uni_metal",
+                 "BINDING": "uni_binding"}
+    for feat in uni_feats:
+        start = int(feat["pos"].split("-")[0])
+        end = int(feat["pos"].split("-")[1])
+        if start == end:
+            length = 0
+            width = 2
+            label = "("+str(start)+") "+feat["info"]
+        else:
+            length = end - start
+            width = length
+            label = "("+str(start)+"-"+str(end)+") "+feat["info"]
+        id_n += 1
+        nodes.append({
+            "group": "nodes",
+            "data": {
+                "id": id_n,
+                "parent": prot_id,
+                "role": uni_roles[feat["feat"]],
+                "label": label,
+                "start": start,
+                "end": end,
+                "length": width
             },
             "position": {
                 "x": ini_pos[0] + start+(float(length)/2) - prot_center - 0.5,
@@ -228,7 +261,7 @@ def add_custom_mutations(nodes, id_n, prot_id, uni_ac, prot_len,
                 "data": {
                     "id": id_n,
                     "parent": prot_id,
-                    "role": "input_mut",
+                    "role": "mod_input",
                     "label": label,
                     "protein": uni_ac
                 },
@@ -241,28 +274,29 @@ def add_custom_mutations(nodes, id_n, prot_id, uni_ac, prot_len,
     return nodes, id_n
 
 def add_cosmic_mutations(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
-                         cosmic_data):
+                         cosmic_data, min_sample_size=2):
 
     """
     Adds COSMIC mutations as nodes within the proteins
     Data extracted from internal MongoDB
     """
 
-    muts = defaultdict(dict)
+    muts = defaultdict(lambda: defaultdict(list))
     for c in cosmic_data.find( {"uni_ac": uni_ac},
                                { "_id": 0, "enst": 0 }):
         pos = re.search("(\d+)",c["aa_mut"]).group(1)
-        if int(c["samples"]) > 1:
-            muts[pos][c["aa_mut"]] = (c["cosmic_id"], c["cds_mut"], str(c["samples"]))
+        if int(c["samples"]) >= min_sample_size:
+            muts[pos][c["samples"]].append(c)
 
     for pos in muts:
-        cosmic_ids, aa_muts, cds_muts, count = [], [], [], []
-
-        for aa_mut, (cosmic_id, cds_mut, samples) in muts[pos].iteritems():
-            cosmic_ids.append("COSM"+str(cosmic_id))
-            aa_muts.append(aa_mut)
-            cds_muts.append(cds_mut)
-            count.append(samples)
+        aa_muts, cosmic_ids, cds_muts, count, tot_count = [], [], [], [], 0
+        for samples in sorted(muts[pos], reverse=True):
+            for mut in muts[pos][samples]:
+                aa_muts.append(mut["aa_mut"])
+                cosmic_ids.append("COSM"+str(mut["cosmic_id"]))
+                cds_muts.append(mut["cds_mut"])
+                count.append(str(samples))
+                tot_count += int(samples)
 
         id_n += 1
         nodes.append({
@@ -270,12 +304,12 @@ def add_cosmic_mutations(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
             "data": {
                 "id": id_n,
                 "parent": prot_id,
-                "role": "cosmic_mut",
+                "role": "mod_cosmic",
                 "cos_id": "; ".join(cosmic_ids),
                 "aa_mut": "; ".join(aa_muts),
                 "cds": "; ".join(cds_muts),
                 "count": "; ".join(count),
-                "protein": uni_ac
+                "tot_count": tot_count
             },
             "position": {
                 "x": ini_pos[0] + float(pos) - prot_center - 0.5,
@@ -664,7 +698,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
 
         nodes, id_n = add_uni_features(nodes, id_n, prot_id, uni_ac,
                                        prot_center, ini_pos[uni_ac],
-                                       data["uni_features"])
+                                       data["uni_features"], data["regions"])
 
         nodes, id_n = add_custom_mutations(nodes, id_n, prot_id, uni_ac,
                                            data["length"],
