@@ -38,6 +38,7 @@
   <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/graph_features.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script>
 
   <base target="_blank">
 </head>
@@ -188,12 +189,16 @@
                 <div>
                   <span style="font-size: 14px; font-weight: bold;">UniProt features</span>
                 </div><br>
+                <label class="container"><div>Regions
+                  <input type="checkbox" id="toggle_uni_regions">
+                  <span class="checkmark"></div>
+                </label></br>
                 <label class="container"><div>Variants
-                  <input type="checkbox" id="toggleUniVariants">
+                  <input type="checkbox" id="toggle_uni_variants">
                   <span class="checkmark"></div>
                 </label></br>
                 <label class="container"><div>Mutagenesis
-                  <input type="checkbox" id="toggleUniMutagen">
+                  <input type="checkbox" id="toggle_uni_mutagen">
                   <span class="checkmark"></div>
                 </label>
               </fieldset>
@@ -281,7 +286,41 @@
             <p>Double-click within a protein box to quickly zoom in on it.</p>
           </div>
         </div>
+        <br>
+        <br>
+        <div style="width:100%;">
+          <div id="chart1" style="width:30%;height:250px;background-color:white;margin:auto;"></div>
+        </div>
+        <script type="text/javascript">
+            // based on prepared DOM, initialize echarts instance
+            var chart1 = echarts.init(document.getElementById('chart1'));
 
+            // specify chart configuration item and data
+            var option = {
+                title: {
+                    text: 'Proteins ranked by number of interactors'
+                },
+                tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                    type: 'shadow'
+                  }
+                },
+                xAxis: {},
+                yAxis: {
+                    type: 'category',
+                    data: {{barchart1_prots}}
+                },
+                series: [{
+                    name: 'Partners',
+                    type: 'bar',
+                    data: {{barchart1_ints}}
+                }]
+            };
+
+            // use configuration item and data specified to show chart
+            chart1.setOption(option);
+        </script>
       </div> <!--close main-->
 
       <br>
@@ -294,7 +333,7 @@
 
         <br>
 
-        <script type="text/javascript" src="static/js/interaction_table.js"></script>
+        <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}"></script>
         <script type="text/javascript">
           var ints_json ="{{ url_for('static',filename=ints_json) }}";
         </script>
