@@ -19,10 +19,12 @@
 </head>
 
 <body>
-
 	<div id="main_container">
 
 		{% include "header.html" %}
+		<div id="loading_msg">Estamos trabajando en ellow</div>
+		<div class="loader"></div>
+
 
 		<div id="body">
 			<div id="body_t1" class="container">
@@ -41,7 +43,7 @@
 			<div id="body_t2" class="container">
 				<div class="form-group row align-items-center">
 					<div class="col-sm-9">
-						<form name="myForm" action="/output" method="post" target="_blank" novalidate="novalidate">
+						<form name="myForm" action="/output" method="post" novalidate="novalidate">
 
 							<!-- <div class="form-group row">
 								<div class="col-sm">
@@ -124,7 +126,7 @@
 										<button class="button1 ex_button" type="button" id="ex5">5</button>
 									</div>
 									<div>
-										<button type="submit" class="button1 button2" id="submit-button">Submit</button>
+										<button type="submit" class="button1 button2" id="submit-button" onclick="loading();">Submit</button>
 										<button type="reset" class="button1 button2" id="reset-button">Reset</button>
 									</div>
 								</div>
@@ -139,6 +141,11 @@
 	</div>
 
 	<script>
+		function loading(){
+			$("#loading_msg").show();
+			$(".loader").show();
+			$("#body").hide();
+		}
 		function uploadInput(id) {
 			var fileInput = document.querySelector('#'+id+'_file');
 			var textFromFile = "";
