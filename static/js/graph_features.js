@@ -81,8 +81,9 @@ $(document).ready(function(){
 		$("#toggle_prets_int").prop("checked", false);
 		$("#toggle_phos").prop("checked", false);
 		$("#toggle_acet").prop("checked", false);
-		$("#toggleUniVariants").prop("checked", false);
-		$("#toggleUniMutagen").prop("checked", false);
+		$("#toggle_uni_regions").prop("checked", false);
+		$("#toggle_uni_variants").prop("checked", false);
+		$("#toggle_uni_mutagen").prop("checked", false);
 		$("#toggle_input_mut").prop("checked", false);
 		$("#toggle_cosmic_mut").prop("checked", false);
 	});
@@ -361,35 +362,26 @@ $(document).ready(function(){
 
 	// BUTTON: Toggle ALL protein modifications
 	$("#toggle_all_mod").click(function(){
-		var phos = cy.$("node[role='phosphorylation']");
-		var ace = cy.$("node[role='acetylation']");
-		var input_mut = cy.$("node[role='input_mut']");
-		var cosmic_mut = cy.$("node[role='cosmic_mut']");
+		var mod = cy.$("node[role ^='mod']");
 		var checked = document.getElementById("toggle_all_mod").checked;
 		if (checked) {
-			phos.style("display", "element");
-			ace.style("display", "element");
-			input_mut.style("display", "element");
-			cosmic_mut.style("display", "element");
+			mod.style("display", "element");
 			$("#toggle_phos").prop("checked", true);
 			$("#toggle_acet").prop("checked", true);
 			$("#toggle_input_mut").prop("checked", true);
 			$("#toggle_cosmic_mut").prop("checked", true);
 		} else {
-			phos.style("display", "none");
-			ace.style("display", "none");
-			input_mut.style("display", "none");
-			cosmic_mut.style("display", "none");
+			mod.style("display", "none");
 			$("#toggle_phos").prop("checked", false);
 			$("#toggle_acet").prop("checked", false);
 			$("#toggle_input_mut").prop("checked", false);
-			$("#toggle_cosmic_mut").prop("checked", true);
+			$("#toggle_cosmic_mut").prop("checked", false);
 		}
 	});
 
 	// BUTTON: Toggle mutations
 	$("#toggle_input_mut").click(function(){
-		var eles = cy.$("node[role='input_mut']");
+		var eles = cy.$("node[role='mod_input']");
 		var checked = document.getElementById("toggle_input_mut").checked;
 		if (checked) {
 			eles.style("display", "element");
@@ -399,7 +391,7 @@ $(document).ready(function(){
 	});
 
 	$("#toggle_cosmic_mut").click(function(){
-		var eles = cy.$("node[role='cosmic_mut']");
+		var eles = cy.$("node[role='mod_cosmic']");
 		var checked = document.getElementById("toggle_cosmic_mut").checked;
 		if (checked) {
 			eles.style("display", "element");
@@ -410,7 +402,7 @@ $(document).ready(function(){
 
 	// BUTTON: Toggle phosphorylations
   $("#toggle_phos").click(function(){
-    var eles = cy.$("node[role='phosphorylation']");
+    var eles = cy.$("node[role='mod_phos']");
     var checked = document.getElementById("toggle_phos").checked;
 		if (checked) {
       eles.style("display", "element");
@@ -421,7 +413,7 @@ $(document).ready(function(){
 
   // BUTTON: Toggle acetylations
   $("#toggle_acet").click(function(){
-    var eles = cy.$("node[role='acetylation']");
+    var eles = cy.$("node[role='mod_acet']");
     var checked = document.getElementById("toggle_acet").checked;
 		if (checked) {
       eles.style("display", "element");
@@ -430,10 +422,22 @@ $(document).ready(function(){
     }
   });
 
+	// BUTTON: Toggle UniProt Regions
+  $("#toggle_uni_regions").click(function(){
+    var eles = cy.$("node[role='uni_region']");
+    var checked = document.getElementById("toggle_uni_regions").checked;
+		if (checked) {
+      eles.style("display", "element");
+    } else {
+      eles.style("display", "none");
+    }
+  });
+
+
 	// BUTTON: Toggle UniProt Variants
-  $("#toggleUniVariants").click(function(){
-    var eles = cy.$("node[role='unifeat_VARIANT']");
-    var checked = document.getElementById("toggleUniVariants").checked;
+  $("#toggle_uni_variants").click(function(){
+    var eles = cy.$("node[role='uni_var']");
+    var checked = document.getElementById("toggle_uni_variants").checked;
 		if (checked) {
       eles.style("display", "element");
     } else {
@@ -442,9 +446,9 @@ $(document).ready(function(){
   });
 
 	// BUTTON: Toggle UniProt Mutagenesis
-	$("#toggleUniMutagen").click(function(){
-		var eles = cy.$("node[role='unifeat_MUTAGEN']");
-		var checked = document.getElementById("toggleUniMutagen").checked;
+	$("#toggle_uni_mutagen").click(function(){
+		var eles = cy.$("node[role='uni_mtg']");
+		var checked = document.getElementById("toggle_uni_mutagen").checked;
 		if (checked) {
 			eles.style("display", "element");
 		} else {
@@ -585,8 +589,7 @@ $(document).ready(function(){
 
 	cy.on("tapdragover tapdragout",
 				"node[role='domain'], node[role='elm'], node[role='iprets'], "+
-				"node[role='phosphorylation'], node[role='acetylation'], "+
-				"node[role='input_mut'], node[role='cosmic_mut']", function(event) {
+				"node[role ^='uni'], node[role ^='mod']", function(event) {
 		var node = event.target;
 		node.toggleClass("hl");
 		node.connectedEdges().toggleClass("hl");
@@ -894,7 +897,7 @@ $(document).ready(function(){
 		});
 	});
 
-	cy.on("click","node[role='cosmic_mut']", function(event) {
+	cy.on("click","node[role='mod_cosmic']", function(event) {
 		var node = event.target;
 		var cos_id = node.data("cos_id").split(";");
 		var mut_aas = node.data("aa_mut").split(";");

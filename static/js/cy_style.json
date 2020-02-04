@@ -10,12 +10,12 @@
       "border-opacity": "1",
       "label": "data(label)",
       "font-size": "30px",
+      "font-weight": "bold",
       "text-halign": "center",
       "text-valign": "bottom",
       "text-margin-y": "-8px",
-      "color": "#FFF",
-      "text-outline-color": "#424949",
-      "text-outline-width": "3px",
+      "color": "#424949",
+      "text-outline-opacity": "0",
       "text-background-opacity": "1",
       "text-background-color": "#FFF",
       "text-background-shape": "roundrectangle",
@@ -29,7 +29,10 @@
     "selector": "node[role='protein_main'].hl, node[role='user_seq'].hl",
     "style": {
       "border-color": "#33a1c2",
-      "text-outline-color": "#33a1c2",
+      "color": "#33a1c2",
+      "overlay-padding": "5px",
+      "overlay-color": "#33a1c2",
+      "overlay-opacity": "0.2",
       "z-index": "1000"
     }
   },
@@ -37,7 +40,7 @@
     "selector": "node[role='protein_main'].hl2, node[role='user_seq'].hl2",
     "style": {
       "border-color": "#ff5733",
-      "text-outline-color": "#ff5733"
+      "color": "#ff5733"
     }
   },
   {
@@ -58,7 +61,7 @@
     "style": {
       "shape": "roundrectangle",
       "width": "data(length)",
-      "height": "20px",
+      "height": "30px",
       "background-color": "data(color)",
       "background-opacity": "0.5",
       "border-width": "1px",
@@ -67,6 +70,8 @@
       "font-size": "10px",
       "min-zoomed-font-size": "15px",
       "text-margin-y": "2px",
+      "text-wrap": "wrap",
+      "text-max-width": "data(length)",
       "color": "#FFF",
       "text-outline-color": "data(color)",
       "text-outline-width": "1px",
@@ -143,38 +148,96 @@
     }
   },
   {
-    "selector": "node[role ^='unifeat']",
+    "selector": "node[role ^='uni']",
     "style": {
+      "shape": "polygon",
+      "shape-polygon-points": "1, 1, -1, 1, -1, -0.5, 0, -1, 1, -0.5",
+      "font-size": "10px",
+      "min-zoomed-font-size": "15px",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "rectangle",
+      "text-background-padding": "0",
+      "text-valign": "top",
+      "text-margin-y": "-3px",
+      "text-wrap": "wrap",
+      "text-max-width": "100px",
+      "color": "#000",
       "display": "none",
       "events": "yes",
       "text-events": "yes"
     }
   },
   {
-    "selector": "node[role='VARIANT']",
+    "selector": "node[role ^='uni'].hl",
     "style": {
-      "shape": "rectangle",
-      "width": "data(length)",
-      "background-color": "#DBCB67",
-      "label": "data(label)",
-      "font-size": "5px",
-      "min-zoomed-font-size": "20px",
-      "color": "#000"
+      "overlay-padding": "3px",
+      "overlay-opacity": "0.3",
+      "z-index": "1000"
     }
   },
   {
-    "selector": "node[role='MUTAGEN']",
+    "selector": "node[role='uni_region']",
     "style": {
-      "shape": "rectangle",
+      "height": "20px",
       "width": "data(length)",
-      "background-color": "#C3821E",
-      "label": "data(label)",
-      "font-size": "5px",
-      "min-zoomed-font-size": "20px",
-      "color": "#000",
-      "events": "yes",
-      "text-events": "yes",
-      "display": "none"
+      "background-color": "#F1948A",
+      "background-opacity": "0.5",
+      "border-width": "1px",
+      "border-color": "#000"
+    }
+  },
+  {
+    "selector": "node[role='uni_region'].hl",
+    "style": {
+      "height": "25px",
+      "background-color": "#EC7063",
+      "background-opacity": "1",
+      "border-style": "dashed",
+      "overlay-color": "#EC7063",
+      "label": "data(label)"
+    }
+  },
+  {
+    "selector": "node[role='uni_var']",
+    "style": {
+      "height": "20px",
+      "width": "data(length)",
+      "background-color": "#58D68D",
+      "background-opacity": "0.5",
+      "border-width": "0.3px",
+      "border-color": "#000"
+    }
+  },
+  {
+    "selector": "node[role='uni_var'].hl",
+    "style": {
+      "height": "25px",
+      "background-color": "#28B463",
+      "background-opacity": "1",
+      "overlay-color": "#28B463",
+      "label": "data(label)"
+    }
+  },
+  {
+    "selector": "node[role='uni_mtg']",
+    "style": {
+      "height": "20px",
+      "width": "data(length)",
+      "background-color": "#C39BD3",
+      "background-opacity": "0.5",
+      "border-width": "0.3px",
+      "border-color": "#000"
+    }
+  },
+  {
+    "selector": "node[role='uni_mtg'].hl",
+    "style": {
+      "height": "25px",
+      "background-color": "#9B59B6",
+      "background-opacity": "1",
+      "overlay-color": "#9B59B6",
+      "label": "data(label)"
     }
   },
   {
@@ -217,172 +280,105 @@
     }
   },
   {
-    "selector": "node[role='input_mut']",
+    "selector": "node[role ^='mod']",
     "style": {
-      "shape": "polygon",
-      "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
-      "width": "3px",
-      "height": "12px",
-      "background-color": "#FF0000",
       "border-width": "0.3px",
-      "border-color": "#000000",
-      "label": "data(label)",
-      "font-size": "3px",
-      "min-zoomed-font-size": "24px",
-      "events": "yes",
-      "display": "none"
-    }
-  },
-  {
-    "selector": "node[role='input_mut_old']",
-    "style": {
-      "shape": "rectangle",
-      "width": "1px",
-      "height": "25px",
-      "background-color": "#FF0000",
-      "label": "data(label)",
-      "font-size": "3px",
-      "min-zoomed-font-size": "24px",
-      "events": "yes",
-      "display": "none",
-      "z-index-compare": "manual",
-      "z-index": "0"
-    }
-  },
-  {
-    "selector": "node[role='input_mut'].hl",
-    "style": {
-      "height": "14px",
-      "background-color": "#971031",
-      "text-background-opacity": "1",
-      "text-background-color": "#FFF",
-      "text-background-shape": "roundrectangle",
-      "text-background-padding": "0",
+      "border-color": "#000",
       "font-size": "8px",
       "min-zoomed-font-size": "14px",
+      "text-wrap": "wrap",
+      "text-max-width": "75px",
+      "text-background-opacity": "1",
+      "text-background-shape": "rectangle",
+      "text-background-padding": "1px",
+      "text-background-color": "#FFF",
+      "display": "none",
+      "events": "yes",
+      "text-events": "yes"
+    }
+  },
+  {
+    "selector": "node[role ^='mod'].hl",
+    "style": {
+      "overlay-padding": "2px",
+      "overlay-opacity": "0.3",
       "z-index": "1000"
     }
   },
   {
-    "selector": "node[role='cosmic_mut']",
+    "selector": "node[role='mod_cosmic']",
     "style": {
       "shape": "polygon",
       "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
+      "height": "mapData(tot_count, 2, 50, 10, 50)",
       "width": "3px",
-      "height": "12px",
+      "background-color": "#2389AF"
+    }
+  },
+  {
+    "selector": "node[role='mod_cosmic'].hl",
+    "style": {
+      "height": "mapData(tot_count, 2, 50, 13, 53)",
+      "width": "4px",
       "background-color": "#28446F",
-      "border-width": "0.3px",
-      "border-color": "#000",
       "label": "data(aa_mut)",
-      "font-size": "3px",
-      "min-zoomed-font-size": "24px",
-      "display": "none",
-      "events": "yes"
+      "overlay-color": "#2389AF"
     }
   },
   {
-    "selector": "node[role='cosmic_mut'].hl",
+    "selector": "node[role='mod_input']",
     "style": {
-      "height": "16px",
-      "background-color": "#2389AF",
-      "text-background-opacity": "1",
-      "text-background-color": "#FFF",
-      "text-background-shape": "roundrectangle",
-      "text-background-padding": "0",
-      "font-size": "8px",
-      "min-zoomed-font-size": "14px",
-      "z-index": "1000"
-    }
-  },
-  {
-    "selector": "node[role='mutagen']",
-    "style": {
-      "shape": "vee",
+      "shape": "polygon",
+      "shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
+      "height": "14px",
       "width": "3px",
-      "height": "12px",
-      "background-color": "#FFF",
-      "border-width": "0.3px",
-      "border-color": "#000",
-      "label": "data(info)",
-      "font-size": "3px",
-      "font-weight": "bold",
-      "min-zoomed-font-size": "24px",
-      "display": "none",
-      "events": "yes"
+      "background-color": "#FF0000"
     }
   },
   {
-    "selector": "node[role='mutagen'].hl",
+    "selector": "node[role='mod_input'].hl",
     "style": {
       "height": "16px",
-      "background-color": "#000",
-      "text-background-opacity": "1",
-      "text-background-color": "#FFF",
-      "text-background-shape": "roundrectangle",
-      "text-background-padding": "0",
-      "font-size": "8px",
-      "min-zoomed-font-size": "14px",
-      "z-index": "1000"
+      "width": "4px",
+      "background-color": "#971031",
+      "label": "data(label)",
+      "overlay-color": "#FF0000"
     }
   },
   {
-    "selector": "node[role='phosphorylation']",
+    "selector": "node[role='mod_phos']",
     "style": {
       "shape": "rectangle",
-      "width": "2px",
       "height": "8px",
-      "background-color": "#FFFF00",
-      "border-width": "0.3px",
-      "border-color": "#000000",
-      "label": "data(label)",
-      "font-size": "3px",
-      "min-zoomed-font-size": "24px",
-      "display": "none",
-      "events": "yes"
+      "width": "2px",
+      "background-color": "#FFFF00"
     }
   },
   {
-    "selector": "node[role='phosphorylation'].hl",
+    "selector": "node[role='mod_phos'].hl",
     "style": {
       "height": "12px",
       "background-color": "#FFB533",
-      "text-background-shape": "roundrectangle",
-      "text-background-opacity": "1",
-      "text-background-color": "#FFF",
-      "text-background-padding": "0",
-      "font-size": "8px",
-      "min-zoomed-font-size": "14px",
-      "z-index": "1000"
+      "label": "data(label)",
+      "overlay-color": "#FFFF00"
     }
   },
   {
-    "selector": "node[role='acetylation']",
+    "selector": "node[role='mod_acet']",
     "style": {
       "shape": "rectangle",
-      "width": "2px",
       "height": "8px",
-      "background-color": "#008000",
-      "border-width": "0.3px",
-      "border-color": "#000",
-      "label": "data(label)",
-      "font-size": "3px",
-      "min-zoomed-font-size": "24px",
-      "display": "none",
-      "events": "yes"
+      "width": "2px",
+      "background-color": "#008000"
     }
   },
   {
-    "selector": "node[role='acetylation'].hl",
+    "selector": "node[role='mod_acet'].hl",
     "style": {
       "height": "12px",
       "background-color": "#10972B",
-      "text-background-shape": "roundrectangle",
-      "text-background-opacity": "1",
-      "text-background-color": "#FFF",
-      "text-background-padding": "0",
-      "font-size": "8px",
-      "min-zoomed-font-size": "14px",
-      "z-index": "1000"
+      "label": "data(label)",
+      "overlay-color": "#008000"
     }
   },
   {
