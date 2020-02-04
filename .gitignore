@@ -13,4 +13,4 @@ test_pymongo.py
 i2_ras.script
 *.json
 index*txt
-input*
+parse_intact*
