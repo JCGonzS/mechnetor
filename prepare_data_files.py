@@ -119,7 +119,6 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
 
         main_gene = genes[0]
 
-
         ## Rememeber: all Reviewed entries come first, then all Unreviewed ones
         if record.data_class == "Reviewed":
             for dic, val in zip(["AC", "ID"], [uni_ac, uni_id]):
@@ -184,7 +183,9 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
             elif feat[0] in ["MUTAGEN", "VARIANT", "METAL", "BINDING"]:
                 pos = str(start)+"-"+str(end)
                 uni_features[feat[0]][uni_ac][pos].append(info)
-
+                if feat[0]=="MUTAGEN":
+                    if start!=end:
+                        print uni_ac, main_gene, feat
             elif feat[0]=="REGION":
                 region[uni_ac].append(
                     {"start": start,
@@ -193,8 +194,8 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
                     }
                 )
 
-            else:
-                print feat
+            # else:
+            #     print feat
 
         # for ref in record.cross_references:
         #     if "PDB" in ref:
@@ -465,6 +466,7 @@ def extract_biogrid_interactions(biogrid_file, prot_dict):
         - Total number of PPI
     """
     biogrid_ppi = defaultdict(lambda: defaultdict(set))
+    biogrid_ppi_all = defaultdict(lambda: defaultdict(set))
     biogrid_ppi_per_prot = defaultdict(lambda: defaultdict(int))
     biogrid_prot_id = {}
     protein_not_found = set()
@@ -477,27 +479,40 @@ def extract_biogrid_interactions(biogrid_file, prot_dict):
                 geneA,geneB = t[7].upper(), t[8].upper()
                 synsA,synsB = t[9].upper().split("|"), t[10].upper().split("|")
                 pubmed, throughput = t[14], t[17].replace(" Throughput","")
-                accA, accB = "-", "-"
+                accA, accB = [], []
                 for protA in [geneA]+synsA:
                     if protA in prot_dict["AC"]:
-                        accA = prot_dict["AC"][protA][0]
-                        break
+                        for ac in prot_dict["AC"][protA]:
+                            if ac not in accA and ac in prot_dict["seq"]:
+                                accA.append(ac)
                 for protB in [geneB]+synsB:
                     if protB in prot_dict["AC"]:
-                        accB = prot_dict["AC"][protB][0]
-                        break
+                        for ac in prot_dict["AC"][protB]:
+                            if ac not in accB and ac in prot_dict["seq"]:
+                                accB.append(ac)
 
-                if accA != "-" and accB != "-":
-                    biogrid_prot_id[accA] = idA
-                    biogrid_prot_id[accB] = idB
-                    biogrid_ppi_per_prot[accA][accB] += 1
-                    biogrid_ppi_per_prot[accB][accA] += 1
-                    if accA < accB:
-                        biogrid_ppi[accA][accB].add(
+                if len(accA)>0 and len(accB)>0:
+                    for a in accA:
+                        biogrid_prot_id[a] = idA
+                        biogrid_ppi_per_prot[a][accB[0]] += 1
+                    for b in accB:
+                        biogrid_prot_id[b] = idB
+                        biogrid_ppi_per_prot[b][accA[0]] += 1
+                    for a in accA:
+                        for b in accB:
+                            if a < b:
+                                biogrid_ppi_all[a][b].add(
+                                            "BioGRID:"+interaction_id+":"+pubmed+":"+throughput)
+                            else:
+                                biogrid_ppi_all[b][a].add(
+                                            "BioGRID:"+interaction_id+":"+pubmed+":"+throughput)
+                    if accA[0] < accB[0]:
+                        biogrid_ppi[accA[0]][accB[0]].add(
                                     "BioGRID:"+interaction_id+":"+pubmed+":"+throughput)
                     else:
-                        biogrid_ppi[accB][accA].add(
+                        biogrid_ppi[accB[0]][accA[0]].add(
                                     "BioGRID:"+interaction_id+":"+pubmed+":"+throughput)
+
                 else:
                     for gene in [geneA, geneB]:
                         if gene not in prot_dict["AC"]:
@@ -506,11 +521,11 @@ def extract_biogrid_interactions(biogrid_file, prot_dict):
     print "From BioGRID, not found:", len(protein_not_found), "proteins"
     # for prot in protein_not_found:
     #     print prot
-    return biogrid_ppi, biogrid_ppi_per_prot, biogrid_prot_id
+    return biogrid_ppi, biogrid_ppi_all, biogrid_ppi_per_prot, biogrid_prot_id
 
 def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
-                           uni_features, regions, bio_id, bio_set,
-                           outfile_name, mode="mongo"):
+                             uni_features, regions, bio_id, bio_set,
+                             outfile_name, mode="mongo"):
 
     pp = pprint.PrettyPrinter(indent=4)
     json_data = {}
@@ -525,14 +540,14 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                     "alt_ids": alt_ids[uni_ac],
                     "description": prot_dict["des"][uni_ac],
                     "data_class": prot_dict["dc"][uni_ac],
-                    "length" : len(seq),
-                    "sequence" : seq,
-                    "pfams" : [],
-                    "elms" : [],
-                    "phosphorylation" : [],
-                    "acetylation" : [],
-                    "uni_features" : [],
-                    "regions" : []
+                    "length": len(seq),
+                    "sequence": seq,
+                    "pfams": [],
+                    "elms": [],
+                    "phosphorylation": [],
+                    "acetylation": [],
+                    "uni_features": [],
+                    "regions": []
             }
 
             if uni_ac in bio_id:
@@ -549,10 +564,10 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                                                   key=lambda x: int(x[0])):
                     protein_data["pfams"].append(
                         {
-                            "acc" :   pfam_ac,
-                            "start" : int(start),
-                            "end" :   int(end),
-                            "e-val" : float(e_val)
+                            "acc":   pfam_ac,
+                            "start": int(start),
+                            "end":   int(end),
+                            "e-val": float(e_val)
                         })
 
             for elm_ac in sorted(elms.get(uni_ac, [])):
@@ -560,10 +575,10 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                                                 key=lambda x: int(x[0])):
                     protein_data["elms"].append(
                         {
-                            "acc" :   elm_ac,
-                            "start" : int(start),
-                            "end" :   int(end),
-                            "seq" :   seq[int(start)-1:int(end)]
+                            "acc":   elm_ac,
+                            "start": int(start),
+                            "end":   int(end),
+                            "seq":   seq[int(start)-1:int(end)]
                         })
 
             for pos_res in ptms.get(uni_ac, []):
@@ -576,8 +591,8 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                         ptm_type = "acetylation"
                     protein_data[ptm_type].append(
                         {
-                            "pos" : int(pos),
-                            "res" : res,
+                            "pos": int(pos),
+                            "res": res,
                             "source": ";".join(source)
                         })
             # else:
@@ -957,8 +972,10 @@ def main( SP="Hsa",
     (prot_dict, alt_ids, masks, ptms, uni_features,
         regions) = extract_protein_data_from_uniprot_text(UNI_TEXT_FILE)
     sys.exit()
+
     # Extract Pfam domains.
     pfams, pfam_names = extract_pfam_doms(PFAM_MATCHES_FILE, prot_dict)
+
     # Extract elm info.
     elm_names = get_elm_names(ELM_CLASSES_FILE)
     ints_elm = extract_elm_interactions(ELM_INTDOM_FILE, elm_names)
@@ -973,7 +990,7 @@ def main( SP="Hsa",
         ptms = extract_ptms(PSP_FILE, prot_dict, ptms)
 
     # Get PP interaction from BioGRID file
-    bio_ppi, bio_set, bio_id = extract_biogrid_interactions(BIOGRID_FILE,
+    bio_ppi, bio_ppi_all, bio_set, bio_id = extract_biogrid_interactions(BIOGRID_FILE,
                                                             prot_dict)
     if SP=="Hsa":
         check_file_exists(HIPPIE_MAP_FILE)
@@ -985,7 +1002,7 @@ def main( SP="Hsa",
     if os.path.isfile(PPI_FILE) and force_ppi==False:
         print_status(PPI_FILE, "exists")
     else:
-        create_ppi_database(PPI_FILE, bio_ppi, prot_dict)
+        create_ppi_database(PPI_FILE, bio_ppi_all, prot_dict)
         print_status(PPI_FILE, "created")
 
     ### 4. Make protein data JSON file
