@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Protein Interaction Visualization</title>
+	<link rel="shortcut icon" type="image/x-icon" href="static/images/piv_icon.ico">
+
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="static/css/common.css">
+	<link rel="stylesheet" type="text/css" href="static/css/index_style.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Staatliches|Source+Sans+Pro:400,600">
+
+	<script type="text/javascript" src="static/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="static/js/index_validation.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"></script>
+</head>
+
+<body>
+
+	<div id="content">
+
+		<div id="header">
+				<div id="navbar">
+	      	<a id="header-title" href="/">Protein Interaction Visualization</a>
+					<ul>
+						<li><a id="home-link" href="/">Home</a></li>
+						<li><a id="help-link" href="/help" >Help</a></li>
+						<li><a id="russell-link" href="http://www.russelllab.org" >Russell Lab</a></li>
+					</ul>
+				</div>
+		</div>
+
+		<div id="main" class="row">
+
+			<div class="col-sm-3">
+				<div style="padding: 1em;">
+					<div class="info-title">What PIV can do:</div>
+					<div class="info-content">
+						<ul>
+							<li>Create an interactive network with your protein(s) of interest and their known interactors.</li>
+							<li>Visualize diverse interaction data.</li>
+							<li>Map mutations and protein modifications.</li>
+						</ul>
+					</div>
+					<div class="info-title">What's new?</div>
+					<div class="info-content">
+					</div>
+				</div>
+			</div>
+
+			<div id="input_box" class="col-sm-7">
+				<div id="input_box_content" class="form-group row align-items-center">
+					<form name="myForm" action="/output" method="post" target="_blank" novalidate="novalidate">
+
+							<!-- <div class="form-group row">
+								<div class="col-sm">
+									<input id="name" name="query_name" placeholder="Name your query" type="text">
+								</div>
+							</div> -->
+
+							<div class="form-group row align-items-top">
+								<div class="col-sm-6">
+
+									<div class="section-title">
+										Input
+									</div>
+									<hr>
+									<div class="label_box">
+										<label for="prots_input"><b>Proteins</b></label>
+										<span class="info_popup" title="hello"><i class="fas fa-question-circle"></i></span>
+										<button type="button" class="btn_del" onclick="resetInput('prots_input')">
+											<i class="fas fa-backspace"></i>
+										</button>
+									</div>
+									<textarea id="prots_input" name="prots_input" aria-required="true" required=""
+										placeholder="Enter a list of interacting proteins"></textarea>
+									<label for="prots_input_file">Or select a file:</label>
+									<input type="file" class="input_browse" id="prots_input_file" onclick="showDiv('prot_up_btn')">
+									<br>
+									<button type="button" class="btn_main btn_up" id="prot_up_btn" onclick="uploadInput('prots_input')" >Upload</button>
+									<br><br>
+									<div class="label_box">
+										<label for="muts_input"><b>Mutations</b> (optional)</label>
+										<span class="info_popup"><i class="fas fa-question-circle"></i></span>
+										<button type="button" class="btn_chev" id="show_hide_mutbox">
+											<i class="fas fa-chevron-down"></i>
+										</button>
+										<button type="button" class="btn_del" id="mut_box_del_btn" onclick="resetInput('muts_input')">
+											<i class="fas fa-backspace"></i>
+										</button>
+									</div>
+									<div id="mut_box" style="display: none;">
+										<textarea id="muts_input" name="muts_input" aria-required="true"
+											placeholder="Enter a list of protein mutations"></textarea>
+										<br>
+										<label for="muts_input_file">Or select a file:</label>
+										<input type="file" class="input_browse" id="muts_input_file" onclick="showDiv('mut_up_btn')">
+										<br>
+										<button type="button" class="btn_main btn_up" id="mut_up_btn" onclick="uploadInput('muts_input')">Upload</button>
+									</div>
+								</div>
+
+								<div class="col-sm">
+									<div class="section-title">
+										Options
+									</div>
+									<hr>
+									<div>
+										<label for="species">Organism:</label>
+										<!-- <input type="text" list="species"> -->
+										<select name="species" id="species">
+												<option value="Hsa" selected>Homo sapiens (Human) [taxID: 9606]</option>
+												<option value="Mmu">Mus musculus (Mouse) [taxID: 10090]</option>
+												<option value="Dme">Drosophila melanogaster (Fruit Fly) [taxID: 7227]</option>
+										</select>
+									</div>
+									<div>
+										<label for="hide_no_int">Hide proteins for which no interactions are found</label>
+										<input type="checkbox" id="hide_no_int" name="hide_no_int" checked>
+									<!-- <br> -->
+									</div>
+									<div>
+										<label for="max_prots">Maximum number of interactors per protein: </label>
+										<input type="number" id="max_prots" name="max_prots" value="5">
+										<label for=""> or show all</label>
+										<input type="checkbox" id="all_prots">
+									</div>
+
+								</div>
+							</div>
+
+							<div class="form-group row align-items-center">
+								<div class="col-sm">
+									<div>
+										<hr>
+										Examples:
+										<button class="btn_main ex_button" type="button" id="ex1">1</button>
+										<button class="btn_main ex_button" type="button" id="ex2">2</button>
+										<button class="btn_main ex_button" type="button" id="ex3">3</button>
+										<button class="btn_main ex_button" type="button" id="ex4">4</button>
+										<button class="btn_main ex_button" type="button" id="ex5">5</button>
+										<button class="btn_main ex_button" type="button" id="ex6">6</button>
+										<script type="text/javascript" src="static/js/index_examples.js"></script>
+									</div>
+									<div>
+										<button type="submit" class="btn_main button2" id="submit-button">Submit</button>
+										<button type="reset" class="btn_main button2" id="reset-button">Reset</button>
+									</div>
+								</div>
+							</div>
+						</form>
+		    </div>
+			</div>
+		</div>
+		<br>
+		<div id="footer">
+			<div class="row">
+				<div class="col-sm-5">
+					<div class="section">Developed by</div>
+					<p style="margin:0; padding:0;">
+						JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
+					</p>
+					<p>
+						at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
+						(University of Heidelberg, 2018)
+					</p>
+				</div>
+				<div class="col-sm-3">
+					<div class="section">Powered by</div>
+					<div id="cyto-logo">
+						<a href="http://js.cytoscape.org/">
+							<img src="static/images/cytoscape-logo-white.png " alt="cyto-logo" width="35" height="40">Cytoscape.js
+						</a>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="section">Contact</div>
+						<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
+				</div>
+			</div>
+			<!-- <hr style="padding:0;">
+			<div><i>University of Heidelberg, 2018</i></div> -->
+		</div>
+	</div>
+
+	<script>
+		function showDiv(id) {
+		 	document.getElementById(id).style.display = "block";
+		};
+
+		$("#show_hide_mutbox").click(function(){
+			var ids = ["mut_box", "mut_box_del_btn"];
+			ids.forEach(function(id) {
+				var e = document.getElementById(id);
+				if(e.style.display == 'block') {
+					e.style.display = 'none';
+				}else {
+					e.style.display = 'block';
+				};
+			});
+			$("i", this).toggleClass("fas fa-chevron-down fas fa-chevron-up");
+		});
+
+		function uploadInput(id) {
+			var fileInput = document.querySelector('#'+id+'_file');
+			var textFromFile = "";
+			var file = fileInput.files[0];
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				textFromFile = e.target.result;
+				document.getElementById(id).value = textFromFile;
+			}
+			reader.readAsText(file);
+		};
+
+		function resetInput(id) {
+			document.getElementById(id).value="";
+		}
+	</script>
+</body>
+</html>
