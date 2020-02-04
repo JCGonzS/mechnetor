@@ -5,7 +5,6 @@
 JC Gonzalez Sanchez, 2018
 """
 
-
 import os, sys, re
 import gzip, json, csv, random, string, datetime, pymongo, argparse
 import pandas as pd
@@ -87,6 +86,7 @@ def parse_protein_input(input_text, prot_dict):
                 for val in vals:
                     if val in prot_dict["AC"]:
                         uni_acs.add( prot_dict["AC"][val][0] )
+                        print val, prot_dict["AC"][val][0], prot_dict["AC"][val]
                     else:
                         not_found.add("'"+val+"'")
 
@@ -108,7 +108,7 @@ def parse_protein_input(input_text, prot_dict):
     for key in remove_keys:
         input_seqs.pop(key, "None")
 
-    return input_prots, input_seqs, custom_pairs, not_found
+    return input_prots, input_seqs, custom_pairs, list(not_found)
 
 def get_additional_interactors(proteins, add_ints, protein_data):
     all_proteins = proteins
@@ -292,6 +292,28 @@ def print_log(ide, msg):
     st = "[{}]".format(datetime.datetime.now())+" [JOB ID: "+ide+"]"
     print st, msg
 
+def get_stats(lines):
+    # "#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
+    #     "Type", "F(A)","Start-End(A)", "Mutations(A)",
+    #     "F(B)", "Start-End(B)", "Mutations(B)",
+    #     "Info", "Source"]
+    prot_ints = defaultdict(set)
+    for line in lines:
+        gene_a, gene_b = line[0], line[2]
+        prot_ints[gene_a].add(gene_b)
+        prot_ints[gene_b].add(gene_a)
+
+    prot_ints_number = {}
+    for prot, ints in prot_ints.iteritems():
+        prot_ints_number[prot] = len(ints)
+
+    # prots_sorted, ints_sorted = [], []
+    # for prot in sorted(prot_ints, key=lambda k: len(prot_ints[k])):
+    #     prots_sorted.append(str(prot))
+    #     ints_sorted.append(len(prot_ints[prot]))
+
+    return prot_ints_number
+
 @line_profile
 def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
@@ -319,23 +341,23 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
         IDE = CUSTOM_ID
     else:
         IDE = get_unique_random_identifier(MAIN_OUTPUT_DIR)
-    output_dir = MAIN_OUTPUT_DIR+"job_"+IDE+"/"
-    if not os.path.exists(output_dir):
+    OUTPUT_DIR = MAIN_OUTPUT_DIR+"job_"+IDE+"/"
+    if not os.path.exists(OUTPUT_DIR):
         try:
-            os.mkdir(output_dir)
+            os.mkdir(OUTPUT_DIR)
         except OSError:
             print_log(IDE,
-                      "Creation of the directory {} failed".format(output_dir))
+                      "Creation of the directory {} failed".format(OUTPUT_DIR))
 
     # if not os.path.exists(TEMP_DIR):
     #     st = "[{}]".format(datetime.datetime.now())
     #     print st, "Error. The specified 'temp' directory"+
     #           "'{}' does not exist'".format(TEMP_DIR)
 
-    fasta_file      = output_dir+"seqs_"+IDE+".fasta"
-    blastout_file   = output_dir+"blastout_"+IDE+".tsv.gz"
-    pfamout_file    = output_dir+"pfamscan_"+IDE
-    iprets_file     = output_dir+"i2_"+IDE+".tsv.gz"
+    fasta_file      = OUTPUT_DIR+"seqs_"+IDE+".fasta"
+    blastout_file   = OUTPUT_DIR+"blastout_"+IDE+".tsv.gz"
+    pfamout_file    = OUTPUT_DIR+"pfamscan_"+IDE
+    iprets_file     = OUTPUT_DIR+"i2_"+IDE+".tsv.gz"
     graph_json      = "graph_elements_"+IDE+".json"
     table_file      = "interaction_table_"+IDE+".json"
     if TABLE_FORMAT == "tsv":
@@ -438,7 +460,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
         all_seqs.update(db_seqs)
         print_log(IDE, "Running InterPrets")
         fasta_iprets = run_interprets.main(
-                   all_seqs, output_dir, iprets_file, IDE,
+                   all_seqs, OUTPUT_DIR, iprets_file, IDE,
                    mode="psiblast", psiblast=psiblast_path, blastdb=blastdb_pdb,
                    print_output=True)
 
@@ -462,7 +484,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
 
     ## Print graph as JSON file
     if MAKE_NETWORK:
-        with open(output_dir+graph_json, "w") as output:
+        with open(OUTPUT_DIR+graph_json, "w") as output:
             json.dump(graph_ele, output, indent=4)
 
         print_log(IDE, "Created \"{}\"".format(graph_json))
@@ -475,23 +497,24 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
         "Info", "Source"]
     int_table["index"] = range(len(lines))
     int_table["data"] = lines
-
     ## as TSV
     if TABLE_FORMAT=="tsv":
-        with open_file(output_dir+table_file, "w") as output:
+        with open_file(OUTPUT_DIR+table_file, "w") as output:
             tsvwriter = csv.writer(output, delimiter="\t")
             tsvwriter.writerow(int_table["columns"])
             for data in int_table["data"]:
                 tsvwriter.writerow(data)
     ## as JSON
     else:
-        with open(output_dir+table_file, "w") as output:
+        with open(OUTPUT_DIR+table_file, "w") as output:
             json.dump(int_table, output)
+
+    prot_ints_number = get_stats(lines)
 
     print_log(IDE, "Created \"{}\"".format(table_file))
     print_log(IDE, "Job Done!")
 
-    return IDE, graph_json, table_file, not_found, no_int_prots
+    return not_found, no_int_prots, prot_ints_number
 
 
 if __name__ == "__main__":
