@@ -33,12 +33,35 @@ def get_unique_random_identifier(output_dir):
             flag = 1
     return ide
 
-def get_stats_for_charts(prot_ints_number):
-    prots_sorted, ints_sorted = [], []
-    for prot in sorted(prot_ints_number, key=prot_ints_number.get):
-        prots_sorted.append(str(prot))
-        ints_sorted.append(prot_ints_number[prot])
-    return prots_sorted, ints_sorted
+def get_stats_for_charts(prot_ints_number, int_types_number):
+    prots_labels, prots_counts = [], []
+    for k in sorted(prot_ints_number, key=prot_ints_number.get):
+        prots_labels.append(str(k))
+        prots_counts.append(prot_ints_number[k])
+
+    colors = {
+        "PROT::PROT": "#5F6A6A",
+        "DOM::DOM": "#16A085",
+        "iDOM::iDOM": "#D4AC0D",
+        "ELM::DOM": "#AF7AC5"
+    }
+    names = {
+        "PROT::PROT": "Binary",
+        "DOM::DOM": "Domain-Domain",
+        "iDOM::iDOM": "Domain-Domain (inferred)",
+        "ELM::DOM": "Linear motifs - domain"
+    }
+    int_types_labels, int_types_series = [], []
+    for k in sorted(int_types_number, key=int_types_number.get):
+        if k == "iELM::DOM":
+            continue
+        int_types_labels.append(str(k))
+        int_types_series.append({
+                                    "value": int_types_number[k],
+                                    "itemStyle": {"color": colors[k]}
+                                })
+
+    return prots_labels, prots_counts, int_types_labels, int_types_series
 
 @app.route("/")
 @app.route("/index")
@@ -115,7 +138,7 @@ def run_job(job_id):
         else:
             param = {} # parameters
             (param["not_found"], param["no_int_prots"],
-                param["prot_ints_number"]) = results
+                param["prot_ints_number"], param["int_types_number"]) = results
 
     # Save required info in extra file
     if first_run:
@@ -125,12 +148,18 @@ def run_job(job_id):
         with open(job_dir+"req_parameters_"+job_id+".json", "r") as f:
             param = json.load(f)
 
-    prots_sorted, ints_sorted = get_stats_for_charts(param["prot_ints_number"])
+    (prots_labels, prots_counts,
+    int_types_labels, int_types_series) = get_stats_for_charts(
+                                                     param["prot_ints_number"],
+                                                     param["int_types_number"])
 
     return render_template(results_template,
                        graph_json="jobs/"+"job_"+job_id+"/"+graph_json,
                        ints_json="jobs/"+"job_"+job_id+"/"+table_file,
                        not_identified=param["not_found"],
                        no_int_prots=param["no_int_prots"],
-                       barchart1_prots=prots_sorted,
-                       barchart1_ints=ints_sorted)
+                       chart1_labels=prots_labels,
+                       chart1_series=prots_counts,
+                       chart2_labels=int_types_labels,
+                       chart2_series=int_types_series
+                       )

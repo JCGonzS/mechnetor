@@ -297,22 +297,33 @@ def get_stats(lines):
     #     "Type", "F(A)","Start-End(A)", "Mutations(A)",
     #     "F(B)", "Start-End(B)", "Mutations(B)",
     #     "Info", "Source"]
+
     prot_ints = defaultdict(set)
+    int_types = defaultdict(set)
     for line in lines:
         gene_a, gene_b = line[0], line[2]
+        int_type = line[4]
         prot_ints[gene_a].add(gene_b)
         prot_ints[gene_b].add(gene_a)
+        a, b = gene_a, gene_b
+        if b < a:
+            a, b = gene_b, gene_a
+        int_types[int_type].add((a, b))
 
     prot_ints_number = {}
     for prot, ints in prot_ints.iteritems():
         prot_ints_number[prot] = len(ints)
+
+    int_types_number = {}
+    for int_type, pairs in int_types.iteritems():
+        int_types_number[int_type] = len(pairs)
 
     # prots_sorted, ints_sorted = [], []
     # for prot in sorted(prot_ints, key=lambda k: len(prot_ints[k])):
     #     prots_sorted.append(str(prot))
     #     ints_sorted.append(len(prot_ints[prot]))
 
-    return prot_ints_number
+    return prot_ints_number, int_types_number
 
 @line_profile
 def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
@@ -509,12 +520,12 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
         with open(OUTPUT_DIR+table_file, "w") as output:
             json.dump(int_table, output)
 
-    prot_ints_number = get_stats(lines)
+    prot_ints_number, int_types_number = get_stats(lines)
 
     print_log(IDE, "Created \"{}\"".format(table_file))
     print_log(IDE, "Job Done!")
 
-    return not_found, no_int_prots, prot_ints_number
+    return not_found, no_int_prots, prot_ints_number, int_types_number
 
 
 if __name__ == "__main__":
