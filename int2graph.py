@@ -973,7 +973,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                                 if len(id_dict[ac2][pfam_acc]) > 1:
                                     domB += " ("+str(j)+")"
                                 line = [gene1[:20], ac1, gene2[:20], ac2,
-                                        "(pred)ELM::DOM",
+                                        "ELM::DOM",
                                          elmA, "-".join(id_coords[source]),
                                          "; ".join(id_muts[source]),
                                          domB, "-".join(id_coords[target]),
