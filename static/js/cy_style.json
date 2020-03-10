@@ -151,7 +151,7 @@
     "selector": "node[role ^='uni']",
     "style": {
       "shape": "polygon",
-      "shape-polygon-points": "1, 1, -1, 1, -1, -0.5, 0, -1, 1, -0.5",
+      "shape-polygon-points": "1, 0.5, 0, 1, -1, 0.5, -1, -0.5, 0, -1, 1, -0.5",
       "font-size": "10px",
       "min-zoomed-font-size": "15px",
       "text-background-opacity": "1",
@@ -177,6 +177,14 @@
     }
   },
   {
+    "selector": "node[role ^='uni'].hl2",
+    "style": {
+      "overlay-padding": "3px",
+      "overlay-opacity": "0.3",
+      "z-index": "1000"
+    }
+  },
+  {
     "selector": "node[role='uni_region']",
     "style": {
       "height": "20px",
@@ -184,17 +192,17 @@
       "background-color": "#F1948A",
       "background-opacity": "0.5",
       "border-width": "1px",
-      "border-color": "#000"
+      "border-color": "#000",
+      "overlay-color": "#EC7063"
     }
   },
   {
-    "selector": "node[role='uni_region'].hl",
+    "selector": "node[role='uni_region'].hl, node[role='uni_region'].hl2",
     "style": {
       "height": "25px",
       "background-color": "#EC7063",
       "background-opacity": "1",
       "border-style": "dashed",
-      "overlay-color": "#EC7063",
       "label": "data(label)"
     }
   },
@@ -210,7 +218,7 @@
     }
   },
   {
-    "selector": "node[role='uni_var'].hl",
+    "selector": "node[role='uni_var'].hl, node[role='uni_var'].hl2",
     "style": {
       "height": "25px",
       "background-color": "#28B463",
@@ -231,7 +239,7 @@
     }
   },
   {
-    "selector": "node[role='uni_mtg'].hl",
+    "selector": "node[role='uni_mtg'].hl, node[role='uni_mtg'].hl2",
     "style": {
       "height": "25px",
       "background-color": "#9B59B6",
@@ -430,6 +438,58 @@
       "target-arrow-color": "#460DD4",
       "arrow-scale": "0.8",
       "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role^='uni_']",
+    "style": {
+      "width": "4px",
+      "curve-style": "bezier",
+      "line-color": "#000",
+      "line-style": "solid",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#000",
+      "opacity": "0.7",
+      "display": "none",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role^='uni_'].hl",
+    "style": {
+      "line-style": "dashed",
+      "opacity": "1",
+      "overlay-opacity": "0.2",
+      "label": "data(label)",
+      "font-size": "10px",
+      "min-zoomed-font-size": "15px",
+      "text-background-opacity": "1",
+      "text-background-color": "#FFF",
+      "text-background-shape": "rectangle",
+      "text-background-padding": "0",
+      "text-valign": "top",
+      "text-wrap": "wrap",
+      "text-max-width": "100px",
+      "color": "#000",
+      "z-index": "1000"
+    }
+  },
+  {
+    "selector": "edge[role='uni_region_interaction']",
+    "style": {
+        "overlay-color": "#EC7063"
+    }
+  },
+  {
+    "selector": "edge[role='uni_var_interaction']",
+    "style": {
+        "overlay-color": "#28B463"
+    }
+  },
+  {
+    "selector": "edge[role='uni_mtg_interaction']",
+    "style": {
+        "overlay-color": "#9B59B6"
     }
   },
   {
