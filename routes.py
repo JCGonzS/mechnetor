@@ -33,35 +33,10 @@ def get_unique_random_identifier(output_dir):
             flag = 1
     return ide
 
-def get_stats_for_charts(prot_ints_number, int_types_number):
-    prots_labels, prots_counts = [], []
-    for k in sorted(prot_ints_number, key=prot_ints_number.get):
-        prots_labels.append(str(k))
-        prots_counts.append(prot_ints_number[k])
-
-    colors = {
-        "PROT::PROT": "#5F6A6A",
-        "DOM::DOM": "#16A085",
-        "iDOM::iDOM": "#D4AC0D",
-        "ELM::DOM": "#AF7AC5"
-    }
-    names = {
-        "PROT::PROT": "Binary",
-        "DOM::DOM": "Domain-Domain",
-        "iDOM::iDOM": "Domain-Domain (inferred)",
-        "ELM::DOM": "Linear motifs - domain"
-    }
-    int_types_labels, int_types_series = [], []
-    for k in sorted(int_types_number, key=int_types_number.get):
-        if k == "iELM::DOM":
-            continue
-        int_types_labels.append(str(k))
-        int_types_series.append({
-                                    "value": int_types_number[k],
-                                    "itemStyle": {"color": colors[k]}
-                                })
-
-    return prots_labels, prots_counts, int_types_labels, int_types_series
+def get_stats_for_charts(stats_file):
+    with open(stats_file, "r") as f:
+        d = json.load(f)
+    return (d["not_found"], d["no_int_prots"])
 
 @app.route("/")
 @app.route("/index")
@@ -77,7 +52,7 @@ def help():
 def output():
     if request.method == "POST":
         input_d = {}
-        #query_name = request.form["query_name"]
+        # input_d["query_name"] = request.form["query_name"]
         input_d["prots_input"] = request.form["prots_input"]
         input_d["muts_input"] = request.form["muts_input"]
         input_d["sps"] = request.form["species"]
@@ -100,22 +75,24 @@ def output():
         with open(job_dir+"input_"+job_id+".json", "w") as out:
             json.dump(input_d, out)
 
-        return redirect(url_for("run_job", job_id=job_id))# prots_input=prots_input))
+        return redirect(url_for("run_job", job_id=job_id))
 
 @app.route('/job/<job_id>', methods=['GET', 'POST'])
 def run_job(job_id):
     job_dir = output_dir+"job_"+job_id+"/"
     graph_json = "graph_elements_"+job_id+".json"
     table_file = "interaction_table_"+job_id+".json"
-    first_run = False
+    stats_file = "req_parameters_"+job_id+".json"
 
-    if not (os.path.isfile(job_dir+graph_json) and os.path.isfile(job_dir+table_file)):
+    if not (os.path.isfile(job_dir+graph_json) and
+            os.path.isfile(job_dir+table_file) and
+            os.path.isfile(job_dir+stats_file)):
 
         with open(job_dir+"input_"+job_id+".json", "r") as f:
             d = json.load(f)
 
         # try:
-        results = pipeline.main(
+        error = pipeline.main(
                         INPUT_1=d["prots_input"],
                         INPUT_2=d["muts_input"],
                         SP=d["sps"],
@@ -128,38 +105,19 @@ def run_job(job_id):
                         HIDE_NO_INT=d["hide"],
                         TABLE_FORMAT="json"
                         )
-        first_run = True
         # except:
             # print "except error"
         #     return render_template(error_template)
-
-        if results == "Error1":
+        if error:
             return render_template(error_template)
-        else:
-            param = {} # parameters
-            (param["not_found"], param["no_int_prots"],
-                param["prot_ints_number"], param["int_types_number"]) = results
 
-    # Save required info in extra file
-    if first_run:
-        with open(job_dir+"req_parameters_"+job_id+".json", "w") as out:
-            json.dump(param, out)
-    else:
-        with open(job_dir+"req_parameters_"+job_id+".json", "r") as f:
-            param = json.load(f)
-
-    (prots_labels, prots_counts,
-    int_types_labels, int_types_series) = get_stats_for_charts(
-                                                     param["prot_ints_number"],
-                                                     param["int_types_number"])
+    # Read stats file
+    (not_found, no_int_prots) = get_stats_for_charts(job_dir+stats_file)
 
     return render_template(results_template,
                        graph_json="jobs/"+"job_"+job_id+"/"+graph_json,
                        ints_json="jobs/"+"job_"+job_id+"/"+table_file,
-                       not_identified=param["not_found"],
-                       no_int_prots=param["no_int_prots"],
-                       chart1_labels=prots_labels,
-                       chart1_series=prots_counts,
-                       chart2_labels=int_types_labels,
-                       chart2_series=int_types_series
+                       stats_json="jobs/"+"job_"+job_id+"/"+stats_file,
+                       not_found=not_found,
+                       no_int_prots=no_int_prots
                        )

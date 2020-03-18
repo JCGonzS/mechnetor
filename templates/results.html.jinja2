@@ -37,9 +37,9 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/graph_features.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script>
-
+  <script type="text/javascript" src="{{ url_for('static',filename='js/stat_charts.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
   <base target="_blank">
 </head>
 
@@ -253,11 +253,11 @@
             <button class="btn" id="dl_svg"><i class="fas fa-image"></i> SVG </button>
           </div>
 
-          {% if not_identified|length > 0 %}
+          {% if not_found|length > 0 %}
             <div style="padding-top:5px; color: orange;">
               The following could not be identified as proteins for the specified organism:
               <ul class="comma-list">
-              {% for prot in not_identified %}
+              {% for prot in not_found %}
                 <li><b>{{ prot }}</b></li>
               {% endfor %}
               </ul>
@@ -286,91 +286,55 @@
             <p>Double-click within a protein box to quickly zoom in on it.</p>
           </div>
         </div>
-        <br>
-        <br>
-        <div style="width:100%;" class="row">
-          <div id="chart1" class="echart"></div>
-          <div id="chart2" class="echart"></div>
-        </div>
-        <script type="text/javascript">
-            // based on prepared DOM, initialize echarts instance
-            var chart1 = echarts.init(document.getElementById('chart1'));
-            var chart2 = echarts.init(document.getElementById('chart2'));
-
-            // specify chart configuration item and data
-            var option1 = {
-                title: {
-                    text: 'Proteins ranked by number of interactors'
-                },
-                grid: {
-                  left: '15%',
-                },
-                tooltip: {
-                  trigger: 'axis',
-                  axisPointer: {
-                    type: 'shadow'
-                  }
-                },
-                xAxis: {
-                  minInterval: 1
-                },
-                yAxis: {
-                    type: 'category',
-                    data: {{chart1_labels}},
-                    axisLabel: {fontWeight: 'bold'}
-                },
-                series: [{
-                    name: 'Partners',
-                    type: 'bar',
-                    color: ['#5d6d7e'],
-                    data: {{chart1_series}}
-                }]
-            };
-
-            var option2 = {
-                title: {
-                    text: 'Interaction types ranked'
-                },
-                grid: {
-                  left: '15%',
-                },
-                tooltip: {
-                  trigger: 'axis',
-                  axisPointer: {
-                    type: 'shadow'
-                  }
-                },
-                xAxis: {
-                  minInterval: 1
-                },
-                yAxis: {
-                    type: 'category',
-                    data: {{chart2_labels}},
-                    axisLabel: {fontWeight: 'bold'}
-                },
-                series: [{
-                    name: 'Linked protein pairs',
-                    type: 'bar',
-                    data: {{chart2_series}}
-                }]
-            };
-
-            // use configuration item and data specified to show chart
-            chart1.setOption(option1);
-            chart2.setOption(option2);
-        </script>
-      </div> <!--close main-->
-
+      </div>
       <br>
       <br>
 
       <div class="container-fluid">
-        <div id="table_title">
-          <span> List of interactions</span>
+        <h2><span><i class="far fa-chart-bar"></i> General Stats</span></h2>
+        <div style="width:100%; padding:5px;" class="row">
+            <div id="prot-barplot" class="echart"></div>
+            <div id="inttype-barplot" class="echart"></div>
+        </div>
+        <div style="width:100%; padding:5px;" class="row">
+            <div id="dom-barplot" class="echart"></div>
+            <div id="dom-barplot2" class="echart"></div>
         </div>
 
-        <br>
+        <script type="text/javascript">
 
+          $(document).ready(function(){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", "{{ url_for('static',filename=stats_json) }}", true);
+            xmlhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                var stats = JSON.parse(this.responseText);
+                var proteins = stats.prot_ints_k;
+                var interactors = stats.prot_ints_v;
+                var max_ints_per_protein = proteins.length - 1;
+                var max_ppi = stats.max_ppi;
+                var int_types = stats.int_types_k;
+                var int_types_series = stats.int_types_series;
+                var domains = stats.dom_ints_k;
+                var dom_ints = stats.dom_ints;
+                makeProtBarplot("prot-barplot", proteins, interactors, max_ints_per_protein);
+                makeIntTypeBarplot("inttype-barplot", int_types, int_types_series, max_ppi)
+                makeDomBarplot("dom-barplot", domains, dom_ints.total, max_ints_per_protein);
+                makeDomBarplot2("dom-barplot2", domains, dom_ints, max_ints_per_protein);
+              }
+            };
+            xmlhttp.send();
+
+
+          });
+        </script>
+      </div>
+
+      <br>
+
+      <div class="container-fluid">
+        <h2><span><i class="fas fa-list"></i> Interaction List</span></h2>
+        <br>
         <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}"></script>
         <script type="text/javascript">
           var ints_json ="{{ url_for('static',filename=ints_json) }}";

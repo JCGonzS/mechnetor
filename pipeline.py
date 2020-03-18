@@ -5,7 +5,7 @@
 JC Gonzalez Sanchez, 2018
 """
 
-import os, sys, re
+import os, sys, re, itertools
 import gzip, json, csv, random, string, datetime, pymongo, argparse
 import pandas as pd
 import run_interprets, int2graph
@@ -292,17 +292,53 @@ def print_log(ide, msg):
     st = "[{}]".format(datetime.datetime.now())+" [JOB ID: "+ide+"]"
     print st, msg
 
-def get_stats(lines):
-    # "#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
-    #     "Type", "F(A)","Start-End(A)", "Mutations(A)",
-    #     "F(B)", "Start-End(B)", "Mutations(B)",
-    #     "Info", "Source"]
+def get_sorted_lists(d):
+    keys, vals = [], []
+    for k in sorted(d, key=lambda k: len(d[k])):
+        v = len(d[k])
+        keys.append(k)
+        vals.append(v)
+    return keys, vals
 
+def dict_from_set_len(d):
+    new_d = {}
+    for k in d:
+        new_d[k] = len(d[k])
+    return new_d
+
+def get_stats(lines, p):
+    colors = {
+        "PROT::PROT": "#5F6A6A",
+        "DOM::DOM": "#16A085",
+        "iDOM::iDOM": "#D4AC0D",
+        "ELM::DOM": "#AF7AC5",
+        "InterPreTS": "#E74C3C",
+        "UniProt region": "#EC7063"
+    }
+    names = {
+        "PROT::PROT": "Binary",
+        "DOM::DOM": "Domain-Domain",
+        "iDOM::iDOM": "(in)Domain-Domain",
+        "ELM::DOM": "Domain-Motif",
+        "InterPreTS": "3D structure",
+        "UniProt region": "UniProt region"
+    }
+    types = {"DOM::DOM": "DDI",
+             "iDOM::iDOM": "iDDI",
+             "ELM::DOM": "DMI",
+             }
     prot_ints = defaultdict(set)
     int_types = defaultdict(set)
+    dom_ints_tot = defaultdict(set)
+    dom_ints_per_type = defaultdict(lambda: defaultdict(list))
     for line in lines:
-        gene_a, gene_b = line[0], line[2]
-        int_type = line[4]
+        # "#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
+        #     "Type", "F(A)","Start-End(A)", "Mutations(A)",
+        #     "F(B)", "Start-End(B)", "Mutations(B)",
+        #     "Info", "Source"]
+        gene_a, gene_b = str(line[0]), str(line[2])
+        int_type = str(line[4])
+        ele_a, ele_b = str(line[5]), str(line[8])
         prot_ints[gene_a].add(gene_b)
         prot_ints[gene_b].add(gene_a)
         a, b = gene_a, gene_b
@@ -310,27 +346,102 @@ def get_stats(lines):
             a, b = gene_b, gene_a
         int_types[int_type].add((a, b))
 
-    prot_ints_number = {}
-    for prot, ints in prot_ints.iteritems():
-        prot_ints_number[prot] = len(ints)
+        if "DOM" in int_type:
+            ele_a = ele_a.split()[0]
+            ele_b = ele_b.split()[0]
+            int_type = types[int_type]
+            if gene_a not in dom_ints_per_type[gene_b+":"+ele_b][int_type]:
+                dom_ints_per_type[gene_b+":"+ele_b][int_type].append(gene_a)
+            dom_ints_tot[gene_b+":"+ele_b].add(gene_a)
+            if int_type in ["DDI", "iDDI"]:
+                if gene_b not in dom_ints_per_type[gene_a+":"+ele_a][int_type]:
+                    dom_ints_per_type[gene_a+":"+ele_a][int_type].append(gene_b)
+                dom_ints_tot[gene_a+":"+ele_a].add(gene_b)
 
-    int_types_number = {}
-    for int_type, pairs in int_types.iteritems():
-        int_types_number[int_type] = len(pairs)
+    prot_ints_k, prot_ints_v = get_sorted_lists(prot_ints)
+    max_ppi = len([x for x in itertools.combinations(prot_ints_k, 2)])
+    int_types_k, int_types_series = [], []
+    for k in sorted(int_types, key=lambda k: len(int_types[k])):
+        v = len(int_types[k])
+        if k == "iELM::DOM":
+            continue
+        int_types_k.append(str(names[k]))
+        int_types_series.append({
+                                "value": v,
+                                "itemStyle": {"color": colors[k]}
+                                })
 
-    # prots_sorted, ints_sorted = [], []
-    # for prot in sorted(prot_ints, key=lambda k: len(prot_ints[k])):
-    #     prots_sorted.append(str(prot))
-    #     ints_sorted.append(len(prot_ints[prot]))
+    int_types_number = dict_from_set_len(int_types)
+    dom_ints_k = []
+    dom_ints = defaultdict(list)
+    for k in sorted(dom_ints_tot, key=lambda k: len(dom_ints_tot[k])):
+        dom_ints_k.append(k)
+        dom_ints["total"].append(len(dom_ints_tot[k]))
+        for int_type in ["DDI", "iDDI", "DMI"]:
+            v = 0
+            if int_type in dom_ints_per_type[k]:
+                v = len(dom_ints_per_type[k][int_type])
+            dom_ints[int_type].append(v)
 
-    return prot_ints_number, int_types_number
+    ## Add parameters to dictionary
+    p["prot_ints_k"], p["prot_ints_v"] = prot_ints_k, prot_ints_v
+    p["dom_ints_k"], p["dom_ints"] = dom_ints_k, dom_ints
+    p["int_types_k"], p["int_types_series"] = int_types_k, int_types_series
+    p["max_ppi"] = max_ppi
+    p["dom_ints_per_type"] = dom_ints_per_type
+
+    return p
+
+def print_sorted_dict(d):
+    for k in sorted(d, key=d.get, reverse=True):
+        print k+"\t"+str(d[k])
+
+def percentage(n, tot):
+    return "{:3.1f}".format(float(n)/tot*100)
+
+def print_stats_summary(stats_file):
+    with open(stats_file, "r") as f:
+        d = json.load(f)
+
+    all_prots = d["prot_ints_k"]
+    max_ints_per_protein = len(all_prots) -1
+    max_ppi = int(d["max_ppi"])
+
+    print "## STATS"
+    print "## Proteins ranked by number of interactors. Max:", max_ints_per_protein
+    ints_per_protein = {}
+    for k, v in reversed(zip(d["prot_ints_k"], d["prot_ints_v"])):
+        print "\t".join([k, str(v), percentage(v, max_ints_per_protein)])
+        ints_per_protein[k] = v
+
+    print "\n## Interaction types ranked by number of linked protein pairs. Max:", max_ppi
+    for k, v in reversed(zip(d["int_types_k"], d["int_types_series"])):
+        v = v["value"]
+        print "\t".join([k, str(v), percentage(v, max_ppi)])
+
+    # print "\n## Domains ranked"
+    # for k, v in enumerate(reversed(zip(d["dom_ints_k"], d["dom_ints_v"])):
+    #     prot = k.split(":")[0]
+    #     line = [k, str(v), percentage(v, ints_per_protein[prot])]
+    #     for t in ["DDI", "iDDI", "DMI"]:
+    #
+    # #         if t in d["dom_ints"][k]:
+    # #             val = len(d["dom_ints"][k][t])
+    # #         per = percentage(val, max_ints_prot)
+    # #         line.append(str(val))
+    # #         line.append(per)
+    #     print "\t".join(line)
 
 @line_profile
 def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
          BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
          CLIENT=MongoClient('localhost', 27017),
-         MAKE_NETWORK=True, HIDE_NO_INT=True, TABLE_FORMAT="json"):
+         MAKE_NETWORK=True, HIDE_NO_INT=True, TABLE_FORMAT="json",
+         CMD_LINE=False):
+
+    error = False
+    param = {} # Parameters to print in JSON file
 
     ## DATA: Set MongoDB databases & collections (CLIENT[database][collection])
     PFAM_DATA       = CLIENT["common"]["pfamA_data"]
@@ -373,6 +484,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
     table_file      = "interaction_table_"+IDE+".json"
     if TABLE_FORMAT == "tsv":
         table_file = "interaction_table_"+IDE+".tsv.gz"
+    stats_file      = "req_parameters_"+IDE+".json"
 
     print_log(IDE, "Running PIV")
 
@@ -390,7 +502,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
     total_n_prots = len(input_prots) + len(input_seqs)
     if total_n_prots == 0:
         print_log(IDE, "ERROR: no valid proteins found in input!")
-        return "Error1"
+        return True
 
     if len(not_found) > 0:
         print_log(IDE,
@@ -482,7 +594,8 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
     ### 6. Run int2graph
     graph_ele, lines, no_int_prots = int2graph.main(SP, all_proteins,
             custom_pairs, input_seqs, input_muts,
-            fasta_data, fasta_link, PROTEIN_DATA, COSMIC_DATA, PPI_DATA,
+            fasta_data, fasta_link, prot_ids,
+            PROTEIN_DATA, COSMIC_DATA, PPI_DATA,
             IPRETS_DATA, fasta_iprets, DB3DID_DATA, ASS_PROB_DATA, ELM_INT_DATA,
             pfam_info, elm_info,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
@@ -492,7 +605,9 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
                 "No interactions found for: {}".format("; ".join(no_int_prots)))
 
     print_log(IDE, "int2graph.py run successfully")
+    param["not_found"], param["no_int_prots"] = not_found, no_int_prots
 
+    ### 7. Print Output files
     ## Print graph as JSON file
     if MAKE_NETWORK:
         with open(OUTPUT_DIR+graph_json, "w") as output:
@@ -519,13 +634,22 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
     else:
         with open(OUTPUT_DIR+table_file, "w") as output:
             json.dump(int_table, output)
-
-    prot_ints_number, int_types_number = get_stats(lines)
-
     print_log(IDE, "Created \"{}\"".format(table_file))
+
+
+    print_log(IDE, "Created \"{}\"".format(stats_file))
+
+    ### 8. Compute Stats from Interaction Table
+    param = get_stats(lines, param)
+    with open(OUTPUT_DIR+stats_file, "w") as output:
+        json.dump(param, output)
+
+    # if CMD_LINE:
+    #     print_stats_summary(OUTPUT_DIR+stats_file)
+
     print_log(IDE, "Job Done!")
 
-    return not_found, no_int_prots, prot_ints_number, int_types_number
+    return error
 
 
 if __name__ == "__main__":
@@ -550,6 +674,6 @@ if __name__ == "__main__":
     main(INPUT_1=prots, INPUT_2=muts, SP=args["species"],
          ADDITIONAL_INTERACTORS=args["add_ints"],
          CUSTOM_ID=args["job_id"],
-         MAKE_NETWORK=False, TABLE_FORMAT="tsv")
+         MAKE_NETWORK=False, TABLE_FORMAT="tsv", CMD_LINE=True)
 
     sys.exit()

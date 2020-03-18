@@ -27,6 +27,82 @@ function removeAll(label) {
 	cy.remove(node);
 };
 
+// function makeEchart3() {
+// 	var chart3 = echarts.init(document.getElementById('chart3'));
+// 	var dom_sets = new Map();
+// 	var dom_ints = cy.$("edge[role='DOM_interaction']");
+// 	dom_ints.forEach(function(dom_int){
+// 		if (dom_int.visible()) {
+// 			var source = dom_int.source();
+// 			var target = dom_int.target();
+// 			if (source.data("label") in dom_sets) {
+// 				dom_sets[source.data("label")].add(target.data("parent"));
+// 			} else {
+// 				dom_sets[source.data("label")] = new Set();
+// 				dom_sets[source.data("label")].add(target.data("parent"));
+// 			}
+// 			if (target.data("label") in dom_sets) {
+// 				dom_sets[target.data("label")].add(source.data("parent"));
+// 			} else {
+// 				dom_sets[target.data("label")] = new Set();
+// 				dom_sets[target.data("label")].add(source.data("parent"));
+// 			}
+//
+// 			// var doms = dom_int.connectedNodes();
+// 			// doms.forEach(function(dom){
+// 			// 	var dom_name = dom.data("label");
+// 			// 	if (dom_name in dom_count){
+// 			// 		dom_count[dom_name]+=1;
+// 			// 	} else {
+// 			// 		dom_count[dom_name]=1;
+// 			// 	}
+// 			// 	console.log(dom_name, dom_count[dom_name]);
+// 			// });
+// 		}
+// 	});
+// 	var dom_count = new Map();
+// 	Object.keys(dom_sets).forEach(function(dom){
+// 		console.log(dom+"dom: "+dom_sets[dom].size);
+// 		dom_count[dom] = dom_sets[dom].size;
+// 	});
+// 	dom_sets.clear();
+// 	// var dom_count_sorted = new Map([...Object.entries(dom_count)].sort((a, b) => a.value - b.value));
+// 	// // dom_count.clear();
+// 	// console.log("ads:"+dom_count_sorted);
+// 	// dom_count_sorted.forEach(function(dom){
+// 	// 	console.log(dom, dom_count_sorted.dom);
+// 	// });
+// 	var option = {
+// 			title: {
+// 					text: dom_ints.length+" domains"
+// 			},
+// 			grid: {
+// 				left: '15%',
+// 			},
+// 			tooltip: {
+// 				trigger: 'axis',
+// 				axisPointer: {
+// 					type: 'shadow'
+// 				}
+// 			},
+// 			xAxis: {
+// 				minInterval: 1
+// 			},
+// 			yAxis: {
+// 					type: 'category',
+// 					data: Object.keys(dom_count),
+// 					axisLabel: {fontWeight: 'bold'}
+// 			},
+// 			series: [{
+// 					name: 'Interactors',
+// 					type: 'bar',
+// 					color: ['#16A085'],
+// 					data: Object.values(dom_count)
+// 			}]
+// 	};
+// 	chart3.setOption(option);
+// };
+
 $(document).ready(function(){
 
 	// Save original positions of all graph elements
@@ -295,8 +371,10 @@ $(document).ready(function(){
 			nodes.style("display", "element");
 			toggle_int_above_pval("DOM_interaction");
 			$("#toggle_doms").prop("checked", true);
+			// makeEchart3();
     } else {
       edges.style("display", "none");
+			// makeEchart3();
     }
   });
 
@@ -424,12 +502,15 @@ $(document).ready(function(){
 
 	// BUTTON: Toggle UniProt Regions
   $("#toggle_uni_regions").click(function(){
-    var eles = cy.$("node[role='uni_region']");
+    var nodes = cy.$("node[role='uni_region']");
+		var edges = node.connectedEdges()
     var checked = document.getElementById("toggle_uni_regions").checked;
 		if (checked) {
-      eles.style("display", "element");
+      nodes.style("display", "element");
+			edges.style("display", "element");
     } else {
-      eles.style("display", "none");
+      nodes.style("display", "none");
+			edges.style("display", "element");
     }
   });
 
@@ -601,34 +682,7 @@ $(document).ready(function(){
 		// }
 	});
 
-	cy.on("mouseover mouseout", "edge[role='prot_prot_interaction']", function(event) {
-		var edge = event.target;
-		edge.toggleClass("hl");
-		edge.connectedNodes().toggleClass("hl2");
-	});
-
-	cy.on("mouseover mouseout", "edge[role='DOM_interaction']", function(event) {
-		var edge = event.target;
-		edge.toggleClass("hl");
-		edge.connectedNodes().toggleClass("hl2");
-		edge.connectedNodes().parent().toggleClass("hl2");
-	});
-
-	cy.on("mouseover mouseout", "edge[role='iDOM_interaction']", function(event) {
-		var edge = event.target;
-		edge.toggleClass("hl");
-		edge.connectedNodes().toggleClass("hl2");
-		edge.connectedNodes().parent().toggleClass("hl2");
-	});
-
-	cy.on("mouseover mouseout", "edge[role='ELM_interaction']", function(event) {
-		var edge = event.target;
-		edge.toggleClass("hl");
-		edge.connectedNodes().toggleClass("hl2");
-		edge.connectedNodes().parent().toggleClass("hl2");
-	});
-
-	cy.on("mouseover mouseout", "edge[role='INT_interaction']", function(event) {
+	cy.on("mouseover mouseout", "edge[role$='_interaction']", function(event) {
 		var edge = event.target;
 		edge.toggleClass("hl");
 		edge.connectedNodes().toggleClass("hl2");

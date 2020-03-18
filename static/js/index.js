@@ -36,7 +36,9 @@ $(document).ready(function() {
 	$("#ex1").click(function () {
     $("#prots_input").val(`TCF3
 CBFA2T3
-ID3`);
+ID3
+PRKAR2A
+HIF1A`);
     $("#muts_input").val(`CBFA2T3/D105G
 TCF3/N554K
 TCF3/N555D

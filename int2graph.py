@@ -186,9 +186,19 @@ def add_ptms(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos, data):
 
     return nodes, id_n, phos
 
-def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
-                     uni_feats, uni_regions):
+def parse_uni_interactors(info, prot_dict):
+    interactors = set()
+    for word in info.split():
+        word = re.sub("[^\w]","", word)
+        if word in prot_dict["AC"]:
+            uni_ac = prot_dict["AC"][word][0]
+            interactors.add(uni_ac)
+    return list(interactors)
 
+def add_uni_features(nodes, id_n, prot_id, prot_center, ini_pos,
+                     uni_feats, uni_regions, prot_dict):
+
+    feat_ints, feat_info = {}, {}
     for region in uni_regions:
         start, end = region["start"], region["end"]
         length = end - start
@@ -209,6 +219,10 @@ def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
                 "y": ini_pos[1]
             }
         })
+        interactors = parse_uni_interactors(region["info"], prot_dict)
+        if len(interactors)>0:
+            feat_ints[id_n] = interactors
+            feat_info[id_n] = ("uni_region", str(start), str(end), region["info"])
 
     uni_roles = {"VARIANT": "uni_var",
                  "MUTAGEN": "uni_mtg",
@@ -217,6 +231,7 @@ def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
     for feat in uni_feats:
         start = int(feat["pos"].split("-")[0])
         end = int(feat["pos"].split("-")[1])
+        role = uni_roles[feat["feat"]]
         if start == end:
             length = 0
             width = 2
@@ -231,7 +246,7 @@ def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
             "data": {
                 "id": id_n,
                 "parent": prot_id,
-                "role": uni_roles[feat["feat"]],
+                "role": role,
                 "label": label,
                 "start": start,
                 "end": end,
@@ -242,8 +257,12 @@ def add_uni_features(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos,
                 "y": ini_pos[1]
             }
         })
+        interactors = parse_uni_interactors(feat["info"], prot_dict)
+        if len(interactors)>0:
+            feat_ints[id_n] = interactors
+            feat_info[id_n] = (role, str(start), str(end), feat["info"])
 
-    return nodes, id_n
+    return nodes, id_n, feat_ints, feat_info
 
 def add_custom_mutations(nodes, id_n, prot_id, uni_ac, prot_len,
                          prot_center, ini_pos, mutations):
@@ -657,7 +676,7 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
 
 @line_profile
 def main(sp, target_prots, custom_pairs, input_seqs, mutations,
-        fasta_data, fasta_link, protein_data, cosmic_data, ppi_data,
+        fasta_data, fasta_link, prot_dict, protein_data, cosmic_data, ppi_data,
         iprets_data, fasta_iprets, db3did_data, ass_prob_data, elm_int_data,
         pfam_info, elm_info,
         make_network=True, hide_no_int=True, inferred_elmdom_ints=False):
@@ -665,12 +684,10 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
     nw = make_network
     nodes, edges = [], []
     id_n = 0
-    id_dict = {}
-    id_coords = {}
+    id_dict, id_coords  = {}, {}
     id_muts = defaultdict(list)
-    genes = {}
-    pfams = {}
-    phospho_positons = {}
+    genes, pfams, phospho_positons = {}, {}, {}
+    uni_feat_ints, uni_feat_info = {}, {}
     elms = defaultdict(lambda: defaultdict(list))
     all_pfams = set()
     ini_pos = get_layout_positions(target_prots | set(input_seqs.keys()))
@@ -696,9 +713,11 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
         nodes, id_n, phos = add_ptms(nodes, id_n, prot_id, uni_ac, prot_center,
                                      ini_pos[uni_ac], data)
 
-        nodes, id_n = add_uni_features(nodes, id_n, prot_id, uni_ac,
-                                       prot_center, ini_pos[uni_ac],
-                                       data["uni_features"], data["regions"])
+        (nodes, id_n, uni_feat_ints[uni_ac],
+            uni_feat_info[uni_ac]) = add_uni_features(nodes, id_n,
+                                       prot_id, prot_center, ini_pos[uni_ac],
+                                       data["uni_features"], data["regions"],
+                                       prot_dict)
 
         nodes, id_n = add_custom_mutations(nodes, id_n, prot_id, uni_ac,
                                            data["length"],
@@ -772,18 +791,45 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
         gene_a = genes[ac_a]
         gene_b = genes[ac_b]
 
+        ### UniProt Features interactions
+        for (ac1, ac2) in itertools.permutations([ac_a, ac_b], 2):
+            for reg_id in uni_feat_ints[ac1]:
+                if ac2 in uni_feat_ints[ac1][reg_id]:
+                    role, start, end, info = uni_feat_info[ac1][reg_id]
+                    id_n += 1
+                    edges.append({
+                        "group": "edges",
+                        "data": {
+                            "role": role+"_interaction",
+                            "id": id_n,
+                            "source": reg_id,
+                            "target": id_dict[ac2]["main"],
+                            "label": info,
+                            "ds": "UniProt"
+                        }
+                    })
+
+                    line = [genes[ac1][:20], ac1, genes[ac2][:20], ac2,
+                            "UniProt region",
+                            "Region "+start+"-"+end, start+"-"+end, "",
+                            "", "", "", info, "UniProt"]
+                    lines.append(line)
+                    n_ints[ac_a] += 1
+                    n_ints[ac_b] += 1
+
         ### User-Input interaction
         if make_network:
             if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
                 id_n += 1
-                edges.append(  { "group": "edges",
-                                 "data":
-                                    { "id": id_n,
-                                      "source": id_dict[ac_a]["main"],
-                                      "target": id_dict[ac_b]["main"],
-                                      "role": "user_interaction",
-                                      "ds": "User input"
-                                }
+                edges.append({
+                    "group": "edges",
+                    "data": {
+                        "id": id_n,
+                        "source": id_dict[ac_a]["main"],
+                        "target": id_dict[ac_b]["main"],
+                        "role": "user_interaction",
+                        "ds": "User input"
+                    }
                 })
 
         ### Protein-Protein interaction

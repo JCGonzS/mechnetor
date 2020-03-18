@@ -368,22 +368,25 @@ span.neg {
   border-radius: 4px;
 }
 
-
-#table_title {
-  border-bottom: 1px solid white;
-}
-#table_title span {
+h2 {
   position: relative;
-  padding-left: 5px;
+}
+h2 span {
+  padding-right: 10px;
   font-size: 20px;
   font-weight: bold;
   color: white;
+  background-color: #272727;
 }
-#table_title a {
+h2:after {
+  content:"";
   position: absolute;
-  right: 1em;
-  font-size: 18px;
-  color: white;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5em;
+  border-top: 1px solid white;
+  z-index: -1;
 }
 
 
