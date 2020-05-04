@@ -4,9 +4,8 @@ import sys, re, os, gzip, math, pprint, datetime, random, string
 import find_all_elms
 import os.path
 from collections import defaultdict
-from Bio import SwissProt
 import run_interprets
-from Bio import SearchIO, SeqIO
+from Bio import SwissProt
 
 def open_file(input_file, mode="r"):
     """ Open file Zipped or not
@@ -183,9 +182,9 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
             elif feat[0] in ["MUTAGEN", "VARIANT", "METAL", "BINDING"]:
                 pos = str(start)+"-"+str(end)
                 uni_features[feat[0]][uni_ac][pos].append(info)
-                if feat[0]=="MUTAGEN":
-                    if start!=end:
-                        print uni_ac, main_gene, feat
+                # if feat[0]=="MUTAGEN":
+                #     if start!=end:
+                #         print uni_ac, main_gene, feat
             elif feat[0]=="REGION":
                 region[uni_ac].append(
                     {"start": start,
@@ -305,6 +304,19 @@ def extract_pfam_doms(pfam_file, prot_dict, max_eval=999):
 
     return pfams, pfam_names
 
+def extract_pfamscan(infile, pfams, pfam_names):
+    with open_file(infile) as f:
+        for line in f:
+            if line[0] != "#" and line.strip():
+                t = line.rstrip().split()
+                query = t[0]
+                start, end = int(t[3]), int(t[4])
+                pfam_ac, pfam_name = t[5].split(".")[0], t[6]
+                e_val = float(t[12])
+                pfam_names[pfam_ac] = pfam_name
+                pfams[query][pfam_ac].add((start, end, e_val))
+    return pfams, pfam_names
+
 def get_elm_names(elm_classes_file):
     elm_names = {}
     with open_file(elm_classes_file) as f:
@@ -353,9 +365,18 @@ def extract_linear_motifs(elm_hits_file, elm_names, masks,
 
     return elms
 
-def edit_pfam_dat(pfam_dat_file, out_file):
+def edit_pfam_dat(pfam_dat_file, cov2_pfam_file, out_file):
     """ Writes a simple TSV file with a few selected columns from Pfam data.
     """
+    cov2 = {}
+    with open_file(cov2_pfam_file) as f:
+        for line in f:
+            if line[0] != "#":
+                t = line.rstrip().split()
+                ide, acc = t[0], t[1]
+                des = " ".join(t[22:])
+                cov2[acc] = (ide, des)
+
     with open_file(out_file, "w") as out:
         cols = ["Accession", "Identifier", "Description"]
         out.write("\t".join(cols)+"\n")
@@ -370,37 +391,62 @@ def edit_pfam_dat(pfam_dat_file, out_file):
                 elif line.startswith("#=GF DE"):
                     des = re.search("#=GF\s+DE\s+(.+)", line.rstrip()).group(1)
                 elif line.startswith("//"):
-                    out.write("\t".join([acc, ide, des])+"\n")
+                    if acc not in cov2:
+                        out.write("\t".join([acc, ide, des])+"\n")
+        for acc in cov2:
+            ide, des = cov2[acc]
+            out.write("\t".join([acc, ide, des])+"\n")
 
-def edit_3did(db_file, out_file):
+def read_pfam_dat(pfam_dat_file):
+    pfam_names = {}
+    with open_file(pfam_dat_file) as f:
+        for line in f:
+            t = line.rstrip().split("\t")
+            pfam_names[t[0]] = t[1]
+    return pfam_names
+
+def create_ddi_database(pfam_names, pfam_int_file, db3did_file, out_file):
     """ Writes a simplified version in TSV format of the 3did flat file db
     """
+    dom_ints = defaultdict(list)
+    with open_file(pfam_int_file) as f:
+        for line in f:
+            a,b = line.rstrip().split()
+            pair = (a, b)
+            if b < a:
+                pair = (b, a)
+            dom_ints[pair].append("Pfam")
+
+    pdbs_3did = {}
+    with open_file(db3did_file) as f:
+        for line in f:
+#=ID    1-cysPrx_C      1-cysPrx_C       (PF10417.4@Pfam       PF10417.4@Pfam)
+            if line.startswith("#=ID"):
+                pfam_acc_a = line.rstrip().split()[3].split(".")[0].split("(")[1]
+                pfam_acc_b = line.rstrip().split()[4].split(".")[0]
+                pdbs = set()
+   
+#=3D    1n8j    E:153-185       O:153-185       0.99    1.35657 0:0
+            elif line.startswith("#=3D"):
+                pdb = line.rstrip().split()[1]
+                pdbs.add(pdb)
+
+            elif line.startswith("//"):
+                pair = (pfam_acc_a, pfam_acc_b)
+                if pfam_acc_b < pfam_acc_a:
+                    pair = (pfam_acc_b, pfam_acc_a)
+                dom_ints[pair].append("3did")
+                pdbs_3did[pair] = ";".join(sorted(list(pdbs)))
+
     with open_file(out_file, "w") as out:
-        cols = ["Pfam_Ide_A", "Pfam_Acc_A", "Pfam_Ide_B", "Pfam_Acc_B", "PDBs"]
+        cols = ["Pfam_Acc_A", "Pfam_Ide_A", "Pfam_Acc_B", "Pfam_Ide_B", "Source", "PDBs"]
         out.write("\t".join(cols)+"\n")
-
-        with open_file(db_file) as f:
-            for line in f:
-    #=ID    1-cysPrx_C      1-cysPrx_C       (PF10417.4@Pfam       PF10417.4@Pfam)
-                if line.startswith("#=ID"):
-                    pfam_name_a, pfam_name_b = line.rstrip().split()[1:3]
-                    pfam_acc_a = line.rstrip().split()[3].split(".")[0].split("(")[1]
-                    pfam_acc_b = line.rstrip().split()[4].split(".")[0]
-                    pdbs = set()
-
-    #=3D    1n8j    E:153-185       O:153-185       0.99    1.35657 0:0
-                elif line.startswith("#=3D"):
-                    pdb = line.rstrip().split()[1]
-                    pdbs.add(pdb)
-
-                elif line.startswith("//"):
-                    if pfam_acc_a < pfam_acc_b:
-                        row = [pfam_name_a, pfam_acc_a, pfam_name_b, pfam_acc_b,
-                               ";".join(sorted(list(pdbs)))]
-                    else:
-                        row = [pfam_name_b, pfam_acc_b, pfam_name_a, pfam_acc_a,
-                               ";".join(sorted(list(pdbs)))]
-                    out.write( "\t".join(row)+"\n" )
+        for pair in dom_ints:
+            a, b = pair
+            name_a, name_b = pfam_names[a], pfam_names[b]
+            sources = ";".join(dom_ints[pair])
+            pdbs = pdbs_3did.get(pair, "")
+            out.write("\t".join([a, name_a, b, name_b, sources, pdbs])+"\n")
     return
 
 def edit_interprets(interprets_file, out_file):
@@ -525,13 +571,12 @@ def extract_biogrid_interactions(biogrid_file, prot_dict):
 
 def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                              uni_features, regions, bio_id, bio_set,
-                             outfile_name, mode="mongo"):
+                             sp, outfile_name, mode="mongo"):
 
     pp = pprint.PrettyPrinter(indent=4)
     json_data = {}
     with open_file(outfile_name, "w") as out:
         for uni_ac in prot_dict["seq"]:
-
             seq = prot_dict["seq"][uni_ac]
             protein_data = {
                     "uni_ac": uni_ac,
@@ -542,12 +587,15 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                     "data_class": prot_dict["dc"][uni_ac],
                     "length": len(seq),
                     "sequence": seq,
+                    "organism": sp,
                     "pfams": [],
                     "elms": [],
                     "phosphorylation": [],
                     "acetylation": [],
                     "uni_features": [],
-                    "regions": []
+                    "regions": [],
+                    "biogrid_id": "NA",
+                    "biogrid_interactors": []
             }
 
             if uni_ac in bio_id:
@@ -555,9 +603,6 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                 sorted_ints = sorted(bio_set[uni_ac], key=bio_set[uni_ac].get,
                                      reverse=True)
                 protein_data["biogrid_interactors"] = sorted_ints
-            else:
-                protein_data["biogrid_id"] = "NA"
-                protein_data["biogrid_interactors"] = []
 
             for pfam_ac in sorted(pfams.get(uni_ac, [])):
                 for (start, end, e_val) in sorted(pfams[uni_ac][pfam_ac],
@@ -633,6 +678,13 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
         if mode == "json":
             json.dump(json_data, out)
 
+def print_uniprot_species_map(prot_dict, alt_ids, sp, outfile):
+    with open_file(outfile, "w") as f:
+        for uni_ac in prot_dict["seq"]:
+            uni_id = list(prot_dict["ID"][uni_ac])[0]
+            alts = alt_ids[uni_ac]
+            for x in [uni_ac]+[uni_id]+alts:
+                print x+"\t"+sp
 
 def hasNumbers(inputString):
 	return any(char.isdigit() for char in inputString)
@@ -912,9 +964,11 @@ def main( SP="Hsa",
     ## Common files:
     COM_DIR              = DATA_DIR+"common/"
     PFAM_DAT_FILE        = COM_DIR+"Pfam-A.hmm_"+PFAM_VERSION+".dat.gz"
+    COV2_PFAM_FILE       = COM_DIR+"SARSCoV2_pfam_matches.scan.txt"
+    PFAM_INT_FILE        = COM_DIR+"pfamA_interactions.txt.gz"
     EDITED_PFAM_DAT_FILE = COM_DIR+"Pfam-A.hmm_"+PFAM_VERSION+".tsv.gz"
-    FLAT_3DID_FILE       = COM_DIR+"3did_flat-2018_04.gz"
-    EDITED_3DID_FILE     = COM_DIR+"3did_flat_edited-2018_04.tsv.gz"
+    FLAT_3DID_FILE       = COM_DIR+"3did_flat-2019_01.gz"
+    DDI_FILE            = COM_DIR+"ddi_db.tsv.gz"
     # pdbchain2uniprot   = COM_DIR+"pdbsws_chain.txt.gz"
     ELM_CLASSES_FILE     = COM_DIR+"elm_classes_"+ELM_VERSION+".tsv"
     ELM_INTDOM_FILE      = (COM_DIR+"elm_interaction_domains_"
@@ -937,25 +991,41 @@ def main( SP="Hsa",
     HIPPIE_FILE       = SP_DIR+"hippie_v2-2.tsv.gz" # Hsa
     HIPPIE_MAP_FILE   = SP_DIR+"hippie_v2-2_uniprot_mapping_table.tsv.gz" # Hsa
     PSP_FILE          = SP_DIR+"PSP_ptms_"+PSP_VERSION+"_"+SP+".tsv.gz" # Only Hsa and Mmu
+    PFAMSCAN_FILE     = SP_DIR+"pfamscan_results_"+SP+".txt.gz"
+    UNI_SPECIES_MAP   = SP_DIR+"uni_species_map.txt.gz"
+
+    # PfamScan
+    PFAMSCAN          = "pfamscan.py"
+    TMP_DIR           = "tmp/"
+    TMP_FASTA         = TMP_DIR+"no_pfam_seqs"
+    TMP_PFAMOUT       = TMP_DIR+"pfamout"
+    evalue = "0.001"
+    email = "juan-carlos.gonzalez@bioquant.uni-heidelberg.de"
 
     ### 2. Check existence/make required data files
     ## Check/Edit common files:
+
     # Pfam.dat
     if os.path.isfile(EDITED_PFAM_DAT_FILE):
         print_status(EDITED_PFAM_DAT_FILE, "exists")
     elif check_file_exists(PFAM_DAT_FILE):
-        edit_pfam_dat(PFAM_DAT_FILE, EDITED_PFAM_DAT_FILE)
+        edit_pfam_dat(PFAM_DAT_FILE, COV2_PFAM_FILE, EDITED_PFAM_DAT_FILE)
         print_status(EDITED_PFAM_DAT_FILE, "created")
+
     # 3did flat
-    if os.path.isfile(EDITED_3DID_FILE):
-        print_status(EDITED_3DID_FILE, "exists")
+    if os.path.isfile(DDI_FILE):
+        print_status(DDI, "exists")
     elif check_file_exists(FLAT_3DID_FILE):
-        edit_3did(FLAT_3DID_FILE, EDITED_3DID_FILE)
-        print_status(EDITED_3DID_FILE, "created")
+        pfam_names = read_pfam_dat(EDITED_PFAM_DAT_FILE)
+        create_ddi_database(pfam_names, PFAM_INT_FILE, FLAT_3DID_FILE, DDI_FILE)
+        print_status(DDI_FILE, "created")
+    sys.exit()
+
     # elm classes & domain-ints
     check_file_exists(ELM_CLASSES_FILE)
     check_file_exists(ELM_INTDOM_FILE)
 
+    sys.exit()
     ## Check/Edit species files:
     for f in [UNI_TEXT_FILE, UNI_FASTA_FILE, PFAM_MATCHES_FILE, BIOGRID_FILE]:
         check_file_exists(f)
@@ -971,10 +1041,60 @@ def main( SP="Hsa",
     # Extract protein ID-dictionary, sequences and masks.
     (prot_dict, alt_ids, masks, ptms, uni_features,
         regions) = extract_protein_data_from_uniprot_text(UNI_TEXT_FILE)
-    sys.exit()
+
+    # print_uniprot_species_map(prot_dict, alt_ids, SP, UNI_SPECIES_MAP)
+    # sys.exit()
 
     # Extract Pfam domains.
     pfams, pfam_names = extract_pfam_doms(PFAM_MATCHES_FILE, prot_dict)
+    # Calculate missing ones
+    if os.path.isfile(PFAMSCAN_FILE):
+        print_status(PFAMSCAN_FILE, "exists")
+    else:
+        if not os.path.exists(TMP_DIR):
+            os.mkdir(TMP_DIR)
+        n, i = 0, 0
+        for uni_ac in prot_dict["seq"]:
+            if uni_ac not in pfams:
+                i += 1
+                if i == 100:
+                    n += 1
+                    i = 0
+                fasta = TMP_FASTA+str(n)+".fasta"
+                with open_file(fasta, "a") as out:
+                    out.write(">"+uni_ac+"\n")
+                    out.write(prot_dict["seq"][uni_ac]+"\n")
+
+        for x in range(n+1):
+            print "Running PfamScan #"+str(x)
+            fasta = TMP_FASTA+str(x)+".fasta"
+            pfamout = TMP_PFAMOUT+str(x)
+            if not os.path.isfile(TMP_PFAMOUT+str(x)+".out.txt"):
+                cmd = ("python {} --sequence {} --database pfam-a --evalue {}".format(
+                        PFAMSCAN, fasta, evalue)+
+                        " --format txt --outfile {} --email {} --quiet".format(
+                        pfamout, email))
+                os.system(cmd)
+
+        miss = []
+        with open_file(PFAMSCAN_FILE, "w") as f:
+            for x in range(n+1):
+                pfamout_file = TMP_PFAMOUT+str(x)+".out.txt"
+                if os.path.isfile(pfamout_file):
+                    with open_file(pfamout_file) as f2:
+                        for line in f2:
+                            if line[0]!="#":
+                                f.write(line)
+                    os.unlink(pfamout_file)
+                    os.unlink(TMP_PFAMOUT+str(x)+".sequence.txt")
+                else:
+                    miss.append(x)
+                os.unlink(TMP_FASTA+str(x)+".fasta")
+
+        print "Missing Pfamscan for files", miss
+        print_status(PFAMOUT_FILE+".out.txt", "created")
+
+    pfams, pfam_names = extract_pfamscan(PFAMSCAN_FILE, pfams, pfam_names)
 
     # Extract elm info.
     elm_names = get_elm_names(ELM_CLASSES_FILE)
@@ -1012,9 +1132,9 @@ def main( SP="Hsa",
         print "Creating protein data JSON file"
         create_protein_data_json(prot_dict, alt_ids, pfams, elms,
                                ptms, uni_features, regions, bio_id, bio_set,
-                               PROT_DATA_FILE, mode="mongo")
+                               SP, PROT_DATA_FILE, mode="mongo")
         print_status(PROT_DATA_FILE, "updated")
-
+    sys.exit()
 
     ###  5. Calculate Dom/ELM-Dom/ELM Interactions probabilities
     if os.path.isfile(ASSOC_PROB_FILE) and force_probs==False:
