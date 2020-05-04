@@ -124,10 +124,12 @@ def add_domains(nodes, id_n, id_dict, id_coords, id_muts, prot_id, uni_ac,
     pfam_set = set()
     for e_val in sorted(pfams2, reverse=True):
         for domain in pfams2[e_val]:
+            pfam_ac = domain["acc"].split(".")[0]
+            if pfam_ac not in pfam_info: # most likely old deleted pfam entries
+                continue
             start = domain["start"]
             end = domain["end"]
             length = end - start
-            pfam_ac = domain["acc"].split(".")[0]
             pfam_set.add(pfam_ac)
 
             id_n += 1
@@ -201,7 +203,16 @@ def add_uni_features(nodes, id_n, prot_id, prot_center, ini_pos,
     feat_ints, feat_info = {}, {}
     for region in uni_regions:
         start, end = region["start"], region["end"]
-        length = end - start
+        try:
+            length = end - start
+        except:
+            length = 0
+            if str(start).isdigit():
+                end = start
+            elif str(end).isdigit():
+                start = end
+            else:
+                continue
         id_n += 1
         nodes.append({
             "group": "nodes",
@@ -209,7 +220,7 @@ def add_uni_features(nodes, id_n, prot_id, prot_center, ini_pos,
                 "id": id_n,
                 "parent": prot_id,
                 "role": "uni_region",
-                "label": "("+str(start)+"-"+str(end)+") "+region["info"],
+                "label": "("+str(region["start"])+"-"+str(region["end"])+") "+region["info"],
                 "start": start,
                 "end": end,
                 "length": length
@@ -416,15 +427,16 @@ def get_PPI_from_MongoDB(data, acc_a, acc_b):
 
     return evidence
 
-def extract_3did_from_MongoDB(data, all_pfams):
+def extract_DDI_from_MongoDB(data, all_pfams):
     d = defaultdict(dict)
     collection = data.find()
     for c in collection:
         pfam_a = c["Pfam_Acc_A"]
         pfam_b = c["Pfam_Acc_B"]
-        pdbs   = c["PDBs"]
+        source = c["Source"]
+        pdbs   = str(c["PDBs"])
         if pfam_a in all_pfams and pfam_b in all_pfams:
-            d[pfam_a][pfam_b] = pdbs.split(";")
+            d[(pfam_a, pfam_b)] = {"dbs":source, "pdbs": pdbs.split(";")}
     return d
 
 def get_pair_association_from_MongoDB(data, acc_a, acc_b,
@@ -588,7 +600,7 @@ def color_from_zvalue(z_score):
 
 
 def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
-                                 elm_gene, dom_gene, sp, sp_tax, prot_phos):
+                                 elm_gene, dom_gene, sps, sp_tax, prot_phos):
 
     elm_ide = elm_ide.upper()
     dom_acc = dom_acc.upper()
@@ -601,6 +613,10 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
     else:
         return False, phospho_hits, elm_hits
 
+    sps_tax = []
+    for sp in sps:
+        sps_tax += sp_tax.get(sp, [])
+    sps_tax = set(sps_tax)
     # print "Checking :",elm_ide+"-"+dom_acc,"/",sp, sp_tax[sp], int_info["in_taxon"]
 
     # 1. Check allowed/not allowed taxons
@@ -675,9 +691,9 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
 
 
 @line_profile
-def main(sp, target_prots, custom_pairs, input_seqs, mutations,
-        fasta_data, fasta_link, prot_dict, protein_data, cosmic_data, ppi_data,
-        iprets_data, fasta_iprets, db3did_data, ass_prob_data, elm_int_data,
+def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
+        fasta_data, fasta_link, prot_dict, CLIENT, protein_data, cosmic_data,
+        fasta_iprets, ddi_data, elm_int_data,
         pfam_info, elm_info,
         make_network=True, hide_no_int=True, inferred_elmdom_ints=False):
 
@@ -686,7 +702,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
     id_n = 0
     id_dict, id_coords  = {}, {}
     id_muts = defaultdict(list)
-    genes, pfams, phospho_positons = {}, {}, {}
+    genes, uni_ids, pfams, phospho_positons = {}, {}, {}, {}
     uni_feat_ints, uni_feat_info = {}, {}
     elms = defaultdict(lambda: defaultdict(list))
     all_pfams = set()
@@ -695,10 +711,12 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
 
     ### Create Nodes for Input Proteins
     for uni_ac in sorted(list(target_prots)):
-
-        data = protein_data.find_one( { "uni_ac": uni_ac },
+        org = sp_map[uni_ac]
+        data = protein_data.find_one( { "organism": org, "uni_ac": uni_ac },
                             { "_id": 0, "data_class": 0, "sequence": 0,
                               "alt_ids": 0, "biogrid_interactors": 0})
+        genes[uni_ac] = data["genes"][0]
+        uni_ids[uni_ac] = data["uni_id"]
         prot_center = float(data["length"])/2
         p_center[uni_ac] = prot_center
         nodes, id_n, id_dict, prot_id = add_protein_main(nodes, id_n, id_dict,
@@ -717,19 +735,19 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
             uni_feat_info[uni_ac]) = add_uni_features(nodes, id_n,
                                        prot_id, prot_center, ini_pos[uni_ac],
                                        data["uni_features"], data["regions"],
-                                       prot_dict)
+                                       prot_dict[org])
 
         nodes, id_n = add_custom_mutations(nodes, id_n, prot_id, uni_ac,
                                            data["length"],
                                            prot_center, ini_pos[uni_ac],
                                            mutations[uni_ac])
 
-        if cosmic_data != "no":
+        if sp_map[uni_ac] == "Hsa":
             nodes, id_n = add_cosmic_mutations(nodes, id_n, prot_id, uni_ac,
                                                prot_center, ini_pos[uni_ac],
                                                cosmic_data)
 
-        genes[uni_ac] = data["genes"][0]
+
         all_pfams.update(pfams[uni_ac])
         for elm in data["elms"]:
             elms[uni_ac][elm["acc"]].append(elm)
@@ -759,12 +777,13 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                                            mutations[header])
 
         genes[header] = header
+        uni_ids[header] = header
         all_pfams.update(pfams[header])
         elms[header] = data["elms"]
         phospho_positons[header] = []
 
     ### Load data from Mongo
-    dd_3did = extract_3did_from_MongoDB(db3did_data, all_pfams)
+    ddi = extract_DDI_from_MongoDB(ddi_data, all_pfams)
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
     sp_tax = {
         "Ath" : ["Eukaryota", "Plantae", "Ath"],
@@ -774,7 +793,8 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
         "Hsa" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Hsa"],
         "Mmu" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Mmu"],
         "Sce" : ["Eukaryota", "Opisthokonta", "Fungi", "Sce"],
-        "Xla" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Amphibia", "Xla"]
+        "Xla" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Amphibia", "Xla"],
+        "SARS-CoV-2" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Hsa","Viridae"]
     }
     for s in sp_tax:
         sp_tax[s] = [x.upper() for x in sp_tax[s]]
@@ -787,12 +807,28 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
     mech_ints = defaultdict(int)
     target_prots = target_prots | set(input_seqs.keys())
 
-    for (ac_a, ac_b) in itertools.combinations(target_prots, 2):
+    if len(custom_pairs) > 0:
+        protein_pairs = custom_pairs
+    else:
+        protein_pairs = itertools.combinations(target_prots, 2)
+
+    for (ac_a, ac_b) in protein_pairs:
         gene_a = genes[ac_a]
         gene_b = genes[ac_b]
+        sps = list(set([sp_map[ac] for ac in [ac_a, ac_b] if ac in sp_map]))
+        if len(sps) == 1:
+            ppi_data = CLIENT[sps[0]]["ppi_db"]
+            ass_prob_data  = CLIENT[sps[0]]["association_probabilities"]
+            iprets_data = CLIENT[sps[0]]["interprets"]
+        else:
+            ppi_data = None
+            ass_prob_data = None
+            iprets_data = None
 
         ### UniProt Features interactions
         for (ac1, ac2) in itertools.permutations([ac_a, ac_b], 2):
+            if ac1 not in uni_feat_ints:
+                continue
             for reg_id in uni_feat_ints[ac1]:
                 if ac2 in uni_feat_ints[ac1][reg_id]:
                     role, start, end, info = uni_feat_info[ac1][reg_id]
@@ -809,7 +845,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                         }
                     })
 
-                    line = [genes[ac1][:20], ac1, genes[ac2][:20], ac2,
+                    line = [uni_ids[ac1], genes[ac1][:20], ac1, uni_ids[ac2], genes[ac2][:20], ac2,
                             "UniProt region",
                             "Region "+start+"-"+end, start+"-"+end, "",
                             "", "", "", info, "UniProt"]
@@ -818,23 +854,24 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                     n_ints[ac_b] += 1
 
         ### User-Input interaction
-        if make_network:
-            if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
-                id_n += 1
-                edges.append({
-                    "group": "edges",
-                    "data": {
-                        "id": id_n,
-                        "source": id_dict[ac_a]["main"],
-                        "target": id_dict[ac_b]["main"],
-                        "role": "user_interaction",
-                        "ds": "User input"
-                    }
-                })
+        # if [ac_a, ac_b] in custom_pairs or [ac_b, ac_a] in custom_pairs:
+        #     id_n += 1
+        #     edges.append({
+        #         "group": "edges",
+        #         "data": {
+        #             "id": id_n,
+        #             "source": id_dict[ac_a]["main"],
+        #             "target": id_dict[ac_b]["main"],
+        #             "role": "user_interaction",
+        #             "ds": "User input"
+        #         }
+        #     })
 
         ### Protein-Protein interaction
-        evidence = get_PPI_from_MongoDB(ppi_data, ac_a, ac_b)
-        biogrid_ints = list(evidence["Low"]) + list(evidence["High"])
+        biogrid_ints = []
+        if ppi_data:
+            evidence = get_PPI_from_MongoDB(ppi_data, ac_a, ac_b)
+            biogrid_ints = list(evidence["Low"]) + list(evidence["High"])
 
         if len(biogrid_ints) > 0:
             id_n += 1
@@ -852,7 +889,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                 }
             })
 
-            line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "PROT::PROT", "", "",
+            line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b] ,gene_b[:20], ac_b, "PROT::PROT", "", "",
                     "", "", "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
             lines.append(line)
             n_ints[ac_a] += 1
@@ -866,19 +903,21 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
             if b < a:
                 pfam_a, pfam_b = b, a
 
-            ## 3did interactions
-            pdbs = dd_3did.get(pfam_a, {}).get(pfam_b, [])
-
             ## Probabilities & association
             p_value, lo = ass_dict.get(pfam_a, {}).get(pfam_b, ("-", "-"))
             if p_value=="-" and lo=="-":
-                p_value, lo = get_pair_association_from_MongoDB(
-                                                ass_prob_data, pfam_a, pfam_b,
-                                                n_min=4, obs_min=5, lo_min=2.0)
+                if ass_prob_data:
+                    p_value, lo = get_pair_association_from_MongoDB(
+                                                    ass_prob_data, pfam_a, pfam_b,
+                                                    n_min=4, obs_min=5, lo_min=2.0)
+                else:
+                    p_value, lo = -1, -1
                 ass_dict[pfam_a][pfam_b] = (p_value, lo)
 
-            # if pdbs:
-            if len(pdbs) > 0:
+            ## From DDI database
+            ddi_info = ddi.get((pfam_a, pfam_b), "")
+
+            if ddi_info != "":
                 for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
                     for j, target in enumerate(id_dict[ac_b][pfam_b], 1):
                         if source == target:
@@ -891,8 +930,8 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                                 "source": source,
                                 "target": target,
                                 "role": "DOM_interaction",
-                                "ds": "3did",
-                                "pdb_n": len(pdbs),
+                                "ds": ddi_info["dbs"],
+                                "pdb_n": len(ddi_info["pdbs"]),
                                 # "links": pdbs, # uncomment if neccessary
                                 "p_val": p_value
                             }
@@ -904,18 +943,19 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                             domA += " ("+str(i)+")"
                         if len(id_dict[ac_b][pfam_b]) > 1:
                             domB += " ("+str(j)+")"
-                        line = [gene_a[:20], ac_a, gene_b[:20], ac_b,
+                        line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b], gene_b[:20], ac_b,
                                 "DOM::DOM",
                                 domA, "-".join(id_coords[source]),
                                 "; ".join(id_muts[source]),
                 				domB, "-".join(id_coords[target]),
                                 "; ".join(id_muts[target]),
-                                pdbs, "3did"]
+                                "; ".join(sorted(ddi_info["pdbs"])), ddi_info["dbs"]]
                         lines.append(line)
                         n_ints[ac_a]+=1
                         n_ints[ac_b]+=1
                         mech_ints[ac_a]+=1
                         mech_ints[ac_b]+=1
+
 
             if lo > 0:
                 for i, source in enumerate(id_dict[ac_a][pfam_a], 1):
@@ -942,7 +982,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                             domA += " ("+str(i)+")"
                         if len(id_dict[ac_b][pfam_b]) > 1:
                             domB += " ("+str(j)+")"
-                        line = [gene_a[:20], ac_a, gene_b[:20], ac_b,
+                        line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b], gene_b[:20], ac_b,
                                 "iDOM::iDOM",
                                 domA, "-".join(id_coords[source]),
                                 "; ".join(id_muts[source]),
@@ -968,7 +1008,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                     elms[ac1][elm_acc]) = check_ELM_domain_interaction(
                                                 elm_dom, elm_ide,
                                                 elms[ac1][elm_acc], pfam_acc,
-                                                gene1, gene2, sp, sp_tax,
+                                                gene1, gene2, sps, sp_tax,
                                                 phospho_positons[ac1])
 
                     if not cont and not inferred_elmdom_ints:
@@ -979,7 +1019,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                     if ele_b < ele_a:
                         ele_a, ele_b = pfam_acc, elm_acc
                     p_value, lo = ass_dict.get(ele_a, {}).get(ele_b, ("-", "-"))
-                    if p_value=="-" and lo=="-":
+                    if p_value=="-" and lo=="-" and ass_prob_data:
                         p_value, lo = get_pair_association_from_MongoDB(
                                                 ass_prob_data, ele_a, ele_b,
                                                 n_min=4, obs_min=5, lo_min=2.0)
@@ -1018,7 +1058,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                                     elmA += " ("+str(i)+")"
                                 if len(id_dict[ac2][pfam_acc]) > 1:
                                     domB += " ("+str(j)+")"
-                                line = [gene1[:20], ac1, gene2[:20], ac2,
+                                line = [uni_ids[ac1], gene1[:20], ac1, uni_ids[ac2], gene2[:20], ac2,
                                         "ELM::DOM",
                                          elmA, "-".join(id_coords[source]),
                                          "; ".join(id_muts[source]),
@@ -1066,7 +1106,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                                     elmA += " ("+str(i)+")"
                                 if len(id_dict[ac2][pfam_acc]) > 1:
                                     domB += " ("+str(j)+")"
-                                line = [gene1[:20], ac1, gene2[:20], ac2, "ELM::DOM",
+                                line = [uni_ids[ac1], gene1[:20], ac1, uni_ids[ac2], gene2[:20], ac2, "iELM::DOM",
                                          elmA, "-".join(id_coords[source]),
                                          "; ".join(id_muts[source]),
                                          domB, "-".join(id_coords[target]),
@@ -1085,7 +1125,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                 hits.append( fasta_iprets[(ac_a, ac_b)] )
             elif (ac_b, ac_a) in fasta_iprets:
                 hits.append( fasta_iprets[(ac_b, ac_a)] )
-        else:
+        elif iprets_data:
             hits = get_Interprets_from_MongoDB(iprets_data, gene_a, ac_a, gene_b, ac_b)
 
         for hit in hits:
@@ -1155,7 +1195,7 @@ def main(sp, target_prots, custom_pairs, input_seqs, mutations,
                 }
             })
 
-            line = [gene_a[:20], ac_a, gene_b[:20], ac_b, "InterPreTS",
+            line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b], gene_b[:20], ac_b, "InterPreTS",
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
                    str(z), "InterPreTS prediction"]

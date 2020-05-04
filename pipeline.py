@@ -28,9 +28,9 @@ def open_file(input_file, mode="r"):
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)
 
-def make_protein_id_dictionary(prot_data):
+def make_protein_id_dictionary(prot_data, org):
     D = defaultdict(lambda: defaultdict(list))
-    for doc in prot_data.find({},
+    for doc in prot_data.find({"organism": org},
                 {"_id":0, "uni_ac":1, "uni_id":1, "genes":1, "alt_ids":1,
                 "data_class":1}).sort("data_class", pymongo.ASCENDING):
                                         # First "Reviewed", then "Unreviewed"
@@ -57,11 +57,19 @@ def make_protein_id_dictionary(prot_data):
 #
 #     return uni_id
 
-def parse_protein_input(input_text, prot_dict):
-    input_prots = set()
+# def function(input_text, prot_dict):
+#     for line in input_text.split("\n"):
+
+#         ## Make proteins UniProtID centric
+#         if line.strip() and line[0] != "#":
+
+def parse_protein_input(input_text, sp, protein_data, prot_dict):
+    input_prots, done = set(), set()
     input_seqs = defaultdict(str)
+    input_to_uniac = {}
     not_found = set()
     custom_pairs = []
+    sp_map = {}
     flag = 0
 
     for line in input_text.split("\n"):
@@ -82,20 +90,33 @@ def parse_protein_input(input_text, prot_dict):
                 flag = 0
                 line = line.replace(","," ")
                 vals = line.rstrip().upper().split()
-                uni_acs = set()
+                found = []
                 for val in vals:
-                    if val in prot_dict["AC"]:
-                        uni_acs.add( prot_dict["AC"][val][0] )
-                        print val, prot_dict["AC"][val][0], prot_dict["AC"][val]
+                    ac, org = None, None
+                    if val in input_to_uniac:
+                        ac = input_to_uniac[val]
+                    elif sp != "any":
+                        if val in prot_dict[sp]["AC"]:
+                            ac = prot_dict[sp]["AC"][val][0]
+                            input_to_uniac[val] = ac
+                            sp_map[ac] = sp
+                            input_prots.add(ac)
+                    else:
+                        doc = protein_data.find_one(
+                                {"$or": [{"uni_id": val},{"uni_ac": val}]},
+                                {"_id": 0, "uni_ac": 1, "organism": 1})
+                        if doc:
+                            ac = doc["uni_ac"]
+                            input_to_uniac[val] = ac
+                            sp_map[ac] = doc["organism"]
+                            input_prots.add(ac)
+                    if ac:
+                        found.append(ac)
                     else:
                         not_found.add("'"+val+"'")
-
-                input_prots = input_prots | uni_acs
-
                 ## If pair of proteins in line, save as custom pair.
-                if len(uni_acs) == 2:
-                    custom_pairs.append( list(uni_acs) )
-
+                if len(found) == 2:
+                    custom_pairs.append(sorted(found))
         else:
             flag = 0
 
@@ -108,9 +129,9 @@ def parse_protein_input(input_text, prot_dict):
     for key in remove_keys:
         input_seqs.pop(key, "None")
 
-    return input_prots, input_seqs, custom_pairs, list(not_found)
+    return input_prots, input_seqs, custom_pairs, list(not_found), sp_map, input_to_uniac
 
-def get_additional_interactors(proteins, add_ints, protein_data):
+def get_additional_interactors(proteins, sp_map, add_ints, protein_data):
     all_proteins = proteins
 
     add_all_ints = False
@@ -135,22 +156,27 @@ def get_additional_interactors(proteins, add_ints, protein_data):
                     interactors.append(uni_ac2)
                     if (len(interactors) >= int(add_ints)):
                         break
-
+            for prot in interactors:
+                sp_map[prot] = sp_map[uni_ac]
             all_proteins = all_proteins | set(interactors)
 
-    return all_proteins, add_ints
+    return all_proteins, sp_map, add_ints
 
-def parse_mutation_input(input_text, prot_dict, proteins):
+def parse_mutation_input(input_text, input_to_uniac, input_seqs):
     mutations = defaultdict(lambda: defaultdict(set))
 
     for line in input_text.split("\n"):
         if line.strip() and line[0] != "#":
             prot, mut = line.rstrip().split()[0].split("/")
             pos = int(re.search("([\d]+)", mut).group(1))
-            if prot in prot_dict["AC"]:
-                uni_ac = prot_dict["AC"][prot][0]
-            	if uni_ac in proteins:
-                    mutations[uni_ac][pos].add(mut)
+            if prot in input_to_uniac:
+                uni_ac = input_to_uniac[prot]
+                mutations[uni_ac][pos].add(mut)
+            elif prot in input_seqs:
+                mutations[prot][pos].add(mut)
+            ## add protein if not present in input
+            # else:
+            #   (...)
 
     return mutations
 
@@ -185,7 +211,7 @@ def get_elm_info(data):
             "prob":  c["Probability"]}
     return d
 
-def parse_blast(blastout_file, mask, data_dict, prot_id,
+def parse_blast(blastout_file, mask, data_dict,
                 max_ol=0.25, max_cov=0.9):
     prots = set()
     sp, tr = defaultdict(list), defaultdict(list)
@@ -194,17 +220,17 @@ def parse_blast(blastout_file, mask, data_dict, prot_id,
             if line[0]!="#":
                 t = line.rstrip().split("\t")
                 query = t[0]
-                dc, subj = t[1].split("|")[:2]
+                dc, acc, uni_id = t[1].split("|")
                 prots.add(query)
                 if dc=="sp":
-                    sp[query].append({ "acc": subj,
+                    sp[query].append({ "acc": uni_id,
                                   "ide": float(t[2]),
                                   "e-val": float(t[10]),
                                   "q-start": int(t[6]),
                                   "q-end": int(t[7])
                                   })
                 elif dc=="tr":
-                    tr[query].append({ "acc": subj,
+                    tr[query].append({ "acc": uni_id,
                                   "ide": float(t[2]),
                                   "e-val": float(t[10]),
                                   "q-start": int(t[6]),
@@ -223,9 +249,8 @@ def parse_blast(blastout_file, mask, data_dict, prot_id,
             if mask_cov >= max_cov:
                 break
         for hit in sorted(final, key=lambda i: i["q-start"]):
-            gene = prot_id["GN"][hit["acc"]][0]
             l = str(hit["q-start"])+"-"+str(hit["q-end"])+"|"
-            l += hit["acc"]+"|"+gene+"|("+"{:1.0e}".format(hit["e-val"])+", "+str(hit["ide"])+"%)"
+            l += hit["acc"]+"|"+"("+"{:1.0e}".format(hit["e-val"])+", "+str(hit["ide"])+"%)"
             data_dict[prot]["blast"].append(l)
     return data_dict
 
@@ -336,9 +361,9 @@ def get_stats(lines, p):
         #     "Type", "F(A)","Start-End(A)", "Mutations(A)",
         #     "F(B)", "Start-End(B)", "Mutations(B)",
         #     "Info", "Source"]
-        gene_a, gene_b = str(line[0]), str(line[2])
-        int_type = str(line[4])
-        ele_a, ele_b = str(line[5]), str(line[8])
+        gene_a, gene_b = str(line[2]), str(line[3])
+        int_type = str(line[6])
+        ele_a, ele_b = str(line[7]), str(line[10])
         prot_ints[gene_a].add(gene_b)
         prot_ints[gene_b].add(gene_a)
         a, b = gene_a, gene_b
@@ -433,30 +458,33 @@ def print_stats_summary(stats_file):
     #     print "\t".join(line)
 
 @line_profile
-def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
+def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
          BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
          CLIENT=MongoClient('localhost', 27017),
          MAKE_NETWORK=True, HIDE_NO_INT=True, TABLE_FORMAT="json",
-         CMD_LINE=False):
+         CMD_LINE=False, RUN_IPRETS=True):
 
     error = False
     param = {} # Parameters to print in JSON file
 
     ## DATA: Set MongoDB databases & collections (CLIENT[database][collection])
     PFAM_DATA       = CLIENT["common"]["pfamA_data"]
-    DB3DID_DATA     = CLIENT["common"]["db_3did"]
+    DDI_DATA        = CLIENT["common"]["ddi_db"]
+    # DB3DID_DATA     = CLIENT["common"]["db_3did"]
     ELM_INT_DATA    = CLIENT["common"]["elm_int_dom"]
     ELM_CLASSES     = CLIENT["common"]["elm_classes"]
-    PROTEIN_DATA    = CLIENT[SP]["protein_data"]
-    PPI_DATA        = CLIENT[SP]["ppi_db"]
-    ASS_PROB_DATA   = CLIENT[SP]["association_probabilities"]
-    COSMIC_DATA     = "no"
-    IPRETS_DATA = CLIENT[SP]["interprets"]
-    if SP == "Hsa":
-        COSMIC_DATA = CLIENT["cosmic_v87"]["genome_screens"]
-    blastdb_uni = BLASTDB_DIR+"uniprot_"+SP
-    blastdb_pdb = BLASTDB_DIR+"pdbaa_2019"
+    PROTEIN_DATA    = CLIENT["common"]["protein_data"]
+    BLASTDB_UNI     = BLASTDB_DIR+"uniprot_sprot_PIV"
+    BLASTDB_PDB     = BLASTDB_DIR+"pdbaa_2019"
+    COSMIC_DATA     = CLIENT["cosmic_v87"]["genome_screens"]
+    if SP != "any":
+        # # PROTEIN_DATA    = CLIENT[SP]["protein_data"]
+        # ASS_PROB_DATA   = CLIENT[SP]["association_probabilities"]
+        # IPRETS_DATA = CLIENT[SP]["interprets"]
+
+        if os.path.isfile(BLASTDB_DIR+"uniprot_"+SP+".pin"):
+            BLASTDB_UNI = BLASTDB_DIR+"uniprot_"+SP
 
     ## Get output file names
     if CUSTOM_ID:
@@ -488,16 +516,27 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
 
     print_log(IDE, "Running PIV")
 
+    ## Load data
     pfam_info = get_pfam_info(PFAM_DATA)
     elm_info = get_elm_info(ELM_CLASSES)
 
-    ### 1. Get protein dictionary & sequences for species
-    prot_ids = make_protein_id_dictionary(PROTEIN_DATA)
+    prot_ids = {}
+    if SP != "any":
+        ### 1. Get protein dictionary & sequences for species
+        prot_ids[SP] = make_protein_id_dictionary(PROTEIN_DATA, SP)
 
     ### 2. Parse protein input
-    input_prots, input_seqs, custom_pairs, not_found = parse_protein_input(
-                                                                    INPUT_1,
-                                                                    prot_ids)
+    (input_prots, input_seqs,
+    custom_pairs, not_found,
+    sp_map, input_to_uniac) = parse_protein_input(INPUT_1, SP,
+                                                    PROTEIN_DATA,
+                                                    prot_ids)
+
+    all_sp = set(sp_map.values())
+    for sp1 in all_sp:
+        if sp1 not in prot_ids:
+            prot_ids[sp1] = make_protein_id_dictionary(PROTEIN_DATA, sp1)
+
 
     total_n_prots = len(input_prots) + len(input_seqs)
     if total_n_prots == 0:
@@ -506,13 +545,14 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
 
     if len(not_found) > 0:
         print_log(IDE,
-                 ("The following input protein(s) could not be identified: "+
+                 ("The following {} input protein(s) could not be identified: ".format(len(not_found))+
                  "; ".join(not_found)))
 
-    print_log(IDE, "Your input contains {} proteins.".format(total_n_prots))
+    print_log(IDE, "Your input contains {} proteins and {} pairs".format(
+                        total_n_prots, len(custom_pairs)))
 
     ### 3. Add additional interaction partners
-    all_proteins, add = get_additional_interactors(input_prots,
+    all_proteins, sp_map, add = get_additional_interactors(input_prots, sp_map,
                                               ADDITIONAL_INTERACTORS,
                                               PROTEIN_DATA)
 
@@ -544,12 +584,12 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
         outfmt = "7"
         ## Run blast through bash.
         cmd = "{} -query {} -db {} -evalue {} -outfmt {} | gzip > {}".format(
-              psiblast_path, fasta_file, blastdb_uni, e_val, outfmt,
+              psiblast_path, fasta_file, BLASTDB_UNI, e_val, outfmt,
               blastout_file)
         print_log(IDE, "Running PSIBLAST: {}".format(cmd))
         os.system(cmd)
         ## Parse results
-        fasta_data = parse_blast(blastout_file, mask, fasta_data, prot_ids)
+        fasta_data = parse_blast(blastout_file, mask, fasta_data)
 
         ### 4-3. Run PfamScan to identify Pfam domains on input sequence(s).
         # pfamscan.py parameters:
@@ -575,34 +615,53 @@ def main(INPUT_1=None, INPUT_2=None, SP="Hsa", ADDITIONAL_INTERACTORS=0,
                                    fpm2_script=fpm2_path)
 
         # 4-5. Run InterPreTS
-        all_seqs = input_seqs.copy()
-        db_seqs = {}
-        for uni_ac in all_proteins:
-            db_seqs[uni_ac] = PROTEIN_DATA.find_one({"uni_ac": uni_ac},
-                                         {"_id": 0, "sequence": 1})["sequence"]
-        all_seqs.update(db_seqs)
-        print_log(IDE, "Running InterPrets")
-        fasta_iprets = run_interprets.main(
-                   all_seqs, OUTPUT_DIR, iprets_file, IDE,
-                   mode="psiblast", psiblast=psiblast_path, blastdb=blastdb_pdb,
-                   print_output=True)
+        if RUN_IPRETS:
+            all_seqs = input_seqs.copy()
+            if len(custom_pairs)==0:
+                # between input sequences with each other
+                custom_pairs = list(itertools.combinations(input_seqs.keys(), 2))
+                # between input sequence with other proteins
+                custom_pairs += list(itertools.product(input_seqs.keys(), list(all_proteins)))
+
+                for uni_ac in all_proteins:
+                    all_seqs[uni_ac] = PROTEIN_DATA.find_one({"uni_ac": uni_ac},
+                                                {"_id": 0, "sequence": 1})["sequence"]
+                print_log(IDE, "Running InterPrets")
+                fasta_iprets = run_interprets.main(
+                                    all_seqs, OUTPUT_DIR, iprets_file, IDE,
+                                    these_pairs=custom_pairs,
+                                    mode="psiblast", psiblast=psiblast_path, blastdb=BLASTDB_PDB,
+                                    print_output=True)
+            else:
+                for pair in custom_pairs:
+                    for prot in pair:
+                        if prot in all_proteins:
+                            all_seqs[uni_ac] = PROTEIN_DATA.find_one({"uni_ac": uni_ac},
+                                                {"_id": 0, "sequence": 1})["sequence"]
+                print_log(IDE, "Running InterPrets")
+                fasta_iprets = run_interprets.main(
+                        all_seqs, OUTPUT_DIR, iprets_file, IDE,
+                        these_pairs=custom_pairs,
+                        mode="psiblast", psiblast=psiblast_path, blastdb=BLASTDB_PDB,
+                        print_output=True)
+
 
     ### 5. Parse Query Mutations
-    input_muts = parse_mutation_input(INPUT_2, prot_ids,
-                                      list(all_proteins)+input_seqs.keys())
+    input_muts = parse_mutation_input(INPUT_2, input_to_uniac, input_seqs.keys())
 
     ### 6. Run int2graph
-    graph_ele, lines, no_int_prots = int2graph.main(SP, all_proteins,
-            custom_pairs, input_seqs, input_muts,
+    graph_ele, lines, no_int_prots = int2graph.main(all_proteins,
+            custom_pairs, input_seqs, input_muts, sp_map,
             fasta_data, fasta_link, prot_ids,
-            PROTEIN_DATA, COSMIC_DATA, PPI_DATA,
-            IPRETS_DATA, fasta_iprets, DB3DID_DATA, ASS_PROB_DATA, ELM_INT_DATA,
+            CLIENT, PROTEIN_DATA, COSMIC_DATA,
+            fasta_iprets, DDI_DATA, ELM_INT_DATA,
             pfam_info, elm_info,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
 
     if len(no_int_prots) > 0:
         print_log(IDE,
-                "No interactions found for: {}".format("; ".join(no_int_prots)))
+                "No interactions found for {} proteins: {}".format(
+                    len(no_int_prots), "; ".join(no_int_prots)))
 
     print_log(IDE, "int2graph.py run successfully")
     param["not_found"], param["no_int_prots"] = not_found, no_int_prots
@@ -658,12 +717,14 @@ if __name__ == "__main__":
     	help="File with protein input as protein identifier or FASTA sequences (Required)")
     ap.add_argument("-m", "--muts", required=False,
     	help="File with mutation input in Mechismo format")
-    ap.add_argument("-sp", "--species", required=False, default="Hsa",
+    ap.add_argument("-sp", "--species", required=False, default="any",
         help="Organism (default: Hsa)")
     ap.add_argument("-ai", "--add_ints", required=False, default=0,
         help="Number of additional interactors per protein. Any number or 'all' (default: 0)")
     ap.add_argument("-id", "--job_id", required=False, default=False,
         help="Custom job name (random by default)")
+    ap.add_argument("-log", required=False, default=False,
+        help="Print log file")
     args = vars(ap.parse_args())
 
     prots = open_file(args["prots"]).read()
@@ -671,9 +732,13 @@ if __name__ == "__main__":
     if args["muts"]:
         muts = open_file(args["muts"]).read()
 
+    if args["log"]:
+        sys.stdout = open(args["log"], 'w')
+
     main(INPUT_1=prots, INPUT_2=muts, SP=args["species"],
          ADDITIONAL_INTERACTORS=args["add_ints"],
          CUSTOM_ID=args["job_id"],
-         MAKE_NETWORK=False, TABLE_FORMAT="tsv", CMD_LINE=True)
+         MAKE_NETWORK=False, TABLE_FORMAT="tsv", CMD_LINE=True,
+         RUN_IPRETS=False)
 
     sys.exit()
