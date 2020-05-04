@@ -20,9 +20,21 @@ if key == "common":
     com_dir = data_dir+"common/"
     print "Creating common databases"
 
+    # Dom-Dom database
+    data_file = com_dir+"ddi_db.tsv.gz"
+    ddi_data = client["common"]["ddi_db"]
+    if (os.path.isfile(data_file)
+    and ("import" in sys.argv[1:] or ddi_data.count()==0)):
+        os.system("zcat "+data_file+" | mongoimport -d common"+
+                    " -c ddi_db --type tsv --headerline --drop")
+        ddi_data.drop_indexes()
+        ddi_data.create_index([("Pfam_Acc_A", pymongo.ASCENDING),
+                                ("Pfam_Acc_B", pymongo.ASCENDING)])
+
+    sys.exit()
     ## 3DID
     db3did_data = client["common"]["db_3did"]
-    data_file = com_dir+"3did_flat_edited-2018_04.tsv.gz"
+    data_file = com_dir+"3did_flat_edited-2019_01.tsv.gz"
     if (os.path.isfile(data_file)
     and ("import" in sys.argv[1:] or db3did_data.count()==0)):
         os.system("zcat "+data_file+" | mongoimport -d common"+
@@ -64,7 +76,7 @@ elif key in ["Xla", "Ath", "Cel", "Dme", "Dre", "Sce", "Hsa", "Mmu"]:
     sps_dir = data_dir+"species/"+sps+"/"
     print "Creating databases for", sps
 
-    ## Protein Data
+    ## Protein Data (ORGANISM-specific)
     protein_data = client[sps]["protein_data"]
     data_file = sps_dir+"protein_data_"+sps+"_mongo.json.gz"
     if (os.path.isfile(data_file)
@@ -75,6 +87,13 @@ elif key in ["Xla", "Ath", "Cel", "Dme", "Dre", "Sce", "Hsa", "Mmu"]:
     protein_data.create_index("uni_ac")
     protein_data.create_index("uni_id")
     protein_data.create_index("data_class")
+
+    ## Protein Data (COMMON)
+    protein_data = client["common"]["protein_data"]
+    if os.path.isfile(data_file):
+        os.system("zcat "+data_file+" | mongoimport -d common -c protein_data --type json "+
+                    "--mode upsert --upsertFields uni_id")
+
 
     ## BioGRID
     biogrid_data = client[sps]["biogrid"]
@@ -133,3 +152,14 @@ elif key in ["Xla", "Ath", "Cel", "Dme", "Dre", "Sce", "Hsa", "Mmu"]:
                       " -c genome_screens --type tsv --headerline --drop")
         cosmic_data.drop_indexes()
         cosmic_data.create_index("uni_ac")
+
+
+## COMMON protein data indexes
+protein_data = client["common"]["protein_data"]
+protein_data.drop_indexes()
+protein_data.create_index("uni_ac")
+protein_data.create_index("uni_id")
+protein_data.create_index("data_class")
+protein_data.create_index("organism")
+protein_data.create_index( [("organism", pymongo.ASCENDING),
+                            ("uni_ac", pymongo.ASCENDING)])
