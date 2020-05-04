@@ -44,7 +44,7 @@ def main(fasta_file, elm_classes_file, print_out=True,
                                 gene = re.search("GN=([^\s]+)", line2.split("/")[1]).group(1)
                         else:
                             seq = line2.rstrip()
-                            to_print.append( "\t".join([elm_ide, elm_acc, label, gene, start, end, elm_prob, "-", "!", seq]) )
+                            to_print.append( "\t".join([elm_ide, elm_acc, label, start, end, elm_prob, "-", "!", seq]) )
 
                             elms[label][elm_acc].append(
                                 {"start" : int(start),
@@ -63,6 +63,6 @@ def main(fasta_file, elm_classes_file, print_out=True,
 
 if __name__ == "__main__":
     main(sys.argv[1],
-        "static/data/common/elm_classes_May2019.tsv.gz",
+        "static/data/common/elm_classes_Oct2019.tsv",
         print_out=True, outfile="test.gz")
     sys.exit()
