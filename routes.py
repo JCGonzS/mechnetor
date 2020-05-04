@@ -12,10 +12,10 @@ log_file = main_dir+"static/jobs/log.txt"
 sys.stdout = open(log_file, 'a')
 
 # Jinja Templates
-index_template = "index.html.jinja2"
-help_template = "features.html.jinja2"
-error_template = "input_error.html.jinja2"
-results_template = "results.html.jinja2"
+index_template = "index.html"
+help_template = "features.html"
+error_template = "input_error.html"
+results_template = "results.html"
 
 client = MongoClient('localhost', 27017)
 
