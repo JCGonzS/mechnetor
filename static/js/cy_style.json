@@ -1,6 +1,6 @@
 [
   {
-    "selector": "node[role='protein_main'], node[role='user_seq']",
+    "selector": "node[role='protein_main']",
     "style": {
       "shape": "roundrectangle",
       "padding": "40px",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "selector": "node[role='protein_main'].hl, node[role='user_seq'].hl",
+    "selector": "node[role='protein_main'].hl",
     "style": {
       "border-color": "#33a1c2",
       "color": "#33a1c2",
@@ -37,7 +37,7 @@
     }
   },
   {
-    "selector": "node[role='protein_main'].hl2, node[role='user_seq'].hl2",
+    "selector": "node[role='protein_main'].hl2",
     "style": {
       "border-color": "#ff5733",
       "color": "#ff5733"
@@ -126,7 +126,7 @@
     }
   },
   {
-    "selector": "node[role='elm'].hl",
+    "selector": "node[role='elm'].hl, node[role='elm'].hl2",
     "style": {
       "background-opacity": "0.5",
       "background-color": "data(color)",
@@ -137,7 +137,26 @@
     }
   },
   {
-    "selector": "node[role='elm'].hl2",
+    "selector": "node[role='3dlm']",
+    "style": {
+      "shape": "roundrectangle",
+      "width": "data(length)",
+      "height": "15px",
+      "background-opacity": "0",
+      "border-width": "1px",
+      "border-color": "#27ae60",
+      "label": "data(label)",
+      "font-size": "8px",
+      "min-zoomed-font-size": "17px",
+      "text-valign": "bottom",
+      "color": "#000",
+      "events": "yes",
+      "text-events": "yes",
+      "display": "none"
+    }
+  },
+  {
+    "selector": "node[role='3dlm'].hl, node[role='3dlm'].hl2",
     "style": {
       "background-opacity": "0.5",
       "background-color": "data(color)",
@@ -578,6 +597,29 @@
       "line-style": "dashed",
       "line-color": "#B03A2E",
       "opacity": "1"
+    }
+  },
+  {
+    "selector": "edge[role='DMI_interaction']",
+    "style": {
+      "width": "4px",
+      "curve-style": "bezier",
+      "line-color": "#27ae60",
+      "line-style": "solid",
+      "opacity": "0.7",
+      "display": "none",
+      "events": "yes"
+    }
+  },
+  {
+    "selector": "edge[role='DMI_interaction'].hl",
+    "style": {
+      "line-style": "dashed",
+      "line-color": "#27ae60",
+      "opacity": "1",
+      "overlay-padding": "6px",
+      "overlay-color": "#27ae60",
+      "overlay-opacity": "0.2"
     }
   },
   {
