@@ -1,124 +1,100 @@
-/* Colors
-#333    -> dark grey. Header background
-#383431 -> MV dark grey
-#BDC3C7 -> light grey. Text, header bottom border.
-#E9EAEC -> very light grey. Body background
-#404952 -> dark grey blue. Footer background
-#2980b9 -> MV blue
-#E25E0E -> orange
-*/
-
-article, aside, details, figcaption, figure,
-footer, header, body, hgroup, menu, nav, section {
-    display: block;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+html, body {
+  /* background-color: #FFF; */
+  background-color: #F4F4F4;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  color: #2c2c2c;
   height: 100%;
-  color: #333;
 }
 
-#content {
-   min-height:100%;
-   position:relative;
-   overflow: hidden;
-   background-color: #E9EAEC;
-   font-family: 'Source Sans Pro', sans-serif;
+.grid-container {
+  display: grid;
+  grid-template-areas: 
+    "hd hd hd"
+    "ct ct ct"
+    "ft ft ft";
+  grid-gap: 10px;
+  height: 100%;
 }
 
-#header {
-  width:100%;
-  padding: 3px;
-  background-color: #333;
-  overflow: hidden;
-  /* border-bottom: 2px solid #BDC3C7; */
-  /* padding-left: 2em; */
-  /* box-shadow: 0px 0px 10px 3px grey; */
+.header { 
+  grid-area: hd;
+  height: 42px;
+  line-height: 42px;
+  display: flex;
+  background-color: #FFF; 
+  /* border-bottom: 1px solid #95a5a6;   */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.header a {
+  text-decoration: none !important;
 }
 
-#navbar #header-title{
-  padding: 2em;
-  font-family: 'Source Sans Pro', sans-serif;
+.header-title {
+  padding: 0 2em 0 2em;
   font-weight: bold;
   font-size: 22px;
-  color: white;
-  text-decoration: none;
+  color: black;
+}
+.header-title:hover {
+  color: black; 
+}
+.header-buttons {
+  display: flex;
 }
 
-#navbar ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 1px;
+.header-button {
+  height: 42px;
+  line-height: 42px;
+  margin: 0 10px 0 10px;
+  /* font-family: 'Staatliches', sans-serif; */
+  font-size: 16px;
+  font-weight: bold;
+  color: #2c2c2c;
+  /* color: #4d4b4a; */
+  /* text-transform: uppercase; */
+}
+.header-button:hover {
+  color: black;
+  border-bottom: 4px solid #e44445;
+}
+
+.header-titlered {
+  color: #e44445;
+}
+.content { 
+  grid-area: ct; 
+  min-height: 700px;
+}
+
+.footer {
+  grid-area: ft;
+  display: grid;
+  grid-template-areas: 
+    "ft1 ft2 ft3";
+  grid-gap: 5px;
+  background-color: #4d4b4a;
+  line-height: 1.6;
   text-align: center;
-  width: 250px;
-  display: inline;
-}
-#navbar ul li {
-  display: inline;
-}
-
-#navbar ul li a {
-  padding-left: 1em;
-  padding-right: 10px;
-  text-decoration: none;
-  text-transform: uppercase;
-  margin: auto;
-  border-radius: 6px;
-  font-family: 'Staatliches', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
+  font-family: "Source Sans Pro", sans-serif;
   color: #BDC3C7;
-
 }
-#navbar ul li a:hover {
+.footer .footer-col-1 { grid-area: ft1; }
+.footer .footer-col-2 { grid-area: ft2; }
+.footer .footer-col-3 { grid-area: ft3; }
+.footer .footer-col-title {
+  padding-top: 10px;
+  padding-bottom: 10px;
   color: #FFF;
+  font-family: 'Staatliches', cursive;
+}
+.footer a {
+  color: #FFF;
+  font-weight: bold;
 }
 
-#home-link:before {
-  font-family: Font Awesome\ 5 Free;
-  font-weight: 900;
-  content: "\f015";
-  padding: 0 3px;
-}
-#help-link:before {
-  font-family: Font Awesome\ 5 Free;
-  font-weight: 900;
-  content: "\f059";
-  padding: 0 3px;
-}
-
-#russell-link:before {
-  font-family: Font Awesome\ 5 Free;
-  font-weight: 900;
-  content: "\f0c0";
-  padding: 0 3px;
-}
-
-#main {
-  padding:10px;
-  padding-bottom:110px;   /* Height of the footer */
-}
-
-textarea {
-  width: 100%;
-  height: 100px;
-  resize:vertical;
-  overflow: auto;
-  box-sizing: border-box;
-  border: 1px solid #BDC3C7;
-  border-radius: 1px;
-  /* background-color: #E9EAEC; */
-  padding: 7px 7px;
-  font-size: 12px;
-  color: #333;
-}
-textarea:focus {
-  border-color: #333;
-}
-
+/* 
 select {
   border: 1px solid #BDC3C7;
   border-radius: 3px;
@@ -126,32 +102,6 @@ select {
 }
 select:focus {
   border-color: #333;
-}
-
-#footer {
-  position: absolute;
-  margin:auto;
-  bottom: 0;
-  height: 110px;
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 0px;
-  background-color: #404952;
-  color: #BDC3C7;
-  text-align: center;
-  font-family: "Source Sans Pro", sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-}
-#footer .section {
-  color: white;
-  font-family: 'Staatliches', cursive;
-  padding-bottom: 10px;
-}
-#cyto-logo a {
-  color: white;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: bold;
 }
 
 .comma-list{
@@ -171,15 +121,15 @@ select:focus {
 .txt-btn{
   border: none;
   background-color: inherit;
-  color: inherit;
+  color: inherit; */
   /*padding: 10px 15px;*/
-  cursor: pointer;
+  /* cursor: pointer;
   display: inline-block;
 }
 .txt-btn:hover {
   background-color: #95a5a6;
   color: black;
-}
+} */
 
 /* GROW EFFECT */
 /* btn_main {
@@ -196,7 +146,7 @@ btn_main:hover {
   transform: scale(1.1);
 } */
 
-.info_popup {
+/* .info_popup {
   color: #b2babb;
 }
 
@@ -208,10 +158,8 @@ btn_main:hover {
   color: #333;
   font-size: 13px;
   /* text-align: center; */
-  vertical-align: middle;
+  /* vertical-align: middle;
   cursor: pointer;
 }
 
-.input_browse{
-  font-size: 12px;
-}
+}  */

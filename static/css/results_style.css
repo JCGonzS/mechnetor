@@ -1,3 +1,62 @@
+.network-container {
+  display: flex; 
+}
+
+.control-panel {
+  width: 20em;
+  height: 600px;
+  overflow: auto;
+  background-color: #ccc;
+  /* border: 1px solid #ccc; */
+  padding-left: 5px;
+  padding-bottom: 10px;
+  text-align: left;
+  font-size: 12px;
+}
+.control-panel legend{
+  font-size: 14px;
+  font-weight: bold;
+}
+.control-panel hr{
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+#control_panel_title{
+  margin-top:6px;
+  margin-bottom:6px;
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.network {
+  flex-grow: 2;
+  height: 600px;
+  background-color: white;
+  /* border: 1px solid #ccc; */
+}
+
+#cy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  /*z-index: 999;*/
+}
+
+.dl_btn {
+  border: none;
+  border-radius: 3px;
+  background-color: #CCC;
+  padding: 3px;
+}
+.dl_btn:hover {
+  background-color: #dfb4b5;
+}
+
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
@@ -86,17 +145,7 @@ input[type=number] {
   display: none;
 }
 
-#body {
-  right: 0;
-  left: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-#body_t2 {
-  width: 98%;
-  margin: auto;
-}
+
 
 .qtip {
   max-width: none !important;
@@ -185,33 +234,6 @@ span.neg {
   color: lightgrey;
 }
 
-#control_panel {
-  position: relative;
-  background-color: #ccc;
-  border:2px solid #ccc;
-  border-radius: 3px;
-  padding-left: 5px;
-  padding-bottom: 10px;
-  text-align: left;
-  color: #555555;
-  font-size: 12px;
-}
-#control_panel_title{
-  margin-top:6px;
-  margin-bottom:6px;
-  text-align:center;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-}
-#control_panel legend{
-  font-size: 14px;
-  font-weight: bold;
-}
-#control_panel hr{
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
 
 .GenButton {
   background-color: #ccc;
@@ -248,32 +270,8 @@ span.neg {
 }
 
 
-#graph {
-  background-color: transparent;
-}
-#graph_box {
-  height:600px;
-  border:2px solid #ccc;
-  border-radius: 3px;
-  background-color: white;
-}
-#graph_title {
-  background-color: #ccc;
-  border-radius: 6px 6px 0px 0px;
-  position: relative;
-  padding-left: 5px;
-  font-weight: bold;
-  color: #555555;
-}
 
-#cy {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  /*z-index: 999;*/
-}
+
 
 #quick-tools {
   position: relative;
@@ -389,7 +387,6 @@ h2:after {
   z-index: -1;
 }
 
-
 #goToTop {
   display: none;
   position: fixed;
@@ -402,7 +399,6 @@ h2:after {
   outline: none;
   font-size: 14px;
   font-weight: bold;
-  color: #555555;
   cursor: pointer;
   padding: 10px;
 }

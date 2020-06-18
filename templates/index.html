@@ -6,11 +6,11 @@
 	<title>Protein Interaction Visualization</title>
 	<link rel="shortcut icon" type="image/x-icon" href="static/images/piv_icon.ico">
 
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Staatliches|Lato|Source+Sans+Pro:400,600">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Staatliches|Source+Sans+Pro">
 
 	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static',filename='js/index.js') }}"></script>
@@ -19,15 +19,17 @@
 </head>
 
 <body>
-	<div id="main_container">
+	
+	<div class="grid-container">
 
 		{% include "header.html" %}
-		<div id="loading_msg" style="margin:auto;">Your job is running...</div>
-		<div class="loader"></div>
 
+		<div class="content">
 
-		<div id="body">
-			<div id="body_t1" class="container">
+			<div id="loading_msg">Your job is running...</div><br>
+			<div class="loader"></div>
+
+			<!-- <div class="container">
 				<div id="intro">
 					<h6><b>What PIV can do:</b></h6>
 					<ul>
@@ -36,11 +38,10 @@
 						<li>Map mutations and protein modifications.</li>
 					</ul>
 				</div>
-			</div>
+			</div> -->
+			<!-- <br> -->
 
-			<br>
-
-			<div id="body_t2" class="container">
+			<div class="main-container">
 				<div class="form-group row align-items-center">
 					<div class="col-sm-9">
 						<form name="myForm" action="/output" method="post" novalidate="novalidate">
@@ -88,6 +89,7 @@
 									<label for="species">Organism:</label>
 									<!-- <input type="text" list="species"> -->
 									<select name="species" id="species">
+											<option value="any">Automatic/More than one</option>
 											<option value="Hsa" selected>Human (Homo sapiens, TaxId: 9606)</option>
 											<option value="Mmu">Mouse (Mus musculus, TaxId: 10090)</option>
 											<option value="Dme">Fruit Fly (Drosophila melanogaster, TaxId: 7227)</option>
@@ -132,19 +134,22 @@
 								</div>
 							</div>
 						</form>
-			    </div>
-		    </div>
+			    	</div>
+		   		</div>
 			</div>
 		</div>
 
 		{% include "footer.html" %}
+	
 	</div>
 
 	<script>
 		function loading(){
+			document.body.scrollTop = 0;
+     		document.documentElement.scrollTop = 0;
 			$("#loading_msg").show();
 			$(".loader").show();
-			$("#body").hide();
+			$(".main-container").hide();
 		}
 		function uploadInput(id) {
 			var fileInput = document.querySelector('#'+id+'_file');
