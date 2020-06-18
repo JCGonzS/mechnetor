@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import sys, re, os, gzip, math, pprint, datetime, random, string
-import find_all_elms
+import sys, re, os, gzip, math, pprint, datetime, random, string, itertools
+import find_all_slims
 import os.path
 from collections import defaultdict
 import run_interprets
@@ -317,93 +317,86 @@ def extract_pfamscan(infile, pfams, pfam_names):
                 pfams[query][pfam_ac].add((start, end, e_val))
     return pfams, pfam_names
 
-def get_elm_names(elm_classes_file):
-    elm_names = {}
+def parse_elm_classes(elm_classes_file):
+    elm_classes = {}
+    elm_map = {}
     with open_file(elm_classes_file) as f:
         for line in f:
             if line.startswith("ELM"):
                 t = line.rstrip().split("\t")
-                elm_names[t[0]] = t[1]
-    return elm_names
+                elm_map[t[0]] = t[1].upper()
+                elm_map[t[1].upper()] = t[0]
+                elm_classes[t[0]] = {"ide": t[1], "regex": t[4], "prob": t[5]}
+    return elm_map, elm_classes
 
-def extract_elm_interactions(elm_intdom_file, elm_names):
-    elm_acc = dict((v, k) for k, v in elm_names.iteritems())
+def extract_slims(hits_file, tp, fp):
+    elms = defaultdict(lambda: defaultdict(set) )
+    with open_file(hits_file) as f:
+        for line in f:
+            if line[0] != "#" and line.strip():
+                t = line.rstrip().split("\t")
+                lm_name, lm_ac = t[0], t[1]
+                uni_ac, uni_id = t[2].split("|")[1:]
+                start, end = int(t[4]), int(t[5])
+                prob_score = t[6] # probability score based on the
+                                  # combined expected frequencies of
+                                  # the AAs in the regular expression
+                status = ""
+                # print uni_ac, lm_ac, start, end
+                if (start, end) in tp.get(uni_ac, {}).get(lm_ac, []):
+                    status = "TP"
+                elif (start, end) in fp.get(uni_ac, {}).get(lm_ac, []):
+                    status = "FP"
+                elms[uni_ac][lm_ac].add((start, end, status))
+    return elms
+
+def extract_elm_interactions(elm_intdom_file, elm_map):
     elm_int = defaultdict(set)
     with open_file(elm_intdom_file) as f:
         for line in f:
             if line[0] != "#":
                 t = line.rstrip().split("\t")
-                if t[0] in elm_acc:
-                    elm, dom = elm_acc[t[0]], t[1]
+                if t[0].upper() in elm_map:
+                    elm, dom = elm_map[t[0].upper()], t[1]
                     elm_int[elm].add(dom)
                     elm_int[dom].add(elm)
 
     return elm_int
 
-def extract_linear_motifs(elm_hits_file, elm_names, masks,
-                                  max_overlap, max_eval=1):
-    """ Reads pre-generated file with ELMs annotated for each protein
-    """
-
-    elms = defaultdict(lambda: defaultdict(set) )
-    elms_temp = defaultdict(lambda: defaultdict(set) )
-    with open_file(elm_hits_file) as f:
-        for line in f:
-            if line[0] != "#" and line.strip():
-                t = line.rstrip().split("\t")
-                elm_name, elm_ac = t[0], t[1]
-                uni_ac, uni_id = t[2].split("|")[1:]
-                elm_start, elm_end = int(t[4]), int(t[5])
-                prob_score = float(t[6]) # probability score based on the
-                                         # combined expected frequencies of
-                                         # the AAs in the regular expression
-
-                # overlap = calculate_overlap(elm_start, elm_end, masks[uni_ac])
-                # if overlap <= max_overlap:
-                #     masks[uni_ac] = fill_mask(elm_start, elm_end, masks[uni_ac])
-                elms[uni_ac][elm_ac].add((elm_start, elm_end))
-
-    return elms
-
 def edit_pfam_dat(pfam_dat_file, cov2_pfam_file, out_file):
     """ Writes a simple TSV file with a few selected columns from Pfam data.
     """
-    cov2 = {}
-    with open_file(cov2_pfam_file) as f:
-        for line in f:
-            if line[0] != "#":
-                t = line.rstrip().split()
-                ide, acc = t[0], t[1]
-                des = " ".join(t[22:])
-                cov2[acc] = (ide, des)
-
+    done = []
     with open_file(out_file, "w") as out:
-        cols = ["Accession", "Identifier", "Description"]
+        cols = ["Accession", "Type", "Identifier", "Description"]
         out.write("\t".join(cols)+"\n")
 
-        with open_file(pfam_dat_file) as f:
-            for line in f:
-                if line.startswith("#=GF ID"):
-                    ide = re.search("#=GF\s+ID\s+(.+)", line.rstrip()).group(1)
-                elif line.startswith("#=GF AC"):
-                    acc = re.search("#=GF\s+AC\s+(.+)", line.rstrip()).group(1)
-                    acc = acc.split(".")[0]
-                elif line.startswith("#=GF DE"):
-                    des = re.search("#=GF\s+DE\s+(.+)", line.rstrip()).group(1)
-                elif line.startswith("//"):
-                    if acc not in cov2:
-                        out.write("\t".join([acc, ide, des])+"\n")
-        for acc in cov2:
-            ide, des = cov2[acc]
-            out.write("\t".join([acc, ide, des])+"\n")
+        for pfam_file in [cov2_pfam_file, pfam_dat_file]: 
+            with open_file(pfam_file) as f:
+                for line in f:
+                    if line.startswith("#=GF ID"):
+                        ide = re.search("#=GF\s+ID\s+(.+)", line.rstrip()).group(1)
+                    elif line.startswith("#=GF AC"):
+                        acc = re.search("#=GF\s+AC\s+(.+)", line.rstrip()).group(1)
+                        acc = acc.split(".")[0]
+                    elif line.startswith("#=GF DE"):
+                        des = re.search("#=GF\s+DE\s+(.+)", line.rstrip()).group(1)
+                    elif line.startswith("#=GF TP"):
+                        tp = re.search("#=GF\s+TP\s+(.+)", line.rstrip()).group(1)
+                    elif line.startswith("//"):
+                        if acc not in cov2:
+                            out.write("\t".join([acc, tp, ide, des])+"\n")
+                            done.append(acc)
 
 def read_pfam_dat(pfam_dat_file):
-    pfam_names = {}
+    pfam_names, pfam_accs, pfam_types = {}, {}, {}
     with open_file(pfam_dat_file) as f:
         for line in f:
             t = line.rstrip().split("\t")
-            pfam_names[t[0]] = t[1]
-    return pfam_names
+            pfam_names[t[0]] = t[2]
+            pfam_accs[t[2]] = t[0]
+            pfam_types[t[0]] = t[1]
+    return pfam_names, pfam_accs, pfam_types
 
 def create_ddi_database(pfam_names, pfam_int_file, db3did_file, out_file):
     """ Writes a simplified version in TSV format of the 3did flat file db
@@ -569,7 +562,7 @@ def extract_biogrid_interactions(biogrid_file, prot_dict):
     #     print prot
     return biogrid_ppi, biogrid_ppi_all, biogrid_ppi_per_prot, biogrid_prot_id
 
-def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
+def create_protein_data_json(prot_dict, alt_ids, pfams, elms, elms2, ptms,
                              uni_features, regions, bio_id, bio_set,
                              sp, outfile_name, mode="mongo"):
 
@@ -590,6 +583,7 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                     "organism": sp,
                     "pfams": [],
                     "elms": [],
+                    "3dlms": [],
                     "phosphorylation": [],
                     "acetylation": [],
                     "uni_features": [],
@@ -616,14 +610,27 @@ def create_protein_data_json(prot_dict, alt_ids, pfams, elms, ptms,
                         })
 
             for elm_ac in sorted(elms.get(uni_ac, [])):
-                for (start, end) in sorted(elms[uni_ac][elm_ac],
+                for (start, end, status) in sorted(elms[uni_ac][elm_ac],
                                                 key=lambda x: int(x[0])):
                     protein_data["elms"].append(
                         {
-                            "acc":   elm_ac,
-                            "start": int(start),
-                            "end":   int(end),
-                            "seq":   seq[int(start)-1:int(end)]
+                            "acc":    elm_ac,
+                            "start":  int(start),
+                            "end":    int(end),
+                            "seq":    seq[int(start)-1:int(end)],
+                            "status": status
+                        })
+            
+            for elm_ac in sorted(elms2.get(uni_ac, [])):
+                for (start, end, status) in sorted(elms2[uni_ac][elm_ac],
+                                                key=lambda x: int(x[0])):
+                    protein_data["3dlms"].append(
+                        {
+                            "acc":    elm_ac,
+                            "start":  int(start),
+                            "end":    int(end),
+                            "seq":    seq[int(start)-1:int(end)],
+                            "status": status
                         })
 
             for pos_res in ptms.get(uni_ac, []):
@@ -788,15 +795,15 @@ def extract_HIPPIE_interactions(hippie_file, hippie_map, score_cutoff=0.63):
                                 ppi[a].add(b)
     return ppi
 
-def extract_3did_interactions(edited_3did_file):
-    ints = defaultdict(set)
-    with open_file(edited_3did_file) as f:
+def extract_ddi_interactions(ddi_file):
+    ints = defaultdict(dict)
+    with open_file(ddi_file) as f:
         for i, line in enumerate(f):
             if i > 0:
                 t = line.rstrip().split("\t")
-                ac_a, ac_b = t[1], t[3]
-                ints[ac_a].add(ac_b)
-                ints[ac_b].add(ac_a)
+                ac_a, ac_b, source = t[0], t[2], t[4]
+                ints[ac_a][ac_b] = source
+                ints[ac_b][ac_a] = source
 
     return ints
 
@@ -814,10 +821,12 @@ def create_ppi_database(outfile, ppi, prot_dict):
                         ";".join(ppi[acc_a][acc_b])]
                 out.write("\t".join(cols)+"\n")
 
-def count_protein_and_domain_pairs(ppi, pfams, elms):
+def count_protein_and_domain_pairs(ppi, eles):
     # From non-redundant PPI set, get:
     #  - total number of proteins
     #  - total number of interactions (or protein pairs)
+
+    ## WARNING: THIS TAKES VERY LONG
     all_proteins = set()
     total_interactions = 0
     ele_pair_count = defaultdict(lambda: defaultdict(int))
@@ -826,35 +835,31 @@ def count_protein_and_domain_pairs(ppi, pfams, elms):
             all_proteins.add(a)
             all_proteins.add(b)
             total_interactions += 1
-
-            # - domain/elm pair counts
+            eles_A = list(eles[a])
+            eles_B = list(eles[b])
             ele_pairs = set()
-            for ele_a in sorted(pfams[a].keys() + elms[a].keys()):
-                for ele_b in sorted(pfams[b].keys() + elms[b].keys()):
-                    if ele_a <= ele_b:
-                        eleA, eleB = ele_a, ele_b
-                    else:
-                        eleA, eleB = ele_b, ele_a
-
-                    if (eleA,eleB) not in ele_pairs:
-                        ele_pair_count[eleA][eleB] += 1
-                        ele_pairs.add((eleA, eleB))
+            for (ele_a, ele_b) in itertools.product(eles_A, eles_B):
+                eleA, eleB = ele_a, ele_b
+                if ele_b <= ele_a:
+                    eleA, eleB = ele_b, ele_a
+    
+                if (eleA, eleB) not in ele_pairs:
+                    ele_pair_count[eleA][eleB] += 1
+                    ele_pairs.add((eleA, eleB))
 
     return all_proteins, total_interactions, ele_pair_count
 
-def count_individual_element_frequency(all_proteins, pfams, elms):
+def count_individual_element_frequency(all_proteins, eles):
     element_count = defaultdict(int)
     for protein in all_proteins:
-        for pfam in pfams[protein]:
-            element_count[pfam] += 1
-        for elm in elms[protein]:
-            element_count[elm] += 1
+        for ele in eles[protein]:
+            element_count[ele] += 1
 
     return element_count
 
 def create_prob_file(out_file, total_proteins, total_interactions,
                      ele_pair_count, ele_count, ele_names,
-                     ints_3did, ints_elm, min_npair=1):
+                     ints_ddi, ints_elm, ints_dmi, min_npair=1):
     """ Calculate element-element* probabilities and log-odds
         *elements are Pfam domains and ELMs
 
@@ -883,10 +888,12 @@ def create_prob_file(out_file, total_proteins, total_interactions,
 
         for ele_a in sorted(ele_pair_count):
             for ele_b in sorted(ele_pair_count[ele_a]):
-                if ele_b in ints_3did.get(ele_a, []):
-                    cat = "3DID"
+                if ele_b in ints_ddi.get(ele_a, []):
+                    cat = ints_ddi[ele_a][ele_b]
                 elif ele_b in ints_elm.get(ele_a, []):
                     cat = "ELM"
+                elif ele_b in ints_dmi.get(ele_a, []):
+                    cat = "3did:DMI"
                 else:
                     cat = "Pred"
 
@@ -943,6 +950,115 @@ def create_interprets_file(outfile, ppi, prot_dict, iprets_dir):
             print "InterPreTS failed"
         print "[IntePreTs finished for {} protein pairs]".format(len(pairs))
 
+def get_pdb2uniprot_map(mapfile, allowed_prts):
+    d = defaultdict(lambda: defaultdict(list))
+    with open_file(mapfile) as f:
+        for line in f:
+            if line[0]=="#" or line.startswith("PDB"):
+                continue
+            t = line.rstrip().split()
+            pdb = t[0].upper()+":"+t[1]
+            seq_start, seq_end = t[3], t[4]
+            pdb_start, pdb_end = t[5], t[6]
+            uni = t[2]
+            uni_start, uni_end = int(t[7]), int(t[8])
+            if uni in allowed_prts:
+                d[pdb][uni].append( ";".join(t[3:9]) )
+    return d
+
+def get_dmi_3did(dmi_file, pfam_acc):
+    outlines = []
+    lm_3did = {}
+    all_pdbs = set()
+    with open_file(dmi_file) as f:
+        for line in f:
+            t = line.rstrip().split("\t")
+            if line.startswith("#=ID"):
+                pfam, lm = t[1], t[3]
+                pdb_set = set()
+            elif line.startswith("#=PT"):
+                regex = t[1].split()[0]
+            elif line.startswith("#=3D"):
+                pdb = t[1].upper()+":"+t[3].split(":")[0]
+                seq = t[4]
+                pdb_set.add(pdb+":"+t[3].split(":")[1]+":"+t[4])
+                all_pdbs.add(pdb)
+            elif line.startswith("//"):
+                outlines.append( "\t".join([lm, regex, pfam_acc[pfam], pfam, str(len(pdb_set)) ]) )
+                lm_3did[lm] = {"ide": lm, "regex": regex, "prob": "-", "pdbs":list(pdb_set)}
+
+    return outlines, lm_3did, all_pdbs
+
+def merge_protein_elements(*argv):
+    eles = defaultdict(set)
+    for arg in argv:
+        for prot in arg:
+            for k in arg[prot]:
+                eles[prot].add(k)
+
+    return eles
+
+def extract_3did_dmi_interactions(dmi_file):
+    dmi = defaultdict(set)
+    with open_file(dmi_file) as f:
+        for i, line in enumerate(f):
+            t = line.rstrip().split("\t")
+            if i > 0:
+                motif, dom = t[0], t[2]
+                dmi[motif].add(dom)
+                dmi[dom].add(motif)
+    return dmi
+
+def merge_protein_elements_names(pfam_names, elm_names, lm_3did):
+    names = pfam_names
+    names.update(elm_names)
+    for lm in lm_3did.keys():
+        names[lm] = lm
+    return names
+
+def get_3did_dmi_instances(lms, pdb2uni, uni_seqs):
+    tp = defaultdict(lambda: defaultdict(list))
+    for lm in lms:
+        pdbs = lms[lm]["pdbs"]
+        for pdb in pdbs:
+            t = pdb.split(":")
+            pdb_id, pdb_coor, seq = t[0]+":"+t[1], t[2], t[3]
+            # print lm,"\t", pdb, "\t", pdb_id
+            p = re.compile(seq)
+            if pdb_id in pdb2uni:
+                for uni_ac in pdb2uni[pdb_id]:
+                    for coord in pdb2uni[pdb_id][uni_ac]:
+                        uni_start, uni_end = coord.split(";")[4:]
+                        sub_seq = uni_seqs[uni_ac][int(uni_start)-1:int(uni_end)]
+                        # print lm,"\t", pdb, "\t", pdb_id, uni_ac,"\t", pdb2uni[pdb_id][uni_ac],"\t",uni_start+"-"+sub_seq+"-"+uni_end 
+              
+                        for m in p.finditer(sub_seq):
+                            m_start = int(uni_start)+int(m.start())
+                            m_end = m_start + len(m.group()) - 1
+                            tp[uni_ac][lm].append((m_start, m_end))
+                            # print uni_ac, lm, m_start, m_end
+    return tp
+
+
+def extract_elm_instances(instances_file, elm_map, seqs):
+    tp = defaultdict(lambda: defaultdict(list))
+    fp = defaultdict(lambda: defaultdict(list))
+    with open_file(instances_file) as f:
+        for line in f:
+            if line[0]!="#" and not line.startswith("\"Acc"):
+                t = line.rstrip().replace("\"", "").split("\t")
+                elm_id = t[2].upper()
+                uni_acs = t[5].replace("-1", "").split()
+                start, end = int(t[6]), int(t[7])
+                status = t[10]
+                if elm_id in elm_map:
+                    elm_ac = elm_map[elm_id]
+                    for uni_ac in uni_acs:
+                        if uni_ac in seqs:
+                            if status == "true positive":
+                                tp[uni_ac][elm_ac].append((start, end))
+                                fp[uni_ac][elm_ac].append((start, end))
+    return tp, fp
 
 def main( SP="Hsa",
           DATA_DIR="",
@@ -955,31 +1071,43 @@ def main( SP="Hsa",
         ):
 
     ### 1. Define required data files
+    COM_DIR         = DATA_DIR+"common/"
+    SP_DIR          = DATA_DIR+"species/"+SP+"/"
     UNI_VERSION     = "Nov2019" # date of download
     PFAM_VERSION    = "r32.0"   # release 32
-    ELM_VERSION     = "Oct2019"
+    ELM_VERSION     = "Mar2020" #"Oct2019"
     BIOGRID_VERSION = "3.5.178" # release
     PSP_VERSION     = "Mar2019"
+    DB3DID_VERSION  = "2019_01"
 
     ## Common files:
-    COM_DIR              = DATA_DIR+"common/"
+    ### PFAM
     PFAM_DAT_FILE        = COM_DIR+"Pfam-A.hmm_"+PFAM_VERSION+".dat.gz"
-    COV2_PFAM_FILE       = COM_DIR+"SARSCoV2_pfam_matches.scan.txt"
-    PFAM_INT_FILE        = COM_DIR+"pfamA_interactions.txt.gz"
     EDITED_PFAM_DAT_FILE = COM_DIR+"Pfam-A.hmm_"+PFAM_VERSION+".tsv.gz"
-    FLAT_3DID_FILE       = COM_DIR+"3did_flat-2019_01.gz"
-    DDI_FILE            = COM_DIR+"ddi_db.tsv.gz"
-    # pdbchain2uniprot   = COM_DIR+"pdbsws_chain.txt.gz"
+    PFAM_INT_FILE        = COM_DIR+"PfamA_interactions_"+PFAM_VERSION+".txt.gz"
+
+    ### 3did
+    FLAT_3DID_FILE       = COM_DIR+"3did_flat-"+DB3DID_VERSION+".gz"
+    DMI_3DID_FILE        = COM_DIR+"3did_dmi_flat-"+DB3DID_VERSION+".gz"
+    EDITED_DMI_3DID_FILE = COM_DIR+"3did_dmi_flat_edited-"+DB3DID_VERSION+".tsv.gz"
+
+    ### DDI database = Pfam + 3did DDI's
+    DDI_FILE             = COM_DIR+"DDI_db.tsv.gz"
+
+    ### ELM
     ELM_CLASSES_FILE     = COM_DIR+"elm_classes_"+ELM_VERSION+".tsv"
+    ELM_INSTANCES_FILE   = COM_DIR+"elm_instances_"+ELM_VERSION+".tsv"
     ELM_INTDOM_FILE      = (COM_DIR+"elm_interaction_domains_"
                             +ELM_VERSION+"_reviewed.tsv")
 
+    PDB2UNIPROT_FILE     = COM_DIR+"pdb_chain_uniprot.tsv.gz"
+
     ## Species files:
-    SP_DIR            = DATA_DIR+"species/"+SP+"/"
     UNI_TEXT_FILE     = SP_DIR+"uniprot_"+UNI_VERSION+"_proteome_"+SP+".txt.gz"
     UNI_FASTA_FILE    = (SP_DIR+"uniprot_"+UNI_VERSION+"_proteome_"+SP
                         +".fasta.gz")
     PFAM_MATCHES_FILE = SP_DIR+"pfamA_"+PFAM_VERSION+"_matches_"+SP+".tsv.gz"
+    LM_3DID_HITS_FILE = SP_DIR+"3did_slims_"+DB3DID_VERSION+"_"+SP+".tsv.gz"
     ELM_HITS_FILE     = SP_DIR+"elm_hits_"+ELM_VERSION+"_"+SP+".tsv.gz"
     BIOGRID_FILE      = (SP_DIR+"BIOGRID-ORGANISM-"+SP+"-"+BIOGRID_VERSION
                         +".tab2.txt.gz")
@@ -992,7 +1120,9 @@ def main( SP="Hsa",
     HIPPIE_MAP_FILE   = SP_DIR+"hippie_v2-2_uniprot_mapping_table.tsv.gz" # Hsa
     PSP_FILE          = SP_DIR+"PSP_ptms_"+PSP_VERSION+"_"+SP+".tsv.gz" # Only Hsa and Mmu
     PFAMSCAN_FILE     = SP_DIR+"pfamscan_results_"+SP+".txt.gz"
-    UNI_SPECIES_MAP   = SP_DIR+"uni_species_map.txt.gz"
+
+    COV2_PFAM_FILE       = COM_DIR+"Pfam-A.SARS-CoV-2.full.gz"
+    COV2_PFAM_SCAN_FILE  = COM_DIR+"SARSCoV2_pfam_matches.scan.txt"
 
     # PfamScan
     PFAMSCAN          = "pfamscan.py"
@@ -1011,21 +1141,35 @@ def main( SP="Hsa",
     elif check_file_exists(PFAM_DAT_FILE):
         edit_pfam_dat(PFAM_DAT_FILE, COV2_PFAM_FILE, EDITED_PFAM_DAT_FILE)
         print_status(EDITED_PFAM_DAT_FILE, "created")
-
+    pfam_names, pfam_accs, pfam_types = read_pfam_dat(EDITED_PFAM_DAT_FILE)
+     
     # 3did flat
     if os.path.isfile(DDI_FILE):
-        print_status(DDI, "exists")
+        print_status(DDI_FILE, "exists")
     elif check_file_exists(FLAT_3DID_FILE):
-        pfam_names = read_pfam_dat(EDITED_PFAM_DAT_FILE)
         create_ddi_database(pfam_names, PFAM_INT_FILE, FLAT_3DID_FILE, DDI_FILE)
         print_status(DDI_FILE, "created")
-    sys.exit()
 
     # elm classes & domain-ints
     check_file_exists(ELM_CLASSES_FILE)
+    elm_map, elm_classes = parse_elm_classes(ELM_CLASSES_FILE)
     check_file_exists(ELM_INTDOM_FILE)
+    check_file_exists(ELM_INSTANCES_FILE)
 
-    sys.exit()
+    # 3did DMI
+    check_file_exists(PDB2UNIPROT_FILE)
+    check_file_exists(DMI_3DID_FILE)
+    edit_lines, lm_3did, all_pdbs = get_dmi_3did(DMI_3DID_FILE, pfam_accs)
+
+    if os.path.isfile(EDITED_DMI_3DID_FILE):
+        print_status(EDITED_DMI_3DID_FILE, "exists")
+    else:
+        with open_file(EDITED_DMI_3DID_FILE, "w") as out:
+            out.write("\t".join(["MOTIF","REGEX","DOMAIN", "DOMAIN_NAME", "PDBS"])+"\n" )
+            for line in edit_lines:
+                out.write(line+"\n")
+        print_status(EDITED_DMI_3DID_FILE, "created")
+
     ## Check/Edit species files:
     for f in [UNI_TEXT_FILE, UNI_FASTA_FILE, PFAM_MATCHES_FILE, BIOGRID_FILE]:
         check_file_exists(f)
@@ -1033,18 +1177,34 @@ def main( SP="Hsa",
     if os.path.isfile(ELM_HITS_FILE):
         print_status(ELM_HITS_FILE, "exists")
     else:
-        find_all_elms.main(UNI_FASTA_FILE, ELM_CLASSES_FILE,
-                           print_out=True, outfile=ELM_HITS_FILE)
+        find_all_slims.main(UNI_FASTA_FILE, elm_classes,
+                            print_out=True, outfile=ELM_HITS_FILE, tmp_file="/tmp/lm_search_"+SP+".txt")
         print_status(ELM_HITS_FILE, "created")
+    
+    if os.path.isfile(LM_3DID_HITS_FILE):
+        print_status(LM_3DID_HITS_FILE, "exists")
+    else:
+        find_all_slims.main(UNI_FASTA_FILE, lm_3did,
+                            print_out=True, outfile=LM_3DID_HITS_FILE, tmp_file="/tmp/lm_search_"+SP+".txt")
+        print_status(LM_3DID_HITS_FILE, "created")
 
     ### 3. Get various data
     # Extract protein ID-dictionary, sequences and masks.
     (prot_dict, alt_ids, masks, ptms, uni_features,
         regions) = extract_protein_data_from_uniprot_text(UNI_TEXT_FILE)
 
-    # print_uniprot_species_map(prot_dict, alt_ids, SP, UNI_SPECIES_MAP)
-    # sys.exit()
-
+    # Extract ELM hits.
+    ints_elm = extract_elm_interactions(ELM_INTDOM_FILE, elm_map)
+    for elm_ac in elm_classes:
+        if elm_ac not in ints_elm:
+            print "\tNo interaction found for:", elm_ac, elm_map[elm_ac]
+    elm_tp, elm_fp = extract_elm_instances(ELM_INSTANCES_FILE, elm_map, prot_dict["seq"])
+    elm_hits = extract_slims(ELM_HITS_FILE, elm_tp, elm_fp)
+    
+    # Extract 3DID_LM hits
+    pdb2uni = get_pdb2uniprot_map(PDB2UNIPROT_FILE, set(prot_dict["seq"].keys()))
+    tp = get_3did_dmi_instances(lm_3did, pdb2uni, prot_dict["seq"])
+    lm3d_hits = extract_slims(LM_3DID_HITS_FILE, tp, {})
     # Extract Pfam domains.
     pfams, pfam_names = extract_pfam_doms(PFAM_MATCHES_FILE, prot_dict)
     # Calculate missing ones
@@ -1092,18 +1252,10 @@ def main( SP="Hsa",
                 os.unlink(TMP_FASTA+str(x)+".fasta")
 
         print "Missing Pfamscan for files", miss
-        print_status(PFAMOUT_FILE+".out.txt", "created")
+        print_status(PFAMSCAN_FILE+".out.txt", "created")
 
     pfams, pfam_names = extract_pfamscan(PFAMSCAN_FILE, pfams, pfam_names)
-
-    # Extract elm info.
-    elm_names = get_elm_names(ELM_CLASSES_FILE)
-    ints_elm = extract_elm_interactions(ELM_INTDOM_FILE, elm_names)
-    for elm_ac in elm_names:
-        if elm_ac not in ints_elm:
-            print "\tNo interaction found for:", elm_ac, elm_names[elm_ac]
-    elms = extract_linear_motifs(ELM_HITS_FILE, elm_names, masks, max_overlap=2)
-
+  
     # Extract PTMs positions from PhosphoSite
     if SP in ["Hsa", "Mmu"]:
         check_file_exists(PSP_FILE)
@@ -1130,13 +1282,13 @@ def main( SP="Hsa",
         print_status(PROT_DATA_FILE, "exists")
     else:
         print "Creating protein data JSON file"
-        create_protein_data_json(prot_dict, alt_ids, pfams, elms,
+        create_protein_data_json(prot_dict, alt_ids, pfams, elm_hits, lm3d_hits,
                                ptms, uni_features, regions, bio_id, bio_set,
                                SP, PROT_DATA_FILE, mode="mongo")
         print_status(PROT_DATA_FILE, "updated")
-    sys.exit()
+    
 
-    ###  5. Calculate Dom/ELM-Dom/ELM Interactions probabilities
+    ###  5. Calculate Interactions Probabilities between Protein Elements
     if os.path.isfile(ASSOC_PROB_FILE) and force_probs==False:
         print_status(ASSOC_PROB_FILE, "exists")
     else:
@@ -1145,19 +1297,20 @@ def main( SP="Hsa",
         if SP=="Hsa":
             ppi = hippie_ppi
 
+        eles = merge_protein_elements(pfams, elm_hits, lm3d_hits)
+        ele_names = merge_protein_elements_names(pfam_names, elm_map, lm_3did)
+
         (all_proteins, total_interactions,
-            ele_pair_count) = count_protein_and_domain_pairs(ppi, pfams, elms)
-        element_count = count_individual_element_frequency(all_proteins, pfams,
-                                                           elms)
+            ele_pair_count) = count_protein_and_domain_pairs(ppi, eles)
+        element_count = count_individual_element_frequency(all_proteins, eles)
+
+        ints_ddi = extract_ddi_interactions(DDI_FILE)
+        ints_dmi = extract_3did_dmi_interactions(EDITED_DMI_3DID_FILE)
         print SP, "Total proteins:", len(all_proteins)
         print SP, "Total interactions:", total_interactions
-
-        ints_3did = extract_3did_interactions(EDITED_3DID_FILE)
-        ele_names = pfam_names
-        ele_names.update(elm_names)
         create_prob_file(ASSOC_PROB_FILE, len(all_proteins), total_interactions,
-                         ele_pair_count, element_count, ele_names, ints_3did,
-                         ints_elm)
+                         ele_pair_count, element_count, ele_names, ints_ddi,
+                         ints_elm, ints_dmi)
         print_status(ASSOC_PROB_FILE, "created")
 
     ### 6. Run InterPreTS on PPI

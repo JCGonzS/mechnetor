@@ -8,7 +8,7 @@ JC Gonzalez Sanchez, 2018
 import os, sys, re, itertools
 import gzip, json, csv, random, string, datetime, pymongo, argparse
 import pandas as pd
-import run_interprets, int2graph
+import run_interprets, int2graph, find_all_slims
 from collections import defaultdict
 from pymongo import MongoClient
 from flask import render_template, url_for
@@ -82,6 +82,8 @@ def parse_protein_input(input_text, sp, protein_data, prot_dict):
                 flag = 1
                 header = str(line.rstrip().split()[0].split(">")[1])
                 header = header.replace("/","-")
+                if sp!="any":
+                    sp_map[header] = sp
             elif (flag == 1 and len(line.split()) == 1
             and not re.search("\d",line)):
                 input_seqs[header] += line.rstrip()
@@ -194,7 +196,10 @@ def get_unique_random_identifier(output_dir):
 def get_pfam_info(data):
     d = {}
     for c in data.find():
-        d[c["Accession"]] = (c["Identifier"], c["Description"])
+        d[c["Accession"]] = {
+            "ide": c["Identifier"],
+            "des": c["Description"],
+            "type": c["Type"]}
     return d
 
 def get_elm_info(data):
@@ -208,8 +213,21 @@ def get_elm_info(data):
             "name":  c["FunctionalSiteName"],
             "des":   c["Description"],
             "regex": c["Regex"],
-            "prob":  c["Probability"]}
+            "prob":  c["Probability"]
+            }
     return d
+
+def get_dmi_info(data):
+    info = {}
+    dmi = defaultdict(dict)
+    for c in data.find():
+        info["3DID:"+c["MOTIF"]] = {
+            "ide": c["MOTIF"],
+            "regex": c["REGEX"],
+            "prob": "-"
+        }
+        dmi[c["MOTIF"]][c["DOMAIN"]] = c["PDBS"]
+    return info, dmi
 
 def parse_blast(blastout_file, mask, data_dict,
                 max_ol=0.25, max_cov=0.9):
@@ -271,35 +289,67 @@ def parse_pfamscan(pfam_file, data_dict):
                                                  })
     return data_dict
 
-def find_all_elms(fasta_file, data_dict, ide, elm_info, fpm2_script = "fpm2.pl"):
+# def find_all_slims(fasta_file, data_dict, ide, elm_info, 
+#                     fpm2_script = "fpm2.pl"):
 
-    tmp_file = "/tmp/elm_"+ide+".txt"
-    for elm_acc in elm_info:
-        elm_ide = elm_info[elm_acc]["ide"]
-        elm_regex = elm_info[elm_acc]["regex"]
-        elm_prob = elm_info[elm_acc]["prob"]
+#     tmp_file = "lm_search_"+ide+".txt"
 
-        mode = "cat"
-        if ".gz" in fasta_file:
-            mode = "zcat"
-        com = "{} {} | perl {} \"{}\" -m 1 > {}".format(mode, fasta_file, fpm2_script, elm_regex, tmp_file)
-        os.system( com )
-        with open_file(tmp_file) as f:
-            for line2 in f:
-                if line2[0]==">":
-                    label = line2.split()[0].split("/")[0].replace(">","")
-                    start, end = line2.split()[0].split("/")[1].split("-")
+#     for elm_acc in elm_info:
+#         elm_ide = elm_info[elm_acc]["ide"]
+#         elm_regex = elm_info[elm_acc]["regex"]
+#         elm_prob = elm_info[elm_acc]["prob"]
+
+#         mode = "cat"
+#         if ".gz" in fasta_file:
+#             mode = "zcat"
+#         com = "{} {} | perl {} \"{}\" -m 1 > {}".format(mode, fasta_file, fpm2_script, elm_regex, tmp_file)
+#         os.system( com )
+
+#         with open_file(tmp_file) as f:
+#             for line2 in f:
+#                 if line2[0]==">":
+#                     label = line2.split()[0].split("/")[0].replace(">","")
+#                     start, end = line2.split()[0].split("/")[1].split("-")
+#                     gene = "-"
+#                     if "GN=" in line.split("/")[1]:
+#                         gene = re.search("GN=([^\s]+)", line.split("/")[1]).group(1)
+#                 else:
+#                     seq = line2.rstrip()
+#                     if "elms" in data_dict[label]:
+#                         data_dict[label]["elms"][elm_acc].append(
+#                                                     {"start" : int(start),
+#                                                      "end" :   int(end),
+#                                                      "seq" :   seq
+#                                                      })
+#                     else:
+#                         data_dict[label]["elms"]=defaultdict(list)
+#     # os.unlink(tmp_file)
+#     return data_dict
+
+def extract_linear_motifs(lm_hits_file, data_dict, max_overlap=2, max_eval=1):
+
+    with open_file(lm_hits_file) as f:
+        for line in f:
+            if line[0] != "#" and line.strip():
+                t = line.rstrip().split("\t")
+                elm_name, elm_acc = t[0], t[1]
+                label = t[2]
+                start, end = t[4], t[5]
+                seq = t[9]
+
+                group = "elms"
+                if elm_acc.startswith("3D"):
+                    group = "3dlms"
+                    elm_acc = elm_acc.split(":")[1]
+
+                if group in data_dict[label]:
+                    data_dict[label][group][elm_acc].append(
+                                                { "start": int(start),
+                                                  "end": int(end),
+                                                  "seq": seq
+                                                })
                 else:
-                    seq = line2.rstrip()
-                    if "elms" in data_dict[label]:
-                        data_dict[label]["elms"][elm_acc].append(
-                                                    {"start" : int(start),
-                                                     "end" :   int(end),
-                                                     "seq" :   seq
-                                                     })
-                    else:
-                        data_dict[label]["elms"]=defaultdict(list)
-    os.unlink(tmp_file)
+                    data_dict[label][group] = defaultdict(list)
     return data_dict
 
 def calculate_overlap(start, end, mask):
@@ -337,6 +387,7 @@ def get_stats(lines, p):
         "DOM::DOM": "#16A085",
         "iDOM::iDOM": "#D4AC0D",
         "ELM::DOM": "#AF7AC5",
+        "LM::DOM" : "#27ae60",
         "InterPreTS": "#E74C3C",
         "UniProt region": "#EC7063"
     }
@@ -345,12 +396,14 @@ def get_stats(lines, p):
         "DOM::DOM": "Domain-Domain",
         "iDOM::iDOM": "(in)Domain-Domain",
         "ELM::DOM": "Domain-Motif",
+        "LM::DOM": "Domain-Motif 3did",
         "InterPreTS": "3D structure",
         "UniProt region": "UniProt region"
     }
     types = {"DOM::DOM": "DDI",
              "iDOM::iDOM": "iDDI",
              "ELM::DOM": "DMI",
+             "LM::DOM": "DMI-3D"
              }
     prot_ints = defaultdict(set)
     int_types = defaultdict(set)
@@ -471,6 +524,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
     ## DATA: Set MongoDB databases & collections (CLIENT[database][collection])
     PFAM_DATA       = CLIENT["common"]["pfamA_data"]
     DDI_DATA        = CLIENT["common"]["ddi_db"]
+    DMI_3DID        = CLIENT["common"]["dmi_3did"]
     # DB3DID_DATA     = CLIENT["common"]["db_3did"]
     ELM_INT_DATA    = CLIENT["common"]["elm_int_dom"]
     ELM_CLASSES     = CLIENT["common"]["elm_classes"]
@@ -507,6 +561,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
     fasta_file      = OUTPUT_DIR+"seqs_"+IDE+".fasta"
     blastout_file   = OUTPUT_DIR+"blastout_"+IDE+".tsv.gz"
     pfamout_file    = OUTPUT_DIR+"pfamscan_"+IDE
+    lmsout_file    = OUTPUT_DIR+"elm_hits_"+IDE+".tsv.gz"
     iprets_file     = OUTPUT_DIR+"i2_"+IDE+".tsv.gz"
     graph_json      = "graph_elements_"+IDE+".json"
     table_file      = "interaction_table_"+IDE+".json"
@@ -519,6 +574,8 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
     ## Load data
     pfam_info = get_pfam_info(PFAM_DATA)
     elm_info = get_elm_info(ELM_CLASSES)
+    lm3did_info, dmi_3did = get_dmi_info(DMI_3DID)
+
 
     prot_ids = {}
     if SP != "any":
@@ -611,8 +668,11 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
         ### 4-4. Run ELM search on input sequence(s).
         fpm2_path = "/var/www/flask_apps/jc_test/jc_app/fpm2.pl"
         print_log(IDE, "Searching for ELMs")
-        fasta_data = find_all_elms(fasta_file, fasta_data, IDE, elm_info,
-                                   fpm2_script=fpm2_path)
+        all_lms = elm_info.copy()
+        all_lms.update(lm3did_info)
+        find_all_slims.main(fasta_file, all_lms,
+                            print_out=True, outfile=lmsout_file, tmp_file="/tmp/lm_search_"+IDE+".txt")
+        fasta_data = extract_linear_motifs(lmsout_file, fasta_data)
 
         # 4-5. Run InterPreTS
         if RUN_IPRETS:
@@ -654,14 +714,14 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
             custom_pairs, input_seqs, input_muts, sp_map,
             fasta_data, fasta_link, prot_ids,
             CLIENT, PROTEIN_DATA, COSMIC_DATA,
-            fasta_iprets, DDI_DATA, ELM_INT_DATA,
+            fasta_iprets, DDI_DATA, ELM_INT_DATA, DMI_3DID,
             pfam_info, elm_info,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
 
     if len(no_int_prots) > 0:
         print_log(IDE,
-                "No interactions found for {} proteins: {}".format(
-                    len(no_int_prots), "; ".join(no_int_prots)))
+                "No interaction evidence found for {} proteins:".format(
+                    len(no_int_prots))
 
     print_log(IDE, "int2graph.py run successfully")
     param["not_found"], param["no_int_prots"] = not_found, no_int_prots

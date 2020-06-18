@@ -79,19 +79,19 @@ def parse_blast(blast_pdb_file, max_E, min_pcid, max_pcid, hits):
     return hits
 
 def main(input_seqs, output_dir, i2sum_file, ide,
-     fasta_as_input=False, print_output=True, verbose=False,
-     these_pairs=[],
-     max_templates=5,
-     mode="psiblast",
-     psiblast="psiblast",
-     blastpgp="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/blastpgp",
-     blastmat= "/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/blast-2.2.23/data",
-     blastdb="/net/home.isilon/ds-russell/blastdb/pdbaa_2019",
-     muscle="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/muscle -quiet",
-    #  i2="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/interprets",
-     i2="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/interprets",
-     i2_opts=" -rand 100 -show_muts -mode 4 -q",
-     ):
+    fasta_as_input=False, print_output=True, verbose=False, return_hits=False,
+    these_pairs=[], hits=defaultdict(lambda: defaultdict(dict)),
+    max_templates=5,
+    mode="psiblast",
+    psiblast="psiblast",
+    blastpgp="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/blastpgp",
+    blastmat= "/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/blast-2.2.23/data",
+    blastdb="/net/home.isilon/ds-russell/blastdb/pdbaa_2019",
+    muscle="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/muscle -quiet",
+    #i2="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/interprets",
+    i2="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/interprets",
+    i2_opts=" -rand 100 -show_muts -mode 4 -q",
+    ):
 
     ### 1: Get input sequences (either dictionary or file)
     if fasta_as_input:
@@ -146,23 +146,25 @@ def main(input_seqs, output_dir, i2sum_file, ide,
     # 3: Read BLAST
     max_E = 0.01
     min_pcid, max_pcid = -1, 1000
-    hits = defaultdict(lambda: defaultdict(dict))
+    # hits = defaultdict(lambda: defaultdict(dict))
     for prot_id in seq:
         blast_out_file = blast_dir+prot_id.replace("|","_")+"_blast.xml.gz"
         hits = parse_blast(blast_out_file, max_E, min_pcid, max_pcid, hits)
     if verbose:
         print "[{}] BLAST parsed for:".format(datetime.datetime.now()), hits.keys()
-
+ 
     # 4: Find best hits for each pair
     best_e = defaultdict(lambda: defaultdict(lambda: defaultdict()))
     pairs = defaultdict(lambda: defaultdict(lambda: defaultdict()))
     if len(these_pairs)==0:
         these_pairs = sorted(itertools.combinations(hits.keys(), 2))
+
     for (qA, qB) in these_pairs:
+        if qA not in hits or qB not in hits:
+            continue
         q1, q2 = qA, qB
         if q2 < q1:
             q1, q2 = qB, qA
-
         for pdb in set(hits[q1]).intersection(set(hits[q2])):
             for c1 in hits[q1][pdb]:
                 hit1 = hits[q1][pdb][c1]
@@ -182,7 +184,7 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                         ele2 += "\t"+"\t".join([hit2["q-start"], hit2["q-end"]])
                         ele2 += "\t"+"\t".join([hit2["s-start"], hit2["s-end"]])
                         pairs[q1][q2][pdb+":"+c1+":"+c2] = ele1+"\t"+ele2
-
+    
     # 5: Run InterPreTS
     results = {}
     if len(pairs)==0:
@@ -192,7 +194,10 @@ def main(input_seqs, output_dir, i2sum_file, ide,
         #         l = [pairs[q1][q2][pdb+":"+c1+":"+c2], i2_sum]
         #         out2.write("\t".join(l)+"\n")
 
-        return results
+        if return_hits:
+            return results, hits
+        else:
+            return results
 
     # if print_output=="True" and not os.path.isfile(i2sum_file):
     #     with open_file(i2sum_file, "w") as out:
@@ -320,7 +325,10 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                 else:
                     for fl in [dfile, cfile]:
                         os.unlink(fl)
-    return results
+    if return_hits:
+        return results, hits
+    else:
+        return results
 
 if __name__ == "__main__":
     fasta_file = sys.argv[1]

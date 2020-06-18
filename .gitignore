@@ -14,3 +14,4 @@ i2_ras.script
 *.json
 index*txt
 parse_intact*
+job_*
