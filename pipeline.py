@@ -720,8 +720,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
 
     if len(no_int_prots) > 0:
         print_log(IDE,
-                "No interaction evidence found for {} proteins:".format(
-                    len(no_int_prots))
+                "No interaction evidence found for {} proteins:".format(len(no_int_prots)))
 
     print_log(IDE, "int2graph.py run successfully")
     param["not_found"], param["no_int_prots"] = not_found, no_int_prots
