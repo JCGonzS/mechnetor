@@ -131,7 +131,6 @@ def add_domains(nodes, id_n, id_dict, id_coords, id_muts, prot_id, uni_ac,
             end = domain["end"]
             length = end - start
             pfam_set.add(pfam_ac)
-
             id_n += 1
             nodes.append({
                 "group": "nodes",
@@ -453,7 +452,7 @@ def muts_within_coords(ac, mutations, start, end):
         if mut_pos >= start and mut_pos <= end:
             for mut in mutations[mut_pos]:
                 if mut not in l:
-                    l.append(ac+"/"+mut)
+                    l.append(mut)
     return l
 
 def get_PPI_from_MongoDB(data, acc_a, acc_b):
@@ -520,20 +519,21 @@ def string2list_fix(string):
     return [str(x) for x in str(string).upper().replace(" ","").split(",") if x!=""]
 
 def get_elm_dom_from_MongoDB(data):
-    d = {}
+    d = defaultdict(list)
     for doc in data.find():
         elm = doc["ELM identifier"].upper()
-        dom = doc["Interaction Domain Id"].upper()
-        d[(elm, dom)] = {
-            "in_taxon"        : string2list_fix(doc["Present in Taxon"]),
-            "not_in_taxon"    : string2list_fix(doc["Not Present in Taxon"]),
-            "elm_genes"       : string2list_fix(doc["ELM-containing Genes"]),
-            "human_dom_genes" : string2list_fix(doc["Human Domain-containing Genes"]),
-	        "dom_genes"       : string2list_fix(doc["Domain-containing Genes"]),
-	        "phos"            : string2list_fix(doc["Phosphosites"]),
-	        "obs"             : doc["Observations"],
-	        "req_elms"        : string2list_fix(doc["Requires other ELM"])
-        }
+        doms = string2list_fix(doc["Interaction Domain Id"].upper())
+        for dom in doms:
+            d[(elm, dom)].append( {
+                "in_taxon"        : string2list_fix(doc["Present in Taxon"]),
+                "not_in_taxon"    : string2list_fix(doc["Not Present in Taxon"]),
+                "elm_genes"       : string2list_fix(doc["ELM-containing Genes"]),
+                "human_dom_genes" : string2list_fix(doc["Human Domain-containing Genes"]),
+                "dom_genes"       : string2list_fix(doc["Domain-containing Genes"]),
+                "phos"            : string2list_fix(doc["Phosphosites"]),
+                "obs"             : doc["Observations"],
+                "req_elms"        : string2list_fix(doc["Requires other ELM"])
+            })
 
     return d
 
@@ -550,22 +550,25 @@ def get_Interprets_from_MongoDB(data, gene_a, ac_a, gene_b, ac_b):
                  {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
                   "not-sure1": 0,	"not-sure2": 0})
     if d:
-        z = 0
+        p_val = "-"
+        z = "-"
         if "Z" in d:
             z = d["Z"]
+        if "p-value" in d:
+            p_val = "{:1.0e}".format(float(d["p-value"]))
 
         if (d["#Gene1"] in [gene_a, ac_a]):
             hit = (d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
                    d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
                    d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
                    d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
-                   z, d["p-value"])
+                   z, p_val)
         elif (d["Gene2"] in [gene_a, ac_a]):
             hit = (d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
                    d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
                    d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
                    d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
-                   z, d["p-value"])
+                   z, p_val)
         hits.add(hit)
     return hits
 
@@ -657,6 +660,43 @@ def color_from_zvalue(z_score):
 
     return color
 
+def check_gene_match(target_gene, gene_list, sps_tax):
+    target_gene = target_gene.upper()
+    allow = False
+
+    gene_list2 = []
+    for gene in gene_list:
+        if "[" in gene:
+            gene_tax = re.search("\[(\w+)\]", gene).group(1)
+            gene = gene.split("[")[0]
+            if gene_tax not in sps_tax:
+                continue
+        gene_list2.append(gene)
+
+    if len(gene_list2) == 0:
+        allow = True
+    else:
+        for gene in gene_list2:
+            if target_gene == gene:
+                allow = True
+                break
+            else:
+                if gene == "[transmembrane]":
+                    continue
+                # if "[" in gene:
+                #     gene_tax = re.search("\[(\w+)\]", gene).group(1)
+                #     gene = gene.split("[")[0]
+                #     if gene_tax not in sps_tax:
+                #         continue
+                if "?" in gene:
+                    if target_gene.startswith(gene.split("?")[0]):
+                        allow = True
+                        break
+                if gene[0]=="^":
+                    if target_gene == gene.split("^")[1]:
+                        allow = False
+                        break
+    return allow
 
 def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
                                  elm_gene, dom_gene, sps, sp_map, sp_tax, prot_phos, input_seqs):
@@ -664,11 +704,10 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
     elm_ide = elm_ide.upper()
     dom_acc = dom_acc.upper()
     phospho_hits = "none"
-    
     # 'elm_hits' is returned but nothing is done to it. This function should returns only the hits
     # of this motif that pass the filter. Right now all of them do.
     try:
-        int_info = elm_dom_info[(elm_ide, dom_acc)]
+        int_infos = elm_dom_info[(elm_ide, dom_acc)]
     except:
         return False, phospho_hits, elm_hits
 
@@ -679,50 +718,34 @@ def check_ELM_domain_interaction(elm_dom_info, elm_ide, elm_hits, dom_acc,
     for sp in sps:
         sps_tax += sp_tax.get(sp, [])
     sps_tax = set(sps_tax)
-    # print "Checking :",elm_ide+"-"+dom_acc,"/",sp, sp_tax[sp], int_info["in_taxon"]
 
     # 1. Check allowed/not allowed taxons
-    if len(sps_tax.intersection(set(int_info["not_in_taxon"]))) > 0:
-        return False, phospho_hits, elm_hits
-    elif (len(int_info["in_taxon"]) > 0
-    and len(sps_tax.intersection(set(int_info["in_taxon"]))) == 0):
-        return False, phospho_hits, elm_hits
-
-    if len(sps) == 1 and elm_gene not in input_seqs:
-        # 2. Check genes with ELM
-        elm_in_genes = [g for g in int_info["elm_genes"] if g != "[transmembrane]"]
-        if len(elm_in_genes) > 0 and elm_gene.upper() not in elm_in_genes:        
-            return False, phospho_hits, elm_hits
-
-    if len(sps) == 1 and dom_gene not in input_seqs:
-        # 3. Check genes with Domain
-        if "Hsa" in sps:
-            dom_in_genes = [g for g in int_info["human_dom_genes"] if not g[0]=="^"]
-            dom_not_in_genes = [g.split("^")[1] for g in int_info["human_dom_genes"] if g[0]=="^"]
+    int_info = "-"
+    for info in int_infos:
+        if len(sps_tax.intersection(set(info["not_in_taxon"]))) > 0:
+            continue
+        elif (len(info["in_taxon"]) > 0
+        and len(sps_tax.intersection(set(info["in_taxon"]))) == 0):
+            continue
         else:
-            dom_in_genes = [g for g in int_info["dom_genes"] if not g[0]=="^"]
-            dom_not_in_genes = [g.split("^")[1] for g in int_info["dom_genes"] if g[0]=="^"]
+            int_info = info
+            break
+    if int_info == "-":
+        return False, phospho_hits, elm_hits
 
-        if dom_gene.upper() in dom_not_in_genes:
+    # 2. Check genes with ELM
+    if len(sps) == 1 and elm_gene not in input_seqs:
+        allow = check_gene_match(elm_gene, int_info["elm_genes"], sps_tax)
+        if not allow:     
             return False, phospho_hits, elm_hits
-
-        if len(dom_in_genes) > 0:
-            cont = False
-            for gene in dom_in_genes:
-                if "[" in gene:
-                    gene_tax = re.search("\[(\w+)\]", gene).group(1)
-                    gene = gene.split("[")[0]
-                    if gene_tax not in sps_tax:
-                        continue
-                if "?" in gene:
-                    if dom_gene.startswith(gene.split("?")[0]):
-                        cont = True
-                        break
-                elif dom_gene == gene:
-                    cont = True
-                    break
-            if not cont:
-                return False, phospho_hits, elm_hits
+    # 3. Check genes with Domain
+    if len(sps) == 1 and dom_gene not in input_seqs:
+        if "Hsa" in sps:
+            allow = check_gene_match(dom_gene, int_info["human_dom_genes"], sps_tax)
+        else:
+            allow = check_gene_match(dom_gene, int_info["dom_genes"], sps_tax)
+        if not allow:     
+            return False, phospho_hits, elm_hits
 
     # 4. Supporting ELMs
 
@@ -848,18 +871,19 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
     ### Load data from Mongo
     ddi = extract_DDI_from_MongoDB(ddi_data, all_pfams)
     elm_dom = get_elm_dom_from_MongoDB(elm_int_data)
+    
     dmi = get_3did_dmi_from_MongoDB(dmi_data)
 
     sp_tax = {
-        "Ath" : ["Eukaryota", "Plantae", "Ath"],
-        "Cel" : ["Eukaryota", "Opisthokonta", "Metazoa", "Nematoda", "Cel"],
-        "Dme" : ["Eukaryota", "Opisthokonta", "Metazoa", "Arthropoda", "Dme"],
-        "Dre" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Dre"],
-        "Hsa" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Hsa"],
-        "Mmu" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Mmu"],
+        "Ath" : ["Eukaryota", "Plantae", "Viridiplantae", "Ath"],
+        "Cel" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Nematoda", "Cel"],
+        "Dme" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Arthropoda", "Insecta", "Dme"],
+        "Dre" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Dre"],
+        "Hsa" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Mammalia", "Hsa"],
+        "Mmu" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Mammalia", "Mmu"],
         "Sce" : ["Eukaryota", "Opisthokonta", "Fungi", "Sce"],
-        "Xla" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Amphibia", "Xla"],
-        "SARS-CoV-2" : ["Eukaryota", "Opisthokonta", "Metazoa", "Vertebrata", "Mammalia", "Hsa","Viridae"]
+        "Xla" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Amphibia", "Xla"],
+        "SARS-CoV-2" : ["Eukaryota", "Opisthokonta", "Metazoa", "Chordata", "Vertebrata", "Mammalia", "Hsa","Viridae", "Virus"]
     }
     for s in sp_tax:
         sp_tax[s] = [x.upper() for x in sp_tax[s]]
@@ -871,6 +895,10 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
     n_ints = defaultdict(int)
     mech_ints = defaultdict(int)
     target_prots = target_prots | set(input_seqs.keys())
+    columns = ["UniProt ID (A)","Gene (A)", "UniProt AC (A)", "UniProt ID (B)", "Gene (B)", "UniProt AC (B)",
+        "Type", "Element (A)", "Start-End (A)", "Mutations (A)",
+        "Element (B)", "Start-End (B)", "Mutations (B)",
+        "Scores", "Data Source"]
 
     if len(custom_pairs) > 0:
         protein_pairs = custom_pairs
@@ -913,7 +941,7 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
             })
 
             line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b] ,gene_b[:20], ac_b, "PROT::PROT", "", "",
-                    "", "", "", "", "; ".join(list(biogrid_ints)), "BioGRID"]
+                    "", "", "", "", len(biogrid_ints), "BioGRID"]
             lines.append(line)
             n_ints[ac_a] += 1
             n_ints[ac_b] += 1
@@ -1037,11 +1065,10 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
         ### ELM-domain Interactions
         for ac1, gene1, ac2, gene2 in zip([ac_a, ac_b], [gene_a, gene_b],
                                           [ac_b, ac_a], [gene_b, gene_a]):
-
             for elm_acc in elms[ac1]:
                 elm_ide = elm_info[elm_acc]["ide"]
-  
                 for pfam_acc in pfams[ac2]:
+
                     ## Annotated ELM-Domain Interaction
                     (cont, phospho_hits,
                     elms[ac1][elm_acc]) = check_ELM_domain_interaction(
@@ -1049,7 +1076,6 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
                                                 elms[ac1][elm_acc], pfam_acc,
                                                 gene1, gene2, sps, sp_map, sp_tax,
                                                 phospho_positons[ac1], set(input_seqs.keys()))
-
                     if not cont and not inferred_elmdom_ints:
                         continue
 
@@ -1281,20 +1307,20 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
                     "pdb": pdb,
                     "color": color,
                     "z-score": z,
-                    "p-value": "{:1.0e}".format(float(pvalue))
+                    "p-value": pvalue
                 }
             })
 
             line = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b], gene_b[:20], ac_b, "InterPreTS",
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
-                   str(z), "InterPreTS prediction"]
+                   pvalue, "InterPreTS prediction"]
             lines.append(line)
             n_ints[ac_a]+=1
             n_ints[ac_b]+=1
             mech_ints[ac_a]+=1
             mech_ints[ac_b]+=1
-
+    
     ## Color domain & LMs nodes
     nodes = color_regions(nodes)
     # nodes = color_regions(nodes, palette="custom1")
@@ -1313,4 +1339,4 @@ def main(target_prots, custom_pairs, input_seqs, mutations, sp_map,
     if not make_network:
         graph_elements = []
 
-    return  graph_elements, lines, no_int_prots
+    return  graph_elements, columns, lines, no_int_prots
