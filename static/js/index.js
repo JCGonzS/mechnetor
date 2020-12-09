@@ -67,7 +67,7 @@ ID3/Q81H
 ID3/V82A
 ID3/Q100STOP`);
 	  $("#add_intrs").val(0);
-	  $("#species").val("Hsa");
+	  $("#species").val("HUMAN");
   });
 
 	$("#ex2").click(function () {
@@ -95,7 +95,7 @@ TAT`);
 SMARCA4/V1404I
 SMARCA4/V1552I`);
 		$("#add_intrs").val(0);
-		$("#species").val("Hsa");
+		$("#species").val("HUMAN");
 	});
 
 	$("#ex3").click(function () {
@@ -107,7 +107,7 @@ DLG5
 WASL`);
 		$("#muts_input").val("");
 		$("#add_intrs").val(0);
-		$("#species").val("Hsa");
+		$("#species").val("HUMAN");
 //  		$('#query_lmd2').val(`
 // #AC(a)	ID(a)	GN(a)	AC(b)	ID(b)	GN(b)	Type	F(a):F(b)	start	end
 // O60504	VINEX_HUMAN	SORBS3	P08247	UniProt_ID	SYP	LMD2	PPxxPx[KR]	236	242
@@ -150,7 +150,7 @@ NEQEKQAQAQKAAAAAAAAAAVQGGHLDQ
 		`);
     $("#muts").val("");
     $("#max_prots").val(0);
-    $("#species").val("Dme");
+    $("#species").val("DROME");
 	});
 
 	$("#ex5").click(function() {
@@ -189,7 +189,7 @@ ABL1
 		`);
 		$("#muts_input").val("");
 		$("#add_intrs").val(0);
-		$("#species").val("Hsa");
+		$("#species").val("HUMAN");
 	});
 
 

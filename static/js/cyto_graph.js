@@ -42,7 +42,10 @@ document.addEventListener("DOMContentLoaded", function() {
     minZoom: 0.05,
     maxZoom : 3.0,
     selectionType: 'single',
-    wheelSensitivity: 0.3
+    wheelSensitivity: 0.3,
+    // pixelRatio: 1,
+    hideEdgesOnViewport: true, // These 2 options could be used only if network is big enough
+    textureOnViewport: true
 	});
 
   cy.fit( cy.$("node:visible") );

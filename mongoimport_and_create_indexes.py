@@ -50,23 +50,23 @@ if key == "common":
     #     os.system("zcat "+data_file+" | mongoimport -d common"+
     #               " -c dmi_3did --type tsv --headerline --drop")
     # sys.exit()
-    # ## ELM-Dom
-    # elm_int_data = client["common"]["elm_int_dom"]
-    # data_file = com_dir+"elm_interaction_domains_"+ELM_VERSION+"_reviewed.tsv"
-    # if (os.path.isfile(data_file)
-    # and ("import" in sys.argv[1:] or elm_int_data.count()==0)):
-    #     os.system("cat "+data_file+" | mongoimport -d common"+
-    #               " -c elm_int_dom --type tsv --headerline --drop")
-    # elm_int_data.drop_indexes()
-
-    ## ELM classes
-    elm_classes = client["common"]["elm_classes"]
-    data_file = com_dir+"elm_classes_"+ELM_VERSION+".tsv"
+    ## ELM-Dom
+    elm_int_data = client["common"]["elm_int_dom"]
+    data_file = com_dir+"elm_interaction_domains_"+ELM_VERSION+"_reviewed.tsv"
     if (os.path.isfile(data_file)
-    and ("import" in sys.argv[1:] or elm_classes.count()==0)):
+    and ("import" in sys.argv[1:] or elm_int_data.count()==0)):
         os.system("cat "+data_file+" | mongoimport -d common"+
-                  " -c elm_classes --type tsv --headerline --drop")
-    elm_classes.drop_indexes()
+                  " -c elm_int_dom --type tsv --headerline --drop")
+    elm_int_data.drop_indexes()
+
+    # ## ELM classes
+    # elm_classes = client["common"]["elm_classes"]
+    # data_file = com_dir+"elm_classes_"+ELM_VERSION+".tsv"
+    # if (os.path.isfile(data_file)
+    # and ("import" in sys.argv[1:] or elm_classes.count()==0)):
+    #     os.system("cat "+data_file+" | mongoimport -d common"+
+    #               " -c elm_classes --type tsv --headerline --drop")
+    # elm_classes.drop_indexes()
 
     # ## Pfam info
     # pfam_data = client["common"]["pfamA_data"]

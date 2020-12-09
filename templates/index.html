@@ -90,29 +90,31 @@
 									<!-- <input type="text" list="species"> -->
 									<select name="species" id="species">
 											<option value="any">Automatic/More than one</option>
-											<option value="Hsa" selected>Human (Homo sapiens, TaxId: 9606)</option>
-											<option value="Mmu">Mouse (Mus musculus, TaxId: 10090)</option>
-											<option value="Dme">Fruit Fly (Drosophila melanogaster, TaxId: 7227)</option>
-											<option value="Ath">Arabidopsis (Arabidopsis thaliana, TaxId: 3702)</option>
-											<option value="Cel">Worm (Caenorhabditis elegans, TaxId: 6239)</option>
-											<option value="Dre">Zebrafish (Danio rerio, TaxId: 7955)</option>
-											<option value="Xla">Frog (Xenopus laevis, TaxId: 8355)</option>
-											<option value="Sce">Yeast (Saccharomyces cerevisiae [S288C], TaxId: 559292)</option>
+											<option value="HUMAN" selected>Human (Homo sapiens, TaxId: 9606)</option>
+											<option value="MOUSE">Mouse (Mus musculus, TaxId: 10090)</option>
+											<option value="DROME">Fruit Fly (Drosophila melanogaster, TaxId: 7227)</option>
+											<option value="ARATH">Arabidopsis (Arabidopsis thaliana, TaxId: 3702)</option>
+											<option value="CAEEL">Worm (Caenorhabditis elegans, TaxId: 6239)</option>
+											<option value="DANRE">Zebrafish (Danio rerio, TaxId: 7955)</option>
+											<option value="XENTR">Frog (Xenopus tropicalis, TaxId: 8364)</option>
+											<option value="YEAST">Yeast (Saccharomyces cerevisiae [S288C], TaxId: 559292)</option>
 									</select>
 								</div>
 							</div>
 							<div class="form-group row align-items-center">
 								<div class="col-sm">
 									<label for="hide_no_int">Hide proteins with no interactions</label>
-									<input type="checkbox" id="hide_no_int" name="hide_no_int" checked>
+									<input type="checkbox" id="hide_no_int" name="hide_no_int" value="true" checked>
 								</div>
 							</div>
 							<div class="form-group row align-items-center">
 								<div class="col-sm">
-									<label for="add_intrs">Add additional interactors per protein: </label>
-									<input type="number" id="add_intrs" name="add_intrs" value="0">
-									<label for="all_intrs"> or show all</label>
-									<input type="checkbox" id="all_intrs">
+									<label for="add_n_interactors">Add additional interactors per protein: </label>
+									<input type="number" id="add_n_interactors" name="add_n_interactors" value="0">
+									<label for="all_interactors"> or show all</label>
+									<input type="checkbox" id="all_interactors" name="all_interactors">
+									<label for="only_int_pairs">Show interactions only between protein and its interactors</label>
+									<input type="checkbox" id="only_int_pairs" name="only_int_pairs" value="true" checked>
 								</div>
 							</div>
 

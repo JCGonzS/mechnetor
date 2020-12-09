@@ -115,6 +115,13 @@ $(document).ready(function(){
 		var pval = document.getElementById("pval_cutoff").value;
 		cy.$("edge[role='"+role+"'][p_val<="+pval+"]").style("display", "element");
 	}
+
+	function toggle_cosmic_muts_by_count() {
+		var min_count = document.getElementById("sample_min").value;
+		cy.$("node[role='mod_cosmic'][tot_count>="+min_count+"]").style("display", "element");
+		cy.$("node[role='mod_cosmic'][tot_count<"+min_count+"]").style("display", "none");
+	}
+
 	// Save original positions of all graph elements
 	cy.nodes().forEach(function(n){
 		var pos = n.position();
@@ -536,44 +543,50 @@ $(document).ready(function(){
 	$("#toggle_all_mod").change(function(){
 		var checked = document.getElementById("toggle_all_mod").checked;
 		if (checked) {
-			["#toggle_input_mut", "#toggle_cosmic_mut",
+			["#toggle_input_mut",
 			"#toggle_phos", "#toggle_acet"].forEach(function(ele) {
-				$(ele).prop("checked", true);
+				$(ele).prop("checked", true).change();
 			});
+			toggle_cosmic_muts_by_count();
 		} else {
 			["#toggle_input_mut", "#toggle_cosmic_mut",
 			"#toggle_phos", "#toggle_acet"].forEach(function(ele) {
-				$(ele).prop("checked", false);
+				$(ele).prop("checked", false).change();
 			});
 		}
 	});
 
 	// BUTTON: Toggle mutations/PTMs
-	$("#toggle_input_mut").click(function(){
-		toggle_nodes(this, "node[role='mod_input']")
+	$("#toggle_input_mut").change(function(){
+		toggle_nodes(this, "node[role='mod_input']");
 	});
-	$("#toggle_cosmic_mut").click(function(){
-		toggle_nodes(this, "node[role='mod_cosmic']")
+	$("#toggle_cosmic_mut").change(function(){
+		var nodes = cy.$("node[role='mod_cosmic']");
+		if (this.checked) {
+			toggle_cosmic_muts_by_count();
+		} else {
+			nodes.style("display", "none");
+		}	
 	});
-	$("#toggle_phos").click(function(){
-		toggle_nodes(this, "node[role='mod_phos']")
+	$("#toggle_phos").change(function(){
+		toggle_nodes(this, "node[role='mod_phos']");
 	});
-	$("#toggle_acet").click(function(){
-		toggle_nodes(this, "node[role='mod_acet']")
+	$("#toggle_acet").change(function(){
+		toggle_nodes(this, "node[role='mod_acet']");
 	});
 
 	// BUTTON: Toggle UniProt Regions
-	$("#toggle_uni_regions").click(function(){
+	$("#toggle_uni_regions").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_region']");
 	});
 
 	// BUTTON: Toggle UniProt Variants
-	$("#toggle_uni_variants").click(function(){
+	$("#toggle_uni_variants").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_var']");
 	});
 
 	// BUTTON: Toggle UniProt Mutagenesis
-	$("#toggle_uni_mutagen").click(function(){
+	$("#toggle_uni_mutagen").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_mtg']");
 	});
 
@@ -616,6 +629,7 @@ $(document).ready(function(){
 			cy.$("edge[role='ELM_interaction'][p_val>"+this.value+"]").style("display", "none");
 		}
 	}
+
 
 	function removeThisEle(id) {
 		var node = cy.$("node[id='"+id+"']");

@@ -807,17 +807,17 @@ def extract_ddi_interactions(ddi_file):
 
     return ints
 
-def create_ppi_database(outfile, ppi, prot_dict):
+def create_ppi_database(outfile, ppi, prot_dict, sp):
 
     with open_file(outfile, "w") as out:
-        out.write("\t".join(["Acc_A", "Gene_A", "Acc_B", "Gene_B",
+        out.write("\t".join(["SP", "Acc_A", "Gene_A", "Acc_B", "Gene_B",
                             "Source:ID:PubMedID:Throughput"])+"\n")
 
         for acc_a in ppi:
             for acc_b in ppi[acc_a]:
                 gene_a = prot_dict["GN"][acc_a][0]
                 gene_b = prot_dict["GN"][acc_b][0]
-                cols = [acc_a, gene_a, acc_b, gene_b,
+                cols = [sp, acc_a, gene_a, acc_b, gene_b,
                         ";".join(ppi[acc_a][acc_b])]
                 out.write("\t".join(cols)+"\n")
 
@@ -831,11 +831,11 @@ def count_protein_and_domain_pairs(ppi, eles):
     total_interactions = 0
     ele_pair_count = defaultdict(lambda: defaultdict(int))
     for a in ppi:
+        all_proteins.add(a)
+        eles_A = list(eles[a])
         for b in ppi[a]:
-            all_proteins.add(a)
             all_proteins.add(b)
             total_interactions += 1
-            eles_A = list(eles[a])
             eles_B = list(eles[b])
             ele_pairs = set()
             for (ele_a, ele_b) in itertools.product(eles_A, eles_B):
@@ -1274,9 +1274,9 @@ def main( SP="Hsa",
     if os.path.isfile(PPI_FILE) and force_ppi==False:
         print_status(PPI_FILE, "exists")
     else:
-        create_ppi_database(PPI_FILE, bio_ppi_all, prot_dict)
+        create_ppi_database(PPI_FILE, bio_ppi_all, prot_dict, SP)
         print_status(PPI_FILE, "created")
-
+    sys.exit()
     ### 4. Make protein data JSON file
     if os.path.isfile(PROT_DATA_FILE) and force_prot_data==False:
         print_status(PROT_DATA_FILE, "exists")

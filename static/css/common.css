@@ -5,6 +5,7 @@ html, body {
   font-size: 14px;
   color: #2c2c2c;
   height: 100%;
+  /* max-width: 1200px !important; */
 }
 
 .grid-container {
@@ -39,6 +40,9 @@ html, body {
 .header-title:hover {
   color: black; 
 }
+.red {
+  color: #e44445;
+}
 .header-buttons {
   display: flex;
 }
@@ -59,12 +63,9 @@ html, body {
   border-bottom: 4px solid #e44445;
 }
 
-.header-titlered {
-  color: #e44445;
-}
 .content { 
   grid-area: ct; 
-  min-height: 700px;
+  /* min-height: 700px; */
 }
 
 .footer {
@@ -74,6 +75,7 @@ html, body {
     "ft1 ft2 ft3";
   grid-gap: 5px;
   background-color: #4d4b4a;
+  /* background-color: #e44445; */
   line-height: 1.6;
   text-align: center;
   font-size: 14px;

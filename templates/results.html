@@ -4,8 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIV results</title>
+  <base target="_blank">
   <!--
-  Loading Icon
+    Loading Icon
   <script type="text/javascript" charset="utf8" src="https://raw.github.com/HubSpot/pace/v0.5.3/pace.min.js"></script>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/pace_atom.css') }}">
   -->
@@ -14,11 +15,17 @@
   <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css"/>
-  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/> -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/jquery.dataTables.night.css') }}"/>
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/jquery.dataTables.css') }}"/> -->
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"/> -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/results_style.css') }}"/>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
+
+  <link rel="stylesheet" type="text/css" href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css/>
+  <link rel="stylesheet" type="text/css" href=https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css/>
+  <link rel="stylesheet" type="text/css" href=https://cdn.datatables.net/fixedheader/3.1.7/css/fixedHeader.bootstrap.min.css/>
+  <link rel="stylesheet" type="text/css" href=https://cdn.datatables.net/responsive/2.2.5/css/responsive.bootstrap.min.css/>
+
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js"></script>
@@ -28,19 +35,78 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js" integrity="sha256-VwkT6wiZwXUbi2b4BOR1i5hw43XMzVsP88kpesvRYfU=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.57/pdfmake.min.js" integrity="sha256-8s2O+N1IIFZ/3uLADkpz++emTlVbAiI320n5vcyww8M=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.57/vfs_fonts.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.5/js/responsive.bootstrap.min.js "></script> -->
+
+  <!-- <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script> -->
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
   <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/graph_features.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/stat_charts.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
-  <base target="_blank">
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+      /// Modal (Help pop-up)
+      var modal = document.getElementById("help-modal");
+      // When the user clicks the button, open the modal
+      $("#help-btn").click(function() {
+        modal.style.display = "block";
+      });
+      // When the user clicks on (x), close the modal
+      $("#help-modal-close").click(function() {
+        modal.style.display = "none";
+      });
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+
+      /// Download button
+      $("#dl-content").hide();
+      $("#dl-btn").click(function(){
+        $("#dl-content").toggle();
+      });
+
+
+      /// Go-to-Top Button
+      // When the user scrolls down 20px from the top of the document, show the button
+      window.onscroll = function() {scrollFunction()};
+      function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          $("#goToTop").show()
+        } else {
+          $("#goToTop").hide()
+        }
+      }
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }
+
+    });
+  </script>
+  <script type="text/javascript">
+      /// Import files
+      var graph_json = "{{ url_for('static',filename=graph_json) }}";
+      var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
+      var ints_json ="{{ url_for('static',filename=ints_json) }}";
+  </script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}" async></script>
+ 
 </head>
 
 <body>
@@ -53,7 +119,7 @@
       
       <div class="network-container">
         <div class="control-panel">
-          <div id="control_panel_title">Toggle</div>
+          <div id="control-panel-title">Toggle</div>
 
           <div>
             <fieldset>
@@ -151,11 +217,11 @@
                 <input type="checkbox" id="toggle_elmdom_pred_int">
                 <span class="checkmark"></div>
               </label></br> -->
-              <div class="form-check form-check-inline">
+              <!-- <div class="form-check form-check-inline">
                 <input class="form-check-input" type="checkbox" id="toggle_lmd2_int">
                 <label class="form-check-label" for="toggle_lmd2_int"> LM(pred)-Protein (LMD2)</label>
               </div>
-              </br>
+              </br> -->
               <label class="container">InterPreTS
                 <input type="checkbox" id="toggle_prets_int">
                 <span class="checkmark">
@@ -184,6 +250,7 @@
                 <input type="checkbox" id="toggle_cosmic_mut">
                 <span class="checkmark">
               </label></br>
+              Sample >=<input type="number" id="sample_min" min=1 max=1000 value="2" step="1">
               <label class="container">Phosphorylations
                 <input type="checkbox" id="toggle_phos">
                 <span class="checkmark">
@@ -220,78 +287,59 @@
 
         <div class="network">
 
-          <div id=graph_box style="position:relative; height:600px">
-            <div id="cy" class="cytoscape_container"></div>
-            <script type="text/javascript">
-              var graph_json = "{{ url_for('static',filename=graph_json) }}";
-              var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
-            </script>
-            <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>
+          <div class="cytoscape_container" id="cy"></div>
 
-            <div id="quick-tools" class="col-sm-2">
-              <div>
-                <button class="btn" id="helpBtn" title="Help">
-                  <i class="far fa-question-circle"></i>
-                </button>
-                <button class="btn" id="center" title="Center graph">
-                  <i class="fa fa-align-center"></i>
-                </button>
-                <button class="btn" id="lock" title="Lock/unlock element positions">
-                  <i class="fa fa-unlock"></i>
-                </button>
-                <button class="btn" id="reset" title="Reload graph">
-                  <i class="fa fa-sync"></i>
-                </button>
-              </div>
 
-              <div style="position: relative; padding-top: 5px;">
-                <button class="btn" id="zoom_in" title="Zoom in">
-                  <i class="fas fa-search-plus"></i>
-                </button>
-              </div>
-              <div style="position: relative; padding-top: 5px;">
-                <button class="btn" id="zoom_out" title="Zoom out">
-                  <i class="fas fa-search-minus"></i>
-                </button>
-              </div>
+          <div class="tools-widget">
+            <button class="my-btn" id="center" title="Center graph">
+              <i class="fa fa-align-center"></i>
+            </button>
+            <button class="my-btn" id="lock" title="Lock/unlock element positions">
+              <i class="fa fa-unlock"></i>
+            </button>
+            <button class="my-btn" id="reset" title="Reload graph">
+              <i class="fa fa-sync"></i>
+            </button>
+          </div>
+          
+          <div class="help-widget">
+            <button class="my-btn" id="help-btn" title="Help">
+              <i class="far fa-question-circle"></i>
+            </button>
+          </div>
+
+          <div class="zoom-widget">
+            <div class="zoom-widget-row">
+              <button class="my-btn" id="zoom_in" title="Zoom in">
+                <i class="fas fa-search-plus"></i>
+              </button>
+            </div>
+            <div class="zoom-widget-row">
+              <button class="my-btn" id="zoom_out" title="Zoom out">
+                <i class="fas fa-search-minus"></i>
+              </button>
             </div>
           </div>
 
-          <div style="padding-top:5px"> 
-            <!-- <i class="far fa-file-image" style="font-size: 20px; vertical-align: middle;"></i> -->
-            <span style="font-weight: 500;"> Download snapshot as:   </span>
-            <!-- <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button> -->
-            <button class="dl_btn" id="dl_jpg"><i class="far fa-file-image"></i> JPG </button>
-            <button class="dl_btn" id="dl_png"><i class="far fa-file-image"></i> PNG </button>
-            <button class="dl_btn" id="dl_svg"><i class="far fa-file-image"></i> SVG </button>
+          <div class="dl-widget">
+            <button class="my-btn" id="dl-btn">
+              <!-- <i class="fas fa-save"></i> -->
+              <i class="fas fa-camera"></i>
+            </button>
+            <div id="dl-content"> 
+              <!-- <i class="far fa-file-image" style="font-size: 20px; vertical-align: middle;"></i> -->
+              <span style="font-weight: 500;"> Download snapshot as:   </span>
+              <!-- <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button> -->
+              <button class="dl-btn-pic" id="dl_jpg"><i class="far fa-file-image"></i> JPG </button>
+              <button class="dl-btn-pic" id="dl_png"><i class="far fa-file-image"></i> PNG </button>
+              <button class="dl-btn-pic" id="dl_svg"><i class="far fa-file-image"></i> SVG </button>
+            </div>
           </div>
-
-          {% if not_found|length > 0 %}
-            <div style="padding-top:5px; color: orange;">
-              The following could not be identified as proteins for the specified organism:
-              <ul class="comma-list">
-              {% for prot in not_found %}
-                <li><b>{{ prot }}</b></li>
-              {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-
-          {% if no_int_prots|length > 0 %}
-            <div style="padding-top:5px; color: white;">
-              No interactions found for:
-              <ul class="comma-list">
-              {% for prot in no_int_prots %}
-                <li><button class="txt-btn" onclick=showProt("{{ prot }}") title="Click to toggle protein"><b>{{ prot }}</b></button></li>
-              {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
         </div>
 
-        <div id="helpBox" class="modal">
+        <div class="modal" id="help-modal">
           <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="modal-close" id="help-modal-close">&times;</span>
             <p><b>How to use:</b></p>
             <p>(soon™)</p>
             <p>Hovering over elements will change the color of connected nodes & edges.</p>
@@ -299,9 +347,34 @@
             <p>Double-click within a protein box to quickly zoom in on it.</p>
           </div>
         </div>
+
       </div>
-      <br>
-      <br>
+
+      <div class="extra-info-container">
+
+        {% if not_found|length > 0 %}
+          <div>
+            The following could not be identified as proteins for the specified organism:
+            <ul class="comma-list">
+            {% for prot in not_found %}
+              <li><b>{{ prot }}</b></li>
+            {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        {% if no_int_prots|length > 0 %}
+          <div style="padding-top:5px;">
+            No interactions found for:
+            <ul class="comma-list">
+            {% for prot in no_int_prots %}
+              <li><button class="txt-btn" onclick=showProt("{{ prot }}") title="Click to toggle protein"><b>{{ prot }}</b></button></li>
+            {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+      </div>
 
       <!-- <div class="container-fluid">
         <h2><span><i class="far fa-chart-bar"></i> General Stats</span></h2>
@@ -343,52 +416,32 @@
         </script>
       </div>
 
-      <br>
+      <br>-->
 
-      <div class="container-fluid">
-        <h2><span><i class="fas fa-list"></i> Interaction List</span></h2>
-        <br>
-        <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}"></script>
-        <script type="text/javascript">
-          var ints_json ="{{ url_for('static',filename=ints_json) }}";
-        </script>
-        <table id="interactionTable" class="display">
+      <div class="section-header"><i class="fas fa-list"></i> Interaction Evidence List</div>
+      <div class="interaction-table-container">
+        <!-- <table id="interaction-table" style="width:98% !important; table-layout:fixed;"> -->
+        <table id="interaction-table" class="table table-striped table-bordered" style="width:100%">
       		<thead>
             <tr>
-      				<th>Protein (A)</th>
-              <th>Accession (A)</th>
-      				<th>Protein (B)</th>
-              <th>Accession (B)</th>
-      				<th>Interaction<br>Type</th>
-      				<th>F (A)</th>
-              <th>Start-End (A)</th>
-              <th>Mutations (A)</th>
-      				<th>F (B)</th>
-              <th>Start-End (B)</th>
-              <th>Mutations (B)</th>
-      				<th>Info</th>
-              <th>Data<br>Source</th>
-      			</tr>
+              {% if table_columns|length > 0 %}
+                {% for col in table_columns %}
+                  <th>{{ col }}</th>
+                {% endfor %}
+              {% endif %}
+            </tr>
       		</thead>
       		<tfoot>
-      			<tr>
-              <th>Protein (A)</th>
-              <th>Accession (A)</th>
-      				<th>Protein (B)</th>
-              <th>Accession (B)</th>
-      				<th>Interaction<br>Type</th>
-              <th>F (A)</th>
-              <th>Start-End  (A)</th>
-              <th>Mutations (A)</th>
-      				<th>F (B)</th>
-              <th>Start-End (B)</th>
-              <th>Mutations (B)</th>
-      				<th>Info</th>
-              <th>Data<br>Source</th>
-      			</tr>
-      		</tfoot>
+            <tr>
+              {% if table_columns|length > 0 %}
+                {% for col in table_columns %}
+                  <th>{{ col }}</th>
+                {% endfor %}
+              {% endif %}
+            </tr>
+          </tfoot>
       	</table>
-      </div> -->
+      </div>
       
       <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
     </div>
@@ -397,47 +450,7 @@
 
   </div>
 
-  <script>
-    ///// MODAL (Help pop-up)
-    // Get the modal
-    var modal = document.getElementById('helpBox');
-    // Get the button that opens the modal
-    var btn = document.getElementById("helpBtn");
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-    // When the user clicks the button, open the modal
-    btn.onclick = function() {
-      modal.style.display = "block";
-    }
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-      modal.style.display = "none";
-    }
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
 
-    ///// Go-to-Top Button
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        $("#goToTop").show()
-      } else {
-        $("#goToTop").hide()
-      }
-    }
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
-
-  </script>
 
 </body>
 </html>

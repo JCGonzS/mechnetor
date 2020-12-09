@@ -381,7 +381,7 @@ def dict_from_set_len(d):
         new_d[k] = len(d[k])
     return new_d
 
-def get_stats(lines, p):
+def get_stats(columns, lines, p):
     colors = {
         "PROT::PROT": "#5F6A6A",
         "DOM::DOM": "#16A085",
@@ -462,6 +462,7 @@ def get_stats(lines, p):
             dom_ints[int_type].append(v)
 
     ## Add parameters to dictionary
+    p["table_columns"] = columns
     p["prot_ints_k"], p["prot_ints_v"] = prot_ints_k, prot_ints_v
     p["dom_ints_k"], p["dom_ints"] = dom_ints_k, dom_ints
     p["int_types_k"], p["int_types_series"] = int_types_k, int_types_series
@@ -561,7 +562,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
     fasta_file      = OUTPUT_DIR+"seqs_"+IDE+".fasta"
     blastout_file   = OUTPUT_DIR+"blastout_"+IDE+".tsv.gz"
     pfamout_file    = OUTPUT_DIR+"pfamscan_"+IDE
-    lmsout_file    = OUTPUT_DIR+"elm_hits_"+IDE+".tsv.gz"
+    lmsout_file     = OUTPUT_DIR+"elm_hits_"+IDE+".tsv.gz"
     iprets_file     = OUTPUT_DIR+"i2_"+IDE+".tsv.gz"
     graph_json      = "graph_elements_"+IDE+".json"
     table_file      = "interaction_table_"+IDE+".json"
@@ -710,7 +711,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
     input_muts = parse_mutation_input(INPUT_2, input_to_uniac, input_seqs.keys())
 
     ### 6. Run int2graph
-    graph_ele, lines, no_int_prots = int2graph.main(all_proteins,
+    graph_ele, columns, lines, no_int_prots = int2graph.main(all_proteins,
             custom_pairs, input_seqs, input_muts, sp_map,
             fasta_data, fasta_link, prot_ids,
             CLIENT, PROTEIN_DATA, COSMIC_DATA,
@@ -720,7 +721,7 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
 
     if len(no_int_prots) > 0:
         print_log(IDE,
-                "No interaction evidence found for {} proteins:".format(len(no_int_prots)))
+                "No interaction evidence found for {} proteins.".format(len(no_int_prots)))
 
     print_log(IDE, "int2graph.py run successfully")
     param["not_found"], param["no_int_prots"] = not_found, no_int_prots
@@ -734,33 +735,30 @@ def main(INPUT_1=None, INPUT_2=None, SP="any", ADDITIONAL_INTERACTORS=0,
         print_log(IDE, "Created \"{}\"".format(graph_json))
 
     ## Print interactions
-    int_table = {}
-    int_table["columns"] = ["#Gene(A)","Accession(A)","Gene(B)","Accession(B)",
-        "Type", "F(A)","Start-End(A)", "Mutations(A)",
-        "F(B)", "Start-End(B)", "Mutations(B)",
-        "Info", "Source"]
-    int_table["index"] = range(len(lines))
-    int_table["data"] = lines
     ## as TSV
     if TABLE_FORMAT=="tsv":
         with open_file(OUTPUT_DIR+table_file, "w") as output:
             tsvwriter = csv.writer(output, delimiter="\t")
-            tsvwriter.writerow(int_table["columns"])
-            for data in int_table["data"]:
+            tsvwriter.writerow(columns)
+            for data in lines:
                 tsvwriter.writerow(data)
     ## as JSON
     else:
+        int_table = {}
+        int_table["columns"] = columns
+        int_table["index"] = range(len(lines))
+        int_table["data"] = lines
         with open(OUTPUT_DIR+table_file, "w") as output:
             json.dump(int_table, output)
     print_log(IDE, "Created \"{}\"".format(table_file))
 
 
-    print_log(IDE, "Created \"{}\"".format(stats_file))
-
     ### 8. Compute Stats from Interaction Table
-    param = get_stats(lines, param)
+    param = get_stats(columns, lines, param)
+    print columns
     with open(OUTPUT_DIR+stats_file, "w") as output:
         json.dump(param, output)
+    print_log(IDE, "Created \"{}\"".format(stats_file))
 
     # if CMD_LINE:
     #     print_stats_summary(OUTPUT_DIR+stats_file)

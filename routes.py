@@ -36,7 +36,7 @@ def get_unique_random_identifier(output_dir):
 def get_stats_for_charts(stats_file):
     with open(stats_file, "r") as f:
         d = json.load(f)
-    return (d["not_found"], d["no_int_prots"])
+    return (d["table_columns"], d["not_found"], d["no_int_prots"])
 
 @app.route("/")
 @app.route("/index")
@@ -112,12 +112,12 @@ def run_job(job_id):
             return render_template(error_template)
 
     # Read stats file
-    (not_found, no_int_prots) = get_stats_for_charts(job_dir+stats_file)
-
+    (table_columns, not_found, no_int_prots) = get_stats_for_charts(job_dir+stats_file)
     return render_template(results_template,
                        graph_json="jobs/"+"job_"+job_id+"/"+graph_json,
                        ints_json="jobs/"+"job_"+job_id+"/"+table_file,
                        stats_json="jobs/"+"job_"+job_id+"/"+stats_file,
                        not_found=not_found,
-                       no_int_prots=no_int_prots
+                       no_int_prots=no_int_prots,
+                       table_columns=table_columns
                        )
