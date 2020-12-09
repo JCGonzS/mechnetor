@@ -31,7 +31,7 @@ def main(fasta_file, elm_classes, print_out=True,
         com = "{} {} | perl {} \"{}\" -m 1 > {}".format(mode, fasta_file, fpm2_script, elm_regex, tmp_file)
         os.system(com)
 
-        with open_file(tmp_file) as f:
+        with open_file(tmp_file, "rt") as f:
             for line in f:
                 if line[0]==">":
                     label = line.split()[0].split("/")[0].replace(">","")
@@ -52,7 +52,7 @@ def main(fasta_file, elm_classes, print_out=True,
     os.unlink(tmp_file)
 
     if print_out:
-        with open_file(outfile, "w") as out:
+        with open_file(outfile, "wt") as out:
             for ele in to_print:
                 out.write(ele+"\n")
     else:
