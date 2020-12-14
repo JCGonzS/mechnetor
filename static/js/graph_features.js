@@ -1145,7 +1145,7 @@ $(document).ready(function(){
 	cy.on("click","edge[role='INT_interaction']", function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
-		var pdb = edge.data("pdb").split("|")[1];
+		var pdb = edge.data("pdb");
 		var z = edge.data("z-score");
 		var pval = edge.data("p-value");
 		var chains = [];
