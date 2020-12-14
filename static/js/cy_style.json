@@ -313,7 +313,7 @@
   {
     "selector": "node[role ^='mod']",
     "style": {
-      "border-width": "0.3px",
+      "border-width": "0.6px",
       "border-color": "#000",
       "color": "#2C2C2C",
       "font-size": "8px",
@@ -346,18 +346,24 @@
     "selector": "node[role='mod_cosmic']",
     "style": {
       "shape": "polygon",
-      "shape-polygon-points": "-1, -1, 1, -1, 0, 1",
+      "shape-polygon-points": "1, -1, 0.1, -1, 0.1, 1, -0.1, 1, -0.1, -1, -1, -1",
       "height": "data(height)",
       "width": "3px",
+      "border-width": "0.8px",
+      "border-color": "#28446F",
       "background-color": "#2389AF"
     }
   },
   {
     "selector": "node[role='mod_cosmic'].hl",
     "style": {
-      "height": "function(ele){ return ele.data(height)+3; }",
+      "shape": "polygon",
+      "shape-polygon-points": "-1, -1, 1, -1, 0, 1",
+      "height": "function(){ return data(height)+3; }",
       "width": "4px",
-      "background-color": "#28446F",
+      "border-width": "0.5px",
+      "border-color": "#000",
+      "background-color": "#2389AF",
       "label": "data(aa_mut)",
       "overlay-color": "#2389AF"
     }
@@ -386,9 +392,9 @@
     "selector": "node[role='mod_phos']",
     "style": {
       "shape": "polygon",
-      "shape-polygon-points": "0.5, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, -0.5, -1, 0.5, -1",
-      "height": "8px",
-      "width": "8px",
+      "shape-polygon-points": "0.2, -0.6, 0, -0.6, 0, 1, 0, -0.6, -0.2, -0.6, -0.2, -1, 0.2, -1",
+      "height": "10px",
+      "width": "10px",
       "background-color": "#FFFF00"
     }
   },
