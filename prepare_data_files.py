@@ -26,6 +26,7 @@ def check_file_exists(somefile):
             "Make sure the file is located and named correctly\n")
 
 def print_status(thefile, status):
+    thefile = thefile.split("/")[-1]
     l = 80 - len(thefile) - len(status)
     print ("'"+thefile+"'"+"."*l+status)
 
@@ -264,7 +265,8 @@ def create_ppi_database(outfile, bio_ppi, interaction_info):
         out.write("\t".join(["Int_ID", "Bio_ID_A", "Bio_ID_B", "Throughput", "PubMed"])+"\n")
 
         for bio_a in bio_ppi:
-            for bio_b in bio_ppi:
+            for bio_b in bio_ppi[bio_a]:
+                # they are sorted bio_a < bio_b
                 for int_id in bio_ppi[bio_a][bio_b]:
                     pm = interaction_info[int_id]["pubmed"]
                     th = interaction_info[int_id]["exp"]
@@ -610,6 +612,93 @@ def reformat_slim_hit_file(edited_file, elms, lm3d):
                         out.write("\t".join(cols)+"\n")
     return
 
+def edit_interprets_raw_file(raw_file, rev_file, uni_map, uni_seqs, prot_data):
+    hits = defaultdict(lambda: defaultdict(list))
+    s = set()
+    with open_file(raw_file, "rt") as f:
+        for i, line in enumerate(f):
+            t = line.rstrip().split("\t")
+            if i==0:
+                cols = t
+            elif len(t) == 24:
+                ### They are sorted: uniac_a < uniac_b
+                ac_a, ac_b = t[0], t[8]
+                id_a, id_b = uni_map[ac_a][0], uni_map[ac_b][0]
+                ac_a, ac_b = prot_data[id_a]["ac"], prot_data[id_b]["ac"]
+                start_a, end_a = int(t[4]), int(t[5])
+                start_b, end_b = int(t[12]), int(t[13])
+                len_a = len(uni_seqs[ac_a])
+                len_b = len(uni_seqs[ac_b])
+                if start_a > len_a:
+                    continue
+                elif end_a > len_a:
+                    end_a = len_a
+                if start_b > len_b:
+                    continue
+                elif end_b > len_b:
+                    end_b = len_b
+                info_a = [ac_a]+t[1:5]+[str(end_a)]+t[6:8] 
+                info_b = [ac_b]+t[9:13]+[str(end_b)]+t[14:16] 
+                scores = t[16:]
+                z = float(t[-4])
+                if id_a <= id_b:
+                    hits[(id_a, id_b)][z].append({
+                        "info_a": info_a, "info_b": info_b, "scores": scores                
+                        })
+                else:
+                    hits[(id_b, id_a)][z].append({
+                        "info_a": info_b, "info_b": info_a, "scores": scores                
+                        })
+
+    mask, mask2 = {}, {}
+    final = defaultdict(list)
+    for pair in hits:
+        (id_a, id_b) = pair
+        for z in sorted(hits[pair], reverse=True):
+            for hit in hits[pair][z]:
+                # Add if first one, compare with previous ones if it's not
+                if pair not in final:
+                    final[pair].append(hit)
+                else:
+                    ac_a, ac_b = prot_data[id_a]["ac"], prot_data[id_b]["ac"]
+                    start_a, end_a = int(hit["info_a"][4]), int(hit["info_a"][5])
+                    start_b, end_b = int(hit["info_b"][4]), int(hit["info_b"][5])
+                    mask[ac_a] = ["0"]*len(uni_seqs[ac_a])
+                    mask[ac_b] = ["0"]*len(uni_seqs[ac_b])
+                    mask2[ac_a] = fill_mask(start_a, end_a, ["0"]*len(uni_seqs[ac_a]))
+                    mask2[ac_b] = fill_mask(start_b, end_b, ["0"]*len(uni_seqs[ac_b]))
+                    
+                    for fhit in final[pair]:
+                        fstart_a, fend_a = int(fhit["info_a"][4]), int(fhit["info_a"][5])
+                        fstart_b, fend_b = int(fhit["info_b"][4]), int(fhit["info_b"][5])
+                        mask[ac_a] = fill_mask(fstart_a, fend_a, mask[ac_a])
+                        mask[ac_b] = fill_mask(fstart_b, fend_b,mask[ac_b])
+                        ov2_a = calculate_overlap(fstart_a, fend_a, mask2[ac_a])
+                        ov2_b = calculate_overlap(fstart_b, fend_b, mask2[ac_b])
+                        if ov2_a>=0.75 and ov2_b>=0.75:
+                            break
+                    else:      
+                        ov_a = calculate_overlap(start_a, end_a, mask[ac_a])
+                        ov_b = calculate_overlap(start_b, end_b, mask[ac_b])
+                        if ov_a<0.75 and ov_b<0.75:
+                            final[pair].append(hit)
+
+    with open_file(rev_file, "wt") as out:
+        v = ["Uni-ID1"]+cols[1:8]+["Uni-ID2"]+cols[9:]
+        for (id_a, id_b) in final:
+            for hit in final[(id_a, id_b)]:
+                v = [id_a]+hit["info_a"]+[id_b]+hit["info_b"]+hit["scores"]
+                out.write("\t".join(v)+"\n")
+
+def fill_mask(start, end, mask):
+    for i in range(start-1, end):
+        mask[i] = "1"
+    return mask
+
+def calculate_overlap(start, end, mask):
+    sub_mask = mask[start-1:end]
+    overlap = sub_mask.count("1") / float(len(sub_mask))
+    return overlap
 #################################################
 
 def merge_gene_names(genes):
@@ -635,41 +724,9 @@ def merge_gene_names(genes):
 
     return pattern+"("+",".join(var)+")"
 
-def calculate_overlap(start, end, mask):
-    sub_mask = mask[start-1:end]
-    overlap = sub_mask.count("1") / float(len(sub_mask))
-    return overlap
 
-def fill_mask(start, end, mask):
-    length = end - start + 1
-    for i in range(start-1, end):
-        mask[i] = "1"
-    return mask
 
-def edit_interprets(interprets_file, out_file):
-    """ Placeholder function - does nothing right now
-        Edit this function so it creates a custom interprets-results file that
-        can be imported to Mongo
-    """
 
-    with open_file(interprets_file) as f:
-        for line in f:
-            if line[0]=="#":
-                cols = line.rstrip().split("\t")
-            else:
-                tab = line.rstrip().split("\t")
-                gn1, pdb1, eval1, pcid1, s1, e1 = tab[0:6]
-                gn2, pdb2, eval2, pcid2, s2, e2 = tab[8:14]
-                eval_avg = (float(eval1)+float(eval2))/2
-                eval_diff = abs(float(eval1)-float(eval2))
-                Z = "-"
-                if len(tab) > 16:
-                    Z = tab[20]
-                info = [pdb1+":"+s1+"-"+e1+":"+eval1+":"+pcid1,
-                        pdb2+":"+s2+"-"+e2+":"+eval2+":"+pcid2,
-                        str(eval_avg), str(eval_diff), Z]
-
-    return
 
 def compare_ints(t, gene1, gene2, ints):
     s1, e1 = int(t[4]), int(t[5])
@@ -1171,12 +1228,12 @@ def main( SP="Hsa",
     PTM_SQL_FILE      = SP_DIR+"ptms_SQL_"+SP+".tsv.gz"
     PPI_FILE          = SP_DIR+"ppi_db_"+SP+".tsv.gz"
     UNI_FEAT_FILE     = SP_DIR+"uniprot_"+UNI_VERSION+"_features_"+SP+".tsv.gz"
+    IPRETS_RAW_FILE   = SP_DIR+"interprets_raw_results_"+SP+".txt.gz"
+    IPRETS_REV_FILE   = SP_DIR+"interprets_reviewed_results_"+SP+".txt.gz"
     ####---------updated til here
 
 
-    ASSOC_PROB_FILE   = SP_DIR+"prot_ele_association_prob_"+SP+".tsv.gz"
-    IPRETS_FILE       = SP_DIR+"interprets_results_"+SP+".txt.gz"
-    IPRETS_HSA_FILE   = SP_DIR+"human_aaa_biogrid_i2.txt.gz" # Hsa
+    ASSOC_PROB_FILE   = SP_DIR+"prot_ele_association_prob_"+SP+".tsv.gz"    
     HIPPIE_FILE       = SP_DIR+"hippie_v2-2.tsv.gz" # Hsa
     HIPPIE_MAP_FILE   = SP_DIR+"hippie_v2-2_uniprot_mapping_table.tsv.gz" # Hsa
     PSP_FILE          = SP_DIR+"PSP_ptms_"+PSP_VERSION+"_"+SP+".tsv.gz" # Only Hsa and Mmu
@@ -1235,14 +1292,9 @@ def main( SP="Hsa",
     prot_data = add_uniprot_biogrid_mapping(UNI2BIO_FILE, uni_id_map, prot_data)
     bio2uni = get_bio_2_uni_mapping(prot_data)
 
-    create_uni_features_table(UNI_FEAT_FILE, uni_feats)
-    print_status(UNI_FEAT_FILE, "created")
-    print("done")
-    sys.exit()
-
-
     # Get PP interaction from BioGRID file
     biogrid_ppi, biogrid_ppi_all, interaction_info = extract_biogrid_interactions(BIOGRID_FILE, bio2uni)    
+    
     ### Create PPI database (only BioGRID now)
     if os.path.isfile(PPI_FILE):
         print_status(PPI_FILE, "exists")
@@ -1250,20 +1302,32 @@ def main( SP="Hsa",
         create_ppi_database(PPI_FILE, biogrid_ppi, interaction_info)
         print_status(PPI_FILE, "created")
 
-    prot_data = add_sorted_interactors(prot_data, biogrid_ppi_all, bio2uni)
+    if os.path.isfile(ID_MAP_FILE):
+        print_status(ID_MAP_FILE, "exists")
+    else:
+        create_id_map_table(ID_MAP_FILE, uni_id_map, org)
+        print_status(ID_MAP_FILE, "created")
 
-    create_id_map_table(ID_MAP_FILE, uni_id_map, org)
-    print_status(ID_MAP_FILE, "created")
-
-    create_protein_data_table(PROT_DATA_FILE, prot_data, org)
-    print_status(PROT_DATA_FILE, "created")
+    if os.path.isfile(PROT_DATA_FILE):
+        print_status(PROT_DATA_FILE, "exists")
+    else:
+        prot_data = add_sorted_interactors(prot_data, biogrid_ppi_all, bio2uni)
+        create_protein_data_table(PROT_DATA_FILE, prot_data, org)
+        print_status(PROT_DATA_FILE, "created")
     
+    if os.path.isfile(UNI_FEAT_FILE):
+        print_status(UNI_FEAT_FILE, "exists")
+    else:
+        create_uni_features_table(UNI_FEAT_FILE, uni_feats)
+        print_status(UNI_FEAT_FILE, "created")
 
-    # FALTA PTMS from PhosphoSitePlus
-    create_ptms_table(PTM_SQL_FILE, modres, uni_seqs)
-    print_status(PTM_SQL_FILE, "created")
-
-    
+    if os.path.isfile(PTM_SQL_FILE):
+        print_status(PTM_SQL_FILE, "exists")
+    else:
+        # FALTA PTMS from PhosphoSitePlus
+        create_ptms_table(PTM_SQL_FILE, modres, uni_seqs)
+        print_status(PTM_SQL_FILE, "created")
+ 
     # Check for PfamScan
     if os.path.isfile(PFAMSCAN_FILE):
         print_status(PFAMSCAN_FILE, "exists")
@@ -1278,8 +1342,6 @@ def main( SP="Hsa",
     else:
         merge_pfam_files(PFAM_FULL_FILE, PFAM_MATCHES_FILE, PFAMSCAN_FILE)
         print_status(PFAM_FULL_FILE, "created")
-    sys.exit()
-    # pfam_matches = extract_pfam_doms(PFAM_FULL_FILE)
 
     # Check for ELM hits
     if os.path.isfile(ELM_HITS_FILE):
@@ -1290,9 +1352,6 @@ def main( SP="Hsa",
                             print_out=True, outfile=ELM_HITS_FILE, tmp_file="/tmp/lm_search_"+SP+".txt")
         print_status(ELM_HITS_FILE, "created")
 
-    elm_tp, elm_fp = extract_elm_instances(ELM_INSTANCES_FILE, elm_map, uni_seqs.keys())
-    elm_hits = extract_slim_hits(ELM_HITS_FILE, elm_tp, elm_fp)
-
     # Check for 3did-motifs hits
     if os.path.isfile(LM_3DID_HITS_FILE):
         print_status(LM_3DID_HITS_FILE, "exists")
@@ -1302,16 +1361,38 @@ def main( SP="Hsa",
                             print_out=True, outfile=LM_3DID_HITS_FILE, tmp_file="/tmp/lm_search_"+SP+".txt")
         print_status(LM_3DID_HITS_FILE, "created")
 
+    # pfam_matches = extract_pfam_doms(PFAM_FULL_FILE)
+    # elm_tp, elm_fp = extract_elm_instances(ELM_INSTANCES_FILE, elm_map, uni_seqs.keys())
+    # elm_hits = extract_slim_hits(ELM_HITS_FILE, elm_tp, elm_fp)
+
     # Extract 3DID_LM hits
-    pdb2uni = get_pdb2uniprot_map(PDB2UNIPROT_FILE, uni_seqs.keys())
-    tp = get_3did_dmi_instances(lm_3did, pdb2uni, uni_seqs)
-    lm3d_hits = extract_slim_hits(LM_3DID_HITS_FILE, tp, {})
+    # pdb2uni = get_pdb2uniprot_map(PDB2UNIPROT_FILE, uni_seqs.keys())
+    # tp = get_3did_dmi_instances(lm_3did, pdb2uni, uni_seqs)
+    # lm3d_hits = extract_slim_hits(LM_3DID_HITS_FILE, tp, {})
 
     if os.path.isfile(LM_HITS_SQL_FILE):
         print_status(LM_HITS_SQL_FILE, "exists")
     else:
         reformat_slim_hit_file(LM_HITS_SQL_FILE , elm_hits, lm3d_hits)
         print_status(LM_HITS_SQL_FILE , "created")
+    
+    ### Run InterPreTS on PPI
+    if os.path.isfile(IPRETS_RAW_FILE):
+        print_status(IPRETS_RAW_FILE, "exists")
+    # else:
+    #     ppi = bio_ppi
+    #     if SP=="Hsa":
+    #         ppi = hippie_ppi
+    #     create_interprets_file(IPRETS_FILE, ppi, prot_dict, SP_DIR+"iprets/")
+    #     # os.system("gzip "+IPRETS_FILE)
+    #     print_status(IPRETS_FILE, "created")
+  
+    if os.path.isfile(IPRETS_REV_FILE):
+        print_status(IPRETS_REV_FILE, "exists")
+    else:
+        edit_interprets_raw_file(IPRETS_RAW_FILE, IPRETS_REV_FILE, uni_id_map, uni_seqs, prot_data)  
+        print_status(IPRETS_REV_FILE, "created")
+   
     sys.exit()
     
 
@@ -1373,16 +1454,7 @@ def main( SP="Hsa",
     #                      ints_elm, ints_dmi)
     #     print_status(ASSOC_PROB_FILE, "created")
 
-    # ### 6. Run InterPreTS on PPI
-    # if os.path.isfile(IPRETS_FILE) and force_iprets==False:
-    #     print_status(IPRETS_FILE, "exists")
-    # else:
-    #     ppi = bio_ppi
-    #     if SP=="Hsa":
-    #         ppi = hippie_ppi
-    #     create_interprets_file(IPRETS_FILE, ppi, prot_dict, SP_DIR+"iprets/")
-    #     # os.system("gzip "+IPRETS_FILE)
-    #     print_status(IPRETS_FILE, "created")
+
 
     # print "Finished without problems :-)"
     # sys.exit()
@@ -1448,7 +1520,7 @@ if __name__ == "__main__":
         probs = True
     if "-iprets" in sys.argv:
         iprets = True
-    main(SP=sys.argv[1], DATA_DIR="/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/piv_app/static/data/",
+    main(SP=sys.argv[1], DATA_DIR="/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/data/",
          force_prot_data=pdata, force_ppi=ppi, force_probs=probs,
          force_iprets=iprets)
     sys.exit()

@@ -7,6 +7,7 @@ from piv2_app import app
 from . import piv
 
 main_dir = "/var/www/flask_apps/piv2/piv2_app/"
+data_dir = main_dir+"static/data/"
 output_dir = main_dir+"static/jobs/"
 log_file = main_dir+"static/jobs/log.txt"
 sys.stdout = open(log_file, 'a')
@@ -106,6 +107,7 @@ def run_job(job_id):
                         ONLY_INT_PAIRS=d["only"],
                         MAIN_OUTPUT_DIR=output_dir,
                         CUSTOM_ID=job_id,
+                        DATA_DIR=data_dir,
                         BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
                         PSQL_USER="bq_jgonzalez", PSQL_DB="piv",
                         MAKE_NETWORK=d["make_graph"],

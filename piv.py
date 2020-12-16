@@ -8,7 +8,7 @@ JC Gonzalez Sanchez, 2020
 import os, sys, re, itertools, psycopg2
 import gzip, json, csv, random, string, datetime, argparse
 from collections import defaultdict
-from . import int2graph, find_all_slims  #run_interprets, , 
+import int2graph, find_all_slims, run_interprets
 # from flask import render_template, url_for
 # from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
@@ -190,7 +190,8 @@ def identify_protein(cursor, id_map, protein_id, org):
             return None, None
 
 def get_protein_data_sql(cursor, sql_table, uni_id):
-    cursor.execute("SELECT uniprot_acc, gene, description, length, biogrid_id, sorted_ints"+
+    cursor.execute("SELECT uniprot_acc, gene, description, length, biogrid_id,"+
+                    " sorted_ints, sequence"+
                     " FROM "+sql_table+
                     " WHERE (uniprot_id = \'"+uni_id+"\');")
     row = cursor.fetchone()
@@ -199,15 +200,15 @@ def get_protein_data_sql(cursor, sql_table, uni_id):
         bioids = row[4]
     ints = []
     if row[5]:
-        row[5]
         ints = row[5].split(", ")
     data = {
         "uni_ac":       row[0],
         "genes":        row[1].split("; "),
         "description":  row[2],
-        "length":       row[3],
+        "length":       int(row[3]),
         "biogrid_ids":  bioids,
-        "sorted_ints":  ints
+        "sorted_ints":  ints,
+        "seq":          row[6]
     }
     return data
 
@@ -330,6 +331,29 @@ def get_ELM_dom_sql(cursor, sql_table):
             })
     return data
 
+def get_interprets_sql(cursor, sql_table, id_a, id_b):
+    data = []
+
+    cursor.execute("SELECT pdb_a, blast_eval_a, blast_pcid_a, "+
+                    "uni_start_a, uni_end_a, pdb_start_a, pdb_end_a, "+
+                    "pdb_b, blast_eval_b, blast_pcid_b, "+
+                    "uni_start_b, uni_end_b, pdb_start_b, pdb_end_b, "+
+                    "z_score, p_value"+
+                    " FROM "+sql_table+
+                    " WHERE (uniprot_id_a=\'"+id_a+"\' AND uniprot_id_b=\'"+id_b+"\');");
+    for row in cursor.fetchall():
+        if row[0]==None:
+            data.append(None)
+            break
+        else:
+            a, b = row[:7], row[7:-2] 
+            z_value, p_value = float(row[-2]), float(row[-1])
+            data.append({
+                "a": a, "b": b, "z": z_value, "p": p_value
+            })
+
+    return data
+
 def format_none(string):
     if string==None:
         return ""
@@ -338,6 +362,51 @@ def format_none(string):
 
 def string2list_fix(string):
     return [str(x) for x in str(string).upper().replace(" ","").split(",") if x!="" and x!="NONE"]
+
+def review_interprets_hits(new_hits, protein_data):
+    mask, mask2 = {}, {}
+    final_hits = defaultdict(list)
+    for pair in new_hits:
+        (id_a, id_b) = pair
+        len_a, len_b = protein_data[id_a]["length"], protein_data[id_b]["length"]
+        for z in sorted(new_hits[pair], reverse=True):
+            for hit in new_hits[pair][z]:
+                if pair not in final_hits:
+                    final_hits[pair].append(hit)
+                else:
+                    start_a, end_a = int(hit["info_a"][3]), int(hit["info_a"][4])
+                    start_b, end_b = int(hit["info_b"][3]), int(hit["info_b"][4])
+        
+                    mask[id_a] = ["0"]*len_a
+                    mask[id_b] = ["0"]*len_b
+                    mask2[id_a] = fill_mask(start_a, end_a, ["0"]*len_a)
+                    mask2[id_b] = fill_mask(start_b, end_b, ["0"]*len_b)
+                    
+                    for fhit in final_hits[pair]:
+                        fstart_a, fend_a = int(fhit["info_a"][3]), int(fhit["info_a"][4])
+                        fstart_b, fend_b = int(fhit["info_b"][3]), int(fhit["info_b"][4])
+                        mask[id_a] = fill_mask(fstart_a, fend_a, mask[id_a])
+                        mask[id_b] = fill_mask(fstart_b, fend_b,mask[id_b])
+                        ov2_a = calculate_overlap(fstart_a, fend_a, mask2[id_a])
+                        ov2_b = calculate_overlap(fstart_b, fend_b, mask2[id_b])
+                        if ov2_a>=0.75 and ov2_b>=0.75:
+                            break
+                    else:      
+                        ov_a = calculate_overlap(start_a, end_a, mask[id_a])
+                        ov_b = calculate_overlap(start_b, end_b, mask[id_b])
+                        if ov_a<0.75 and ov_b<0.75:
+                            final_hits[pair].append(hit)
+    return final_hits
+
+def fill_mask(start, end, mask):
+    for i in range(start-1, end):
+        mask[i] = "1"
+    return mask
+
+def calculate_overlap(start, end, mask):
+    sub_mask = mask[start-1:end]
+    overlap = sub_mask.count("1") / float(len(sub_mask))
+    return overlap
 ###
 
 def hasNumbers(inputString):
@@ -374,7 +443,6 @@ def get_additional_interactors(protein_data, n_ints):
 
     return interactors
     
-
 def parse_blast(blastout_file, mask, data_dict,
                 max_ol=0.25, max_cov=0.9):
     prots = set()
@@ -509,7 +577,6 @@ def fill_mask(start, end, mask):
         mask[i] = "1"
     return mask
 
-
 def get_sorted_lists(d):
     keys, vals = [], []
     for k in sorted(d, key=lambda k: len(d[k])):
@@ -562,9 +629,7 @@ def get_stats(columns, lines, p):
         ele_a, ele_b = str(line[7]), str(line[10])
         prot_ints[gene_a].add(gene_b)
         prot_ints[gene_b].add(gene_a)
-        a, b = gene_a, gene_b
-        if b < a:
-            a, b = gene_b, gene_a
+        (a, b) = sorted([gene_a, gene_b])
         int_types[int_type].add((a, b))
 
         if "DOM" in int_type:
@@ -655,15 +720,15 @@ def print_stats_summary(stats_file):
     #     print "\t".join(line)
 
 # @line_profile
-def main(INPUT_1=None, INPUT_2=None, ORG=None, 
+def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN", 
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
+         DATA_DIR="static/data/",
          BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
          PSQL_USER="bq_jgonzalez", PSQL_DB="piv", 
          MAKE_NETWORK=True, HIDE_NO_INT=True, TABLE_FORMAT="json",
          ADDITIONAL_INTERACTORS=0, ONLY_INT_PAIRS=True,
          CMD_LINE=False, RUN_IPRETS=True):
 
-    print("only:", ONLY_INT_PAIRS)
     try:
         add_n_ints = int(ADDITIONAL_INTERACTORS)
     except:
@@ -701,12 +766,15 @@ def main(INPUT_1=None, INPUT_2=None, ORG=None,
     DDI_TABLE          = "ddi_db"
     ELM_DOM_TABLE      = "elm_int_dom"
     DMI_3DID_TABLE     = "dmi_3did"
+    IPRETS_TABLE       = "interprets_pdb2019"
     conn = psycopg2.connect(database=PSQL_DB, 
                             user=PSQL_USER)
     cursor = conn.cursor()
 
+    BLASTPGP_PATH = "blastpgp"
+    PSIBLAST_PATH = "psiblast"
+    BLASTDB_PDB   = BLASTDB_DIR+"pdbaa_2019"#"pdbseq"
     # BLASTDB_UNI     = BLASTDB_DIR+"uniprot_sprot_PIV"
-    # BLASTDB_PDB     = BLASTDB_DIR+"pdbaa_2019"
     # if SP != "any":
         # if os.path.isfile(BLASTDB_DIR+"uniprot_"+SP+".pin"):
         #     BLASTDB_UNI = BLASTDB_DIR+"uniprot_"+SP
@@ -734,7 +802,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG=None,
     # blastout_file   = OUTPUT_DIR+"blastout_"+IDE+".tsv.gz"
     # pfamout_file    = OUTPUT_DIR+"pfamscan_"+IDE
     # lmsout_file     = OUTPUT_DIR+"elm_hits_"+IDE+".tsv.gz"
-    # iprets_file     = OUTPUT_DIR+"i2_"+IDE+".tsv.gz"
+    iprets_file     = OUTPUT_DIR+"i2_"+IDE+".tsv.gz"
     graph_json      = "graph_elements_"+IDE+".json"
     table_file      = "interaction_table_"+IDE+".json"
     if TABLE_FORMAT == "tsv":
@@ -904,14 +972,57 @@ def main(INPUT_1=None, INPUT_2=None, ORG=None,
             #             mode="psiblast", psiblast=psiblast_path, blastdb=BLASTDB_PDB,
             #             print_output=True)
 
+    iprets_hits = defaultdict(list)
+    run_seqs, run_pairs = {}, []
+    for pair in protein_pairs:
+        (uni_id_a, uni_id_b) = sorted(pair)
+        hits = get_interprets_sql(cursor, IPRETS_TABLE, uni_id_a, uni_id_b)
+        if hits:
+            iprets_hits[(uni_id_a, uni_id_b)] = hits
+        else:
+            run_pairs.append((uni_id_a, uni_id_b))
+            for uni_id in (uni_id_a, uni_id_b):
+                run_seqs[uni_id] = protein_data[uni_id]["seq"]
+    
+    if run_pairs:
+        print_log(IDE, "Running InterPrets for {} pairs".format(len(run_pairs)))
+        new_hits = run_interprets.main( run_seqs, OUTPUT_DIR, iprets_file, IDE, org_map,
+                        these_pairs=run_pairs,
+                        mode="blastpgp", blastpgp=BLASTPGP_PATH, psiblast=PSIBLAST_PATH, 
+                        blastdb=BLASTDB_PDB, data_dir=DATA_DIR, print_output=False)
+        
+        final_hits = review_interprets_hits(new_hits, protein_data)
+
+        for pair in run_pairs:
+            (id_a, id_b) = pair
+            ac_a, ac_b = protein_data[id_a]["uni_ac"], protein_data[id_b]["uni_ac"]
+            if pair in final_hits:
+                for hit in final_hits[pair]:
+                    vals = ["\'"+x+"\'" for x in [id_a, ac_a]+hit["info_a"]+[id_b, ac_b]+hit["info_b"]+hit["scores"] ]
+                    cursor.execute("INSERT INTO "+IPRETS_TABLE+" VALUES ("+", ".join(vals)+");")
+                    conn.commit()
+
+                    iprets_hits[pair].append({
+                        "a": hit["info_a"],
+                        "b": hit["info_b"],
+                        "z": float(hit["scores"][-4]),
+                        "p": float(hit["scores"][-3])
+                    })
+            else:
+                vals = ["\'"+x+"\'" for x in [id_a, ac_a, id_b, ac_b] ]
+                cursor.execute("INSERT INTO "+IPRETS_TABLE+
+                               " (uniprot_id_a, uniprot_ac_a, uniprot_id_b, uniprot_ac_b)"+
+                               " VALUES ("+", ".join(vals)+");")
+                conn.commit()
+  
     ### 6. Run int2graph
-    graph_ele, columns, lines, no_int_prots = int2graph.main(all_proteins,
-            protein_pairs, input_seqs, input_muts, org_map,
-            fasta_data, fasta_link, #prot_ids,
+    graph_ele, columns, lines, no_int_prots = int2graph.main(
+            all_proteins, protein_pairs, input_seqs, input_muts, org_map,
             conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts,
-            fasta_iprets, PPI_DATA, ddi, dmi_elm, dmi_3did, 
-            pfam_info, elm_info,
+            PPI_DATA, ddi, dmi_elm, dmi_3did, pfam_info, elm_info, iprets_hits,
+            fasta_data, fasta_link, fasta_iprets,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
+    
     conn.close()
 
     if len(no_int_prots) > 0:
@@ -966,7 +1077,7 @@ if __name__ == "__main__":
     	help="File with protein input as protein identifier or FASTA sequences (Required)")
     ap.add_argument("-m", "--muts", required=False,
     	help="File with mutation input in Mechismo format")
-    ap.add_argument("-sp", "--species", required=False, default=None,
+    ap.add_argument("-sp", "--species", required=False, default="HUMAN",
         help="Organism (default: Hsa)")
     ap.add_argument("-ai", "--add_ints", required=False, default=0,
         help="Number of additional interactors per protein. Any number or 'all' (default: 0)")

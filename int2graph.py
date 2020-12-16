@@ -167,7 +167,7 @@ def add_ptms(nodes, id_n, prot_id, uni_ac, prot_center, ini_pos, data):
                 },
                 "position": {
                     "x": ini_pos[0] + float(pos) - prot_center - 0.5,
-                    "y": ini_pos[1]
+                    "y": ini_pos[1] - 4
                 }
             })
 
@@ -252,10 +252,11 @@ def get_PPI_sql(cursor, sql_table, bios_a, bios_b):
     data = defaultdict(set)
     for bio_a in bios_a:
         for bio_b in bios_b:
+            a, b = sorted([bio_a, bio_b])
             cursor.execute("SELECT interaction_id, throughput"+
                             " FROM "+sql_table+ 
-                            " WHERE (interactor_a=\'"+bio_a+"\' AND interactor_b=\'"+bio_b+"\')"+
-                            " OR (interactor_a=\'"+bio_b+"\' AND interactor_b=\'"+bio_a+"\');")
+                            " WHERE (interactor_a=\'"+a+"\' AND interactor_b=\'"+b+"\');")
+                          
             for row in cursor.fetchall():
                 data[row[1]].add(row[0])
     return data
@@ -690,41 +691,6 @@ def get_pair_association_from_MongoDB(data, dic, acc_a, acc_b,
 
     return p_value, log_odds, dic
 
-def get_Interprets_from_MongoDB(data, gene_a, ac_a, gene_b, ac_b):
-    hits = set()
-    # for d in data.find_( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
-    #              {"#Gene1": gene_b, "Gene2": gene_a} ]},
-    #              {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
-    #               "p-value": 0,	"not-sure1": 0,	"not-sure2": 0}):
-    d = data.find_one( {"$or": [{"#Gene1": gene_a, "Gene2": gene_b},
-                                {"#Gene1": gene_b, "Gene2": gene_a},
-                                {"#Gene1": ac_a, "Gene2": ac_b},
-                                {"#Gene1": ac_b, "Gene2": ac_a} ]},
-                 {"_id": 0, "i2-raw": 0, "rand": 0, "rand-mean": 0, "rand-sd": 0,
-                  "not-sure1": 0,	"not-sure2": 0})
-    if d:
-        p_val = "-"
-        z = "-"
-        if "Z" in d:
-            z = d["Z"]
-        if "p-value" in d:
-            p_val = "{:1.0e}".format(float(d["p-value"]))
-
-        if (d["#Gene1"] in [gene_a, ac_a]):
-            hit = (d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
-                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
-                   d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
-                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
-                   z, p_val)
-        elif (d["Gene2"] in [gene_a, ac_a]):
-            hit = (d["PDB2"], d["Blast-E2"], d["Blast-PCID2"],
-                   d["qstart2"], d["qend2"], d["pdbstart2"], d["pdbend2"],
-                   d["PDB1"], d["Blast-E1"], d["Blast-PCID1"],
-                   d["qstart1"], d["qend1"], d["pdbstart1"], d["pdbend1"],
-                   z, p_val)
-        hits.add(hit)
-    return hits
-
 def color_from_zvalue(z_score):
     color = "grey"
     if z_score < 0 and z_score > -999999:
@@ -743,9 +709,9 @@ def color_from_zvalue(z_score):
 
 # @line_profile
 def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
-        fasta_data, fasta_link, conn, protein_data, pfam_matches, 
-        lms, ptms, uni_feats, cosmic_muts, fasta_iprets,
-        ppi_table, ddi, dmi_elm, dmi_3did, pfam_info, elm_info,
+        conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts, 
+        ppi_table, ddi, dmi_elm, dmi_3did, pfam_info, elm_info, iprets_hits,
+        fasta_data, fasta_link, fasta_iprets,
         make_network=True, hide_no_int=True, inferred_elmdom_ints=False):
     nw = make_network
     id_n = 0 ##### MAKE IT GLOBAL
@@ -820,26 +786,26 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
     
   
     ### Create Nodes for Input Protein Sequences
-    for header, seq in input_seqs.items():
-        data = fasta_data[header]
-        link = fasta_link[header]
-        prot_center = float(len(seq))/2
-        p_center[header] = prot_center
-        nodes, id_n, id_dict, prot_id = add_fasta_main(nodes, id_n, id_dict,
-                                                       header, seq, link,
-                                                       data["blast"],
-                                                       ini_pos[header])
+    # for header, seq in input_seqs.items():
+    #     data = fasta_data[header]
+    #     link = fasta_link[header]
+    #     prot_center = float(len(seq))/2
+    #     p_center[header] = prot_center
+    #     nodes, id_n, id_dict, prot_id = add_fasta_main(nodes, id_n, id_dict,
+    #                                                    header, seq, link,
+    #                                                    data["blast"],
+    #                                                    ini_pos[header])
 
-        (nodes, id_n, id_dict, id_coords, id_muts,
-        pfams[header]) = add_domains(nodes, id_n, id_dict, id_coords, id_muts,
-                                     prot_id, header, prot_center,
-                                     ini_pos[header], data["pfams"], pfam_info,
-                                     mutations[header])
+    #     (nodes, id_n, id_dict, id_coords, id_muts,
+    #     pfams[header]) = add_domains(nodes, id_n, id_dict, id_coords, id_muts,
+    #                                  prot_id, header, prot_center,
+    #                                  ini_pos[header], data["pfams"], pfam_info,
+    #                                  mutations[header])
 
-        nodes, id_n = add_custom_mutations(nodes, id_n, prot_id, header,
-                                           len(seq),
-                                           prot_center, ini_pos[header],
-                                           mutations[header])
+    #     nodes, id_n = add_custom_mutations(nodes, id_n, prot_id, header,
+    #                                        len(seq),
+    #                                        prot_center, ini_pos[header],
+    #                                        mutations[header])
 
         # genes[header] = header
         # uni_ids[header] = header
@@ -854,13 +820,13 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
     rows = []
     n_ints = defaultdict(int)
     mech_ints = defaultdict(int)
-    target_prots = target_prots | set(input_seqs.keys())
     columns = ["UniProt ID (A)","Gene (A)", "UniProt AC (A)", "UniProt ID (B)", "Gene (B)", "UniProt AC (B)",
         "Type", "Element (A)", "Start-End (A)", "Mutations (A)",
         "Element (B)", "Start-End (B)", "Mutations (B)",
         "Scores", "Data Source"]
     
-    for (id_a, id_b) in protein_pairs:
+    for pair in protein_pairs:
+        (id_a, id_b) = sorted(pair)
         gene_a = merge_gene_names(protein_data[id_a]["genes"])
         gene_b = merge_gene_names(protein_data[id_b]["genes"])
         ac_a = protein_data[id_a]["uni_ac"]
@@ -1151,93 +1117,89 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                     mech_ints[id1]+=1
                                     mech_ints[id2]+=1
 
-        ## InterPreTS interactions
-        # hits = []
+        ## InterPreTS interactions (for sequences)
         # if ac_a in input_seqs or ac_b in input_seqs:
         #     if (ac_a, ac_b) in fasta_iprets:
         #         hits.append( fasta_iprets[(ac_a, ac_b)] )
         #     elif (ac_b, ac_a) in fasta_iprets:
         #         hits.append( fasta_iprets[(ac_b, ac_a)] )
-        # elif iprets_data:
-        #     hits = get_Interprets_from_MongoDB(iprets_data, gene_a, ac_a, gene_b, ac_b)
 
-        # for hit in hits:
-        #     pdb_a, eval_a, pcid_a, start_a, end_a, pdb_start_a, pdb_end_a = hit[:7]
-        #     pdb_b, eval_b, pcid_b, start_b, end_b, pdb_start_b, pdb_end_b = hit[7:-2]
-        #     z, pvalue = hit[-2:]
+        ## InterPreTS interactions
+        for hit in iprets_hits.get( (id_a, id_b), []):
+            if hit == None:
+                break
+            pdb_a, eval_a, pcid_a, start_a, end_a, pdb_start_a, pdb_end_a = hit["a"]
+            pdb_b, eval_b, pcid_b, start_b, end_b, pdb_start_b, pdb_end_b = hit["b"]
+            z, pvalue = hit["z"], hit["p"]
 
-        #     label_a = pdb_a+":"+str(start_a)+"-"+str(end_a)
-        #     label_b = pdb_b+":"+str(start_b)+"-"+str(end_b)
-        #     eval_avg = (float(eval_a)+float(eval_b)) / 2
-        #     eval_diff = abs(float(eval_a)-float(eval_b))
-        #     color = color_from_zvalue(z)
+            label_a = pdb_a+":"+str(start_a)+"-"+str(end_a)
+            label_b = pdb_b+":"+str(start_b)+"-"+str(end_b)
+            eval_avg = (float(eval_a)+float(eval_b)) / 2
+            eval_diff = abs(float(eval_a)-float(eval_b))
+            color = color_from_zvalue(z)
 
-        #     ## Add homology region node
-        #     for (ac, label, pdb, pdb_start, pdb_end,
-        #         start, end, e_val, pcid) in zip([ac_a, ac_b],
-        #                             [label_a, label_b], [pdb_a, pdb_b],
-        #                             [pdb_start_a, pdb_start_b], [pdb_end_a, pdb_end_b],
-        #                             [start_a, start_b], [end_a, end_b],
-        #                             [eval_a, eval_b], [pcid_a, pcid_b]):
+            ## Add homology region node 
+            for x in [ (id_a, label_a, pdb_a, pdb_start_a, pdb_end_a, start_a, end_a, eval_a, pcid_a),
+                       (id_b, label_b, pdb_b, pdb_start_b, pdb_end_b, start_b, end_b, eval_b, pcid_b)]:
+                (uni_id, label, pdb, pdb_start, pdb_end, start, end, e_val, pcid) = x
+                length = int(end) - int(start)
+                id_n += 1
+                nodes.append({
+                    "group": "nodes",
+                    "data": {
+                        "id": id_n,
+                        "parent": id_dict[uni_id]["main"],
+                        "role": "iprets",
+                        "label": label,
+                        "pdb": pdb,
+                        "pdb_start": int(pdb_start),
+                        "pdb_end": int(pdb_end),
+                        "start": int(start),
+                        "end": int(end),
+                        "length": length,
+                        "eval": "{:1.0e}".format(float(e_val)),
+                        "pcid": pcid,
+                        "color": color,
+                        "protein": uni_id
+                    },
+                    "position": {
+                        "x": ini_pos[uni_id][0]+int(start)+(float(length)/2)-p_center[uni_id]-0.5,
+                        "y": ini_pos[uni_id][1]
+                    }
+                })
 
-        #         length = int(end) - int(start)
-        #         id_n += 1
-        #         nodes.append({
-        #             "group": "nodes",
-        #             "data": {
-        #                 "id": id_n,
-        #                 "parent": id_dict[ac]["main"],
-        #                 "role": "iprets",
-        #                 "label": label,
-        #                 "pdb": pdb,
-        #                 "pdb_start": int(pdb_start),
-        #                 "pdb_end": int(pdb_end),
-        #                 "start": int(start),
-        #                 "end": int(end),
-        #                 "length": length,
-        #                 "eval": "{:1.0e}".format(float(e_val)),
-        #                 "pcid": pcid,
-        #                 "color": color,
-        #                 "protein": ac
-        #             },
-        #             "position": {
-        #                 "x": ini_pos[ac][0]+int(start)+(float(length)/2)-p_center[ac]-0.5,
-        #                 "y": ini_pos[ac][1]
-        #             }
-        #         })
+                id_dict[uni_id][label] = id_n
+                id_muts[id_n] = muts_within_coords(uni_id, mutations[uni_id],
+                                                   int(start), int(end))
 
-        #         id_dict[ac][label] = id_n
-        #         id_muts[id_n] = muts_within_coords(ac, mutations[ac],
-        #                                            int(start), int(end))
-
-        #     ## Add interaction edge
-        #     source = id_dict[ac_a][label_a]
-        #     target = id_dict[ac_b][label_b]
-        #     id_n += 1
-        #     edges.append({
-        #         "group": "edges",
-        #         "data": {
-        #             "id": id_n,
-        #             "source": source,
-        #             "target": target,
-        #             "role": "INT_interaction",
-        #             "pdb": pdb,
-        #             "color": color,
-        #             "z-score": z,
-        #             "p-value": pvalue
-        #         }
-        #     })
-
-        #     row = [uni_ids[ac_a], gene_a[:20], ac_a, uni_ids[ac_b], gene_b[:20], ac_b, "InterPreTS",
-        #            label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
-        #            label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
-        #            pvalue, "InterPreTS prediction"]
-        #     rows.append(row)
-        #     n_ints[ac_a]+=1
-        #     n_ints[ac_b]+=1
-        #     mech_ints[ac_a]+=1
-        #     mech_ints[ac_b]+=1
-    
+            ## Add interaction edge
+            source = id_dict[id_a][label_a]
+            target = id_dict[id_b][label_b]
+            id_n += 1
+            edges.append({
+                "group": "edges",
+                "data": {
+                    "id": id_n,
+                    "source": source,
+                    "target": target,
+                    "role": "INT_interaction",
+                    "pdb": pdb_a.split("|")[1],
+                    "color": color,
+                    "z-score": z,
+                    "p-value": pvalue
+                }
+            })
+            
+            row = [ "InterPreTS",
+                   label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
+                   label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
+                   pvalue, "InterPreTS prediction"]
+            rows.append(row_main+row)
+            n_ints[id1] += 1
+            n_ints[id2] += 1
+            mech_ints[id1] += 1
+            mech_ints[id2] += 1
+                          
     ## Do not display proteins without interactions
     no_int_prots = []
     if hide_no_int:

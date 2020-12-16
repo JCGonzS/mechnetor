@@ -17,10 +17,10 @@ def create_psql_database(conn, cursor, table_name, columns, drop=False, index=No
     if not exists:
         ## Create Database
         cursor.execute( "CREATE TABLE "+table_name+"("+columns+");" )
-        conn.commit()
         print("Database",table_name,"created")
         if index:
             cursor.execute(index)
+        conn.commit()
     return
 
 def populate_psql_database(conn, cursor, table_name, import_file):
@@ -180,9 +180,13 @@ conn = psycopg2.connect(database="piv",
                         user="bq_jgonzalez")
 cursor = conn.cursor()
 
-com_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/piv_app/static/data/common/"
-sp_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/piv_app/static/data/species/"
+com_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/data/common/"
+sp_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/data/species/"
+sps = ["Sce"]#,"Hsa"]
 
+###########################################
+## MAKE SURE ALL TSV FILES HAVE A HEADER ##
+###########################################
 
 # prots_a = ["118093", "113010", "112055", "107985"]
 # prots_b = ["117030", "110358", "111384", "107028"]
@@ -190,7 +194,6 @@ sp_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/piv_app/static/data/
 #     for a in prots_a:
 #         for b in prots_b:
 #             ints = get_PPI(cursor, "ppi_db", a, b)
-# sys.exit()
 
 ## Pfam Data
 import_file = com_dir+"Pfam-A_r33-1.hmm.tsv.gz"
@@ -237,11 +240,8 @@ phosphosites                TEXT,
 observations                TEXT,
 other_elm_required          TEXT
 '''
-create_psql_database(conn, cursor, table_name, columns, drop=True)
-populate_psql_database(conn, cursor, table_name, import_file)
-
-conn.close()
-sys.exit()
+create_psql_database(conn, cursor, table_name, columns)
+# populate_psql_database(conn, cursor, table_name, import_file)
 
 # ## DDI DATABASE
 # import_file = com_dir+"DDI_db.tsv.gz"
@@ -287,7 +287,7 @@ sys.exit()
 
 
 # ######## ORGANISM-specific ##############
-# sps = ["Sce","Hsa"]
+
 # ## ID MAPPING DATA
 # table_name = "id_mapping"
 # columns = '''
@@ -367,8 +367,6 @@ sys.exit()
 #     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
 #     populate_psql_database(conn, cursor, table_name, import_file)
 
-
-
 # ### PTMS
 # # uniprot_acc", "residue", "ptm", "sources
 # table_name = "ptms"
@@ -422,6 +420,49 @@ sys.exit()
 #     populate_psql_database(conn, cursor, table_name, import_file)
 
 
+### InterPreTS
+table_name = "interprets_pdb2019"
+columns = '''
+uniprot_id_a    TEXT        NOT NULL,
+uniprot_ac_a    VARCHAR(15) NOT NULL,
+pdb_a           VARCHAR(15),
+blast_eval_a    VARCHAR(15),
+blast_pcid_a    REAL,
+uni_start_a     INT,
+uni_end_a       INT,
+pdb_start_a     INT,
+pdb_end_a       INT,
+uniprot_id_b    TEXT        NOT NULL,
+uniprot_ac_b    VARCHAR(15) NOT NULL,
+pdb_b           VARCHAR(15),
+blast_eval_b    VARCHAR(15),
+blast_pcid_b    REAL,
+uni_start_b     INT,
+uni_end_b       INT,
+pdb_start_b     INT,
+pdb_end_b       INT,
+i2_raw          REAL,
+rand            VARCHAR(10),
+rand_mean       REAL,
+rand_sd         REAL,
+z_score         REAL,
+p_value         REAL,
+not_sure1       REAL,
+not_sure2       REAL
+'''
+index = "CREATE INDEX interprets_2019_main_idx ON "+table_name+" (uniprot_ac_a, uniprot_ac_b);"
+drop = True
+create_psql_database(conn, cursor, table_name, columns, index=index, drop=drop)
+base_file = "interprets_reviewed_results_SPS.txt.gz"
+for sp in sps:
+    import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
+    populate_psql_database(conn, cursor, table_name, import_file)
+
+conn.close()
+sys.exit()
+
+
+
 
 # ###
 # pfam_info = get_pfam_info(cursor, "pfam_a_data")
@@ -430,51 +471,6 @@ sys.exit()
 # ddi = get_ddi(cursor, "ddi_db")
 # dmi = get_3did_dmi(cursor, "dmi_3did")
 # ###
-
-
-
-
-# '''
-# 0 #BioGRID Interaction ID 103
-# 1 Entrez Gene Interactor A 6416
-# 2 Entrez Gene Interactor B 2318
-# 3 BioGRID ID Interactor A 112315
-# 4 BioGRID ID Interactor B 108607
-# 5 Systematic Name Interactor A -
-# 6 Systematic Name Interactor B -
-# 7 Official Symbol Interactor A MAP2K4
-# 8 Official Symbol Interactor B FLNC
-# 9 Synonyms Interactor A JNKK|JNKK1|MAPKK4|MEK4|MKK4|PRKMK4|SAPKK-1|SAPKK1|SEK1|SERK1|SKK1
-# 10 Synonyms Interactor B ABP-280|ABP280A|ABPA|ABPL|FLN2|MFM5|MPD4
-# 11 Experimental System Two-hybrid
-# 12 Experimental System Type physical
-# 13 Author Marti A (1997)
-# 14 Publication Source PUBMED:9006895
-# 15 Organism ID Interactor A 9606
-# 16 Organism ID Interactor B 9606
-# 17 Throughput Low Throughput
-# 18 Score -
-# 19 Modification -
-# 20 Qualifications -
-# 21 Tags -
-# 22 Source Database BIOGRID
-# 23 SWISS-PROT Accessions Interactor A P45985
-# 24 TREMBL Accessions Interactor A -
-# 25 REFSEQ Accessions Interactor A NP_003001|NP_001268364
-# 26 SWISS-PROT Accessions Interactor B Q14315
-# 27 TREMBL Accessions Interactor B Q59H94
-# 28 REFSEQ Accessions Interactor B NP_001120959|NP_001449
-# 29 Ontology Term IDs -
-# 30 Ontology Term Names -
-# 31 Ontology Term Categories -
-# 32 Ontology Term Qualifier IDs -
-# 33 Ontology Term Qualifier Names -
-# 34 Ontology Term Types -
-# 35 Organism Name Interactor A Homo sapiens
-# 36 Organism Name Interactor B Homo sapiens
-# '''
-
-
 
 
 

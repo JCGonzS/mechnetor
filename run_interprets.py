@@ -14,9 +14,19 @@ def open_file(input_file, mode="r"):
         infile = open(input_file, mode)
     return infile
 
+def make_dir(directory, verbose):
+    if not os.path.exists(directory):
+        try:
+            os.mkdir(directory)
+            if verbose:
+                print( directory, "created")
+        except OSError:
+            print("Creation of the directory {} failed".format(directory))
+    return
+
 def run_blast(mode, psiblast, blastpgp, blastmat, db,
               seq_file, blast_out_file, verbose=False):
-
+    
     if mode=="blastpgp": ## Not working with apache
         #    -m  alignment view options
         #    -d database
@@ -37,7 +47,7 @@ def run_blast(mode, psiblast, blastpgp, blastmat, db,
         else:
             com = "{} -query {} -db {} {}".format(psiblast, seq_file, db, options)
     else:
-        print "ERROR: could not recognize Blast mode: \'"+mode+"\'"
+        print("ERROR: could not recognize Blast mode: \'"+mode+"\'")
         return
 
     if ".gz" in blast_out_file:
@@ -46,12 +56,12 @@ def run_blast(mode, psiblast, blastpgp, blastmat, db,
         com += " > "+blast_out_file
     # print "[{}] Running BLAST: {}".format(datetime.datetime.now(), com)
     if verbose:
-        print com
+        print(com)
     os.system(com)
-
-def parse_blast(blast_pdb_file, max_E, min_pcid, max_pcid, hits):
-    with open_file(blast_pdb_file) as f:
-        for qresult in SearchIO.parse(f, 'blast-xml'):
+    
+def parse_blast(blast_pdb_file, max_E, min_pcid, max_pcid, hits, mode="blast-xml"):
+    with open_file(blast_pdb_file, "rt") as f:
+        for qresult in SearchIO.parse(f, mode):
             query = qresult.id#.split("|")[1]
             for hit in qresult:
                 s = hit.id + hit.description
@@ -78,20 +88,25 @@ def parse_blast(blast_pdb_file, max_E, min_pcid, max_pcid, hits):
                     break
     return hits
 
-def main(input_seqs, output_dir, i2sum_file, ide,
+def main(input_seqs, output_dir, i2sum_file, ide, org_map,
     fasta_as_input=False, print_output=True, verbose=False, return_hits=False,
+    force_new=False,
     these_pairs=[], hits=defaultdict(lambda: defaultdict(dict)),
-    max_templates=5,
-    mode="psiblast",
+    max_templates=10,
+    mode="blastpgp", # Like Rob's original script
     psiblast="psiblast",
-    blastpgp="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/blastpgp",
-    blastmat= "/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/blast-2.2.23/data",
-    blastdb="/net/home.isilon/ds-russell/blastdb/pdbaa_2019",
-    muscle="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/muscle -quiet",
-    #i2="/net/home.isilon/ag-russell/install/CentOS-5.6-x86_64/bin/interprets",
+    blastpgp="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/blastpgp",
+    blastmat="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/blast-2.2.23/data",
+    blastdb="/net/home.isilon/ds-russell/blastdb/pdbseq",
+    muscle="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/muscle -quiet",
     i2="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/interprets",
     i2_opts=" -rand 100 -show_muts -mode 4 -q",
+    data_dir="static/data/"
     ):
+    os.environ["I2DIR"] = "/net/home.isilon/ag-russell/code/interprets/data"
+    mode = mode+"_v_"+blastdb.split("/")[-1]
+    
+    results = {}
 
     ### 1: Get input sequences (either dictionary or file)
     if fasta_as_input:
@@ -106,119 +121,117 @@ def main(input_seqs, output_dir, i2sum_file, ide,
     else:
         seq = input_seqs
     if verbose:
-        print "Received sequences for {} proteins".format(len(seq))
-    # if len(seq)<2: ## could be homodimeric interactions
-     #   sys.exit("Not enough proteins. Skipping")
+        print("Received sequences for {} proteins".format(len(seq)))
+
 
     ### 2: Create neccessary directories
     seqs_dir = output_dir+"seqs/"
-    blast_dir = output_dir+"blast/"
     temp_dir = output_dir+"temp/"
-    for directory in [output_dir, seqs_dir, blast_dir ,temp_dir]:
-        if not os.path.exists(directory):
-            try:
-                os.mkdir(directory)
-                if verbose:
-                    print directory, "created"
-            except OSError:
-                print "Creation of the directory {} failed".format(directory)
+    blast_dir = output_dir+mode+"/"
+    for directory in [output_dir, seqs_dir, blast_dir, temp_dir]:
+        make_dir(directory, verbose)
+    for org in set(org_map.values()):
+        data_seqs_dir = data_dir+org+"/seqs/"
+        data_blast_dir = data_dir+org+"/"+mode+"/"
+        make_dir(data_seqs_dir, verbose)
+        make_dir(data_blast_dir, verbose)
 
     ### 3: Print individual fasta
+    seq_file = {}
     for prot_id in seq:
-        seq_file = seqs_dir + prot_id.replace("|","_")+".fa"
-        if not os.path.isfile(seq_file):
-            with open_file(seq_file, "w") as out:
+        file_name = prot_id.replace("|","_")+".fa"
+        data_seqs_dir = data_dir+org_map[prot_id]+"/seqs/"
+        old_file = data_seqs_dir+file_name
+        new_file = seqs_dir+file_name
+        if os.path.isfile(old_file) and not force_new:
+            seq_file[prot_id] = old_file
+        elif not os.path.isfile(new_file):
+            with open_file(new_file, "w") as out:
                 out.write(">"+prot_id+"\n")
                 out.write(seq[prot_id]+"\n")
-            if verbose:
-                print seq_file, "created"
-
-    # 4: Run individual blastpgp
+            os.system("cp "+new_file+" "+data_seqs_dir)
+            seq_file[prot_id] = new_file
+        
+    ### 4: Run individual blastpgp
+    blast_files = []
     for prot_id in seq:
-        seq_file = seqs_dir+prot_id.replace("|","_")+".fa"
-        blast_out_file = blast_dir+prot_id.replace("|","_")+"_blast.xml.gz"
-        if not os.path.isfile(blast_out_file):
-            run_blast(mode, psiblast, blastmat, blastpgp, blastdb,
-                      seq_file, blast_out_file, verbose=verbose)
+        data_blast_dir = data_dir+org_map[prot_id]+"/"+mode+"/"
+        if mode.startswith("psiblast"):
+            file_name = prot_id.replace("|","_")+"_psiblast.xml.gz"
+            blast = "psiblast"
+        elif mode.startswith("blastpgp"):
+            file_name = prot_id.replace("|","_")+"_blastpgp.txt.gz"
+            blast = "blastpgp"
+        old_file = data_blast_dir+file_name
+        new_file = blast_dir+file_name
+        if os.path.isfile(old_file) and not force_new:
+            blast_files.append(old_file)
+        elif not os.path.isfile(new_file):
+            run_blast(blast, psiblast,  blastpgp, blastmat, blastdb,
+                      seq_file[prot_id], new_file, verbose=verbose)
+            os.system("cp "+new_file+" "+data_blast_dir)
+            blast_files.append(new_file)
     if verbose:
-        print "[{}] BLAST done".format(datetime.datetime.now())
+        print("[{}] BLAST done".format(datetime.datetime.now()))
 
-    # 3: Read BLAST
+    ### 5: Read BLAST
     max_E = 0.01
     min_pcid, max_pcid = -1, 1000
     # hits = defaultdict(lambda: defaultdict(dict))
-    for prot_id in seq:
-        blast_out_file = blast_dir+prot_id.replace("|","_")+"_blast.xml.gz"
-        hits = parse_blast(blast_out_file, max_E, min_pcid, max_pcid, hits)
+    for blast_out_file in blast_files:
+        if mode.startswith("psiblast"):
+            hits = parse_blast(blast_out_file, max_E, min_pcid, max_pcid,
+                    hits, mode="blast-xml")
+        elif mode.startswith("blastpgp"):
+            hits = parse_blast(blast_out_file, max_E, min_pcid, max_pcid, 
+                    hits, mode="blast-text")
     if verbose:
-        print "[{}] BLAST parsed for:".format(datetime.datetime.now()), hits.keys()
- 
-    # 4: Find best hits for each pair
-    best_e = defaultdict(lambda: defaultdict(lambda: defaultdict()))
-    pairs = defaultdict(lambda: defaultdict(lambda: defaultdict()))
-    if len(these_pairs)==0:
+        print("[{}] BLAST parsed for:".format(datetime.datetime.now()), str(len(hits.keys())))
+
+    ### 6: Find best hits for each pair
+    pairs = defaultdict(lambda: defaultdict(list))
+    if not these_pairs:
         these_pairs = sorted(itertools.combinations(hits.keys(), 2))
 
-    for (qA, qB) in these_pairs:
-        if qA not in hits or qB not in hits:
+
+    for pair in these_pairs:
+        q1, q2 = sorted(pair)
+        results[(q1, q2)] = defaultdict(list)
+
+        if q1 not in hits or q2 not in hits:
             continue
-        q1, q2 = qA, qB
-        if q2 < q1:
-            q1, q2 = qB, qA
-        for pdb in set(hits[q1]).intersection(set(hits[q2])):
-            for c1 in hits[q1][pdb]:
+  
+        for pdb in sorted(list(set(hits[q1]).intersection(set(hits[q2])))):
+            for c1 in sorted(hits[q1][pdb]):
                 hit1 = hits[q1][pdb][c1]
-                for c2 in hits[q2][pdb]:
+                for c2 in sorted(hits[q2][pdb]):
                     hit2 = hits[q2][pdb][c2]
                     if c1 != c2:
                         eval1 = hit1["e-val"]
                         eval2 = hit2["e-val"]
-                        if eval1 < eval2:
-                            best_e[q1][q2][pdb+":"+c1+":"+c2] = eval1
-                        else:
-                            best_e[q1][q2][pdb+":"+c1+":"+c2] = eval2
+                        avg_eval = float(eval1)+float(eval2)/2
                         ele1 = "\t".join([q1,"pdb|"+pdb+"|"+c1,str(eval1),hit1["ide"]])
                         ele1 += "\t"+"\t".join([hit1["q-start"], hit1["q-end"]])
                         ele1 += "\t"+"\t".join([hit1["s-start"], hit1["s-end"]])
                         ele2 = "\t".join([q2,"pdb|"+pdb+"|"+c2,str(eval2),hit2["ide"]])
                         ele2 += "\t"+"\t".join([hit2["q-start"], hit2["q-end"]])
                         ele2 += "\t"+"\t".join([hit2["s-start"], hit2["s-end"]])
-                        pairs[q1][q2][pdb+":"+c1+":"+c2] = ele1+"\t"+ele2
-    
-    # 5: Run InterPreTS
-    results = {}
-    if len(pairs)==0:
-        # if print_output==True:
-        #     with open_file(i2sum_file, "a") as out2:
-        #         l =
-        #         l = [pairs[q1][q2][pdb+":"+c1+":"+c2], i2_sum]
-        #         out2.write("\t".join(l)+"\n")
+                        pairs[(q1, q2)][avg_eval].append( (pdb+":"+c1+":"+c2, ele1+"\t"+ele2) )
 
-        if return_hits:
-            return results, hits
-        else:
-            return results
-
-    # if print_output=="True" and not os.path.isfile(i2sum_file):
-    #     with open_file(i2sum_file, "w") as out:
-    #         cols = ["#Gene1","PDB1","Blast-E1","Blast-PCID1","qstart1","qend1","pdbstart1","pdbend1",
-    #                 "Gene2","PDB2","Blast-E2","Blast-PCID2","qstart2","qend2","pdbstart2","pdbend2",
-    #                 "i2-raw","rand","rand-mean","rand-sd","Z","p-value","not-sure1","not-sure2"]
-    #         out.write("\t".join(cols)+"\n")
-
+    ### 7: Run InterPreTS
     already = set()
     i = 0
-    os.environ["I2DIR"] = "/net/home.isilon/ag-russell/code/interprets/data"
-    for q1 in sorted(pairs):
-        for q2 in sorted(pairs[q1]):
-            n_template = 0
-            for pdb_chains in sorted(best_e[q1][q2], key=best_e[q1][q2].get):
+    for pair in pairs:
+        (q1, q2) = pair
+        n_template = 0
+        for avg in sorted(pairs[pair]):
+            for match in sorted(pairs[pair][avg]):
                 if n_template >= max_templates:
                     break
                 i+=1
-                pdb, c1, c2 = pdb_chains.split(":")
+                pdb, c1, c2 = match[0].split(":")
 
-                # Files names
+                ## Files names
                 dfile = temp_dir+ide+"_"+str(i)+"_"+pdb+".dom"
                 cfile = temp_dir+ide+"_"+str(i)+"_"+pdb+".contact"
                 # cfile = temp_dir+"see"
@@ -229,16 +242,16 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                 ras = temp_dir+ide+"_"+str(i)+"_"+pdb+"_i2_ras.txt"
                 fi2 = temp_dir+ide+"_"+str(i)+"_"+pdb+"_i2.txt"
 
-                # Make domain file
+                ## Make domain file
                 with open_file(dfile, "w") as out:
                     out.write("UNK "+pdb+c1+" { CHAIN "+c1+" }\n")
                     out.write("UNK "+pdb+c2+" { CHAIN "+c2+" }\n")
 
-                # Test contacts
+                ## Test contacts
                 com = i2+" -d "+dfile+" -count -q > "+cfile
                 if verbose:
-                    print "[{}] Testing contacts: {}".format(
-                                                datetime.datetime.now(), com)
+                    print("[{}] Testing contacts: {}".format(
+                                                datetime.datetime.now(), com))
                 os.system(com)
                 n_contact = 0
                 with open(cfile) as f:
@@ -262,11 +275,11 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                     tmp_fasta = "/tmp/tmp_"+ide+".fasta"
                     com = i2+" -fasta -q -d "+dfile+" > "+tmp_fasta
                     if verbose:
-                        print "[{}] {}".format(datetime.datetime.now(), com)
+                        print("[{}] {}".format(datetime.datetime.now(), com))
                     os.system(com)
                     with open_file(tmp_fasta) as f:
                         for record in SeqIO.parse(f, "fasta"):
-                            seq[str(record.id)]=str(record.seq)
+                            seq[str(record.id)] = str(record.seq)
 
                     # 2. Make pairwise files for alignment
                     with open_file(f1, "w") as out:
@@ -281,17 +294,17 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                     # 3. Run muscle
                     com = muscle+" -in "+f1+" -clwstrict > "+m1
                     if verbose:
-                        print "[{}] Align: {}".format(datetime.datetime.now(), com)
+                        print("[{}] Align: {}".format(datetime.datetime.now(), com))
                     os.system(com)
                     com = muscle+" -in "+f2+" -clwstrict > "+m2
                     if verbose:
-                        print "[{}] Align: {}".format(datetime.datetime.now(), com)
+                        print("[{}] Align: {}".format(datetime.datetime.now(), com))
                     os.system(com)
 
                     # 4. Run interprets
                     com = i2+" -d "+dfile+" -a "+m1+" "+m2+" "+i2_opts+" -op \'"+q1+"\' \'"+q2+"\' > "+fi2
                     if verbose:
-                        print "[{}] Final InterPreTS: {}".format(datetime.datetime.now(), com)
+                        print("[{}] Final InterPreTS: {}".format(datetime.datetime.now(), com))
                     os.system(com)
 
                     # 5. Read i2 file
@@ -301,18 +314,18 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                             if line.startswith("SUM"):
                                 t = line.rstrip().split()
                                 i2_sum = "\t".join(t[5:])
+                                z = float(t[-4])
 
-                    if n_template == 0: # only the first (and best) hit per pair
-                        results[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
-                        results[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
-                        results[(q1, q2)] += i2_sum.split("\t")[4:6]
-                        results[(q1, q2)] = pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[9:]
-                        results[(q1, q2)] += pairs[q1][q2][pdb+":"+c1+":"+c2].split("\t")[1:8]
-                        results[(q1, q2)] += i2_sum.split("\t")[4:6]
+                    # if n_template == 0: # only the first (and best) hit per pair
+                    results[(q1, q2)][z].append(
+                        { "info_a": match[1].split("\t")[1:8],
+                          "info_b": match[1].split("\t")[9:],
+                          "scores": i2_sum.split("\t")
+                    })
 
                     if print_output==True:
-                        with open_file(i2sum_file, "a") as out2:
-                            l = [pairs[q1][q2][pdb+":"+c1+":"+c2], i2_sum]
+                        with open_file(i2sum_file, "at") as out2:
+                            l = [match[1], i2_sum]
                             out2.write("\t".join(l)+"\n")
 
                     n_template += 1
@@ -321,7 +334,7 @@ def main(input_seqs, output_dir, i2sum_file, ide,
                         try:
                             os.unlink(fl)
                         except:
-                            print f1,"wasn't created"
+                            print(f1,"wasn't created")
                 else:
                     for fl in [dfile, cfile]:
                         os.unlink(fl)
