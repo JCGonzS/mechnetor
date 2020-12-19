@@ -98,6 +98,10 @@ def run_job(job_id):
         with open(job_dir+"input_"+job_id+".json", "rt") as f:
             d = json.load(f)
 
+        if d["sps"]=="HUMAN":
+            db = "mechnetor_human"
+        else:
+            db = "mechnetor_all"
         # try:
         error = piv.main(
                         INPUT_1=d["prots_input"],
@@ -117,9 +121,10 @@ def run_job(job_id):
         # except:
             # print "except error"
         #     return render_template(error_template)
-        print("error?", error)
         if error:
             return render_template(error_template)
+    else:
+        print_log(job_id, "Files exist")
 
     # Read stats file
     (table_columns, not_found, no_int_prots) = get_stats_for_charts(job_dir+stats_file)

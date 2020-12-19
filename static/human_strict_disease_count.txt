@@ -1,0 +1,3017 @@
+SLC4A1               20 diseases: SPH:26 AD-dRTA:6 CHC:3 SW(a+:2 NFLD+ antigen:2 WARR antigen:1 PN(a:1 VG(a:1 MO(a:1 HG(a:1 FR(a+:1 RB(A:1 WU antigen:1 KREP antigen:1 ELO antigen:1 BP(a:1 TR(A:1 BOW antigen:1 WD(a:1 WR(a:1
+KEL                  14 diseases: KEL3/Kp(a:1 KEL1/K antigen:1 KEL27 antigen:1 KEL12 antigen:1 KEL26 antigen:1 KEL19 antigen:1 KEL25 antigen:1 KEL23 antigen:1 KEL17 antigen:1 KEL22 antigen:1 KEL6/Js(a:1 KEL10/Ul(a:1 KEL24 antigen:1 KEL21/Kp(c:1
+COL2A1               14 diseases: ACG:22 SEDC:11 STL:8 PLSD-T:5 SEMDSTWK:5 ANFH:3 STL1O:2 DRRD:2 OSCDP:1 KD:1 EDMMD:1 SEDSTN:1 LCPD:1 CZECHD:1
+CCR5                 14 diseases: ZWCCR5-:5 MWCCR5-:5 UGCCR5-145A:3 THCCR5-:3 TZCCR5-:2 INCCR5-71A:2 INCCR5-72A:2 KECCR5-3B:1 TZCCR5-181A:1 KECCR5-:1 INCCR5-:1 UGCCR5-145C:1 INCCR5-45C:1 UGCCR5-145B:1
+FGFR3                10 diseases: KERSEB:7 TD:7 BLC:4 ACH:2 TGCT:1 CATSHLS:1 SADDAN:1 MNKS:1 CAN:1 LADDS:1
+PIK3CA               10 diseases: MCAP:15 CRC:9 BC:7 CWS:6 CLAPO:5 MADAC:4 KERSEB:4 CLOVE:3 OC:2 HCC:1
+LMNA                 10 diseases: EDMD:65 CMD1A:28 FPLD:16 HGPS:10 MDCL:9 MADA:3 CMDHH:2 CMDA:1 CMT2B:1 CMT:1
+GNAS                 9 diseases: AHO:10 PHP1A:6 GNASHYP:5 MAS:3 AIMAH:2 PHP1C:2 AHO/PHP1A:1 GNAS hyperfunction:1 POH:1
+FGFR2                9 diseases: CS:38 PS:19 JWS:5 APRS:3 ABS:3 LADDS:3 BBDS:2 BSTVS:2 FSPC:1
+SCN5A                9 diseases: BRGDA:229 LQT:148 ATFB:11 PFHB1A:10 SSS:5 SIDS:4 VF:1 CMD1E:1 ATRST:1
+COL7A1               8 diseases: RDEB:40 DDEB:27 EBP:5 NDNC:2 TBDN:2 PR-DEB:1 EBDSC:1 DDEB/RDEB:1
+MPZ                  8 diseases: CMT1B:55 DSS:16 CMT2I:13 CMT:6 CMT2J:3 CHN:1 CMTDID:1 ROULS:1
+TRPV4                8 diseases: MTD:17 SMDK:10 CMT2C:7 FDAB:3 HMN:3 BCYM:2 PSTD:1 SPSMA:1
+GJA1                 8 diseases: ODDD:46 AVSD:2 HLHS:2 EKVP:2 PPKCA:1 SDTY:1 CMDR:1 HSS:1
+FGFR1                7 diseases: HH:62 HRTFDS:7 OGD:3 ECCL:2 JWS:1 TRIGNO:1 PS:1
+MT-ATP6              7 diseases: LS:4 APAO:1 MIBSN:1 NARP:1 MLASA:1 LHON:1 MC5DM:1
+POLG                 7 diseases: PEOB:33 MTDPS4A:19 PEOA:9 SANDO:9 MTDPS4B:5 SCAE:3 LS:2
+LRP5                 7 diseases: EVR:26 OPPG:23 PCLD:8 OPTA:4 HBM:3 WENHY:3 VBCH:1
+NRAS                 7 diseases: CMNS:3 KNEN:3 NCMS:2 NS:2 JMML:2 NMTC:1 RALD:1
+GJB2                 7 diseases: DFNB1A:22 DFNA3A:9 PPKDFN:5 KID syndrome:4 VOWNKL:2 KPLD:2 HID syndrome:1
+MYH7                 7 diseases: CMH:171 CMD1S:20 MPD:4 LVNC:4 MSMA:3 SPMM:1 MSMB:1
+GDF5                 7 diseases: SYNS:6 BDC:5 DPS:5 SYM1B:3 BDA1C:2 BDA:2 AMDG:1
+TGFBI                7 diseases: CDL:13 CDL3A:4 CDGG:2 EBMD:2 CDTB:1 CDRB:1 CDA:1
+NKX2-5               6 diseases: ASD:47 TOF:6 CHNG:3 VSD:2 HLHS:1 CTHM:1
+CAV3                 6 diseases: RMD:11 LQT:5 SIDS:3 HYPCK:3 MPDT:2 CMH:1
+PAX6                 6 diseases: AN:28 BONH:3 ASGD:3 FVH:2 COAD:1 COLON:1
+BRAF                 6 diseases: CFC:23 CRC:5 NHL:3 NS:2 LNCR:2 LPRD:1
+SCN4A                6 diseases: PMC:20 MYOSCN4A:17 HOKPP:11 NKPP:5 HYPP:4 CMS:3
+WT1                  6 diseases: DDS:24 NPHS:10 WT:9 MEACHS:2 FS:1 RNA edited version:1
+FBN1                 6 diseases: MFS:323 ECTOL:18 GPHYSD:9 ACMICD:9 SSKS:4 MFLS:1
+FLNA                 6 diseases: OPD:16 PVNH:6 FMD:5 MNS:4 CVDX:3 FGS:1
+TP63                 6 diseases: EEC:18 SHFM:4 RHS:3 AEC:2 OFC:1 ADULT syndrome:1
+GATA6                5 diseases: PACHD:6 TOF:2 CTHM:1 ASD:1 AVSD:1
+HOXD13               5 diseases: SPD:5 BDE:2 SDTY:1 BDSDO:1 BDD:1
+FHL1                 5 diseases: RBMX1A:6 RBMX1B:4 XMPMA:3 SPM:2 EDMD:2
+SCN1A                5 diseases: EIEE:316 GEFS+:44 ICEGTC:32 FHM:5 FEB3A:2
+IKBKG                5 diseases: IP:10 EDAID:8 IMD:2 IPD:1 NEMOID:1
+GYPA                 5 diseases: ENEP/HAG antigen:1 ENAV/MARS antigen:1 ERIK antigen:1 ENEH/Hut antigen:1 ENEH/Vw antigen:1
+SETBP1               5 diseases: SGMFS:5 MDS:4 ACML:4 AML:4 JMML:1
+TBC1D24              5 diseases: DOORS:5 FIME:3 EIEE:3 DFNB:2 DFNA:1
+ARX                  5 diseases: LISX:5 EIEE:3 MRXARX:2 ACCAG:1 PRTS:1
+COL4A1               5 diseases: BSVD:14 SCHZC:9 HANAC:6 ICH:2 RATOR:1
+KCNJ11               5 diseases: PNDM:25 HHF:17 TNDM:4 NIDDM:2 MODY:1
+PTEN                 5 diseases: CWS:32 MCEPHAS:5 GLM:1 HNSCC:1 LDD:1
+NLRP3                5 diseases: CINCA:20 FCAS:8 MWS:8 DFNA:1 KEFH:1
+KRAS                 5 diseases: NS:8 GASC:6 CFC:5 JMML:3 AML:1
+RET                  5 diseases: HSCR:70 MEN2A:32 MTC:31 CCHS:4 MEN2B:3
+NR5A1                5 diseases: SRXY:11 SPGF:6 POF:3 SRXX:2 AINR:2
+CLCN2                5 diseases: HALD:5 LKPAT:1 EIG:1 JAE:1 EJM:1
+TMEM67               5 diseases: COACHS:24 MKS:14 JBTS:8 NPHP:4 RHYNS:1
+INSR                 5 diseases: LEPRCH:25 IRAN type A:23 RMS:14 NIDDM:3 HHF:1
+SCN9A                5 diseases: PERYTHM:11 PEPD:10 GEFS+:2 FEB3B:2 CIP:1
+GATA4                5 diseases: ASD:8 VSD:7 TOF:5 AVSD:2 TACHD:1
+MITF                 4 diseases: WS2A:5 COMMAD:2 CMM:1 TADS:1
+PTPN22               4 diseases: IDDM:1 VTLG:1 SLE:1 RA:1
+BRCA1                4 diseases: BC:105 BROVCA:11 FANCS:2 OC:1
+ALDH18A1             4 diseases: SPG9A:5 ARCL3A:5 SPG9B:3 ADCL:3
+APOE                 4 diseases: HLPP:12 FH:3 LPG:2 AD:1
+MYH6                 4 diseases: CMD1EE:4 CMH:2 SSS:1 ASD:1
+WDR19                4 diseases: SLSN:8 CED:1 NPHP:1 SRTD:1
+PNPLA6               4 diseases: BNHS:9 OMCS:4 SPG:4 LNMS:1
+OPA1                 4 diseases: OPA:50 DOA+:8 BEHRS:3 MTDPS:1
+PDGFRB               4 diseases: IBGC:3 IMF:2 KOGS:1 PENTT:1
+KIT                  4 diseases: PBT:10 MASTC:8 GIST:3 MASTSYS:2
+CTNNB1               4 diseases: PTR:7 MDB:2 EVR:1 NEDSDV:1
+HRAS                 4 diseases: CSTLO:13 CMEMS:4 SFM:1 NMTC:1
+MT-ND6               4 diseases: LHON:5 LDYT:2 LS:1 MELAS:1
+FKTN                 4 diseases: MDDGA:3 MDDGC:3 MDDGB:2 CMD1X:2
+SLC2A1               4 diseases: GLUT1DS:39 EIG:11 DYT:2 SDCHCN:1
+KCNQ1                4 diseases: LQT:225 JLNS:7 SQT:1 ATFB:1
+WFS1                 4 diseases: WFS:22 DFNA:13 WFSL:5 CTRCT:1
+FIG4                 4 diseases: CMT4J:3 YVS:2 ALS:1 BTOP:1
+INS                  4 diseases: PNDM:16 HPRI:3 MODY:3 IDDM:1
+COL11A2              4 diseases: DFNB:3 DFNA:2 OSMEDA:1 OSMEDB:1
+ERCC4                4 diseases: XP-F:9 FANCQ:3 XPF/CS:2 XFEPS:1
+PRPH2                4 diseases: RP:25 MDPT:9 VMD:7 CACD:3
+ERBB2                4 diseases: LNCR:3 GLM:1 OC:1 GASC:1
+MBTPS2               4 diseases: IFAPS:5 OI:2 KFSDX:1 OLMSX:1
+DNM2                 4 diseases: CNM:17 CMT2M:3 CMTDIB:1 LCCS:1
+TERT                 4 diseases: PFBM:14 AA:8 DKCB:5 DKCA:3
+CASR                 4 diseases: HHC:62 HYPOC:34 NSHPT:7 EIG:5
+TYR                  4 diseases: OCA1A:102 OCA1B:10 OCA:4 OCA-I:1
+GABRG2               4 diseases: EIEE:6 GEFS+:2 FEB:2 ECA:1
+TPM2                 4 diseases: NEM:8 DA1A:5 DA2B:2 CAPM:2
+ACTA1                4 diseases: NEM:75 CD:3 MPCETM:2 SHPM:1
+PMP22                4 diseases: DSS:20 CMT1A:11 CMT1E:3 HNPP:3
+ABCC8                4 diseases: HHF:72 PNDM:20 TNDM:5 LIH:1
+SDHA                 4 diseases: LS:3 CMD1GG:1 MT-C2D:1 PGL:1
+LBR                  4 diseases: PHA:2 GRBGD:2 PHASK:2 REYNS:1
+SETD2                4 diseases: ALL:22 AML:5 RCC:2 LLS:1
+GDF6                 4 diseases: MCOP:5 KFS:4 LCA:4 SYNS:2
+TNNI3                4 diseases: CMH:11 RCM:6 CMD1FF:3 CMD2A:1
+PEX1                 4 diseases: PBD-CG:5 PBD1B:4 HMLR:3 PBD1A:2
+GDAP1                4 diseases: CMT2K:11 CMT4A:2 CMT2RV:1 CMTRIA:1
+BEST1                4 diseases: VMD:93 ARB:10 RP:4 ADVIRC:3
+PRPS1                4 diseases: PRPS1 superactivity:6 DFNX:4 CMTX:2 ARTS:2
+POMGNT1              4 diseases: MDDGA:13 RP:4 MDDGB:3 MDDGC:1
+TWNK                 4 diseases: PEOA:29 MTDPS:5 PRLTS:4 PEO:1
+PRNP                 4 diseases: CJD:9 GSD:8 FFI:1 SENF:1
+DSPP                 4 diseases: DGI:5 DFNA39/DGI:2 DTDP:1 DGI2 AND DGI:1
+KRT14                4 diseases: WC-EBS:14 DM-EBS:14 EBSB:1 WC-EBS at heterozygosity:1
+CACNA1A              4 diseases: EA:22 FHM:15 SCA:5 EIEE:4
+CHRND                4 diseases: CMS3B:4 CMS3A:2 CMS3C:1 LMPS:1
+ABCA4                4 diseases: STGD:183 FFM:21 CORD:15 ARMD:14
+CDH23                4 diseases: DFNB:31 USH1D:25 PITA:4 USH1DF:1
+TTN                  4 diseases: CMD1G:6 TMD:2 MFM:1 CMH:1
+NOG                  4 diseases: SYM1A:9 BDB:6 TCC:3 SYNS:2
+ENPP1                4 diseases: GACI:29 COLED:6 ARHR:5 OPLL:2
+IDUA                 4 diseases: MPS1H/S:25 MPS1H:19 MPS1S:14 IDUA pseudodeficiency:1
+KRT5                 4 diseases: WC-EBS:25 DM-EBS:13 EBSB:2 MP-EBS:1
+ERCC2                4 diseases: XP-D:19 TTD:15 COFS:2 XP-D/CS:1
+KCNJ2                3 diseases: LQT:10 SQT:1 ATFB:1
+MPL                  3 diseases: CAMT:9 THCYT:3 MMM:2
+GP1BA                3 diseases: BSS:5 VWDP:3 BSSA:1
+MET                  3 diseases: RCCP:15 HCC:3 DFNB:1
+SPECC1L              3 diseases: GBBB:2 OBLFC:1 TBHS:1
+UGT1A1               3 diseases: CN:47 GILBS:6 HBLRTFN:2
+KRT1                 3 diseases: EHK:17 AEI:2 NEPPK:1
+COL1A1               3 diseases: OI:148 CAFFD:1 EDSCL:1
+DGUOK                3 diseases: MTDPS:3 PEOB:2 NCPH:1
+KCNA1                3 diseases: EA:13 MK:4 RNA edited version:1
+ANO5                 3 diseases: LGMDR:28 GDD:4 MMD:2
+MSH6                 3 diseases: CRC:32 HNPCC:25 ENDMC:4
+TPM3                 3 diseases: CD:11 CAPM:6 NEM:4
+HESX1                3 diseases: CPHD:3 SOD:2 GHDPA:2
+FKRP                 3 diseases: MDDGC:19 MDDGB:14 MDDGA:2
+GCK                  3 diseases: MODY:91 PNDM:15 HHF:7
+POMT1                3 diseases: MDDGA:6 MDDGB:5 MDDGC:1
+MFN2                 3 diseases: CMT2A2A:15 CMT2A2B:7 HMSN6A:6
+RYR1                 3 diseases: MHS:111 CCD:58 MMDO:6
+ACTC1                3 diseases: CMH:8 CMD1R:2 ASD:1
+DYNC1H1              3 diseases: MRD:9 SMALED:8 CMT2O:4
+MED12                3 diseases: OHDOX:3 LUJFRYS:1 OKS:1
+KRT17                3 diseases: PC:15 SM:3 SM AND PC:1
+TTC21B               3 diseases: NPHP:5 JBTS:4 SRTD:3
+DCX                  3 diseases: SBHX:35 LISX:15 SBH:1
+OPN1MW               3 diseases: CBD:3 COD:1 BCM:1
+RTEL1                3 diseases: DKCB:10 PFBM:3 DKCA:1
+PLA2G6               3 diseases: NBIA2A:3 PARK:2 NBIA2B:2
+ZFPM2                3 diseases: SRXY:3 TOF:3 CTHM:2
+PIEZO2               3 diseases: DA:6 MWKS:1 DAIPT:1
+DCTN1                3 diseases: PERRYS:7 ALS:4 HMN7B:1
+CACNA1H              3 diseases: ECA:12 HALD:4 EIG:2
+SOX10                3 diseases: PCWH:8 WS4C:4 WS2E:3
+JAK2                 3 diseases: THCYT:2 AML:2 PV:1
+PEX26                3 diseases: PBD7B:2 PBD7A:1 PBD-CG:1
+NF1                  3 diseases: NF:82 NFNS:5 FSNF:1
+NEFL                 3 diseases: CMT2E:8 CMT1F:5 CMTDIG:2
+PCDH15               3 diseases: USH1F:2 DFNB:2 USH1DF:1
+BCS1L                3 diseases: MC3DN:11 BJS:7 GRACILE:3
+GCH1                 3 diseases: DRD:33 HPABH4B:5 HGCH-:1
+SCNN1B               3 diseases: BESC:7 LIDLS:5 PHA1B:1
+KRT74                3 diseases: ADWH:1 HYPT:1 ECTD:1
+ZIC3                 3 diseases: HTX:6 CHTD:3 VACTERLX:2
+FOXE3                3 diseases: ASGD:3 AAT:2 CTRCT:2
+VCP                  3 diseases: IBMPFD:12 ALS:4 CMT2Y:2
+NKX2-1               3 diseases: BHC:5 CAHTP:2 NMTC:1
+STAT1                3 diseases: IMD31C:18 IMD31A:5 IMD31B:3
+GABRA1               3 diseases: EIEE:4 EIG:1 EJM:1
+ABCC9                3 diseases: HTOCD:13 ATFB:1 CMD1O:1
+FLCN                 3 diseases: BHD:2 PSP:2 RCC:1
+GDNF                 3 diseases: HSCR:4 PCC:1 CCHS:1
+CTNS                 3 diseases: CTNS:26 CTNSJAN:5 CTNSANN:1
+RPGRIP1L             3 diseases: JBTS:6 MKS:1 COACHS:1
+SLC25A4              3 diseases: PEOA:5 MTDPS12B:2 MTDPS12A:2
+SCN1B                3 diseases: GEFS+:2 EIEE:2 ATFB:2
+MVK                  3 diseases: HIDS:21 POROK:9 MEVA:8
+SLC26A2              3 diseases: EDM:4 AO:3 ACG1B:2
+MT-ND5               3 diseases: MELAS:4 LHON:3 LS:2
+CHCHD10              3 diseases: IMMD:2 DALS:2 SMAJ:1
+NUP107               3 diseases: NPHS:3 GAMOS:2 ODG:1
+MT-CO1               3 diseases: CRC:2 MT-C4D:2 LHON:1
+TWIST2               3 diseases: BBRSAY:3 FFDD:1 AMS:1
+GJC2                 3 diseases: HLD:3 LMPHM:2 SPG:1
+GLS                  3 diseases: GDPAG:1 CASGID:1 EIEE:1
+SCO2                 3 diseases: MYP:5 CEMCOX:5 LS:2
+NLRP1                3 diseases: MSPC:3 AIADK:2 VAMAS:1
+UMOD                 3 diseases: HNFJ:33 MCKD:5 GCKDHI:1
+GATA2                3 diseases: IMD:3 LMPM:2 MDS:1
+DMD                  3 diseases: DMD:6 BMD:5 CMD3B:3
+ABCB6                3 diseases: DUH:7 PSHK:3 MCOPCB:2
+HADHA                3 diseases: LCHAD deficiency:2 MTPD:2 AFLP:1
+GDF1                 3 diseases: TOF:3 CHTD:2 CTHM:1
+NOD2                 3 diseases: IBD:40 BLAUS:17 YAOS:2
+MLH1                 3 diseases: HNPCC:112 CRC:14 MMRCS:1
+GLB1                 3 diseases: GM1G:89 MPS4B:15 GM1-gangliosidosis:2
+TSHR                 3 diseases: HTNA:21 CHNG:17 HTFG:1
+TWIST1               3 diseases: SCS:5 CRS:2 SWCOS:2
+CRB1                 3 diseases: RP:40 LCA:39 PPCRA:1
+ALPL                 3 diseases: HOPS:99 HOPSI:7 HOPSC:6
+AIFM1                3 diseases: DFNX:11 COWCK:1 COXPD:1
+CHRNE                3 diseases: CMS4A:5 CMS4B:5 CMS4C:3
+LZTR1                3 diseases: SWNTS:23 NS:19 GLM:5
+ATP1A3               3 diseases: AHC:23 DYT:8 CAPOS:1
+KIF7                 3 diseases: ACLS:5 BBS:3 AGBK:1
+MMP13                3 diseases: MANDP:3 MDST:1 SEMD-MO:1
+DSP                  3 diseases: ARVD:4 SFWHS:2 DCWHKTA:2
+PAX4                 3 diseases: KPD:2 NIDDM:1 MODY:1
+MECP2                3 diseases: RTT:40 MRXS:8 ENS-MECP:1
+CD55                 3 diseases: GUTI(-:1 CHAPLE:1 WES(a:1
+PTPN11               3 diseases: NS:40 JMML:11 LPRD:10
+DICER1               3 diseases: GLOW:2 PPB:1 MNG:1
+MYO6                 3 diseases: DFNA:1 DFNHCM:1 DFNB:1
+CASP10               3 diseases: NHL:1 ALPS2A:1 GASC:1
+STIM1                3 diseases: TAM:10 STRMK:2 IMD:1
+CFH                  3 diseases: AHUS:32 CFHD:10 ARMD:1
+TSC2                 3 diseases: TSC:57 FCORD:1 LAM:1
+FLNC                 3 diseases: CMH:6 MPD:2 RCM:2
+ATP7A                3 diseases: MNKD:33 DSMAX:2 OHS:2
+JAG1                 3 diseases: ALGS:51 TOF:2 DCHE:1
+IRF6                 3 diseases: VWS:35 PPS:10 OFC:1
+SERPINA1             3 diseases: QO-Newport:1 QO-Ludwigshafen:1 QO-Lisbon:1
+MAPT                 3 diseases: PIDB:4 PSNP:2 CBD:1
+C8orf37              3 diseases: CORD:1 RP:1 BBS:1
+SIX3                 3 diseases: HPE:31 SCHZC AND HPE:1 SCHZC:1
+SLC34A1              3 diseases: HCINF:7 NPHLOP:2 FRTS:1
+EYA1                 3 diseases: BOR:12 ASA:2 BOS:1
+PITX2                3 diseases: RIEG:10 ASGD:2 RDC:1
+MYBPC3               3 diseases: CMH:70 CMD1MM:3 LVNC:2
+RAF1                 3 diseases: NS:14 CMD1NN:6 LPRD:2
+EGR2                 3 diseases: CMT1D:6 CHN:2 DSS:1
+MYH3                 3 diseases: DA2B:9 DA2A:6 CPSKF1A:5
+MT-ND4               3 diseases: LDYT:1 MELAS:1 LHON:1
+GUCY2D               3 diseases: LCA:22 CORD:8 CACD:1
+TPM1                 3 diseases: CMH:4 CMD1Y:2 LVNC:2
+TBX1                 3 diseases: VCFS:2 DGS:1 CTHM:1
+FLNB                 3 diseases: LRS:12 AO:5 BOOMD:2
+WAS                  3 diseases: WAS:19 THC:10 XLN:1
+GBA                  3 diseases: GD:168 GDPL:3 GD3C:1
+SMAD4                3 diseases: JPS:3 MYHRS:3 JP/HHT:2
+GLI3                 3 diseases: GCPS:5 PAPA:1 PAPB:1
+PTCH1                3 diseases: BCNS:14 HPE:7 BCC:1
+PRKAG2               3 diseases: CMH:5 WPWS:2 GSDH:1
+PEX6                 3 diseases: HMLR:8 PBD-CG:5 PBD4A:2
+MT-ND1               3 diseases: LHON:4 AD-MT:1 MELAS:1
+L1CAM                3 diseases: HSAS:34 MASA:19 ACCPX:1
+HNF1A                3 diseases: MODY:37 IDDM:5 NIDDM:1
+CC2D2A               3 diseases: JBTS:22 MKS:2 COACHS:2
+CRX                  3 diseases: CORD:3 LCA:3 RP:2
+TTR                  3 diseases: AMYL-TTR:73 CTS:1 DTTRH:1
+GMPPB                3 diseases: MDDGC:15 MDDGB:3 MDDGA:1
+CHRNA1               3 diseases: CMS1A:7 CMS1B:4 LMPS:1
+OTX2                 3 diseases: MCOPS:4 CPHD:2 RDEOP:1
+CFI                  3 diseases: AHUS:10 CFI deficiency:2 ARMD:1
+CLCN5                3 diseases: NPHL:31 LMWPHN:2 XLRHR:1
+FGA                  3 diseases: CAFBN:3 AMYL:2 DYSFIBRIN:2
+WDR35                3 diseases: SRTD:3 CED:2 SRTD7/:1
+WNT10A               3 diseases: STHAG:18 OODD:5 SSPS:2
+HPRT1                3 diseases: LNS:38 GOUT-HPRT:28 GOUT-HPRT AND LNS:1
+ABCB4                3 diseases: PFIC:40 GBD:32 ICP:4
+HNF4A                3 diseases: MODY:3 FRTS:1 NIDDM:1
+TNFRSF11A            3 diseases: OPTB:5 FEO:1 PDB:1
+NPR2                 3 diseases: AMDM:12 SNSK:5 ECDM:3
+PROM1                3 diseases: MCDR:1 CORD:1 STGD:1
+ERCC6                3 diseases: CSB:7 COFS:2 POF:2
+BSCL2                3 diseases: SPG:2 HMN5A:2 CGL:1
+MYO7A                3 diseases: USH1B:47 DFNA:3 DFNB:3
+VSX2                 3 diseases: MCOP:2 MCOPCTI:2 MCOPCB:1
+SCNN1A               3 diseases: PHA1B:2 BESC:2 LIDLS:1
+COL6A3               3 diseases: BTHLM:11 DYT:4 UCMD:3
+SCN8A                3 diseases: EIEE:45 BFIS:2 MYOCL:1
+LRP4                 3 diseases: CLSS:7 CMS:2 SOST:2
+GH1                  3 diseases: IGHD1B:12 KWKS:2 IGHD:1
+POMT2                3 diseases: MDDGA:9 MDDGB:5 MDDGC:2
+BMPR1B               3 diseases: AMDD:2 BDA:2 BDA1D:1
+ACTA2                3 diseases: AAT:14 MSMDYS:1 MYMY:1
+FREM1                3 diseases: MOTA:3 BNAR:2 TRIGNO:2
+PSEN1                3 diseases: AD:125 CMD1U:1 PIDB:1
+PTH1R                3 diseases: MCDJ:4 BOCD:1 ENCHOM:1
+TREX1                3 diseases: AGS:9 SLE:9 CHBL:1
+PRRT2                3 diseases: EKD:5 ICCA:1 BFIS:1
+SLC4A11              3 diseases: CHED:25 FECD:13 CDPD:4
+ATP8B1               3 diseases: PFIC:17 BRIC:11 ICP:3
+VHL                  3 diseases: VHLD:95 ECYT:7 RCC:1
+FBLN5                3 diseases: ARMD:9 HNARMD:4 ARCL1A:3
+GDF3                 3 diseases: MCOPCB:2 MCOP:2 KFS:1
+CTSC                 3 diseases: PLS:26 AP:2 HMS:1
+TMEM216              2 diseases: JBTS:4 MKS:3
+CNTNAP1              2 diseases: CHN:5 LCCS:1
+EDN1                 2 diseases: ARCND:2 QME:1
+HSPB1                2 diseases: HMN2B:17 CMT2F:6
+ABCC6                2 diseases: PXE:81 GACI:6
+SLC33A1              2 diseases: CCHLND:1 SPG:1
+FAT4                 2 diseases: HKLLS:4 VMLDS:3
+PARN                 2 diseases: PFBM:1 DKCB:1
+PNPT1                2 diseases: DFNB:1 COXPD:1
+TOP3A                2 diseases: PEOB:1 MGRISCE:1
+COX15                2 diseases: LS:2 CEMCOX:1
+GPR143               2 diseases: OA:33 NYS:1
+EVC                  2 diseases: EVC:3 WAD:1
+HOXA13               2 diseases: HFG:5 GUTTS:1
+ITM2B                2 diseases: CAA-ITM2B:2 RDGCA:1
+LMNB2                2 diseases: APLD:2 EPM:1
+VKORC1               2 diseases: CMRES:18 VKCFD:1
+ELANE                2 diseases: SCN:76 CH:19
+TEK                  2 diseases: VMCM:8 GLC3E:3
+MAP3K20              2 diseases: SFMMP:1 CNM:1
+PPP3CA               2 diseases: IECEE:6 ACCIID:2
+GHR                  2 diseases: LARS:17 GHIP:2
+TBXT                 2 diseases: SAVA:1 NTD:1
+DYSF                 2 diseases: MMD:34 LGMDR:29
+FOXE1                2 diseases: BLS:3 NMTC:1
+GLE1                 2 diseases: LCCS:2 CAAHD:2
+RIPK4                2 diseases: BPS:3 CHANDS:2
+MFSD8                2 diseases: CLN:15 CCMD:1
+NR2E3                2 diseases: ESCS:15 RP:1
+C3                   2 diseases: AHUS:10 ARMD:1
+GJB1                 2 diseases: CMTX:193 DSS:1
+HSPD1                2 diseases: SPG:1 HLD:1
+PRDM16               2 diseases: CMD1LL:3 LVNC:1
+PDE6C                2 diseases: ACHM:7 COD:1
+TUBB                 2 diseases: CDCBM:3 CSCSC:2
+GNAT1                2 diseases: CSNBAD:2 CSNB1G:1
+IFT140               2 diseases: RP:15 SRTD:11
+TNXB                 2 diseases: EDSCLL:3 VUR:2
+FUS                  2 diseases: ALS:19 ETM:2
+THRB                 2 diseases: GTHR:31 PRTH:2
+GUCY2C               2 diseases: MECIL:1 DIAR:1
+DNMT3B               2 diseases: ICF:16 FSHD:2
+ELAC2                2 diseases: HPC:7 COXPD:3
+CEP120               2 diseases: JBTS:4 SRTD:1
+RAG1                 2 diseases: OS:24 CHIDG:5
+GNA11                2 diseases: HYPOC:4 HHC:1
+OFD1                 2 diseases: OFD:6 JBTS:1
+CST3                 2 diseases: AMYL:1 ARMD:1
+CRPPA                2 diseases: MDDGA:8 MDDGC:4
+OCRL                 2 diseases: OCRL:39 DD:5
+MUTYH                2 diseases: FAP:32 GASC:2
+GLA                  2 diseases: FD:212 RNA edited version:1
+KLHL7                2 diseases: CISS:3 RP:3
+ASAH1                2 diseases: FRBRL:15 SMAPME:3
+KCNJ13               2 diseases: LCA:2 SVD:1
+KISS1R               2 diseases: HH:7 CPPB:1
+MT-ND2               2 diseases: LHON:2 AD-MT:1
+SCN11A               2 diseases: FEPS:7 HSAN:2
+GFI1                 2 diseases: SCN:1 NI-CINA:1
+GATA1                2 diseases: XDAT:4 XLTT:1
+FN1                  2 diseases: SMDCF:5 GFND:3
+CSRP3                2 diseases: CMH:3 CMD1M:2
+CHRNA2               2 diseases: ENFL:1 BFIS:1
+ACO2                 2 diseases: ICRD:3 OPA:2
+ATP1A1               2 diseases: CMT2DD:7 HOMGSMR:3
+GNAO1                2 diseases: NEDIM:10 EIEE:5
+RPL10                2 diseases: MRXS:3 AUTSX:2
+SCN3A                2 diseases: FFEVF:5 EIEE:5
+CARD14               2 diseases: PSORS:14 PRP:4
+RPE65                2 diseases: LCA:26 RP:18
+MTHFD1               2 diseases: CIMAH:4 NTDFS:2
+COG4                 2 diseases: CDG2J:1 SWILS:1
+EDAR                 2 diseases: ECTD10B:18 ECTD10A:1
+HARS                 2 diseases: CMT2W:7 USH3B:1
+KCND3                2 diseases: SCA:7 BRGDA:4
+CREBBP               2 diseases: MKHK:17 RSTS:17
+IFT43                2 diseases: RP:1 SRTD:1
+SHH                  2 diseases: HPE:84 SMMCI:2
+SCN4B                2 diseases: ATFB:2 LQT:1
+MED25                2 diseases: CMT2B:1 BVSYS:1
+TNNT2                2 diseases: CMH:18 CMD1D:3
+PHGDH                2 diseases: PHGDHD:6 NLS:2
+SDHD                 2 diseases: PGL:6 MT-C2D:2
+USH2A                2 diseases: USH2A:104 RP:33
+B2M                  2 diseases: IMD:1 AMYL:1
+ATP6V1A              2 diseases: IECEE:4 ARCL2D:2
+FSHR                 2 diseases: ODG:8 OHSS:8
+BMP15                2 diseases: POF:13 ODG:1
+BAG3                 2 diseases: CMD1HH:6 MFM:1
+SMCHD1               2 diseases: FSHD:24 BAMS:23
+SOST                 2 diseases: CDD:2 SOST:1
+ERCC8                2 diseases: CSA:6 UVSS:1
+CLN6                 2 diseases: CLN:18 CLN4A:7
+GRM1                 2 diseases: SCA:2 SCAR:1
+RAPSN                2 diseases: CMS:6 FADS:2
+SNCA                 2 diseases: PARK:4 DLB:1
+OTOF                 2 diseases: AUNB:8 DFNB:6
+POR                  2 diseases: DISPORD:5 ABS:5
+ACAN                 2 diseases: SSOAOD:1 SEMDAG:1
+TGFB1                2 diseases: CAEND:7 IBDIMDE:3
+MME                  2 diseases: CMT2T:5 SCA:1
+SHANK3               2 diseases: PHMDS:2 SCZD:1
+PAX2                 2 diseases: PAPRS:20 FSGS:6
+PSEN2                2 diseases: AD:11 CMD1V:1
+NLGN3                2 diseases: ASPGX:1 AUTSX:1
+DAG1                 2 diseases: MDDGC:3 MDDGA:1
+WWOX                 2 diseases: SCAR:2 EIEE:1
+ABCA12               2 diseases: ARCI4A:12 ARCI4B:2
+WNT10B               2 diseases: SHFM:1 STHAG:1
+PLOD2                2 diseases: BRKS:3 AR-OI:1
+BGN                  2 diseases: MRLS:2 SEMDX:2
+FARS2                2 diseases: COXPD:3 SPG:1
+NPHP3                2 diseases: NPHP:7 RHPD:1
+TSEN54               2 diseases: PCH2A:2 PCH:2
+B9D2                 2 diseases: JBTS:3 MKS:1
+TK2                  2 diseases: MTDPS:9 PEOB:2
+POGLUT1              2 diseases: DDD:2 LGMDR:1
+MKKS                 2 diseases: BBS:22 MKKS:3
+RHO                  2 diseases: RP:66 CSNBAD:3
+EBP                  2 diseases: CDPX:5 MEND:4
+ATL1                 2 diseases: SPG:17 HSN1D:2
+POT1                 2 diseases: CMM:8 GLM:1
+EEF1A2               2 diseases: MRD:2 EIEE:1
+KCNH1                2 diseases: ZLS:6 TMBTS:4
+CDH3                 2 diseases: HJMD:1 EEMS:1
+FH                   2 diseases: HLRCC:9 FMRD:4
+NR3C2                2 diseases: PHA1A:13 EOHSEP:1
+FAM111A              2 diseases: GCLEB:3 KCS:2
+CASQ1                2 diseases: TAM:3 VMCQA:1
+CACNA1C              2 diseases: TS:18 BRGDA:2
+IHH                  2 diseases: BDA:4 ACFD:2
+IGHMBP2              2 diseases: HMN:29 CMT2S:3
+BHLHA9               2 diseases: MSSD:3 CCSPD:1
+WNT1                 2 diseases: OI:6 OSTEOP:2
+POLR3A               2 diseases: HLD:16 WDRTS:5
+CPLANE1              2 diseases: OFD:7 JBTS:1
+ADA2                 2 diseases: VAIHS:8 SNDNS:2
+SASH1                2 diseases: DUH:8 CAPOK:1
+BRCA2                2 diseases: BC:81 FANCD:3
+IFT172               2 diseases: SRTD:5 RP:3
+NTRK2                2 diseases: OBHD:2 EIEE:1
+SH3TC2               2 diseases: CMT4C:3 MNMN:1
+CEP290               2 diseases: JBTS:3 SLSN:1
+CHD7                 2 diseases: CHARGES:86 HH:21
+TSC1                 2 diseases: TSC:32 FCORD:2
+TULP1                2 diseases: RP:11 LCA:3
+ANKH                 2 diseases: CMDD:4 CCAL:3
+SAMHD1               2 diseases: AGS:12 CHBL:1
+ATP13A2              2 diseases: KRS:8 SPG:1
+NAGLU                2 diseases: MPS3B:68 CMT2V:1
+AKT2                 2 diseases: HIHGHH:1 NIDDM:1
+NRL                  2 diseases: RP:10 RDCP:2
+RAX2                 2 diseases: CORD:2 ARMD:1
+GBE1                 2 diseases: GSD:7 APBN:2
+CDK13                2 diseases: CHDFIDD:6 RNA edited version:1
+CLCN1                2 diseases: MCAR:48 MCAD:18
+UFSP2                2 diseases: SEMDDR:1 BFHD:1
+ZNF408               2 diseases: EVR:2 RP:1
+TMEM43               2 diseases: EDMD:2 ARVD:1
+GNE                  2 diseases: NM:33 SIALURIA:2
+TBL1XR1              2 diseases: MRD:3 PRPTS:1
+KRT16                2 diseases: PC:14 FNEPPK:2
+MYOC                 2 diseases: GLC1A:64 GLC3A:1
+COMP                 2 diseases: PSACH:32 EDM:31
+PLEKHG5              2 diseases: CMTRIC:2 DSMA:1
+ZNF423               2 diseases: NPHP:1 JBTS:1
+CYBB                 2 diseases: CGD:63 IMD:2
+SPTA1                2 diseases: EL:20 HPP:2
+PDE6B                2 diseases: RP:12 CSNBAD:1
+GGCX                 2 diseases: PXEL-MCFD:5 VKCFD:3
+HTRA1                2 diseases: CADASIL:10 CARASIL:2
+B3GALT6              2 diseases: SEMDJL:7 EDSSPD:2
+ADAR                 2 diseases: AGS:8 DSH:4
+MPV17                2 diseases: MTDPS:19 CMT2EE:2
+PDE10A               2 diseases: IOLOD:2 ADSD:2
+CANT1                2 diseases: DBQD:11 EDM:2
+POLE                 2 diseases: CRCS:3 IMAGEI:1
+SGCD                 2 diseases: CMD1L:1 LGMDR:1
+GABRB3               2 diseases: EIEE:11 ECA:1
+KIF1A                2 diseases: MRD:15 SPG:1
+TNFRSF13B            2 diseases: CVID:3 IGAD:1
+KANK2                2 diseases: NPHS:2 PPKWH:1
+GLI2                 2 diseases: CJS:5 HPE:3
+BICD2                2 diseases: SMALED2A:7 SMALED2B:3
+STK11                2 diseases: PJS:10 TGCT:1
+LAMB2                2 diseases: PIERSS:5 NPHS:4
+HNF1B                2 diseases: RCAD:23 NIDDM:1
+PPA2                 2 diseases: SCFI:7 SCFAI:2
+MAP3K7               2 diseases: FMD:4 CSCF:2
+LPL                  2 diseases: HLPP:68 FCHL:2
+F5                   2 diseases: THPH:5 FA5D:2
+SLC2A2               2 diseases: FBS:3 NIDDM:1
+MAF                  2 diseases: AYGRP:7 CTRCT:3
+PDGFRA               2 diseases: GIST:1 GIST sample:1
+IMPDH1               2 diseases: RP:5 LCA:2
+ABCB11               2 diseases: PFIC:16 BRIC:8
+TRPV3                2 diseases: OLMS:3 FNEPPK:1
+IFIH1                2 diseases: AGS:8 SGMRT:1
+SEMA4A               2 diseases: CORD:2 RP:2
+SELENON              2 diseases: RSMD:10 CD:1
+SHOX                 2 diseases: LWD:3 LMD:1
+REN                  2 diseases: RTD:2 HNFJ:1
+NEK9                 2 diseases: NC:2 APUG:1
+GABBR2               2 diseases: EIEE:3 NDPLHS:2
+DCHS1                2 diseases: MVP:2 VMLDS:1
+LCAT                 2 diseases: LCATD:23 FED:12
+DNM1L                2 diseases: EMPF:6 OPA:2
+COL11A1              2 diseases: STL:6 FBCG:2
+GYG1                 2 diseases: PGBM:2 GSD:1
+COL8A2               2 diseases: FECD:6 PPCD:1
+TPH2                 2 diseases: RNA edited version:2 ADHD:1
+MKS1                 2 diseases: MKS:5 BBS:1
+PLP1                 2 diseases: HLD:62 SPG:10
+PEX12                2 diseases: PBD3B:1 PBD-CG:1
+CNNM2                2 diseases: HOMGSMR:4 HOMG:1
+APC                  2 diseases: FAP:13 MDB:3
+NARS2                2 diseases: COXPD:2 DFNB:1
+ACTG1                2 diseases: DFNA:11 BRWS:6
+CHRNG                2 diseases: EVMPS:2 LMPS:2
+CALM1                2 diseases: LQT:4 CPVT:2
+POMGNT2              2 diseases: MDDGC:2 MDDGA:1
+HEXA                 2 diseases: GM2G:50 HEXA pseudodeficiency:2
+CYFIP2               2 diseases: EIEE:3 RNA edited version:1
+FLT4                 2 diseases: LMPHM:11 HCI:2
+NDP                  2 diseases: ND:47 EVR:15
+EPO                  2 diseases: ECYT:4 DBAL:1
+COL1A2               2 diseases: OI:85 OI3 AND OI:1
+HNRNPA1              2 diseases: ALS:4 IBMPFD:1
+KCNJ8                2 diseases: HTOCD:2 SIDS:1
+SLC16A1              2 diseases: SDLT:2 MCT1D:1
+HEPACAM              2 diseases: MLC2A:6 MLC2B:5
+GJA5                 2 diseases: ATFB:3 ATRST:2
+SLC17A5              2 diseases: ISSD:3 SD:2
+EPHB4                2 diseases: CMAVM:26 LMPHM:2
+CYP1B1               2 diseases: GLC3A:43 GLC1A:1
+SMAD6                2 diseases: CRS:6 AOVD:2
+CACNA1G              2 diseases: SCA42ND:2 SCA:1
+XYLT1                2 diseases: DBQD:2 PXE:1
+ARL6                 2 diseases: BBS:5 RP:1
+SCN3B                2 diseases: ATFB:3 BRGDA7 AND ATFB:1
+IL2RG                2 diseases: XSCID:32 XCID:2
+KARS1                2 diseases: CMTRIB:2 DFNB:2
+ZAP70                2 diseases: IMD:7 ADMIO:2
+SPINK1               2 diseases: PCTT:3 TCP:1
+NBAS                 2 diseases: ILFS:6 SOPH:1
+ATRX                 2 diseases: ATRX:29 MRXHF:5
+TRAF3IP2             2 diseases: CANDF:1 PSORS:1
+LAMA2                2 diseases: MDC1A:8 LGMDR:5
+RLBP1                2 diseases: RPA:2 BRD:1
+POLR1C               2 diseases: HLD:11 TCS:2
+PNKP                 2 diseases: MCSZ:3 AOA:1
+SEC23B               2 diseases: CDAN:7 CWS:2
+NLRC4                2 diseases: AIFEC:2 FCAS:1
+KCNE1                2 diseases: LQT:20 JLNS:5
+SDHB                 2 diseases: PCC:15 PGL:5
+CLRN1                2 diseases: USH3A:7 RP:2
+MUSK                 2 diseases: CMS:6 FADS:1
+KCNT1                2 diseases: EIEE:11 ENFL:4
+SLC39A14             2 diseases: HMNDYT:3 HCIN:1
+EXT2                 2 diseases: EXT:7 SSMS:2
+CLN8                 2 diseases: CLN:16 CLN8NE:1
+TBK1                 2 diseases: DALS:11 IIAE:3
+CIB2                 2 diseases: DFNB:5 USH1J:1
+SQSTM1               2 diseases: DALS:24 PDB:7
+RPGRIP1              2 diseases: LCA:4 CORD:2
+CARD11               2 diseases: IMD11B:3 BENTA:2
+UCHL1                2 diseases: SPG:3 PARK:1
+GJB6                 2 diseases: ECTD:3 DFNA3B:1
+FBN2                 2 diseases: CCA:28 EOMD:2
+ITGB4                2 diseases: EB-PA:13 GABEB:1
+PAFAH1B1             2 diseases: LIS:5 SBH:2
+AFG3L2               2 diseases: SCA:14 SPAX:1
+FOXC1                2 diseases: RIEG:25 ASGD:9
+FGG                  2 diseases: CAFBN:4 DYSFIBRIN:4
+CRYAB                2 diseases: MFM:2 CMD1II:2
+COPA                 2 diseases: AILJK:4 RNA edited version:1
+PKLR                 2 diseases: PKRD:102 PKHYP:1
+MYH9                 2 diseases: MATINS:17 DFNA:1
+HSD17B4              2 diseases: DBPD:3 PRLTS:1
+DHDDS                2 diseases: DEDSM:2 RP:1
+KCNH2                2 diseases: LQT:254 SQT:1
+F9                   2 diseases: HEMB:146 THPH:1
+CNGB3                2 diseases: ACHM:14 STGD:1
+GCM2                 2 diseases: HRPT:4 FIH:4
+APOB                 2 diseases: FDB:2 FHBL:2
+CYP11B2              2 diseases: CMO-2 deficiency:5 CMO-1 deficiency:2
+FGB                  2 diseases: CAFBN:6 DYSFIBRIN:1
+MYOT                 2 diseases: MFM:6 SBM:1
+ENAM                 2 diseases: AI1B:1 AI1C:1
+TNNC1                2 diseases: CMH:5 CMD1Z:1
+COL4A3               2 diseases: ATS:16 BFH:2
+NAGA                 2 diseases: KANZD:2 SCHIND:2
+GJB3                 2 diseases: EKVP:5 DFNA2B:2
+LIPH                 2 diseases: HYPT:1 ARWH:1
+MT-CYB               2 diseases: LHON:2 CMIH:1
+DYM                  2 diseases: SMC:2 DMC:1
+DNAH1                2 diseases: SPGF:9 CILD:1
+MSX2                 2 diseases: CRS:2 PFM:2
+FTL                  2 diseases: NBIA:1 HRC:1
+THBD                 2 diseases: AHUS:8 THPH:1
+MT-ATP8              2 diseases: CMHI:1 MC5DM:1
+MTOR                 2 diseases: FCORD:14 SKS:6
+MYPN                 2 diseases: CMD1KK:11 CMH:7
+VAPB                 2 diseases: ALS:2 SMAPAD:1
+SMPD1                2 diseases: NPDB:72 NPDA:48
+COL6A2               2 diseases: UCMD:6 BTHLM:5
+MTFMT                2 diseases: COXPD:2 MC1DN:1
+INF2                 2 diseases: FSGS:24 CMTDIE:11
+CRB2                 2 diseases: FSGS:4 VMCKD:3
+EDN3                 2 diseases: WS4B:2 HSCR:1
+NALCN                2 diseases: CLIFAHDD:8 IHPRF:1
+SOX3                 2 diseases: PHPX:1 MRXGH:1
+DES                  2 diseases: MFM:31 CMD1I:3
+RHAG                 2 diseases: RHN:4 OHST:2
+PRKAR1A              2 diseases: ACRDYS:11 CNC:6
+EDNRB                2 diseases: HSCR:4 WS4A:2
+GRIN2B               2 diseases: MRD:8 EIEE:4
+STAT3                2 diseases: HIES:16 ADMIO:5
+PEX7                 2 diseases: RCDP:2 PBD9B:1
+ORAI1                2 diseases: TAM:4 IMD:1
+NEK1                 2 diseases: SRTD:2 ALS:1
+MATN3                2 diseases: EDM:15 SEMD-MATN:1
+ITPR1                2 diseases: SCA:3 GLSP:3
+KIF5A                2 diseases: SPG:13 ALS:5
+HBD                  2 diseases: NYU:1 MUMC/Corleone:1
+RAD51C               2 diseases: BROVCA:5 FANCO:1
+ADAM10               2 diseases: RAK:2 AD:2
+LIPA                 2 diseases: CESD:3 WOD:1
+SLC26A4              2 diseases: PDS:43 DFNB:34
+TMC1                 2 diseases: DFNA:1 DFNB:1
+MRPS22               2 diseases: ODG:2 COXPD:1
+TGFBR1               2 diseases: LDS:11 MSSE:4
+WDR4                 2 diseases: GAMOS:2 MIGSB:1
+HK1                  2 diseases: HK deficiency:2 RP:1
+PYCR1                2 diseases: ARCL2B:6 ARCL3B:3
+ATP5F1A              2 diseases: MC5DN:1 COXPD:1
+BMP4                 2 diseases: OFC:4 MCOPS:1
+NEUROD1              2 diseases: MODY:2 NIDDM:1
+CLCN7                2 diseases: OPTB:22 OPTA:15
+HPGD                 2 diseases: COA:1 ICNC:1
+DKC1                 2 diseases: DKCX:20 HHS:4
+TUBB3                2 diseases: CFEOM3A:8 CDCBM:4
+CACNA1F              2 diseases: CSNB2A:20 AIED:1
+ERCC3                2 diseases: XP-B:1 TTD:1
+AMACR                2 diseases: CBAS:2 AMACRD:1
+AVPR2                2 diseases: XNDI:82 NSIAD:2
+DCDC2                2 diseases: NSC:1 DFNB:1
+MTUS1                2 diseases: HCC:4 HNSCC cell lines:1
+PIEZO1               2 diseases: DHS:13 LMPHM:4
+SIGMAR1              2 diseases: ALS:1 DSMA:1
+ACTN2                2 diseases: CMH:5 CMD1AA:2
+TFG                  2 diseases: SPG:3 HMSNO:1
+CPT2                 2 diseases: CPT2D:18 CPT2DI:2
+LSS                  2 diseases: HYPT:4 CTRCT:2
+ICK                  2 diseases: EJM:4 ECO:1
+CPA6                 2 diseases: ETL:1 FEB:1
+SLC37A4              2 diseases: GSD1B:30 GSD1C:2
+WDR81                2 diseases: CAMRQ:1 HYC:1
+COL3A1               2 diseases: EDSVASC:101 PMGEDSV:2
+CACNA1D              2 diseases: PASNA:2 SANDD:1
+BBS2                 2 diseases: BBS:17 RP:4
+AARS2                2 diseases: LKENP:3 COXPD:2
+NPHP4                2 diseases: NPHP:14 SLSN:5
+MYH14                2 diseases: DFNA4A:4 PNMHH:1
+UROD                 2 diseases: FPCT:28 HEP:11
+LRP6                 2 diseases: ADCAD:4 STHAG:1
+LHCGR                2 diseases: FMPP:15 LHR:10
+ACTL6B               2 diseases: EIEE:3 IDDSSAD:2
+ITGA2B               2 diseases: GT:32 BDPLT:2
+PSAP                 2 diseases: MLD-SAPB:4 AGD:2
+ATP1A2               2 diseases: FHM:7 AHC:1
+OPTN                 2 diseases: GLC1E:5 ALS:2
+RBP4                 2 diseases: MCOPCB:2 RDCCAS:2
+MYRF                 2 diseases: CUGS:3 MMERV:1
+DNMT1                2 diseases: ADCADN:3 HSN1E:2
+BRIP1                2 diseases: FANCJ:4 BC:2
+PIGA                 2 diseases: PNH:9 MCAHS:5
+COL4A4               2 diseases: BFH:5 ATS:3
+TPP1                 2 diseases: CLN:36 SCAR:1
+BRAT1                2 diseases: NEDCAS:3 RMFSL:1
+HSPA9                2 diseases: SIDBA:3 EVPLS:2
+SURF1                2 diseases: LS:11 CMT4K:1
+LARGE1               2 diseases: MDDGA:3 MDDGB:1
+PSAT1                2 diseases: NLS:2 PSATD:1
+CDH1                 2 diseases: HDGC:3 BCDS:2
+GRIN1                2 diseases: NDHMSD:16 NDHMSR:2
+ITPA                 2 diseases: EIEE:1 ITPAD:1
+EDA                  2 diseases: XHED:71 STHAGX:8
+SCN2A                2 diseases: EIEE:50 BFIS:19
+WNT7A                2 diseases: LPHAS:4 FUHRS:1
+FOXL2                2 diseases: BPES:27 POF:2
+CAMK2A               2 diseases: MRD:10 MRT:1
+KCNQ2                2 diseases: BFNS:23 EIEE:16
+PEX3                 2 diseases: PBD10A:1 PBD10B:1
+PRODH                2 diseases: HYRPRO:9 SCZD:7
+GNPTAB               2 diseases: MLIIIA:21 MLII:15
+HADH                 2 diseases: HADH deficiency:2 HHF:1
+MSX1                 2 diseases: OFC:5 STHAG:2
+RDH12                2 diseases: LCA:8 RP:3
+C19orf12             2 diseases: NBIA:15 SPG:1
+MT-ND3               2 diseases: MC1DM:3 LS:1
+SPTB                 2 diseases: EL:6 SPH:1
+ALX4                 2 diseases: CRS:2 PFM:2
+CACNA1S              2 diseases: HOKPP:5 MHS:1
+NEXN                 2 diseases: CMH:2 CMD1CC:2
+PLEC                 2 diseases: MD-EBS:1 LGMDR:1
+KCNK15               2 diseases: TASK-5B:3 TASK-5A:1
+OPN1LW               2 diseases: BCM:2 CBP:1
+TMEM231              2 diseases: MKS:1 JBTS:1
+RYR2                 2 diseases: CPVT:44 ARVD:4
+TRIM32               2 diseases: LGMDR:2 BBS:1
+SLC36A2              2 diseases: HG:1 IG:1
+SLC25A19             2 diseases: MCPHA:1 THMD:1
+PRLR                 2 diseases: MFAB:1 HPRL:1
+CFAP410              2 diseases: SMDAX:5 RDMS:2
+CFTR                 2 diseases: CF:139 CBAVD:37
+VSX1                 2 diseases: KTCN:8 CAASDS:1
+MSH2                 2 diseases: HNPCC:100 CRC:9
+BUB1B                2 diseases: MVA:6 PCS:1
+ERF                  2 diseases: CRS:2 CHYTS:1
+SLC12A5              2 diseases: EIEE:3 EIG:2
+ARL3                 2 diseases: JBTS:2 RP:1
+CDKN1C               2 diseases: BWS:5 IMAGE:5
+COL17A1              2 diseases: GABEB:4 ERED:1
+ACTB                 2 diseases: BRWS:4 DJO:1
+VCL                  2 diseases: CMH:1 CMD1W:1
+UBA5                 2 diseases: EIEE:6 SCAR:1
+EDARADD              2 diseases: ECTD11A:2 ECTD11B:1
+MYH8                 2 diseases: CACOV:1 DA:1
+TGFBR2               2 diseases: LDS:24 HNPCC:1
+RAD51                2 diseases: FANCR:2 BC:1
+HTRA2                2 diseases: MGCA:2 PARK:1
+SYNJ1                2 diseases: PARK:3 EIEE:1
+ST3GAL3              2 diseases: MRT:2 EIEE:1
+VANGL1               2 diseases: NTD:7 SDAM:1
+KCNE2                2 diseases: LQT:11 ATFB:1
+AKT1                 2 diseases: CWS:2 PROTEUSS:1
+RPGR                 2 diseases: RP:26 RPDSI:1
+RRM2B                2 diseases: MTDPS8A:7 MTDPS8B:2
+KRT10                2 diseases: EHK:14 AEI:2
+PAX3                 2 diseases: WS:28 CDHS:1
+RAD21                2 diseases: CDLS:2 MGS:1
+IRF8                 2 diseases: IMD32B:1 IMD32A:1
+SIX1                 2 diseases: BOS:8 BOR:1
+ITGB3                2 diseases: GT:29 BDPLT:1
+MARS                 2 diseases: ILLD:6 CMT2U:2
+CEP152               2 diseases: SCKL:1 MCPH:1
+COL6A1               2 diseases: BTHLM:10 UCMD:3
+WNT4                 2 diseases: MULLAPL:3 SERKAL:1
+F12                  2 diseases: FA12D:11 HAE:2
+SAMD9                2 diseases: MIRAGE:8 NC:1
+KITLG                2 diseases: FPHH:1 DCUA:1
+SETX                 2 diseases: SCAN:15 ALS:6
+DDR2                 2 diseases: SEMD-SL:5 WRCN:2
+DCC                  2 diseases: MRMV:8 HGPPS:1
+KCNJ5                2 diseases: HALD:5 LQT:1
+LARS2                2 diseases: HLASA:2 PRLTS:2
+CDKN2A               2 diseases: CMM:37 FAMMMPC:1
+RAG2                 2 diseases: OS:2 CHIDG:2
+HGSNAT               2 diseases: MPS3C:24 RP:3
+DPAGT1               2 diseases: CMS:6 CDG1J:1
+NOTCH3               2 diseases: CADASIL:109 IMF:1
+ATP2A2               2 diseases: DD:42 AKV:1
+AR                   2 diseases: AIS:110 PAIS:60
+CASK                 2 diseases: MICPCH:3 FGS:1
+G6PC3                2 diseases: SCN:20 DURSS:1
+COQ2                 2 diseases: MSA:11 COQ10D:7
+SMARCE1              2 diseases: CSS:2 MNGMA:1
+AARS                 2 diseases: EIEE:3 CMT2N:2
+TUBB4A               2 diseases: HLD:1 DYT:1
+APP                  2 diseases: AD:14 CAA-APP:4
+RPS6KA3              2 diseases: CLS:11 MRX:2
+GARS                 2 diseases: CMT2D:11 HMN5A:6
+FGF23                2 diseases: HC:4 ADHR:3
+PAH                  2 diseases: PKU:183 HPA:18
+PMS2                 2 diseases: HNPCC:14 MMRCS:14
+TOP1                 2 diseases: CPT-resistant leukemia:3 CPT-resistant lung cancer:1
+DPM2                 1 diseases: CDG1U:1
+CLMP                 1 diseases: CSBS:1
+ACTN4                1 diseases: FSGS:10
+PLPBP                1 diseases: EPVB6D:3
+MMP2                 1 diseases: MONA:2
+ABCA3                1 diseases: SMDP:4
+PLCE1                1 diseases: NPHS:1
+FEZF1                1 diseases: HH:1
+MLC1                 1 diseases: MLC:15
+INSL3                1 diseases: CRYPTO:3
+EIF2B5               1 diseases: VWM:29
+KCNMA1               1 diseases: PNKD:3
+VPS33A               1 diseases: MPSPS:1
+PINK1                1 diseases: PARK:25
+ERCC5                1 diseases: XP-G:6
+IFT52                1 diseases: SRTD:1
+PSTPIP1              1 diseases: PAPAS:3
+NDUFS6               1 diseases: MC1DN:1
+XDH                  1 diseases: XAN:1
+ERAL1                1 diseases: PRLTS:1
+ECHS1                1 diseases: ECHS1D:16
+PDHA1                1 diseases: PDHAD:22
+TKT                  1 diseases: SDDHD:1
+ABCB7                1 diseases: ASAT:4
+INPP5E               1 diseases: JBTS:16
+CYP11A1              1 diseases: AICSR:7
+PMPCA                1 diseases: SCAR:4
+STOX1                1 diseases: PEE:2
+H3C12                1 diseases: GLM:1
+NCF4                 1 diseases: CGD:1
+SLC25A3              1 diseases: MPCD:1
+CUBN                 1 diseases: RH-MGA:1
+ACP4                 1 diseases: AI1J:5
+SLC10A7              1 diseases: SSASKS:4
+HSD17B10             1 diseases: HSD10MD:12
+NUP155               1 diseases: ATFB:1
+LDB3                 1 diseases: CMD1C:4
+IFT122               1 diseases: CED:8
+CHD8                 1 diseases: AUTS:1
+PAK1                 1 diseases: IDDMSSD:2
+LRRC6                1 diseases: CILD:2
+NTRK1                1 diseases: CIPA:26
+MYMK                 1 diseases: CFZS:5
+CYCS                 1 diseases: THC:1
+TECTA                1 diseases: DFNA:29
+PRKRA                1 diseases: DYT:1
+HMGCS2               1 diseases: HMGCS2D:5
+CNGB1                1 diseases: RP:1
+GNAL                 1 diseases: DYT:2
+EP300                1 diseases: MKHK:1
+B9D1                 1 diseases: JBTS:2
+PRKCG                1 diseases: SCA:5
+GYS1                 1 diseases: NIDDM:1
+DDX11                1 diseases: WBRS:1
+DNAI1                1 diseases: KTGS:1
+REEP6                1 diseases: RP:3
+SLC26A1              1 diseases: CAON:3
+COL4A5               1 diseases: ATS:145
+ZEB1                 1 diseases: FECD:8
+HRG                  1 diseases: THPH:2
+PROP1                1 diseases: CPHD:7
+NDUFS1               1 diseases: MC1DN:2
+HCN1                 1 diseases: EIEE:8
+KCNK3                1 diseases: PPH:6
+NDUFAF4              1 diseases: MC1DN:2
+MSRB3                1 diseases: DFNB:1
+XK                   1 diseases: MLS:3
+PDE1C                1 diseases: DFNA:1
+AK7                  1 diseases: SPGF:1
+ING3                 1 diseases: HNSCC:1
+CLCNKA               1 diseases: BARTS4B:1
+TTC37                1 diseases: THES:3
+PCSK1                1 diseases: PC1 deficiency:2
+MAX                  1 diseases: PCC:10
+PPCS                 1 diseases: CMD2C:2
+LONP1                1 diseases: CODASS:10
+PIKFYVE              1 diseases: CFD:1
+PCARE                1 diseases: RP:4
+TMEM132E             1 diseases: DFNB:1
+MED13L               1 diseases: DTGA:3
+SYNGAP1              1 diseases: MRD:2
+TEAD1                1 diseases: SCRA:1
+SORL1                1 diseases: AD:5
+HMGN1                1 diseases: RNA edited version:1
+CHD1                 1 diseases: PILBOS:4
+C15orf41             1 diseases: CDAN1B:6
+LEP                  1 diseases: LEPD:2
+UBA1                 1 diseases: SMAX:3
+CSF3R                1 diseases: SCN:1
+WDR34                1 diseases: SRTD:9
+SUGCT                1 diseases: GA:1
+PUF60                1 diseases: VRJS:1
+NMNAT1               1 diseases: LCA:28
+DARS                 1 diseases: HBSL:8
+ELOVL5               1 diseases: SCA:2
+B4GALNT1             1 diseases: SPG:2
+TANGO2               1 diseases: MECRCN:1
+LHB                  1 diseases: HH:1
+IRX5                 1 diseases: HMMS:2
+ITGA3                1 diseases: ILNEB:3
+HERC2                1 diseases: MRT:1
+HSD11B2              1 diseases: AME:16
+UNC45B               1 diseases: CTRCT:1
+S1PR2                1 diseases: DFNB:2
+CRYGC                1 diseases: CTRCT:3
+LIMS2                1 diseases: MDRCMTT:3
+HNMT                 1 diseases: MRT:2
+GINS1                1 diseases: IMD:2
+EFNB1                1 diseases: CFNS:19
+PAPSS2               1 diseases: BCYM:4
+IGLC7                1 diseases: IMGT ALLELE IGLC7*:1
+SMO                  1 diseases: CRJS:1
+PIK3R5               1 diseases: AOA:1
+CDC14A               1 diseases: DFNB:3
+COL9A2               1 diseases: IDD:1
+RELT                 1 diseases: AI3C:1
+ABCD4                1 diseases: MAHCJ:1
+RPL35                1 diseases: DBA:1
+BBS12                1 diseases: BBS:12
+PPP1R15B             1 diseases: MSSGM:1
+TENM4                1 diseases: ETM:11
+SLC25A46             1 diseases: HMSN6B:4
+ZIC2                 1 diseases: HPE:22
+TRPM6                1 diseases: HOMG:6
+TMEM240              1 diseases: SCA:5
+EED                  1 diseases: COGIS:6
+CLDN16               1 diseases: HOMG:18
+RAB33B               1 diseases: SMC:2
+GSS                  1 diseases: GSS deficiency:14
+SIX5                 1 diseases: BOR:4
+GRK1                 1 diseases: CSNBO:2
+ANLN                 1 diseases: FSGS:2
+FOXP3                1 diseases: IPEX:10
+CLN5                 1 diseases: CLN:12
+ALDH3A2              1 diseases: SLS:27
+WDR45                1 diseases: NBIA:1
+NEIL1                1 diseases: RNA edited version:1
+KATNB1               1 diseases: LIS:3
+DDB2                 1 diseases: XP-E:2
+LTBP4                1 diseases: URDS:1
+KCNC1                1 diseases: EPM:1
+ARHGEF9              1 diseases: EIEE:2
+MT-ND4L              1 diseases: LHON:1
+MTRR                 1 diseases: HMAE:5
+BBS7                 1 diseases: BBS:4
+C2CD3                1 diseases: OFD:1
+CNGA3                1 diseases: ACHM:54
+ASB10                1 diseases: GLC1F:16
+EXOSC2               1 diseases: SHRF:2
+NPC2                 1 diseases: NPC:7
+FGF17                1 diseases: HH:3
+RBPJ                 1 diseases: AOS:2
+ROR2                 1 diseases: RRS:5
+UFM1                 1 diseases: HLD:1
+TPI1                 1 diseases: TPID:7
+DNAJC5               1 diseases: CLN4B:1
+TNNT3                1 diseases: DA2B:2
+FBXO11               1 diseases: IDDFBA:8
+AIRE                 1 diseases: APS:20
+LMOD3                1 diseases: NEM:1
+EMP2                 1 diseases: NPHS:2
+EMC1                 1 diseases: CAVIPMR:3
+QDPR                 1 diseases: HPABH4C:18
+ALG2                 1 diseases: CMS:1
+SLCO2A1              1 diseases: PHOAR:12
+EPB42                1 diseases: SPH:4
+HIKESHI              1 diseases: HLD:1
+TMEM98               1 diseases: NNO:2
+TRIM2                1 diseases: CMT2R:1
+OPHN1                1 diseases: MRXSO:1
+ATAD1                1 diseases: HKPX:1
+DNM1                 1 diseases: EIEE:4
+HYOU1                1 diseases: IMD:2
+RXYLT1               1 diseases: MDDGA:2
+IGHG2                1 diseases: IMGT allele IGHG2*:1
+YME1L1               1 diseases: OPA:1
+LIM2                 1 diseases: CTRCT:1
+BCHE                 1 diseases: BCHED:38
+SERPING1             1 diseases: HAE:40
+NFKB2                1 diseases: CVID:2
+ARL13B               1 diseases: JBTS:3
+KLHL41               1 diseases: NEM:2
+KL                   1 diseases: HC:1
+ORC1                 1 diseases: MGORS:5
+GMPPA                1 diseases: AAMR:5
+SON                  1 diseases: ZTTKS:2
+AIPL1                1 diseases: LCA:2
+HPCA                 1 diseases: DYT:3
+NDUFS4               1 diseases: MC1DN:1
+PXDN                 1 diseases: ASGD:1
+OTUD6B               1 diseases: IDDFSDA:1
+CEACAM16             1 diseases: DFNA4B:2
+ATP11C               1 diseases: HAXL:1
+GPD1                 1 diseases: HTGTI:1
+CDH15                1 diseases: MRD:4
+TF                   1 diseases: ATRAF:2
+CLCN4                1 diseases: MRXSRC:5
+MYBPC1               1 diseases: DA1B:3
+MTMR14               1 diseases: CNM:2
+DNAH11               1 diseases: CILD:4
+ALAD                 1 diseases: AHEPP:5
+AQP2                 1 diseases: ANDI:28
+ASS1                 1 diseases: CTLN:87
+F7                   1 diseases: FA7D:109
+RSPH4A               1 diseases: CILD:2
+EDNRA                1 diseases: MFDA:2
+NIPBL                1 diseases: CDLS:39
+ZBTB11               1 diseases: MRT:2
+TFR2                 1 diseases: HFE:3
+IRS1                 1 diseases: NIDDM:2
+GUCA1B               1 diseases: RP:1
+EFHC1                1 diseases: EJM:20
+SRP72                1 diseases: BMFS:1
+TSPAN7               1 diseases: MRX:1
+LDHB                 1 diseases: LDHBD:11
+ATR                  1 diseases: FCTCS:1
+CRYBA4               1 diseases: CTRCT:3
+IRF3                 1 diseases: IIAE:1
+CAPN1                1 diseases: SPG:1
+DDHD2                1 diseases: SPG:1
+THAP1                1 diseases: DYT:45
+GRIK2                1 diseases: RNA edited version:3
+CRIPT                1 diseases: SSMCF:1
+DEPDC5               1 diseases: FFEVF:14
+LAGE3                1 diseases: GAMOS:2
+TRIP12               1 diseases: MRD:5
+SMAD9                1 diseases: PPH:1
+GNRHR                1 diseases: HH:16
+FGF8                 1 diseases: HH:6
+CHST6                1 diseases: MCD:59
+KCNE3                1 diseases: BRGDA:1
+DPYD                 1 diseases: DPYDD:3
+ZNF687               1 diseases: PDB:2
+MBD5                 1 diseases: MRD:6
+LRRK2                1 diseases: PARK:32
+POF1B                1 diseases: POF2B:1
+SARS                 1 diseases: NEDMAS:1
+EPX                  1 diseases: EPXD:1
+MAN2B1               1 diseases: MANSA:42
+FERMT3               1 diseases: LAD:1
+HES7                 1 diseases: SCDO:3
+ABHD12               1 diseases: PHARC:4
+AGT                  1 diseases: RTD:1
+LGI4                 1 diseases: AMCNMY:2
+KRT71                1 diseases: HYPT:1
+BBS1                 1 diseases: BBS:12
+PEX16                1 diseases: PBD8B:2
+CFAP298              1 diseases: CILD:1
+MFAP5                1 diseases: AAT:1
+PLD1                 1 diseases: CVDD:1
+C12orf4              1 diseases: MRT:1
+CDC6                 1 diseases: MGORS:1
+CHRNB2               1 diseases: ENFL:2
+NUP88                1 diseases: FADS:1
+DBH                  1 diseases: ORTHYP:3
+COX10                1 diseases: MT-C4D:7
+WDR62                1 diseases: MCPH:5
+TFAP2B               1 diseases: CHAR:6
+ECEL1                1 diseases: DA5D:4
+LEMD2                1 diseases: CTRCT:1
+CIITA                1 diseases: BLS:3
+PKHD1                1 diseases: PKD:98
+KIF2A                1 diseases: CDCBM:2
+ARL2BP               1 diseases: RP:1
+FANCC                1 diseases: FANCC:3
+RP9                  1 diseases: RP:2
+RARB                 1 diseases: MCOPS:4
+MAFA                 1 diseases: INSDM:1
+KCNQ5                1 diseases: MRD:4
+MARK3                1 diseases: VIPB:1
+AGPS                 1 diseases: RCDP:6
+ZBTB20               1 diseases: PRIMS:4
+NEU1                 1 diseases: SIALIDOSIS:24
+DRAM2                1 diseases: CORD:3
+WASHC5               1 diseases: SPG:6
+PIGP                 1 diseases: EIEE:1
+AGGF1                1 diseases: KTS:1
+PCCB                 1 diseases: PA-:28
+UNG                  1 diseases: HIGM:1
+DPF2                 1 diseases: CSS:5
+NPHS1                1 diseases: NPHS:70
+SPRY2                1 diseases: IGAN:1
+PRSS56               1 diseases: MCOP:7
+LZTFL1               1 diseases: BBS:1
+XPC                  1 diseases: XP-C:3
+MYORG                1 diseases: IBGC:17
+TCF4                 1 diseases: PTHS:13
+SLC9A3R1             1 diseases: NPHLOP:4
+GNB4                 1 diseases: CMTDIF:2
+ANKLE2               1 diseases: MCPH:1
+SLC9A3               1 diseases: DIAR:4
+AGTPBP1              1 diseases: CONDCA:6
+HBG2                 1 diseases: TNCY:6
+SLC39A5              1 diseases: MYP:2
+MYH2                 1 diseases: MYPOP:1
+FXN                  1 diseases: FRDA:8
+RHOBTB2              1 diseases: EIEE:6
+SRD5A2               1 diseases: PPSH:21
+SPG11                1 diseases: SPG:6
+AP3B1                1 diseases: HPS:1
+HCFC1                1 diseases: MRX:1
+AHI1                 1 diseases: JBTS:6
+KIAA0586             1 diseases: JBTS:2
+SLC3A1               1 diseases: CSNU:53
+IGLL1                1 diseases: AGM:1
+DNAAF1               1 diseases: CILD:1
+CPAMD8               1 diseases: ASGD:1
+KIF14                1 diseases: MCPH:4
+ADSS1                1 diseases: MPD:1
+OSGEP                1 diseases: GAMOS:14
+MTR                  1 diseases: HMAG:2
+MYLK2                1 diseases: CMH:2
+DHFR                 1 diseases: DHFRD:2
+ZNF711               1 diseases: MRX:5
+EIF4A3               1 diseases: RCPS:1
+ASH1L                1 diseases: MRD:8
+RSPO2                1 diseases: HHRRD:1
+PRPF3                1 diseases: RP:2
+CHMP2B               1 diseases: ALS:3
+PHACTR1              1 diseases: EIEE:3
+KCNA4                1 diseases: MCIDDS:1
+IQSEC2               1 diseases: MRX:5
+NFE2L2               1 diseases: IMDDHH:4
+UBQLN2               1 diseases: ALS:10
+MEGF10               1 diseases: EMARDD:3
+PRRX1                1 diseases: AGOTC:1
+FAM83H               1 diseases: AI3A:1
+KLKB1                1 diseases: PKK deficiency:3
+GAA                  1 diseases: GSD:134
+PRDM12               1 diseases: HSAN:7
+OPA3                 1 diseases: OPA:2
+HP                   1 diseases: AHP:1
+BTK                  1 diseases: XLA:111
+TRAF7                1 diseases: CAFDADD:4
+GDF9                 1 diseases: POF:8
+PIGL                 1 diseases: CHIME:1
+ECE1                 1 diseases: HCAD:1
+IDS                  1 diseases: MPS:128
+LIPI                 1 diseases: FHTR:1
+CDHR1                1 diseases: CORD:1
+FXYD2                1 diseases: HOMG:1
+ATP7B                1 diseases: WD:272
+NIPAL4               1 diseases: ARCI:7
+ALG6                 1 diseases: CDG1C:6
+NPPA                 1 diseases: ATRST:1
+MOGS                 1 diseases: CDGIIb:2
+LAMB3                1 diseases: GABEB:3
+KCNJ6                1 diseases: KPLBS:1
+ETFA                 1 diseases: GA2A:3
+NDUFA13              1 diseases: MC1DN:1
+CYP19A1              1 diseases: AROD:5
+SLC17A9              1 diseases: POROK:2
+SOX9                 1 diseases: CMD:18
+CUL4B                1 diseases: MRXS:3
+CENPJ                1 diseases: MCPH:1
+PITX1                1 diseases: CCF:1
+RDX                  1 diseases: DFNB:1
+NPRL2                1 diseases: FFEVF:4
+ALDH6A1              1 diseases: MMSDHD:1
+CARD9                1 diseases: CANDF:3
+SLC34A3              1 diseases: HHRH:6
+BCKDK                1 diseases: BCKDKD:3
+CHRNB1               1 diseases: CMS2A:3
+UMPS                 1 diseases: ORAC:3
+POC1A                1 diseases: SO:1
+CAMK2B               1 diseases: MRD:6
+IGLC3                1 diseases: IMGT allele IGLC3*:1
+FANCA                1 diseases: FANCA:31
+C1QBP                1 diseases: COXPD:5
+NDUFB8               1 diseases: MC1DN:3
+PHYKPL               1 diseases: PHLU:2
+GDF2                 1 diseases: HHT:3
+GANAB                1 diseases: PKD:3
+BFSP2                1 diseases: CTRCT:1
+MYF5                 1 diseases: EORVA:1
+PDSS1                1 diseases: COQ10D:1
+GRM6                 1 diseases: CSNB1B:6
+FRMPD4               1 diseases: MRX:1
+KLHL10               1 diseases: SPGF:2
+NSD1                 1 diseases: SOTOS:14
+AMMECR1              1 diseases: MFHIEN:1
+NEDD4L               1 diseases: PVNH:4
+JPH2                 1 diseases: CMH:5
+GLDN                 1 diseases: LCCS:2
+CRYBB3               1 diseases: CTRCT:2
+AMELX                1 diseases: AI1E:4
+SLC2A10              1 diseases: ATORS:8
+EGF                  1 diseases: HOMG:1
+GNRH1                1 diseases: HH:1
+NCAPD3               1 diseases: MCPH:1
+ERCC1                1 diseases: COFS:1
+LDLR                 1 diseases: FH:139
+BVES                 1 diseases: LGMDR:1
+PARK7                1 diseases: PARK:5
+DSTYK                1 diseases: CAKUT:3
+PAX1                 1 diseases: OTFCS:1
+PMVK                 1 diseases: POROK:1
+TUBA1A               1 diseases: LIS:8
+TAB2                 1 diseases: CHTD:2
+ABCC2                1 diseases: DJS:4
+COL5A2               1 diseases: EDSCL:2
+NOP10                1 diseases: DKCB:1
+PGM1                 1 diseases: CDG1T:13
+LRRC56               1 diseases: CILD:1
+MYOZ2                1 diseases: CMH:2
+XRCC4                1 diseases: SSMED:2
+CFAP43               1 diseases: SPGF:3
+CYB561               1 diseases: ORTHYP:1
+IRF7                 1 diseases: IMD:1
+SET                  1 diseases: MRD:2
+LRBA                 1 diseases: CVID:1
+TRAPPC2              1 diseases: SEDT:4
+KRT8                 1 diseases: CIRRH:3
+LMAN2L               1 diseases: MRT:1
+C1GALT1C1            1 diseases: TNPS:2
+TYRP1                1 diseases: OCA:2
+NUP85                1 diseases: NPHS:3
+DSE                  1 diseases: EDSMC:1
+PPOX                 1 diseases: VP:56
+POLR1A               1 diseases: AFDCIN:2
+PIGG                 1 diseases: MRT:1
+NSMF                 1 diseases: HH:2
+ANTXR1               1 diseases: HCI susceptibility:1
+RHCE                 1 diseases: VS antigen:1
+TNFRSF1A             1 diseases: FHF:14
+TAC3                 1 diseases: HH:2
+ACADVL               1 diseases: ACADVLD:37
+CD8A                 1 diseases: CD8 deficiency:1
+GTF2H5               1 diseases: TTD:1
+LRP1B                1 diseases: NSCLC cells:1
+ABCG8                1 diseases: STSL:11
+MIP                  1 diseases: CTRCT:8
+F2                   1 diseases: FA2D:10
+EIF2B2               1 diseases: VWM:9
+WNT5A                1 diseases: DRS:2
+TRPA1                1 diseases: FEPS:1
+VAX1                 1 diseases: MCOPS:1
+RPS29                1 diseases: DBA:2
+GNS                  1 diseases: MPS3D:3
+SLC29A3              1 diseases: HLAS:8
+SUMF1                1 diseases: MSD:16
+IMPAD1               1 diseases: CDP-GPAPP:2
+ARR3                 1 diseases: MYP:2
+ARFGEF2              1 diseases: PVNH:1
+NCF1                 1 diseases: CGD:1
+SPG7                 1 diseases: SPG:4
+NUP133               1 diseases: NPHS:3
+CBS                  1 diseases: CBSD:103
+FGF12                1 diseases: EIEE:1
+SNTA1                1 diseases: LQT:2
+IL21R                1 diseases: IMD:1
+CACNG2               1 diseases: MRD:1
+FCGR3A               1 diseases: IMD:1
+ANO10                1 diseases: SCAR:1
+PRDM6                1 diseases: PDA:3
+KCNV2                1 diseases: RCD3B:5
+CCNK                 1 diseases: IDDHDF:1
+DNMT3A               1 diseases: TBRS:14
+ERMARD               1 diseases: PVNH:1
+GAS8                 1 diseases: CILD:1
+NT5E                 1 diseases: CALJA:1
+NCSTN                1 diseases: ACNINV:1
+WNK4                 1 diseases: PHA2B:4
+KRT83                1 diseases: MNLIX:2
+SLC16A2              1 diseases: MCT8 deficiency:20
+FOXRED1              1 diseases: MC1DN:2
+CA5A                 1 diseases: CA5AD:1
+CTSK                 1 diseases: PKND:6
+SC5D                 1 diseases: LATHST:3
+NOTCH2               1 diseases: ALGS:1
+PRKDC                1 diseases: IMD:2
+IGHA2                1 diseases: IMGT allele IGHA2*:6
+CEP164               1 diseases: NPHP:2
+EXOSC3               1 diseases: PCH1B:4
+MEIOB                1 diseases: SPGF:1
+RS1                  1 diseases: XLRS:66
+LAMC3                1 diseases: OCCM:1
+MVD                  1 diseases: POROK:9
+CLDN10               1 diseases: HELIX:2
+ESR1                 1 diseases: ESTRR:2
+GCNT2                1 diseases: CTRCT:2
+TRAIP                1 diseases: SCKL:1
+SMS                  1 diseases: MRXSSR:5
+PRF1                 1 diseases: FHL:8
+CDK4                 1 diseases: CMM:3
+KCTD17               1 diseases: DYT:1
+GIGYF2               1 diseases: PARK:18
+FLI1                 1 diseases: BDPLT:5
+CD79B                1 diseases: AGM:1
+DNA2                 1 diseases: PEOA:3
+MAB21L2              1 diseases: MCSKS:5
+MCM5                 1 diseases: MGORS:1
+ALG9                 1 diseases: CDG1L:2
+APTX                 1 diseases: AOA:9
+CUL3                 1 diseases: PHA2E:2
+MXRA5                1 diseases: LNCR:11
+BMS1                 1 diseases: ACC:1
+IBA57                1 diseases: MMDS:1
+PDE4D                1 diseases: ACRDYS:12
+GEMIN4               1 diseases: NEDMCR:2
+ITK                  1 diseases: LPFS:1
+KMT2B                1 diseases: DYT:7
+ESRRB                1 diseases: DFNB:5
+ADGRE2               1 diseases: VBU:1
+ZFHX2                1 diseases: MARSIS:1
+ARHGAP26             1 diseases: JMML:1
+PRCD                 1 diseases: RP:3
+JAGN1                1 diseases: SCN:5
+PDE3A                1 diseases: HTNB:6
+NDUFAF1              1 diseases: MC1DN:4
+UQCRQ                1 diseases: MC3DN:1
+DMGDH                1 diseases: DMGDHD:1
+ITGB2                1 diseases: LAD:15
+RIMS1                1 diseases: CORD:1
+XYLT2                1 diseases: PXE:1
+MDH2                 1 diseases: EIEE:3
+DHCR7                1 diseases: SLOS:53
+PROS1                1 diseases: THPH:90
+PSMB8                1 diseases: PRAAS:4
+PDZD7                1 diseases: DFNB:4
+FGFR4                1 diseases: PC:1
+CRAT                 1 diseases: NBIA:1
+XRCC1                1 diseases: SCAR:1
+APOL1                1 diseases: FSGS:2
+PIK3CD               1 diseases: APDS:1
+LIPT1                1 diseases: LIPT1D:3
+AP2S1                1 diseases: HHC:3
+ALG11                1 diseases: CDG1P:5
+GRIN2A               1 diseases: FESD:37
+SCARF2               1 diseases: VDEGS:1
+TUFM                 1 diseases: COXPD:1
+VPS53                1 diseases: PCH2E:1
+MPDU1                1 diseases: CDG1F:3
+SGO1                 1 diseases: CAID:1
+WDR26                1 diseases: SKDEAS:4
+ATP6V1E1             1 diseases: ARCL2C:2
+NAA15                1 diseases: MRD:3
+DNAAF5               1 diseases: CILD:1
+ARSA                 1 diseases: MLD:97
+BCL11B               1 diseases: IMD:2
+PHYH                 1 diseases: RD:15
+AGBL1                1 diseases: FECD:1
+RNPC3                1 diseases: IGHD:1
+PLS3                 1 diseases: OSTEOP:1
+ISCA1                1 diseases: MMDS:1
+PYROXD1              1 diseases: MFM:2
+WDPCP                1 diseases: CHDTHP:1
+PCSK9                1 diseases: HCHOLA:9
+SDHAF1               1 diseases: MT-C2D:2
+PJVK                 1 diseases: DFNB:3
+GAL                  1 diseases: ETL:1
+COCH                 1 diseases: DFNA:14
+SLC30A2              1 diseases: TNZD:2
+CALM2                1 diseases: LQT:8
+LFNG                 1 diseases: SCDO:1
+AUH                  1 diseases: MGA:1
+PIP5K1C              1 diseases: LCCS:1
+CTSF                 1 diseases: CLN:4
+KIF1B                1 diseases: CMT2A:1
+GPD1L                1 diseases: BRGDA:4
+TNFAIP3              1 diseases: AISBL:1
+PIGT                 1 diseases: MCAHS:1
+KIF5C                1 diseases: CDCBM:2
+MSTO1                1 diseases: MMYAT:4
+CLCNKB               1 diseases: BARTS:5
+FUT8                 1 diseases: CDGF:1
+PKP2                 1 diseases: ARVD:12
+AGA                  1 diseases: AGU:13
+SPATA16              1 diseases: SPGF:1
+AMPD3                1 diseases: AMPDDE:10
+FBXO7                1 diseases: PARK:1
+CA12                 1 diseases: HYCHL:2
+GCLC                 1 diseases: HAGGSD:3
+CBX2                 1 diseases: SRXY:2
+ALDH5A1              1 diseases: SSADHD:12
+SEC61A1              1 diseases: HNFJ:2
+ZMYND10              1 diseases: CILD:5
+CRTAP                1 diseases: OI:3
+KRT86                1 diseases: MNLIX:8
+HABP2                1 diseases: NMTC:1
+REEP1                1 diseases: SPG:8
+IRF2BPL              1 diseases: NEDAMSS:3
+DLL4                 1 diseases: AOS:7
+UBE2T                1 diseases: FANCT:1
+DPP6                 1 diseases: MRD:1
+EPCAM                1 diseases: DIAR:1
+GCDH                 1 diseases: GA:58
+NR2F2                1 diseases: CHTD:6
+ZBTB24               1 diseases: ICF:1
+SPAST                1 diseases: SPG:106
+BANF1                1 diseases: NGPS:1
+GREB1L               1 diseases: RHDA:25
+CR1                  1 diseases: MCC(b:1
+HMBS                 1 diseases: AIP:94
+TOR1A                1 diseases: DYT:2
+SLC25A24             1 diseases: FPS:2
+SLC25A15             1 diseases: HHH syndrome:15
+ACER3                1 diseases: PLDECO:1
+TDP1                 1 diseases: SCAN:1
+EFEMP1               1 diseases: DHRD:1
+ARMC2                1 diseases: SPGF:1
+RERE                 1 diseases: NEDBEH:4
+TIMM8A               1 diseases: MTS:1
+FOXG1                1 diseases: RTTCV:2
+BIN1                 1 diseases: CNM:5
+TCTN3                1 diseases: JBTS:1
+TRIP11               1 diseases: ODCD:2
+PROC                 1 diseases: THPH:37
+MOCS1                1 diseases: MOCODA:10
+DNAJB11              1 diseases: PKD:2
+GBA2                 1 diseases: SPG:3
+NDUFB3               1 diseases: MC1DN:1
+SLC22A5              1 diseases: CDSP:91
+PTDSS1               1 diseases: LMHD:3
+SYP                  1 diseases: MRX:3
+SLC25A42             1 diseases: MECREN:1
+KIAA1109             1 diseases: ALKKUCS:7
+ADGRG1               1 diseases: BFPP:9
+MYO1E                1 diseases: FSGS:1
+MIPEP                1 diseases: COXPD:5
+FSHB                 1 diseases: HH:1
+HFM1                 1 diseases: POF:2
+HLCS                 1 diseases: HLCS deficiency:24
+AK1                  1 diseases: HAAKD:4
+SPEG                 1 diseases: CNM:1
+STK10                1 diseases: TGCT:1
+GREM2                1 diseases: STHAG:3
+AAAS                 1 diseases: AAAS:3
+HERC1                1 diseases: MDFPMR:1
+DNAJB13              1 diseases: CILD:1
+HOXB1                1 diseases: HCFP:1
+CRADD                1 diseases: MRT:1
+INPP5K               1 diseases: MDCCAID:7
+INPPL1               1 diseases: OPSMD:4
+COL9A3               1 diseases: EDM:1
+COPB2                1 diseases: MCPH:1
+UBR1                 1 diseases: JBS:19
+MCCC1                1 diseases: MCC1D:35
+VPS35                1 diseases: PARK:1
+AP1S3                1 diseases: PSORS:2
+VAC14                1 diseases: SNDC:3
+ZC4H2                1 diseases: WRWF:6
+COL4A2               1 diseases: BSVD:2
+BPGM                 1 diseases: ECYT:2
+C1S                  1 diseases: EDSPD:1
+GFPT1                1 diseases: CMS:13
+SLC39A4              1 diseases: AEZ:12
+CITED2               1 diseases: ASD:1
+PRKN                 1 diseases: PARK:33
+GPIHBP1              1 diseases: HLPP1D:11
+KRT9                 1 diseases: EPPK:22
+FAM126A              1 diseases: HLD:2
+FOXP2                1 diseases: SPCH:1
+ALOXE3               1 diseases: ARCI:7
+CCDC103              1 diseases: CILD:1
+PCDH12               1 diseases: MISSBC:3
+EXT1                 1 diseases: EXT:11
+ABHD5                1 diseases: CDS:4
+YWHAG                1 diseases: EIEE:3
+KMT2D                1 diseases: KABUK:51
+IMPG2                1 diseases: VMD:2
+EIF2B4               1 diseases: VWM:7
+CENPE                1 diseases: MCPH:2
+TELO2                1 diseases: YHFS:5
+TSPAN12              1 diseases: EVR:7
+PNPLA3               1 diseases: NAFLD:3
+ASL                  1 diseases: ARGINSA:59
+F13A1                1 diseases: FA13AD:20
+GATA3                1 diseases: HDR:2
+TFAM                 1 diseases: MTDPS:1
+IL17RD               1 diseases: HH:7
+ACADM                1 diseases: ACADMD:19
+PIGH                 1 diseases: GPIBD:1
+KCNQ4                1 diseases: DFNA2A:7
+PHC1                 1 diseases: MCPH:1
+FMR1                 1 diseases: FXS:3
+LDLRAP1              1 diseases: ARH:1
+TUBB2B               1 diseases: CDCBM:10
+RTN4IP1              1 diseases: OPA:1
+BBS9                 1 diseases: BBS:1
+SLC12A3              1 diseases: GTLMNS:120
+SLC5A7               1 diseases: CMS:10
+CYP4F22              1 diseases: ARCI:5
+UROC1                1 diseases: UROCD:2
+FOXC2                1 diseases: LPHDST:1
+ACY1                 1 diseases: ACY1D:7
+GLRA1                1 diseases: HKPX:18
+CTNNA1               1 diseases: MDPT:4
+RNASEH2C             1 diseases: AGS:7
+MYO9A                1 diseases: CMS:5
+NEUROD2              1 diseases: EIEE:2
+BRPF1                1 diseases: IDDDFP:2
+SH3BP2               1 diseases: CRBM:7
+AGRN                 1 diseases: CMS:5
+DHH                  1 diseases: SRXY:1
+ACP5                 1 diseases: SPENCDI:8
+TBCE                 1 diseases: PEAMO:1
+LIAS                 1 diseases: HGCLAS:1
+CA4                  1 diseases: RP:4
+CNPY3                1 diseases: EIEE:1
+PLCB4                1 diseases: ARCND:5
+RTN2                 1 diseases: SPG:1
+HSD17B3              1 diseases: MPH:15
+CTRC                 1 diseases: PCTT:10
+WDFY3                1 diseases: MCPH:1
+HNRNPA2B1            1 diseases: IBMPFD:1
+HOXA2                1 diseases: MHICP:1
+RNF216               1 diseases: GDHS:2
+DPM1                 1 diseases: CDG1E:3
+TMEM70               1 diseases: MC5DN:1
+EFL1                 1 diseases: SDS:2
+NHLRC2               1 diseases: FINCA:1
+SBF1                 1 diseases: CMT4B:2
+LRP1                 1 diseases: KPA:1
+GP1BB                1 diseases: BSS:2
+RFT1                 1 diseases: CDG1N:3
+CYP27B1              1 diseases: VDDR1A:18
+FTO                  1 diseases: GDFD:3
+SLC6A1               1 diseases: MAE:4
+SH3PXD2B             1 diseases: HS:1
+OCLN                 1 diseases: PTORCH:1
+DMXL2                1 diseases: DFNA:1
+KRT4                 1 diseases: WSN:2
+MYSM1                1 diseases: BMFS:1
+CDON                 1 diseases: HPE:6
+IGKC                 1 diseases: IGKCD:1
+GYS2                 1 diseases: GSD:6
+TREM2                1 diseases: PLOSL:3
+SERPINI1             1 diseases: FENIB:2
+MMP14                1 diseases: WNCHRS:1
+FMO3                 1 diseases: TMAU:8
+UBE3B                1 diseases: KOS:1
+POU4F3               1 diseases: DFNA:12
+KCNK9                1 diseases: BIBAS:1
+TNFSF11              1 diseases: OPTB:1
+LHX4                 1 diseases: CPHD:4
+LINS1                1 diseases: MRT:1
+EGFR                 1 diseases: NISBD:1
+KDF1                 1 diseases: ECTD:1
+IKBKB                1 diseases: IMD15A:1
+MYL3                 1 diseases: CMH:5
+SDHAF2               1 diseases: PGL:1
+PTPRQ                1 diseases: DFNB84A:1
+MYLK                 1 diseases: AAT:3
+SOD1                 1 diseases: ALS:80
+MAPKAPK3             1 diseases: MDPT:1
+UNC5C                1 diseases: AD:1
+PACS1                1 diseases: SHMS:1
+HOXD10               1 diseases: CVT:1
+SRPX2                1 diseases: RESDX:2
+CHD2                 1 diseases: EEOC:2
+CTLA4                1 diseases: ALPS:1
+RAB40AL              1 diseases: MRXSMP:1
+KRT6C                1 diseases: PPKNEFD:1
+PURA                 1 diseases: MRD:7
+UQCC3                1 diseases: MC3DN:1
+TRAPPC11             1 diseases: LGMDR:1
+PRPF31               1 diseases: RP:2
+PLCD1                1 diseases: NDNC:2
+NPHS2                1 diseases: NPHS:60
+NDUFV1               1 diseases: MC1DN:3
+RAB3GAP2             1 diseases: MARTS:1
+CFL2                 1 diseases: NEM:2
+TMPRSS3              1 diseases: DFNB:7
+STAG1                1 diseases: MRD:8
+UPB1                 1 diseases: UPB1D:9
+DHX38                1 diseases: RP:2
+NECTIN4              1 diseases: EDSS:1
+CLDN14               1 diseases: DFNB:5
+ZNF142               1 diseases: NEDISHM:2
+TARS2                1 diseases: COXPD:1
+LPIN2                1 diseases: MJDS:1
+P3H2                 1 diseases: MCVD:1
+IL17F                1 diseases: CANDF:1
+CDT1                 1 diseases: MGORS:5
+VPS37A               1 diseases: SPG:1
+CFAP53               1 diseases: HTX:1
+SMARCA4              1 diseases: CSS:5
+DIABLO               1 diseases: DFNA:1
+ARMC9                1 diseases: JBTS:5
+MASP2                1 diseases: MASPD:3
+POU6F2               1 diseases: WT:1
+AGL                  1 diseases: GSD:1
+BBS4                 1 diseases: BBS:9
+MINPP1               1 diseases: NMTC:2
+F13B                 1 diseases: FA13BD:8
+HS6ST1               1 diseases: HH:6
+AKR1D1               1 diseases: CBAS:5
+BLCAP                1 diseases: RNA edited version:3
+STAT5B               1 diseases: GHII:2
+PRPF8                1 diseases: RP:8
+HSD3B2               1 diseases: AH:27
+SKI                  1 diseases: SGS:14
+SLC35A2              1 diseases: CDG2M:2
+GABRD                1 diseases: GEFS+:2
+IARS                 1 diseases: GRIDHH:4
+SZT2                 1 diseases: EIEE:1
+G6PD                 1 diseases: NSHA:58
+NEK8                 1 diseases: NPHP:3
+PROKR2               1 diseases: HH:18
+RBBP8                1 diseases: SCKL:1
+HDAC8                1 diseases: CDLS:4
+PLCZ1                1 diseases: SPGF:1
+BCKDHA               1 diseases: MSUD1A:13
+F10                  1 diseases: FA10D:28
+ACVR1                1 diseases: FOP:9
+STAR                 1 diseases: AH:7
+RNASEH2B             1 diseases: AGS:14
+TRNT1                1 diseases: SIFD:7
+TCAP                 1 diseases: CMH:4
+PIK3R2               1 diseases: MPPH:4
+ABL1                 1 diseases: CHDSKM:2
+MOCOS                1 diseases: XAN:3
+SRGAP1               1 diseases: NMTC:4
+BRDT                 1 diseases: SPGF:1
+BMP1                 1 diseases: OI:3
+LACC1                1 diseases: RASJ:1
+SLC6A8               1 diseases: CCDS:13
+PATL2                1 diseases: OOMD:5
+MC2R                 1 diseases: GCCD:9
+CDC45                1 diseases: MGORS:11
+TBX3                 1 diseases: UMS:2
+DNAJC21              1 diseases: BMFS:1
+TAZ                  1 diseases: BTHS:4
+GRID2                1 diseases: SCAR:3
+PPP1CB               1 diseases: NSLH:6
+XPNPEP3              1 diseases: NPHPL:1
+LRP2                 1 diseases: DBS:1
+MPLKIP               1 diseases: TTD:1
+ARSG                 1 diseases: USH:1
+SLC24A4              1 diseases: AI2A:2
+PRX                  1 diseases: CMT4F:1
+NDUFA1               1 diseases: MC1DN:2
+SLC25A20             1 diseases: CACTD:3
+TRIOBP               1 diseases: DFNB:1
+SYNE1                1 diseases: EDMD:3
+MYCN                 1 diseases: FGLDS:3
+TBX18                1 diseases: CAKUT:2
+UVSSA                1 diseases: UVSS:1
+TRPC6                1 diseases: FSGS:15
+NKX6-2               1 diseases: SPAX:1
+GUF1                 1 diseases: EIEE:1
+ARPC1B               1 diseases: PLTEID:2
+PIGY                 1 diseases: HPMRS:1
+IGHG1                1 diseases: IMGT allele IGHG1*:3
+GUSB                 1 diseases: MPS:36
+PMPCB                1 diseases: MMDS:5
+EXTL3                1 diseases: ISDNA:5
+HYLS1                1 diseases: HLS:1
+CRELD1               1 diseases: AVSD:4
+GLDC                 1 diseases: NKH:22
+EHMT1                1 diseases: KLEFS:1
+CHEK2                1 diseases: BC:1
+FBP1                 1 diseases: FBP1D:5
+VARS                 1 diseases: NDMSCA:2
+PLA2G7               1 diseases: PAFAD:2
+RAX                  1 diseases: MCOP:4
+MCM2                 1 diseases: DFNA:1
+FUCA1                1 diseases: FUCA1D:3
+KRT18                1 diseases: CIRRH:4
+CDAN1                1 diseases: CDAN1A:9
+STRA6                1 diseases: MCOPS:6
+SPTBN2               1 diseases: SCA:3
+P2RX2                1 diseases: DFNA:2
+PTH                  1 diseases: FIH:2
+TARDBP               1 diseases: ALS:25
+CLPX                 1 diseases: EPP:1
+ROBO3                1 diseases: HGPPS:6
+RB1                  1 diseases: RB:23
+LRSAM1               1 diseases: CMT2P:2
+FGF5                 1 diseases: TCMGLY:1
+CETP                 1 diseases: HALP:3
+APOC2                1 diseases: HLPP1B:1
+MTO1                 1 diseases: COXPD:1
+HADHB                1 diseases: MTPD:14
+ILDR1                1 diseases: DFNB:2
+POP1                 1 diseases: ANXD:3
+GRIK3                1 diseases: RNA edited version:1
+ERLIN1               1 diseases: SPG:1
+GRXCR1               1 diseases: DFNB:4
+CACNB2               1 diseases: BRGDA:1
+COA7                 1 diseases: SCAN:4
+REPS1                1 diseases: NBIA:2
+ALG8                 1 diseases: CDG1H:2
+DCPS                 1 diseases: ARS:1
+SHOC2                1 diseases: NSLH:2
+SRC                  1 diseases: THC:1
+HBB                  1 diseases: SKCA:1
+CYB5R3               1 diseases: METHB-CYB5R:9
+TFAP2A               1 diseases: BOFS:4
+RUNX2                1 diseases: CLCD:48
+PPP2CA               1 diseases: NEDLBA:10
+MAPRE2               1 diseases: CSCSC:3
+FGF10                1 diseases: LADDS:2
+MAFB                 1 diseases: MCTO:10
+PHEX                 1 diseases: XLHR:31
+RFX6                 1 diseases: MTCHRS:3
+PHF8                 1 diseases: MRXSSD:1
+MSMO1                1 diseases: MCCPD:3
+FGF16                1 diseases: MF:1
+DNAJB2               1 diseases: DSMA:1
+MECOM                1 diseases: RUSAT:3
+TSPEAR               1 diseases: ECTD:3
+THRA                 1 diseases: CHNG:2
+POLH                 1 diseases: XPV:10
+BBS5                 1 diseases: BBS:2
+IFT27                1 diseases: BBS:1
+ENO3                 1 diseases: GSD:2
+NACC1                1 diseases: NECFM:1
+COL4A6               1 diseases: DFNX:1
+CYP17A1              1 diseases: AH:27
+ESCO2                1 diseases: RBS:1
+GFER                 1 diseases: MPMCHD:1
+ESRP1                1 diseases: DFNB:1
+DDX59                1 diseases: OFD:2
+SBDS                 1 diseases: SDS:7
+TRMT10A              1 diseases: MSSGM:1
+SGSH                 1 diseases: MPS3A:59
+PCBD1                1 diseases: HPABH4D:3
+GIPC3                1 diseases: DFNB:7
+GALT                 1 diseases: GALCT:134
+MAN1B1               1 diseases: MRT:2
+GOSR2                1 diseases: EPM:1
+BFSP1                1 diseases: CTRCT:1
+PLG                  1 diseases: PLGD:8
+FECH                 1 diseases: EPP:24
+FLRT3                1 diseases: HH:4
+SLC7A7               1 diseases: LPI:18
+TACR3                1 diseases: HH:5
+CA8                  1 diseases: CMARQ:1
+IL10RA               1 diseases: IBD:7
+SLC35C1              1 diseases: CDG2C:2
+IL36RN               1 diseases: PSORS:4
+RSPRY1               1 diseases: SEMDFA:1
+NDUFB11              1 diseases: MC1DN:1
+UBE2A                1 diseases: MRXSN:2
+ADAMTS3              1 diseases: HKLLS:2
+SLC39A8              1 diseases: CDG2N:5
+PANK2                1 diseases: NBIA:35
+STS                  1 diseases: IXL:7
+LHFPL5               1 diseases: DFNB:4
+SLC1A3               1 diseases: EA:1
+SHROOM4              1 diseases: SDSX:1
+ALDH1A3              1 diseases: MCOP:10
+TGIF1                1 diseases: HPE:5
+PEX5                 1 diseases: PBD2B:2
+TP53                 1 diseases: LFS:83
+SFTPC                1 diseases: SMDP:5
+ARL6IP4              1 diseases: RNA edited version:1
+ENTPD1               1 diseases: SPG:1
+RPL35A               1 diseases: DBA:1
+JUP                  1 diseases: ARVD:2
+PRIMPOL              1 diseases: MYP:1
+SDR9C7               1 diseases: ARCI:2
+DZIP1L               1 diseases: PKD:2
+LOX                  1 diseases: AAT:7
+YARS                 1 diseases: CMTDIC:2
+COA8                 1 diseases: MT-C4D:1
+PRDM5                1 diseases: BCS:1
+UNC80                1 diseases: IHPRF:2
+PPIP5K2              1 diseases: DFNB:1
+SOHLH1               1 diseases: SPGF:2
+DYNC2LI1             1 diseases: SRTD:2
+LAMP2                1 diseases: DAND:1
+DGKE                 1 diseases: AHUS:2
+FBXL3                1 diseases: IDDSFAS:1
+HCN4                 1 diseases: SSS:3
+LIPC                 1 diseases: HL deficiency:3
+CPOX                 1 diseases: HCP:16
+EIF2B1               1 diseases: VWM:2
+GSTZ1                1 diseases: MAAID:2
+RASA1                1 diseases: CMAVM:5
+LYZ                  1 diseases: AMYL:2
+CPS1                 1 diseases: CPS1D:145
+PIK3R1               1 diseases: SHORTS:2
+GPC3                 1 diseases: SGBS:1
+TRAK1                1 diseases: EIEE:1
+STXBP1               1 diseases: EIEE:18
+CSTB                 1 diseases: EPM:1
+PTRH2                1 diseases: IMNEPD:1
+STAMBP               1 diseases: MICCAP:6
+CERT                 1 diseases: MRD:2
+GHRHR                1 diseases: IGHD:5
+GTF2E2               1 diseases: TTD:2
+KRT25                1 diseases: ARWH:3
+OTC                  1 diseases: OTCD:111
+PRKACA               1 diseases: PPNAD:1
+KCNQ3                1 diseases: BFNS:4
+SLC22A12             1 diseases: RHUC:10
+SPRY4                1 diseases: HH:7
+RPL11                1 diseases: DBA:1
+RORC                 1 diseases: IMD:1
+OTULIN               1 diseases: AIPDS:2
+GRAP                 1 diseases: DFNB:1
+ETFB                 1 diseases: GA2B:2
+TMIE                 1 diseases: DFNB:3
+TUBB4B               1 diseases: LCAEOD:2
+CCBE1                1 diseases: HKLLS:5
+TIMM50               1 diseases: MGCA:2
+AHSG                 1 diseases: APMR:1
+ZFYVE27              1 diseases: SPG:1
+ELMOD3               1 diseases: DFNB:1
+STX1B                1 diseases: GEFSP:2
+KPTN                 1 diseases: MRT:1
+SLURP1               1 diseases: MDM:9
+FBXO38               1 diseases: HMN2D:1
+MANBA                1 diseases: MANSB:3
+BOLA3                1 diseases: MMDS:2
+TUBB8                1 diseases: OOMD:13
+NKX2-6               1 diseases: CTHM:3
+H3-3B                1 diseases: GLM:3
+RBP3                 1 diseases: RP:1
+HAX1                 1 diseases: SCN:3
+NUP205               1 diseases: NPHS:1
+G6PC                 1 diseases: GSD1A:54
+WARS2                1 diseases: NEMMLAS:7
+TBX22                1 diseases: CPX:7
+MAPKBP1              1 diseases: NPHP:1
+WRAP53               1 diseases: DKCB:4
+HARS2                1 diseases: PRLTS:2
+CTSA                 1 diseases: GSL:12
+TPRKB                1 diseases: GAMOS:2
+GNB1                 1 diseases: MRD:19
+CDKL5                1 diseases: EIEE:23
+UPF3B                1 diseases: MRXS:1
+CXCR6                1 diseases: STRL:1
+CFAP300              1 diseases: CILD:1
+COQ4                 1 diseases: COQ10D:4
+ELP2                 1 diseases: MRT:2
+NOBOX                1 diseases: POF:9
+AGXT                 1 diseases: HP:42
+MMADHC               1 diseases: MAHCD:4
+ATP8A2               1 diseases: CMARQ:1
+POLD1                1 diseases: CRCS:2
+BTD                  1 diseases: BTD deficiency:9
+COLGALT1             1 diseases: BSVD:3
+SIAE                 1 diseases: AIS:9
+AGBL5                1 diseases: RP:5
+ZMPSTE24             1 diseases: MADB:3
+TMEM107              1 diseases: OFD:1
+UBE3A                1 diseases: AS:15
+ATP2B3               1 diseases: SCAX:1
+SNRNP200             1 diseases: RP:12
+ALAS2                1 diseases: SIDBA:25
+TLK2                 1 diseases: MRD:9
+MARS2                1 diseases: COXPD:1
+ORC4                 1 diseases: MGORS:1
+NFKBIA               1 diseases: EDAID:1
+CPT1C                1 diseases: SPG:1
+ANO3                 1 diseases: DYT:4
+DNAL1                1 diseases: CILD:1
+ALB                  1 diseases: FDAH:3
+CPT1A                1 diseases: CPT1AD:15
+FCSK                 1 diseases: CDGF:3
+HAMP                 1 diseases: HFE2B:4
+KIF22                1 diseases: SEMDJL:4
+GRIA4                1 diseases: NEDSGA:5
+PLVAP                1 diseases: DIAR:1
+GPR68                1 diseases: AI2A:1
+IL21                 1 diseases: CVID:1
+ARMC5                1 diseases: AIMAH:24
+EPAS1                1 diseases: ECYT:6
+UBTF                 1 diseases: CONDBA:1
+RAB18                1 diseases: WARBM:1
+ACTN1                1 diseases: BDPLT:6
+AMPD2                1 diseases: PCH:3
+SLC13A3              1 diseases: ARLIAK:2
+CYB5A                1 diseases: METAG:1
+SCN10A               1 diseases: FEPS:2
+KRT12                1 diseases: MECD:18
+KISS1                1 diseases: HH:1
+PGAM2                1 diseases: GSD:3
+LRIT3                1 diseases: CSNB1F:2
+FAM111B              1 diseases: POIKTMP:3
+PYCR2                1 diseases: HLD:2
+FZD4                 1 diseases: EVR:20
+GALNS                1 diseases: MPS4A:127
+TMLHE                1 diseases: AUTSX:2
+PDK3                 1 diseases: CMTX:1
+MECR                 1 diseases: DYTOABG:3
+FAM20C               1 diseases: RNS:9
+PIGC                 1 diseases: GPIBD:2
+TSFM                 1 diseases: COXPD:2
+LRAT                 1 diseases: LCA:1
+TTLL5                1 diseases: CORD:1
+TBX6                 1 diseases: SCDO:1
+LYRM7                1 diseases: MC3DN:1
+SLC45A1              1 diseases: IDDNPF:3
+NDUFS3               1 diseases: MC1DN:3
+SUN5                 1 diseases: SPGF:6
+MOCS2                1 diseases: MOCODB:2
+HCRT                 1 diseases: NRCLP:1
+SULT2B1              1 diseases: ARCI:2
+MCPH1                1 diseases: MCPH:1
+BACH2                1 diseases: IMD:2
+FBXL4                1 diseases: MTDPS:7
+ROR1                 1 diseases: DFNB:1
+NFU1                 1 diseases: MMDS:5
+ALG1                 1 diseases: CDG1K:25
+TBC1D23              1 diseases: PCH:1
+COL27A1              1 diseases: STLS:1
+KDSR                 1 diseases: EKVP:2
+HINT1                1 diseases: NMAN:6
+MCM8                 1 diseases: POF:1
+HAVCR2               1 diseases: SPTCL:3
+CHCHD2               1 diseases: PARK:2
+TEX11                1 diseases: SPGFX:2
+ESR2                 1 diseases: ODG:1
+CSNK2A1              1 diseases: OCNDS:4
+MID2                 1 diseases: MRX:1
+RBM28                1 diseases: ANES:1
+PAX5                 1 diseases: ALL:1
+APRT                 1 diseases: APRTD:8
+GJB4                 1 diseases: EKVP:5
+RMND1                1 diseases: COXPD:1
+IGKV1-5              1 diseases: IMGT allele IGKV1-5*:1
+DTNA                 1 diseases: LVNC:1
+AKT3                 1 diseases: MPPH:3
+TRIM36               1 diseases: ANPH:1
+SIK1                 1 diseases: EIEE:3
+LTBP3                1 diseases: GPHYSD:1
+TP53RK               1 diseases: GAMOS:3
+AMHR2                1 diseases: PMDS:8
+OTOG                 1 diseases: DFNB18B:1
+PHKB                 1 diseases: GSD9B:1
+TBC1D8B              1 diseases: NPHS:2
+TCOF1                1 diseases: TCS:1
+EHHADH               1 diseases: FRTS:1
+USP8                 1 diseases: PITA:3
+SOX18                1 diseases: HLTS:2
+TYMP                 1 diseases: MTDPS:5
+SI                   1 diseases: CSID:11
+CFD                  1 diseases: CFDD:2
+REEP2                1 diseases: SPG:2
+BAAT                 1 diseases: FHCA:1
+ACSL4                1 diseases: MRX:1
+VPS45                1 diseases: SCN:2
+TRMT5                1 diseases: COXPD:2
+VWA3B                1 diseases: SCAR:1
+NHLRC1               1 diseases: EPM:22
+SOX2                 1 diseases: MCOPS:3
+SCO1                 1 diseases: MT-C4D:1
+FLVCR2               1 diseases: PVHH:9
+COL12A1              1 diseases: BTHLM:3
+CHST3                1 diseases: SEDCJD:5
+GNPTG                1 diseases: MLIIIC:3
+COLQ                 1 diseases: CMS:6
+SLC6A3               1 diseases: PKDYS:2
+USP27X               1 diseases: MRX:1
+SLC6A17              1 diseases: MRT:2
+UQCRC2               1 diseases: MC3DN:1
+KRT75                1 diseases: LAHS:1
+HYAL1                1 diseases: MPS:1
+SLC19A2              1 diseases: TRMA:3
+C9                   1 diseases: ARMD:1
+ISCA2                1 diseases: MMDS:1
+PNP                  1 diseases: PNPD:5
+FANCG                1 diseases: FANCG:1
+MAPK8IP1             1 diseases: NIDDM:1
+GNB3                 1 diseases: CSNB1H:1
+AVP                  1 diseases: NDI:39
+FANCD2               1 diseases: FANCD:3
+PSPH                 1 diseases: PSPHD:2
+RNASEH1              1 diseases: PEOB:2
+PGK1                 1 diseases: PGK1D:9
+OAT                  1 diseases: HOGA:28
+DARS2                1 diseases: LBSL:11
+DPH1                 1 diseases: DEDSSH:2
+PLOD1                1 diseases: EDSKSCL:5
+SLC44A4              1 diseases: DFNA:1
+GPAA1                1 diseases: GPIBD:6
+CHPT1                1 diseases: MCF-12A cell line:1
+CLPB                 1 diseases: MEGCANN:12
+DONSON               1 diseases: MISSLA:8
+ERGIC1               1 diseases: AMCN:1
+ERBB4                1 diseases: ALS:2
+STT3A                1 diseases: CDG1W:1
+GPHN                 1 diseases: MOCODC:2
+SLC6A2               1 diseases: OI:1
+PDE6A                1 diseases: RP:5
+FIBP                 1 diseases: TROFAS:1
+SLFN14               1 diseases: BDPLT:4
+IL12RB1              1 diseases: IMD:1
+CHST8                1 diseases: PSS:1
+DHCR24               1 diseases: DESMOS:6
+NBN                  1 diseases: BC:1
+QARS                 1 diseases: MSCCA:4
+ARV1                 1 diseases: EIEE:1
+RCBTB1               1 diseases: RDEOA:6
+MYL4                 1 diseases: ATFB:1
+ADAMTS18             1 diseases: MMCAT:2
+MACF1                1 diseases: LIS:5
+FAN1                 1 diseases: KMIN:4
+SEC24D               1 diseases: CLCRP:2
+CYBA                 1 diseases: ARCGD:12
+SOS1                 1 diseases: NS:39
+TGFB2                1 diseases: LDS:3
+RAC1                 1 diseases: MRD:7
+CHRDL1               1 diseases: MGC:1
+HSPB8                1 diseases: HMN2A:5
+ADD3                 1 diseases: CPSQ:1
+C1R                  1 diseases: EDSPD:14
+AXIN1                1 diseases: HCC:4
+MALT1                1 diseases: IMD:1
+TRIO                 1 diseases: MRD:10
+MATR3                1 diseases: ALS:6
+TICAM1               1 diseases: IIAE:1
+WEE2                 1 diseases: OOMD:1
+MTM1                 1 diseases: CNMX:59
+RFX5                 1 diseases: BLS:1
+CAPN3                1 diseases: LGMDR:55
+TIA1                 1 diseases: WDM:1
+HOXC13               1 diseases: ECTD:1
+SPTLC1               1 diseases: HSAN1A:5
+SMARCC2              1 diseases: CSS:7
+PADI3                1 diseases: UHS:3
+RNF170               1 diseases: SNAX:1
+NDUFA6               1 diseases: MC1DN:1
+KLF11                1 diseases: MODY:2
+SYNE2                1 diseases: EDMD:1
+NDUFAF3              1 diseases: MC1DN:3
+GNAI3                1 diseases: ARCND:1
+KBTBD13              1 diseases: NEM:3
+NAXE                 1 diseases: PEBEL:2
+POLG2                1 diseases: PEOA:1
+CD4                  1 diseases: OKT4-negative populations:1
+LDHD                 1 diseases: DLACD:2
+SERPINA6             1 diseases: CBG deficiency:2
+DOCK2                1 diseases: IMD:2
+GALK1                1 diseases: GALCT:11
+NDST1                1 diseases: MRT:4
+IRF1                 1 diseases: GASC:2
+FAM20A               1 diseases: AI1G:4
+IRF2BP2              1 diseases: CVID:1
+NGF                  1 diseases: HSAN:2
+GK                   1 diseases: GKD:3
+MSN                  1 diseases: IMD:1
+SH2D1A               1 diseases: XLP:19
+FLVCR1               1 diseases: PCARP:4
+GPR101               1 diseases: PITA:1
+NR2F1                1 diseases: BBSOAS:4
+ACAD8                1 diseases: IBDD:9
+KCNJ18               1 diseases: TTPP:7
+PKD1                 1 diseases: PKD:112
+JAM3                 1 diseases: HDBSCC:2
+DDOST                1 diseases: CDG1R:1
+MRPS14               1 diseases: COXPD:1
+CHSY1                1 diseases: TPBS:1
+PHKG2                1 diseases: GSD9C:4
+SLC25A26             1 diseases: COXPD:3
+DOLK                 1 diseases: CDG1M:2
+FARSB                1 diseases: RILDBC:8
+ACVRL1               1 diseases: HHT:83
+POU3F4               1 diseases: DFNX:5
+SNIP1                1 diseases: PMRED:1
+PKD2                 1 diseases: PKD:10
+BMPR1A               1 diseases: JPS:8
+CRYM                 1 diseases: DFNA:2
+TIMP3                1 diseases: SFD:5
+STAG2                1 diseases: NEDXCF:4
+LRTOMT               1 diseases: DFNB:7
+EPHA2                1 diseases: CTRCT:3
+COG6                 1 diseases: CDG2L:1
+CYP2U1               1 diseases: SPG:4
+TMEM127              1 diseases: PCC:7
+SARS2                1 diseases: HUPRAS:1
+RAC2                 1 diseases: NEUID:1
+RPS23                1 diseases: BTDD:2
+PLN                  1 diseases: CMD1P:3
+PROK2                1 diseases: HH:6
+MTHFR                1 diseases: MTHFRD:53
+SLC18A3              1 diseases: CMS:2
+INTU                 1 diseases: SRTD:1
+EML1                 1 diseases: BH:2
+SMAD3                1 diseases: LDS:5
+NUP93                1 diseases: NPHS:3
+KDM5C                1 diseases: MRXSCJ:10
+PHKA2                1 diseases: GSD9A:20
+TRDN                 1 diseases: CPVT:1
+TBX5                 1 diseases: HOS:5
+YARS2                1 diseases: MLASA:2
+CCDC39               1 diseases: CILD:1
+ZNF513               1 diseases: RP:1
+MRPS34               1 diseases: COXPD:1
+POU1F1               1 diseases: CPHD:13
+NPHP1                1 diseases: NPHP:1
+COQ7                 1 diseases: COQ10D:1
+HTR2C                1 diseases: RNA edited version:3
+RTN4R                1 diseases: SCZD:7
+SYT2                 1 diseases: CMS:2
+DNAAF3               1 diseases: CILD:1
+KRT13                1 diseases: WSN:5
+LCT                  1 diseases: COLACD:2
+CACNA1E              1 diseases: EIEE:14
+APOC3                1 diseases: HALP:1
+ZNF141               1 diseases: PAPA:1
+IKZF1                1 diseases: CVID:5
+SLC26A8              1 diseases: SPGF:3
+FYCO1                1 diseases: CTRCT:1
+KCNA2                1 diseases: EIEE:4
+DUOXA2               1 diseases: TDH:1
+PCYT1A               1 diseases: SMDCRD:6
+THOC2                1 diseases: MRX:4
+UBQLN4               1 diseases: ALS:1
+ALK                  1 diseases: NBLST:16
+SLC25A1              1 diseases: CMS:1
+DOCK8                1 diseases: HIES:1
+EZH2                 1 diseases: WVS:13
+TRPV6                1 diseases: HRPTTN:6
+GAN                  1 diseases: GAN:19
+VAMP1                1 diseases: CMS:1
+EVC2                 1 diseases: EVC:2
+SLC25A32             1 diseases: RREI:1
+SGPL1                1 diseases: NPHS:5
+FAS                  1 diseases: ALPS1A:22
+ATP5F1D              1 diseases: MC5DN:2
+NEUROG3              1 diseases: DIAR:2
+BDNF                 1 diseases: CCHS:1
+PI4KA                1 diseases: PMGYCHA:1
+OSMR                 1 diseases: PLCA:5
+SEMA3A               1 diseases: HH:12
+CYP21A2              1 diseases: AH:68
+NDUFS8               1 diseases: MC1DN:7
+EIF2B3               1 diseases: VWM:5
+HSPB3                1 diseases: HMN2C:1
+ABCA1                1 diseases: HDLD:32
+PQBP1                1 diseases: RENS:1
+ALDH4A1              1 diseases: HYRPRO:1
+REST                 1 diseases: WT:4
+EDC3                 1 diseases: MRT:1
+SMARCB1              1 diseases: CSS:4
+PGAP2                1 diseases: HPMRS:5
+SLC26A3              1 diseases: DIAR:28
+KIF11                1 diseases: MCLMR:4
+FZD2                 1 diseases: OMOD:1
+IGSF1                1 diseases: CHTE:3
+SLC40A1              1 diseases: HFE:12
+PTHLH                1 diseases: BDE:2
+MYO5B                1 diseases: DIAR:14
+CD36                 1 diseases: PG4D:3
+COA6                 1 diseases: CEMCOX:2
+PIBF1                1 diseases: JBTS:2
+CPLX1                1 diseases: EIEE:1
+MBTPS1               1 diseases: SEDKF:1
+NCF2                 1 diseases: CGD:15
+SECISBP2             1 diseases: ATHYHM:1
+IDH2                 1 diseases: GLM:5
+SPRTN                1 diseases: RJALS:1
+AICDA                1 diseases: HIGM:11
+SOS2                 1 diseases: NS:5
+PAX9                 1 diseases: STHAG:1
+C1QTNF5              1 diseases: LORD:1
+GPI                  1 diseases: HA-GPID:25
+LARS                 1 diseases: ILFS:1
+TAF2                 1 diseases: MRT:3
+PIGV                 1 diseases: HPMRS:4
+TRAF3                1 diseases: IIAE:1
+TBX2                 1 diseases: VETD:2
+TSEN15               1 diseases: PCH2F:3
+ALG14                1 diseases: CMS:1
+IFITM5               1 diseases: OI:1
+KNSTRN               1 diseases: SCC:1
+CHD3                 1 diseases: SNIBCPS:19
+ADCY5                1 diseases: FDFM:2
+HMCN1                1 diseases: ARMD:1
+CD40                 1 diseases: HIGM:2
+FGD4                 1 diseases: CMT4H:2
+SGCB                 1 diseases: LGMDR:12
+FAT2                 1 diseases: SCA:2
+IGFALS               1 diseases: ACLSD:10
+CLP1                 1 diseases: PCH:1
+NR0B1                1 diseases: AHC:18
+GDI1                 1 diseases: MRX:2
+DUOX2                1 diseases: TDH:3
+RASGRP2              1 diseases: BDPLT:4
+GPRASP2              1 diseases: DFNX:1
+EFTUD2               1 diseases: MFDM:3
+CASP8                1 diseases: CASP8D:1
+CCM2                 1 diseases: CCM:3
+DHX30                1 diseases: NEDMIAL:6
+IGFBP7               1 diseases: RNA edited version:2
+GJA8                 1 diseases: CTRCT:9
+NDUFAF6              1 diseases: MC1DN:6
+COA5                 1 diseases: CEMCOX:1
+ARF1                 1 diseases: PVNH:3
+GTPBP3               1 diseases: COXPD:8
+KRT3                 1 diseases: MECD:2
+TCF12                1 diseases: CRS:3
+PACS2                1 diseases: EIEE:1
+MOG                  1 diseases: NRCLP:1
+HAL                  1 diseases: HISTID:4
+SPTAN1               1 diseases: EIEE:1
+PLEKHG2              1 diseases: LDAMD:1
+EMG1                 1 diseases: BWCNS:1
+HOXB13               1 diseases: PC:1
+PPARG                1 diseases: FPLD:2
+MERTK                1 diseases: RP:3
+BBS10                1 diseases: BBS:24
+DSG2                 1 diseases: ARVD:5
+TBXA2R               1 diseases: BDPLT:1
+MMAB                 1 diseases: MMAB:5
+TECR                 1 diseases: MRT:1
+SLC7A14              1 diseases: RP:8
+SMC1A                1 diseases: CDLS:23
+ITGA8                1 diseases: RHDA:2
+DSC2                 1 diseases: ARVD:5
+IFT80                1 diseases: SRTD:2
+ANKS6                1 diseases: NPHP:2
+TMPRSS6              1 diseases: IRIDA:25
+ANTXR2               1 diseases: HFS:7
+AKR1C2               1 diseases: SRXY:4
+IL31RA               1 diseases: PLCA:1
+PUS1                 1 diseases: MLASA:1
+RPSA                 1 diseases: ICAS:5
+RUNX1                1 diseases: FPDMM:2
+ALX3                 1 diseases: FND:4
+MID1                 1 diseases: GBBB:6
+SNX10                1 diseases: OPTB:4
+ATP2C1               1 diseases: HHD:20
+TMEM230              1 diseases: PARK:2
+AHCY                 1 diseases: HMAHCHD:4
+MTTP                 1 diseases: ABL:10
+ALG12                1 diseases: CDG1G:5
+KHK                  1 diseases: FRUCT:2
+CNGA1                1 diseases: RP:1
+RDH5                 1 diseases: FALBI:19
+NYX                  1 diseases: CSNB1A:19
+CCN6                 1 diseases: PPAC:15
+EPB41L1              1 diseases: MRD:1
+LITAF                1 diseases: CMT1C:5
+TRIM37               1 diseases: MUL:3
+GRHL2                1 diseases: ECTDS:2
+TMEM165              1 diseases: CDG2K:3
+EXOSC9               1 diseases: PCH1D:1
+PHOX2B               1 diseases: CCHS:3
+MPC1                 1 diseases: MPYCD:2
+MFRP                 1 diseases: NNO:1
+USP9X                1 diseases: MRX:2
+TGM5                 1 diseases: PSS:1
+NR3C1                1 diseases: GCCR:16
+CYP4V2               1 diseases: BCD:8
+CHKB                 1 diseases: MDCMC:2
+F11                  1 diseases: FA11D:58
+NOL3                 1 diseases: MYOCL:2
+BRF1                 1 diseases: CFDS:4
+HUWE1                1 diseases: MRXST:21
+ATP2A1               1 diseases: BRM:1
+ASPH                 1 diseases: FDLAB:1
+COG2                 1 diseases: CDG2Q:1
+YY1                  1 diseases: GADEVS:5
+PNLIP                1 diseases: PNLIPD:1
+TRAPPC2L             1 diseases: PEERB:1
+EARS2                1 diseases: COXPD:15
+OXCT1                1 diseases: SCOTD:11
+LEPR                 1 diseases: LEPRD:3
+LTBP2                1 diseases: WMS:1
+HECW2                1 diseases: NDHSAL:4
+NDUFS2               1 diseases: MC1DN:3
+SLC19A3              1 diseases: THMD:2
+STUB1                1 diseases: SCAR:12
+KDM1A                1 diseases: CPRF:3
+CRYBA2               1 diseases: CTRCT:1
+GP6                  1 diseases: BDPLT:2
+SLC25A22             1 diseases: EIEE:1
+SNRPE                1 diseases: HYPT:1
+MRPS7                1 diseases: COXPD:1
+TNFRSF4              1 diseases: IMD:1
+RORB                 1 diseases: EIG:1
+NHP2                 1 diseases: DKCB:2
+SLC9A7               1 diseases: MRX:1
+CDK6                 1 diseases: MCPH:1
+NPRL3                1 diseases: FFEVF:2
+DPM3                 1 diseases: MDDGC:1
+EIF2S3               1 diseases: MEHMO:3
+IGHM                 1 diseases: IMGT allele IGHM*:3
+GABRB1               1 diseases: EIEE:2
+SNAP25               1 diseases: CMS:1
+SLC25A13             1 diseases: NICCD:1
+TH                   1 diseases: ARSEGS:38
+MFSD2A               1 diseases: MCPH:3
+TMTC3                1 diseases: LIS:2
+RP1                  1 diseases: RP:11
+VANGL2               1 diseases: NTD:3
+LCK                  1 diseases: IMD:1
+AFF4                 1 diseases: CHOPS:3
+FA2H                 1 diseases: SPG:3
+ALG13                1 diseases: EIEE:2
+ZIC1                 1 diseases: CRS:1
+PRPF6                1 diseases: RP:1
+LYST                 1 diseases: CHS:3
+GSN                  1 diseases: AMYL:2
+IGHV1-46             1 diseases: IMGT allele IGHV1-46*:1
+RSPH1                1 diseases: CILD:1
+BLM                  1 diseases: BLM:8
+ANK2                 1 diseases: LQT:5
+HOGA1                1 diseases: HP:2
+RAB23                1 diseases: CRPT:2
+PLA2G4A              1 diseases: GURDP:3
+FKBP10               1 diseases: BRKS:3
+CERKL                1 diseases: RP:1
+GATAD1               1 diseases: CMD2B:1
+MAP2K2               1 diseases: CFC:4
+ITGB6                1 diseases: AI1H:3
+DBT                  1 diseases: MSUD:3
+SLC1A2               1 diseases: EIEE:3
+INVS                 1 diseases: NPHP:2
+MPO                  1 diseases: MPOD:3
+ZBTB16               1 diseases: SGYMR:1
+PDGFB                1 diseases: IBGC:2
+NTF4                 1 diseases: GLC1O:6
+VIM                  1 diseases: CTRCT:2
+WARS                 1 diseases: HMN:1
+MPI                  1 diseases: CDG1B:13
+PHOX2A               1 diseases: CFEOM:1
+HPS3                 1 diseases: HPS:1
+ASPA                 1 diseases: CAND:42
+CERS1                1 diseases: EPM:1
+XRCC3                1 diseases: CMM:1
+SPR                  1 diseases: DRDSPRD:2
+CARS2                1 diseases: COXPD:1
+SAMD9L               1 diseases: ATXPC:2
+KIF21A               1 diseases: CFEOM:11
+PCNA                 1 diseases: ATLD:1
+MMACHC               1 diseases: MAHCC:14
+RBM20                1 diseases: CMD1DD:10
+CPN1                 1 diseases: CPND:1
+PHKA1                1 diseases: GSD9D:1
+ATG5                 1 diseases: SCAR:1
+TNNI2                1 diseases: DA2B:1
+RSPO4                1 diseases: NDNC:4
+CYC1                 1 diseases: MC3DN:2
+GABRB2               1 diseases: IECEE:9
+CD27                 1 diseases: LPFS:1
+EGLN1                1 diseases: ECYT:2
+PEX13                1 diseases: PBD11B:1
+EPRS                 1 diseases: HLD:3
+CD207                1 diseases: BIRGD:1
+COX20                1 diseases: MT-C4D:1
+SLC38A8              1 diseases: FVH:5
+ATP6AP1              1 diseases: IMD:4
+CHAT                 1 diseases: CMS:10
+HS6ST2               1 diseases: MRXSPM:1
+HR                   1 diseases: ALUNC:3
+NLRP7                1 diseases: HYDM:9
+GM2A                 1 diseases: GM2GAB:2
+KYNU                 1 diseases: HYXKY:1
+WDR36                1 diseases: GLC1G:8
+SMN2                 1 diseases: SMA:18
+ARSB                 1 diseases: MPS:29
+RPS26                1 diseases: DBA:2
+CTBP1                1 diseases: HADDTS:1
+CYP7B1               1 diseases: SPG5A:14
+KCNC3                1 diseases: SCA:11
+TBXAS1               1 diseases: GHDD:4
+AMPD1                1 diseases: MMDD:2
+HSF4                 1 diseases: CTRCT:5
+MYH11                1 diseases: AAT:1
+POMK                 1 diseases: MDDGA:3
+ARMC4                1 diseases: CILD:1
+IFNGR2               1 diseases: IMD:5
+ANKRD11              1 diseases: KBGS:1
+EBF3                 1 diseases: HADDS:10
+CEP83                1 diseases: NPHP:2
+ARG1                 1 diseases: ARGIN:9
+GFM1                 1 diseases: COXPD:4
+SPRED1               1 diseases: LGSS:2
+VPS11                1 diseases: HLD:1
+PCK1                 1 diseases: PCKDC:2
+CFC1                 1 diseases: HTX:1
+CNNM4                1 diseases: JALIS:4
+MEGF8                1 diseases: CRPT:3
+GALC                 1 diseases: GLD:45
+MT-CO3               1 diseases: LHON:2
+SLC45A2              1 diseases: OCA:21
+CHST14               1 diseases: EDSMC:6
+GAMT                 1 diseases: CCDS:18
+SOX17                1 diseases: VUR:3
+PAK3                 1 diseases: MRX:2
+DPYS                 1 diseases: DPYSD:5
+P2RY12               1 diseases: BDPLT:3
+PNPLA1               1 diseases: ARCI:1
+CDC42                1 diseases: TKS:1
+VWF                  1 diseases: VWD:44
+VPS33B               1 diseases: ARCS:2
+NAA10                1 diseases: NATD:2
+HEXB                 1 diseases: GM2G:9
+LRPPRC               1 diseases: LSFC:1
+LINGO1               1 diseases: MRT:2
+SETD5                1 diseases: MRD:2
+GALNT12              1 diseases: CRCS:8
+SEPTIN9              1 diseases: HNA:2
+DHTKD1               1 diseases: AMOXAD:1
+ZNF644               1 diseases: MYP:13
+CRLF1                1 diseases: CISS:14
+TRBV7-9              1 diseases: IMGT ALLELE TRBV7-9*:1
+CTH                  1 diseases: CSTNU:2
+ATM                  1 diseases: AT:52
+ARHGEF18             1 diseases: RP:1
+LIG4                 1 diseases: LIG4S:2
+AGTR1                1 diseases: RTD:1
+WDR60                1 diseases: SRTD:1
+MC1R                 1 diseases: CMM:5
+CDCA7                1 diseases: ICF:4
+GRHL3                1 diseases: VWS:3
+ADAMTSL2             1 diseases: GPHYSD:14
+ZSWIM6               1 diseases: AFND:1
+MYL1                 1 diseases: MYOA:1
+PPIB                 1 diseases: OI:1
+PCGF2                1 diseases: TPFS:2
+SLC52A3              1 diseases: BVVLS:16
+ALDH7A1              1 diseases: PDE:8
+EIF3F                1 diseases: MRT:1
+CSNK1D               1 diseases: FASPS:2
+KCNJ10               1 diseases: SESAMES:8
+LCA5                 1 diseases: LCA:1
+CD46                 1 diseases: AHUS:5
+PER2                 1 diseases: FASPS:1
+RGR                  1 diseases: RP:1
+ANG                  1 diseases: ALS:14
+U2AF1                1 diseases: MDS:3
+HJV                  1 diseases: HFE2A:14
+CTSD                 1 diseases: CLN:2
+NHEJ1                1 diseases: NHEJ1-SCID:2
+PFKM                 1 diseases: GSD:9
+DNAJC12              1 diseases: HPANBH:1
+PER3                 1 diseases: FASPS:1
+TTC7A                1 diseases: GIDID:9
+COL25A1              1 diseases: CFEOM:1
+TFRC                 1 diseases: IMD:1
+TINF2                1 diseases: DKCA:4
+DNAJB6               1 diseases: LGMDD:3
+VARS2                1 diseases: COXPD:3
+NAGS                 1 diseases: NAGSD:14
+ITPR2                1 diseases: ANHD:1
+AK2                  1 diseases: RDYS:2
+VPS13A               1 diseases: CHAC:5
+CYP4A11              1 diseases: CYP4A11V:1
+BCOR                 1 diseases: MCOPS:1
+GRIA3                1 diseases: MRX:4
+KERA                 1 diseases: CNA:2
+PPT1                 1 diseases: CLN:23
+RP2                  1 diseases: RP:11
+COX4I2               1 diseases: EPIDACH:1
+SERPINF2             1 diseases: APLID:1
+SGCG                 1 diseases: LGMDR:4
+C12orf57             1 diseases: TEMTYS:1
+PLOD3                1 diseases: LH3 deficiency:1
+DYNC2H1              1 diseases: SRTD:35
+TBL1Y                1 diseases: DFNY:1
+CUX2                 1 diseases: EIEE:1
+UROS                 1 diseases: CEP:22
+SLC10A2              1 diseases: PBAM:2
+AIP                  1 diseases: PITA:3
+MAP3K1               1 diseases: SRXY:4
+ALDOA                1 diseases: GSD:4
+CTNNA3               1 diseases: ARVD:1
+VPS13D               1 diseases: SCAR:11
+ATL3                 1 diseases: HSN1F:1
+EXOSC8               1 diseases: PCH1C:2
+F8                   1 diseases: HEMA:475
+SKIV2L               1 diseases: THES:1
+PLAA                 1 diseases: NDMSBA:2
+DIS3L2               1 diseases: PRLMNS:2
+KRT6A                1 diseases: PC:24
+FREM2                1 diseases: FRASRS:1
+SERPIND1             1 diseases: THPH:3
+BMPER                1 diseases: DSD:1
+CTCF                 1 diseases: MRD:1
+PPP1R3A              1 diseases: NIDDM:1
+B4GAT1               1 diseases: MDDGA:2
+KRT81                1 diseases: MNLIX:3
+RFXANK               1 diseases: BLS:1
+ADA                  1 diseases: ADASCID:29
+COASY                1 diseases: NBIA:2
+CLTC                 1 diseases: MRD:3
+EIF2AK3              1 diseases: WRS:1
+CHMP4B               1 diseases: CTRCT:2
+ACADS                1 diseases: ACADSD:10
+TLR3                 1 diseases: IIAE:1
+KCNK4                1 diseases: FHEIG:2
+FGF14                1 diseases: SCA:1
+ELOVL4               1 diseases: SCA:1
+ZNF335               1 diseases: MCPH:1
+MCCC2                1 diseases: MCC2D:58
+MED23                1 diseases: MRT:1
+IVD                  1 diseases: IVA:19
+UFC1                 1 diseases: NEDSG:2
+NSDHL                1 diseases: CHILD:3
+H1F0                 1 diseases: RNA edited version:1
+MRPL44               1 diseases: COXPD:1
+MAST1                1 diseases: MCCCHCM:1
+EPOR                 1 diseases: ECYT:1
+EIF4G1               1 diseases: PARK:2
+MTPAP                1 diseases: SPAX:1
+TRPM4                1 diseases: PFHB1B:10
+CLDN19               1 diseases: HOMG:3
+ZP3                  1 diseases: OOMD:1
+TGDS                 1 diseases: CATMANS:5
+RAB39B               1 diseases: WSMN:2
+RAB11B               1 diseases: NDAGSCW:2
+DYRK1B               1 diseases: AOMS:2
+ATP6V0A4             1 diseases: RTADR:6
+RNF213               1 diseases: MYMY:3
+ADGRG6               1 diseases: LCCS:2
+SUCLG1               1 diseases: MTDPS:3
+KRT2                 1 diseases: IBS:15
+HSD3B7               1 diseases: CBAS:2
+XPR1                 1 diseases: IBGC:4
+VDR                  1 diseases: VDDR2A:14
+SEC23A               1 diseases: CLSD:1
+DNAJC6               1 diseases: PARK19B:1
+NSUN2                1 diseases: MRT:1
+OPN1SW               1 diseases: CBT:4
+BCO1                 1 diseases: HCVAD:1
+NCAPH                1 diseases: MCPH:1
+TGM1                 1 diseases: ARCI:65
+MST1R                1 diseases: NPCA:4
+DLL3                 1 diseases: SCDO:1
+FASLG                1 diseases: ALPS1B:1
+ENG                  1 diseases: HHT:33
+ZBTB42               1 diseases: LCCS:1
+WASHC4               1 diseases: MRT:1
+GFM2                 1 diseases: COXPD:3
+INAVA                1 diseases: IBD:1
+CCNO                 1 diseases: CILD:2
+KLF1                 1 diseases: CDAN:1
+KDR                  1 diseases: HCI:2
+PRDM8                1 diseases: EPM:1
+GLUD1                1 diseases: HHF:13
+OGT                  1 diseases: MRX:3
+SYT1                 1 diseases: BAGOS:5
+TUBA4A               1 diseases: ALS:5
+HPD                  1 diseases: TYRSN:3
+EEF2                 1 diseases: SCA:1
+PDGFRL               1 diseases: CRC:1
+RPIA                 1 diseases: RPID:1
+PHIP                 1 diseases: DIDOD:4
+P4HA2                1 diseases: MYP:3
+RFWD3                1 diseases: FANCW:1
+KCNT2                1 diseases: EIEE:1
+SLC11A2              1 diseases: AHMIO:3
+NBEAL2               1 diseases: GPS:8
+SCAPER               1 diseases: IDDRP:1
+DENND5A              1 diseases: EIEE:1
+MEN1                 1 diseases: MEN:90
+STXBP2               1 diseases: FHL:5
+STN1                 1 diseases: CRMCC:2
+ATP5F1E              1 diseases: MC5DN:1
+COQ6                 1 diseases: COQ10D:3
+PRPF4                1 diseases: RP:2
+TAF6                 1 diseases: ALYUS:2
+TNC                  1 diseases: DFNA:2
+MYD88                1 diseases: MYD88D:2
+PEX2                 1 diseases: PBD5B:1
+WDR11                1 diseases: HH:6
+TBX4                 1 diseases: ICPPS:2
+TUBB2A               1 diseases: CDCBM:2
+SACS                 1 diseases: SACS:25
+SERPINH1             1 diseases: OI:1
+RBCK1                1 diseases: PGBM:2
+GPR179               1 diseases: CSNB1E:4
+CBLIF                1 diseases: IFD:1
+KRIT1                1 diseases: CCM:2
+LEFTY2               1 diseases: LRAM:1
+RORA                 1 diseases: IDDECA:5
+CD59                 1 diseases: HACD:1
+IL2RA                1 diseases: IMD:2
+ATP6V1B2             1 diseases: ZLS:1
+TRAPPC12             1 diseases: PEBAS:1
+PLCG2                1 diseases: APLAID:1
+KCNJ1                1 diseases: BARTS:13
+CRYGD                1 diseases: CTRCT:7
+NUS1                 1 diseases: CDG1AA:1
+CACNB4               1 diseases: EA:1
+CHM                  1 diseases: CHM:3
+CRYAA                1 diseases: CTRCT:5
+TG                   1 diseases: TDH:7
+ACADSB               1 diseases: SBCADD:1
+CABP4                1 diseases: CRSD:1
+DUSP6                1 diseases: HH:4
+TGFB3                1 diseases: LDS:1
+MRPL3                1 diseases: COXPD:1
+ACAD9                1 diseases: MC1DN:17
+HGD                  1 diseases: AKU:68
+BMPR2                1 diseases: PPH:30
+COX6B1               1 diseases: MT-C4D:1
+MGAT2                1 diseases: CDG2A:3
+MSH5                 1 diseases: POF:3
+BPTF                 1 diseases: NEDDFL:2
+KNL1                 1 diseases: MCPH:1
+PYGL                 1 diseases: GSD:2
+GRIK1                1 diseases: RNA edited version:1
+RPL21                1 diseases: HYPT:1
+ICAM4                1 diseases: LW(B:1
+PHF6                 1 diseases: BFLS:6
+HOMER2               1 diseases: DFNA:1
+NUBPL                1 diseases: MC1DN:2
+TAF13                1 diseases: MRT:2
+PRKG1                1 diseases: AAT:1
+SLC5A5               1 diseases: TDH:5
+MCOLN1               1 diseases: ML:7
+NFIX                 1 diseases: SOTOS:6
+ADRA2B               1 diseases: FAME:1
+MMP21                1 diseases: HTX:9
+HIBCH                1 diseases: HIBCHD:1
+PLA2G5               1 diseases: FRFB:2
+PALB2                1 diseases: BC:1
+SEPSECS              1 diseases: PCH2D:3
+MED17                1 diseases: MCPHSBA:1
+NFIB                 1 diseases: MACID:3
+ANOS1                1 diseases: HH:14
+BCORL1               1 diseases: SHUVER:3
+ETFDH                1 diseases: GA2C:22
+SASS6                1 diseases: MCPH:1
+GJA3                 1 diseases: CTRCT:19
+TAT                  1 diseases: TYRSN:1
+KREMEN1              1 diseases: ECTD:1
+STIL                 1 diseases: MCPH:1
+LIFR                 1 diseases: STWS:1
+CBL                  1 diseases: NSLL:4
+RPL5                 1 diseases: DBA:2
+NODAL                1 diseases: HTX:5
+GP9                  1 diseases: BSS:7
+HCCS                 1 diseases: LSDMCA:1
+LHX3                 1 diseases: CPHD:3
+TAF1                 1 diseases: MRXS:7
+SPTLC2               1 diseases: HSAN1C:5
+MYO15A               1 diseases: DFNB:4
+CIC                  1 diseases: MRD:1
+ZDHHC9               1 diseases: MRXSZ:2
+SGCA                 1 diseases: LGMDR:30
+TSEN2                1 diseases: PCH2B:1
+TNPO3                1 diseases: LGMDD:1
+MAG                  1 diseases: SPG:3
+PCDH19               1 diseases: EIEE:37
+KMT5B                1 diseases: MRD:3
+HTT                  1 diseases: LOMARS:2
+TSR2                 1 diseases: DBA:1
+MBNL1                1 diseases: DM:2
+SLC6A5               1 diseases: HKPX:6
+RTTN                 1 diseases: MSSP:2
+NUP160               1 diseases: NPHS:1
+FGF9                 1 diseases: SYNS:1
+FADD                 1 diseases: IEHDCM:1
+ERBB3                1 diseases: FERLK:1
+NAXD                 1 diseases: PEBEL:2
+NIN                  1 diseases: SCKL:2
+HNRNPDL              1 diseases: LGMDD:2
+SLC1A1               1 diseases: DCBXA:1
+GRIN2D               1 diseases: EIEE:1
+SLC1A4               1 diseases: SPATCCM:2
+TBR1                 1 diseases: IDDAS:9
+PMP2                 1 diseases: CMT1G:3
+TGM6                 1 diseases: SCA:5
+AGPAT2               1 diseases: CGL:3
+CHRNA4               1 diseases: ENFL:2
+EMD                  1 diseases: EDMD:4
+SLC6A19              1 diseases: HND:14
+SLC12A1              1 diseases: BARTS:2
+CYP27A1              1 diseases: CTX:7
+PUS7                 1 diseases: IDDABS:1
+SLC18A2              1 diseases: PKDYS:1
+TUBB6                1 diseases: FPVEPD:1
+H6PD                 1 diseases: CORTRD:2
+CAD                  1 diseases: EIEE:2
+GNAQ                 1 diseases: SWS:1
+SLC7A9               1 diseases: CSNU:45
+XPA                  1 diseases: XP-A:5
+MMAA                 1 diseases: MMAA:23
+MGME1                1 diseases: MTDPS:1
+ETHE1                1 diseases: EE:9
+AMH                  1 diseases: PMDS:9
+GNMT                 1 diseases: GNMT deficiency:3
+TRPM1                1 diseases: CSNB1C:12
+PPP2R1A              1 diseases: MRD:4
+NTN1                 1 diseases: MRMV:2
+TMEM173              1 diseases: SAVI:3
+EPG5                 1 diseases: VICIS:8
+PLEKHM1              1 diseases: OPTA:1
+GLUL                 1 diseases: CSGD:2
+DIAPH1               1 diseases: DFNA:1
+CORO1A               1 diseases: IMD:1
+MRE11                1 diseases: ATLD:1
+AKAP9                1 diseases: LQT:1
+LGI1                 1 diseases: ETL:17
+CRYBB1               1 diseases: CTRCT:1
+SLC30A10             1 diseases: HMNDYT:2
+TPK1                 1 diseases: THMD:3
+SLC27A4              1 diseases: IPS:5
+IGF1R                1 diseases: IGF1RES:7
+FAR1                 1 diseases: PFCRD:2
+PRKD1                1 diseases: CHDED:2
+PGAP3                1 diseases: HPMRS:3
+EFEMP2               1 diseases: ARCL1B:3
+MTHFS                1 diseases: NEDMEHM:2
+ABAT                 1 diseases: GABATD:1
+PKD1L1               1 diseases: HTX:1
+DNAH9                1 diseases: CILD:5
+HELLS                1 diseases: ICF:1
+FANCI                1 diseases: FANCI:3
+SCARB2               1 diseases: EPM:1
+SLC20A2              1 diseases: IBGC:19
+IGHV3-23             1 diseases: IMGT allele IGHV3-23*:2
+PIGN                 1 diseases: MCAHS:1
+CRBN                 1 diseases: MRT2A:1
+TUBG1                1 diseases: CDCBM:3
+DLX5                 1 diseases: SHFM1D:1
+ADK                  1 diseases: HMAKD:3
+TTC21A               1 diseases: SPGF:1
+CELSR1               1 diseases: NTD:4
+HMGCL                1 diseases: HMGCLD:19
+TNNI3K               1 diseases: CCDD:1
+SLC9A1               1 diseases: LIKNS:2
+CORIN                1 diseases: PEE:2
+ABCD1                1 diseases: ALD:141
+COQ8A                1 diseases: COQ10D:13
+FOXF1                1 diseases: ACDMPV:21
+CA2                  1 diseases: OPTB:4
+TPO                  1 diseases: TDH2A:25
+NCAPD2               1 diseases: MCPH:1
+TTI2                 1 diseases: MRT:1
+ANK1                 1 diseases: SPH:3
+FGD1                 1 diseases: AAS:5
+PIGS                 1 diseases: GPIBD:3
+ASNS                 1 diseases: ASNSD:3
+WBP2                 1 diseases: DFNB:3
+RPL18                1 diseases: DBA:1
+MMUT                 1 diseases: MMAM:132
+POLR1D               1 diseases: TCS:7
+GATA5                1 diseases: CHTD:18
+SMOC1                1 diseases: OAS:3
+SEPTIN12             1 diseases: SPGF:2
+TMEM138              1 diseases: JBTS:4
+EPM2A                1 diseases: EPM:19
+ADAT3                1 diseases: MRT:1
+PC                   1 diseases: PC deficiency:9
+SFTPB                1 diseases: SMDP:1
+FAH                  1 diseases: TYRSN:20
+TCIRG1               1 diseases: OPTB:5
+USH1G                1 diseases: USH1G:2
+TRIM44               1 diseases: AN:1
+TBX19                1 diseases: IAD:1
+KIF1C                1 diseases: SPAX:1
+CHD4                 1 diseases: SIHIWES:7
+BICC1                1 diseases: CYSRD:1
+PAX8                 1 diseases: CHNG:4
+GRN                  1 diseases: UP-D:1
+SLC2A4               1 diseases: NIDDM:1
+PTS                  1 diseases: HPABH4A:24
+TSEN34               1 diseases: PCH2C:1
+RPS19                1 diseases: DBA:25
+PRKACG               1 diseases: BDPLT:1
+ADCY6                1 diseases: LCCS:1
+IGKV1D-16            1 diseases: IMGT allele IGKV1D-16*:1
+DDC                  1 diseases: AADCD:9
+KLHL40               1 diseases: NEM:14
+CYP11B1              1 diseases: AH:52
+CDC73                1 diseases: HRPT:4
+TBX20                1 diseases: ASD:2
+WRN                  1 diseases: WRN:2
+SERAC1               1 diseases: MEGDEL:4
+ADSL                 1 diseases: ADSLD:27
+LAS1L                1 diseases: WTS:2
+GLRX5                1 diseases: SIDBA:2
+FLAD1                1 diseases: LSMFLAD:1
+ST14                 1 diseases: ARCI:1
+ZEB2                 1 diseases: MOWS:2
+RIT1                 1 diseases: NS:5
+CYLD                 1 diseases: BRSS:1
+RHBDF2               1 diseases: TOC:2
+ABCG5                1 diseases: STSL:6
+FDX2                 1 diseases: MEOAL:2
+CEBPA                1 diseases: AML:2
+ACSF3                1 diseases: CMAMMA:9
+CRYGS                1 diseases: CTRCT:1
+ALOX12B              1 diseases: ARCI:18
+MTMR2                1 diseases: CMT4B:1
+SLC46A1              1 diseases: HFM:10
+CAPN5                1 diseases: VRNI:2
+NR1H4                1 diseases: PFIC:1
+NDUFAF5              1 diseases: MC1DN:3
+EIF2AK4              1 diseases: PVOD:2
+THOC6                1 diseases: BBIS:1
+SALL4                1 diseases: DRRS:1
+MRPS2                1 diseases: COXPD:3
+GFAP                 1 diseases: ALXDRD:63
+MAT1A                1 diseases: MATD:12
+NIPA1                1 diseases: SPG:2
+CYP26B1              1 diseases: RHFCA:2
+APCDD1               1 diseases: HYPT:1
+RGS9                 1 diseases: PERRS:1
+PCCA                 1 diseases: PA-:16
+B4GALT7              1 diseases: EDSSPD:2
+AQP5                 1 diseases: PPKB:5
+NSMCE3               1 diseases: LICS:2
+MPDZ                 1 diseases: HYC:1
+ATF6                 1 diseases: ACHM:2
+GNB5                 1 diseases: LADCI:1
+EYS                  1 diseases: RP:18
+MKRN3                1 diseases: CPPB:4
+ADAMTS13             1 diseases: TTP:44
+IMPG1                1 diseases: VMD:2
+ACVR2B               1 diseases: HTX:2
+IYD                  1 diseases: TDH:3
+RNASEH2A             1 diseases: AGS:8
+SUFU                 1 diseases: JBTS:2
+CCDC88C              1 diseases: SCA:1
+HFE                  1 diseases: HFE:13
+SPATA5               1 diseases: EHLMRS:10
+SLC13A5              1 diseases: EIEE:6
+PPP2R5D              1 diseases: MRD:4
+CD96                 1 diseases: CSYN:1
+BRWD3                1 diseases: MRX:1
+SFTPA2               1 diseases: IPF:2
+MLH3                 1 diseases: HNPCC:9
+PORCN                1 diseases: FODH:15
+ACTG2                1 diseases: VSCM:12
+ROBO2                1 diseases: VUR:2
+ALG3                 1 diseases: CDG1D:2
+IFNGR1               1 diseases: IMD27A:10
+LPAR6                1 diseases: ARWH:3
+IFT81                1 diseases: SRTD:1
+COQ8B                1 diseases: NPHS:8
+PEX10                1 diseases: PBD6B:1
+DEAF1                1 diseases: MRD:4
+GALE                 1 diseases: EDG:16
+GLRB                 1 diseases: HKPX:4
+AMN                  1 diseases: RH-MGA:3
+NT5C2                1 diseases: SPG:1
+SLITRK1              1 diseases: TTM:2
+FGF3                 1 diseases: LAMM:2
+TLE6                 1 diseases: PREMBL:1
+CIT                  1 diseases: MCPH:3
+IER3IP1              1 diseases: MEDS:2
+FERMT1               1 diseases: KNDLRS:2
+DLD                  1 diseases: DLDD:10
+ABRAXAS1             1 diseases: BC:1
+SARDH                1 diseases: SARCOS:2
+PADI6                1 diseases: PREMBL:2
+MCM3AP               1 diseases: PNRIID:8
+KCTD7                1 diseases: EPM:5
+RNASET2              1 diseases: LCWM:1
+MT-CO2               1 diseases: MT-C4D:1
+PITPNM3              1 diseases: CORD:1
+PIGO                 1 diseases: HPMRS:6
+IARS2                1 diseases: CAGSSS:1
+KCNB1                1 diseases: EIEE:6
+LYRM4                1 diseases: COXPD:1
+PPP2R3C              1 diseases: GDRM:3
+CCND2                1 diseases: MPPH:5
+DDX58                1 diseases: SGMRT:2
+CFB                  1 diseases: AHUS:8
+UBIAD1               1 diseases: SCCD:19
+SLC34A2              1 diseases: PALM:1
+RNF125               1 diseases: TNORS:3
+ABCA7                1 diseases: AD:1
+PLD3                 1 diseases: SCA:1
+FRZB                 1 diseases: OS:1
+SLC6A9               1 diseases: GCENSG:1
+FOXP1                1 diseases: MRLIAF:3
+RP1L1                1 diseases: OCMD:3
+SLC5A1               1 diseases: GGM:5
+SYT14                1 diseases: SCAR:1
+ZNHIT3               1 diseases: PEHO:1
+GNPAT                1 diseases: RCDP:3
+TMEM126B             1 diseases: MC1DN:1
+GMNN                 1 diseases: MGORS:1
+NDUFA9               1 diseases: MC1DN:2
+TJP2                 1 diseases: FHCA:1
+SCRIB                1 diseases: NTD:2
+CCT5                 1 diseases: HSNSP:1
+FDXR                 1 diseases: ANOA:4
+RAB27A               1 diseases: GS:3
+FZD6                 1 diseases: NDNC:1
+CSF2RA               1 diseases: SMDP:1
+PITX3                1 diseases: CTRCT:1
+SLC25A12             1 diseases: EIEE:2
+EYA4                 1 diseases: DFNA:2
+UNC119               1 diseases: IMD:1
+NNT                  1 diseases: GCCD:11
+TBCK                 1 diseases: IHPRF:2
+SIK3                 1 diseases: SEMDK:1
+LMX1B                1 diseases: NPS:30
+SNRPB                1 diseases: CCMS:4
+SLC5A2               1 diseases: GLYS:1
+TAPT1                1 diseases: OCLSBG:1
+ELP1                 1 diseases: HSAN:1
+MAP2K1               1 diseases: CFC:3
+PFN1                 1 diseases: ALS:4
+ORC6                 1 diseases: MGORS:1
+HPS5                 1 diseases: HPS:2
+ACD                  1 diseases: DKCB:1
+SOX11                1 diseases: MRD:2
+ARSE                 1 diseases: CDPX:9
+TECRL                1 diseases: CPVT:1
+PDE8B                1 diseases: PPNAD:1
+CCDC22               1 diseases: RTSC:2
+MAK                  1 diseases: RP:5
+RARS                 1 diseases: HLD:2
+SMARCA2              1 diseases: NCBRS:32
+MORC2                1 diseases: CMT2Z:5
+P4HB                 1 diseases: CLCRP:1
+TLL1                 1 diseases: ASD:3
+ADAMTS10             1 diseases: WMS:1
+PIGW                 1 diseases: GPIBD:2
+BSND                 1 diseases: BARTS4A:4
+COL10A1              1 diseases: SMCD:18
+AMT                  1 diseases: NKH:11
+SGCE                 1 diseases: DYT:13
+BCL11A               1 diseases: IDPFH:3
+FRMD7                1 diseases: NYS:25
+STAC3                1 diseases: MYPBB:1
+RLIM                 1 diseases: TOKAS:4
+TDO2                 1 diseases: HYPTRP:1
+KRT6B                1 diseases: PC:1
+SPARC                1 diseases: OI:2
+TMEM199              1 diseases: CDG2P:3
+COL5A1               1 diseases: EDSCL:6
+FANCE                1 diseases: FANCE:1
+TRMT10C              1 diseases: COXPD:2
+GPT2                 1 diseases: MRT:1
+ANKRD1               1 diseases: TAPVR:1
+ADAM22               1 diseases: EIEE:1
+ALDOB                1 diseases: HFI:16
+LAMA4                1 diseases: CMD1JJ:1
+ADPRHL2              1 diseases: CONDSIAS:5
+SERPINC1             1 diseases: AT3D:84
+CFP                  1 diseases: PFD:4
+DOCK3                1 diseases: NEDIDHA:3
+GUCA1A               1 diseases: COD:8
+TRIT1                1 diseases: COXPD:4
+TBCD                 1 diseases: PEBAT:13
+HNRNPH2              1 diseases: MRXSB:3
+PDSS2                1 diseases: COQ10D:1
+CASQ2                1 diseases: CPVT:4
+NDUFA10              1 diseases: MC1DN:2
+APOA1                1 diseases: AMYL:2
+RNF13                1 diseases: EIEE:2
+PYGM                 1 diseases: GSD:17
+CLIC2                1 diseases: MRXS:1
+PRICKLE1             1 diseases: EPM1B:3
+TTPA                 1 diseases: AVED:7
+B3GALNT2             1 diseases: MDDGA:4
+SLC25A38             1 diseases: SIDBA:4
+FTCD                 1 diseases: FIGLU-URIA:2
+ING1                 1 diseases: HNSCC:3
+CHN1                 1 diseases: DURS:7
+SLC2A9               1 diseases: RHUC:5
+CARMIL2              1 diseases: IMD:4
+ETV6                 1 diseases: THC:3
+TOE1                 1 diseases: PCH:10
+ADGRV1               1 diseases: USH2C:2
+SCN2B                1 diseases: ATFB:2
+RELN                 1 diseases: ETL:7
+RECQL4               1 diseases: BGS:1
+PMM2                 1 diseases: CDG1A:67
+IGHV3-20             1 diseases: IMGT allele IGHV3-20*:1
+VPS13C               1 diseases: PARK:1
+MAGED2               1 diseases: BARTS:1
+TRPS1                1 diseases: TRPS:7
+KRT85                1 diseases: ECTD:1
+ACOX2                1 diseases: CBAS:1
+ATCAY                1 diseases: ATCAY:1
+DOK7                 1 diseases: CMS:19
+IGHV1-2              1 diseases: IMGT allele IGHV1-2*:4
+RANBP2               1 diseases: IIAE:3
+ATG16L1              1 diseases: IBD:1
+PDHB                 1 diseases: PDHBD:2
+EOGT                 1 diseases: AOS:2
+CSF1R                1 diseases: HDLS:15
+IRAK4                1 diseases: IRAK4D:2
+PARD3                1 diseases: NTD:3
+MYL2                 1 diseases: CMH:6
+DHODH                1 diseases: POADS:10
+MLPH                 1 diseases: GS:1
+ATIC                 1 diseases: AICAR:1
+ATOH7                1 diseases: PHPVAR:2
+NF2                  1 diseases: NF:16
+GAB1                 1 diseases: DFNB:1
+DDX41                1 diseases: MPLPF:3
+ESPN                 1 diseases: DFNB:3
+CLPP                 1 diseases: PRLTS:3
+PGM3                 1 diseases: IMD:7
+PAM16                1 diseases: SMDMDM:1
+DDX3X                1 diseases: MRX:18
+KCNN4                1 diseases: DHS:3
+GATM                 1 diseases: CCDS:15
+NUP62                1 diseases: SNDI:1
+AP4E1                1 diseases: STUT:15
+ZFP57                1 diseases: TNDM:3
+TENT5A               1 diseases: OI:2
+CDKN3                1 diseases: HCC:9
+ARHGEF10             1 diseases: SNCV:1
+GAD1                 1 diseases: CPSQ:1
+CLCF1                1 diseases: CISS:1
+SPINT2               1 diseases: DIAR:1
+KLHL3                1 diseases: PHA2D:32
+HSPG2                1 diseases: SJS:1
+APPL1                1 diseases: MODY:1
+NOTCH1               1 diseases: AOS:3
+ATPAF2               1 diseases: MC5DN:1
+FDPS                 1 diseases: POROK:1
+SLC52A2              1 diseases: BVVLS:10
+OCA2                 1 diseases: OCA:40
+IGHE                 1 diseases: IMGT allele IGHE*:1
+SLC17A8              1 diseases: DFNA:1
+PNPO                 1 diseases: PNPOD:3
+PDYN                 1 diseases: SCA:8
+SUCLA2               1 diseases: MTDPS:3
+NANS                 1 diseases: SEMDG:7
+SUOX                 1 diseases: ISOD:11
+IDH3B                1 diseases: RP:1
+POC1B                1 diseases: CORD:1
+CYP24A1              1 diseases: HCINF:4
+SMARCAL1             1 diseases: SIOD:11
+SELENBP1             1 diseases: EHMTO:2
+NDUFS7               1 diseases: MC1DN:1
+TNFRSF10D            1 diseases: TRAIL-R4-B:2
+MIB1                 1 diseases: LVNC:1
+NPC1                 1 diseases: NPC:151
+PRMT7                1 diseases: SBIDDS:3
+CCDC115              1 diseases: CDG2O:2
+CD40LG               1 diseases: HIGM:33
+TRAF3IP1             1 diseases: SLSN:4
+DNAH5                1 diseases: CILD:12
+CTC1                 1 diseases: CRMCC:9
+GHSR                 1 diseases: GHDP:2
+B3GAT3               1 diseases: JDSCD:3
+MAD2L2               1 diseases: FANCV:1
+CLN3                 1 diseases: CLN:9
+TRPC3                1 diseases: SCA:1
+TMEM106B             1 diseases: HLD:1
+TUBB1                1 diseases: MAD-TUBB:1
+PRUNE1               1 diseases: NMIHBA:5
+SAR1B                1 diseases: CMRD:5
+PEPD                 1 diseases: PD:4
+ANXA11               1 diseases: ALS:6
+GRIA2                1 diseases: RNA edited version:1
+MNX1                 1 diseases: CURRAS:11
+DACT1                1 diseases: NTD:2
+PRSS1                1 diseases: PCTT:12
+PNPLA2               1 diseases: NLSDM:1
+DNAJC13              1 diseases: PARK:4
+BCKDHB               1 diseases: MSUD1B:5
+PTCH2                1 diseases: BCNS:1
+TRMU                 1 diseases: LFIT:2
+VPS13B               1 diseases: COH:6
+PNKD                 1 diseases: DYT:2
+DCLRE1C              1 diseases: RSSCID:2
+SPART                1 diseases: SPG:2
+PSMB9                1 diseases: PRAAS:1
+CYP2R1               1 diseases: VDDR1B:1
+PUM1                 1 diseases: SCA:3
+NDUFB9               1 diseases: MC1DN:1
+RAB7A                1 diseases: CMT2B:4
+IL11RA               1 diseases: CRSDA:4
+KCTD1                1 diseases: SENS:8
+POLR3B               1 diseases: HLD:8
+RXFP2                1 diseases: CRYPTO:1
+LIPT2                1 diseases: NELABA:3
+SRY                  1 diseases: SRXY:27
+DCAF8                1 diseases: GAN:1
+ADIPOQ               1 diseases: ADPND:1

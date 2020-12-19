@@ -242,8 +242,8 @@ $(document).ready(function(){
 		["#toggle_elms", "#toggle_confirmed_elms", "#toggle_iprets", "#toggle_dom_int",
 		 "#toggle_idom_int", "#toggle_elmdom_int", "#toggle_elmdom_pred_int",
 		 "#toggle_prets_int", "#toggle_phos", "#toggle_acet", "#toggle_uni_regions",
-		 "#toggle_uni_variants", "#toggle_uni_mutagen", "#toggle_input_mut",
-		 "#toggle_cosmic_mut"].forEach(function(ele) {
+		 "#toggle_uni_variants", "#toggle_uni_mutagen", "#toggle_uni_binding",
+		 "#toggle_uni_metal", "#toggle_input_mut", "#toggle_cosmic_mut"].forEach(function(ele) {
 			$(ele).prop("checked", false);
 		});
 
@@ -579,15 +579,21 @@ $(document).ready(function(){
 	$("#toggle_uni_regions").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_region']");
 	});
-
 	// BUTTON: Toggle UniProt Variants
 	$("#toggle_uni_variants").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_var']");
 	});
-
 	// BUTTON: Toggle UniProt Mutagenesis
 	$("#toggle_uni_mutagen").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_mtg']");
+	});
+	// BUTTON: Toggle UniProt Binding
+	$("#toggle_uni_binding").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_binding']");
+	});
+	// BUTTON: Toggle UniProt Metal
+	$("#toggle_uni_metal").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_metal']");
 	});
 
 	// SLIDERS
@@ -678,17 +684,19 @@ $(document).ready(function(){
 		} else {
 			var gene = node.data("label");
 			var des = node.data("des");
-			var acc = node.data("protein");
+			var uni_id = node.data("protein")
+			var uni_ac = node.data("uni_ac");
+			var uni_prot = uni_ac+" ("+uni_id+")";
 			var length = node.data("length");
 			var qtip_content = "<span class='tip'>"+
+							"<span class='tipProt'>UniProtKB</span> | " +
+							"<a href='https://www.uniprot.org/uniprot/"+uni_ac+"'>" +
+							uni_prot+" <i class='fas fa-external-link-alt fa-xs'></i>" +
+							"</a><br>" +
 							"<span class='tipProt'>Gene</span> | <b>"+gene+"</b><br>" +
 							"<span class='tipProt'>Protein</span> | <b>"+des+"</b><br>" +
-							"<span class='tipProt'>Accession</span> | " +
-							"<a href='https://www.uniprot.org/uniprot/"+acc+"'>" +
-							acc+" <i class='fas fa-external-link-alt fa-xs'></i>" +
-							"</a><br>" +
 							"<span class='tipProt'>Length</span> | "+
-							"<a href='https://www.uniprot.org/uniprot/"+acc+".fasta'>" +
+							"<a href='https://www.uniprot.org/uniprot/"+uni_ac+".fasta'>" +
 							length+" AA <i class='fas fa-external-link-alt fa-xs'></i>"+
 							"</span>";
 		}

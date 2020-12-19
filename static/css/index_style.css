@@ -26,6 +26,16 @@
   100% { transform: rotate(360deg); }
 }
 
+.intro-container{
+  max-width: 80%;
+  margin: auto;
+  padding: 10px;
+  /* background-color:  #fef9e7 ; */
+  font-size: large;
+  margin-bottom: 10px;
+  display: flex;
+}
+
 .main-container{
   max-width: 80%;
   margin: auto;
@@ -34,8 +44,8 @@
 }
 
 textarea {
-  width: 20em;
-  height: 100px;
+  width: 25em;
+  height: 150px;
   resize:vertical;
   overflow: auto;
   box-sizing: border-box;
@@ -81,16 +91,7 @@ hr{
 #max_prots {
   width: 30px;
 }
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-}
 
-input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
-}
 
 button {
   /* GROW EFFECT */

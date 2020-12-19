@@ -1,124 +1,190 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Protein Interaction Visualization</title>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Mechnetor</title>
+		<link
+			rel="shortcut icon"
+			type="image/x-icon"
+			href="static/images/mechnetor.ico"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css?family=Staatliches|Lato|Audiowide|Source+Sans+Pro:400,600"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+			integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+			integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static',filename='css/common.css') }}"
+		/>
+		<script
+			type="text/javascript"
+			src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"
+		></script>
 
-	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Merriweather:300,400|Montserrat|Lato">
+		<script
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"
+		></script>
 
-	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static',filename='js/index_validation.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static',filename='js/file_uploader.js') }}"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"></script>
-</head>
+		<style>
+			.main-header {
+				margin-top: 10px;
+			}
+			.sub-header {
+				border-bottom: 1px solid #000;
+				padding-bottom: 2px;
+				font-size: large;
+				font-weight: bold;
+				margin-bottom: 5px;
+			}
+			.main-container {
+				max-width: 60%;
+				margin: auto;
+				background-color: #fff;
+				padding: 10px;
+				border: 1px solid #ccc;
+			}
+			table {
+				width: 400px;
+				margin-bottom: 5px;
+			}
+			tr {
+				border-bottom: 1px solid #ddd;
+				padding-right: 20px;
+			}
+		</style>
+	</head>
 
-<body>
+	<body>
+		<div class="grid-container">
+			{% include "header.html" %}
 
-	<div id="main_container">
-	  <div class="header">
-			<div id="header-content">
-	      <div id="header-title">Protein Interaction Visualization</div>
-				<div id="navbar">
-					<ul>
-						<li><a href="/" class="home-link">Home</a></li>
-						<li><a href="/help" class="help-link">Help</a></li>
-						<li><a href="http://www.russelllab.org" class="russell-link">Russell Lab</a></li>
-					</ul>
+			<div class="content">
+				<div class="main-container">
+					<div class="main-header">
+						<h3>
+							<i class="fas fa-question-circle"></i
+							><b> Help and documentation</b>
+						</h3>
+					</div>
+
+					<div class="sub-header">What is Mechnetor?</div>
+					<p>
+						The current abundance of genetic variant data requires new tools to
+						develop mechanistic hypotheses about biological processes and
+						diseases. Fortunately, growing datasets of protein interactions,
+						mechanism and structure can provide help understand or predict
+						biological mechanism. However, a systematic integration of these
+						datasets is first needed. For this purpose, we developed
+						<strong>Mechnetor</strong>. <br /><br />
+						For sets of proteins or interactions, the tool integrates
+						mechanistic data from diverse sources (below) and constructs an
+						interactive network for intuitive visualization of interaction
+						mechanisms. Proteins are represented as linear arrangements of
+						domains, motifs and other functional elements, which permits the
+						display of interactions between the relevant/known protein regions.
+						The result is a finer resolution interaction network and more
+						immediate clues as to points of intervention. The view can be
+						customized and manipulated, and exported as an image or vector
+						graphics (SVG) at any time, providing beautiful figures suitable for
+						publication.
+					</p>
+
+					<div class="sub-header">Input</div>
+					<p>
+						<strong>Mechnetor</strong> requires protein pairs so that it can
+						look for interactions between them. Users can provide their input in
+						different ways but always using <b>gene names</b>,
+						<b>UniProt accessions</b> or <b>UniProt identifiers</b>.
+					</p>
+
+					<p>
+						A graph will be created with your gene and a number of known
+						interactors. This method is useful when you don't know the
+						interactors of your gene of interest, or you want to explore putable
+						effects of mutations on any interaction.<br />
+						It is triggered by entering a single gene name/identifier in the
+						input box. Select the maximum number of interactors that will be
+						displayed with the "Limit the number of proteins" slider.<br />
+						Interactors for your gene are determined through BioGRID and sorted
+						according to the evidence (# of publications where they've been
+						reported).
+					</p>
+
+					<br /><br />
+
+					<div class="main-header">
+						<h3><i class="far fa-chart-bar"></i><b> Data</b></h3>
+					</div>
+
+					<p>This are all the data sources currently used by Mechnetor:</p>
+					<table>
+						<tr style="border-bottom: 2px" solid #ddd>
+							<th>Database</th>
+							<th>Version/Release</th>
+						</tr>
+						<tr>
+							<td>UniProt</td>
+							<td>2020_05</td>
+						</tr>
+						<tr>
+							<td>Pfam</td>
+							<td>33.1</td>
+						</tr>
+						<tr>
+							<td>ELM</td>
+							<td>March 2020</td>
+						</tr>
+						<tr>
+							<td>3did</td>
+							<td>2020-01</td>
+						</tr>
+						<tr>
+							<td>BioGRID</td>
+							<td>4.2.191</td>
+						</tr>
+						<tr>
+							<td>PhosphoSitePlus</td>
+							<td>March 2019</td>
+						</tr>
+						<tr>
+							<td>COSMIC</td>
+							<td>v87</td>
+						</tr>
+					</table>
+					<br />
+					<p>
+						It also runs
+						<a
+							href="https://http://www.russelllab.org/cgi-bin/tools/interprets.pl"
+							>InterPreTS</a
+						>, our tool to predict interactions through tertiary structure.
+					</p>
+					<p>Currently, it supports human and 6 other model organisms.</p>
 				</div>
 			</div>
+
+			{% include "footer.html" %}
 		</div>
-
-	  <div id="body">
-	    <div class="row">
-	      <div id="feat_and_data" class="col-sm-5">
-	        <div class="title"><h2><i class="far fa-chart-bar"></i> Data</h2></div>
-	        <div class="subtitle"><h4>Protein info</h4></div>
-	        <div class="row">
-
-	          <div class="col-sm-6" style="padding-left:35px;">
-	            <li><div class="db"><a href="https://www.uniprot.org">UniProt</a></div></li>
-	            <div class="info">accession, description, gene name, length</div>
-	            <li><div class="db"><a href="https://pfam.xfam.org">Pfam</a></div></li>
-	            <div class="info">protein family domains</div>
-	            <li><div class="db"><a href="https://http://elm.eu.org">ELM</a></div></li>
-	            <div class="info">eukaryotic linear motifs</div>
-	          </div>
-	          <div class="col-sm-6" style="padding-left:35px;">
-	            <li><div class="db"><a href="https://www.phosphosite.org">PhosphoSitePlus</a></div></li>
-	            <div class="info">phosphorylation and acetylation sites</div>
-	            <li><div class="db"><a href="https://cancer.sanger.ac.uk/cosmic">COSMIC</a></div></li>
-	            <div class="info">human cancer mutations</div>
-	          </div>
-	        </div>
-	        <br>
-	        <div class="subtitle"><h4>Protein Interactions</h4></div>
-	        <div class="row">
-	          <div class="col-sm-6" style="padding-left:35px;">
-	            <li><div class="db"><a href="https://thebiogrid.org">BioGRID</a></div></li>
-	            <div class="info">protein-protein interactions</div>
-	            <li><div class="db"><a href="https://3did.irbbarcelona.org/">3did</a></div></li>
-	            <div class="info">domain-domain interactions</div>
-	          </div>
-	          <div class="col-sm-6" style="padding-left:35px;">
-	            <li><div class="db"><a href="https://http://elm.eu.org">ELM</a></div></li>
-	            <div class="info">linear motif-domain interactions</div>
-	            <li><div class="db"><a href="https://http://www.russelllab.org/cgi-bin/tools/interprets.pl">InterPreTS</a></div></li>
-	            <div class="info">3D-structure templates interactions</div>
-	          </div>
-	        </div>
-	        <br>
-	        <div class="title"><h2><i class="fas fa-exclamation-circle"></i> Features</h2></div>
-	    		<div class="subtitle"><h4>Single-protein input method:</h4></div>
-	        <div class="paragraph">
-	          A graph will be created with your gene and a number of known interactors.
-	          This method is useful when you don't know the interactors of your gene of
-	          interest, or you want to explore putable effects of mutations on any interaction.<br>
-	          It is triggered by entering a single gene name/identifier in the input box.
-	          Select the maximum number of interactors that will be displayed with the
-	          "Limit the number of proteins" slider.<br>
-	          Interactors for your gene are determined through BioGRID and sorted according
-	          to the evidence (# of publications where they've been reported).
-	    		</div>
-	        <br>
-	    	</div>
-	    </div>
-	  </div>
-
-		<div id="footer">
-  		<div class="row">
-  			<div class="col-sm-5">
-  				<div class="section">Developed by</div>
-  				<p style="margin:0; padding:0;">
-  					JC Gonzalez Sanchez, Mustafa Ibrahim, Kyle Weise and Rob Russell
-  				</p>
-  				<p>
-  					at the <a href="http://www.russelllab.org/" style="color: white;">Russell Lab</a>
-  					(University of Heidelberg, 2018)
-  				</p>
-  			</div>
-  			<div class="col-sm-3">
-  				<div class="section">Powered by</div>
-  				<div id="cyto-logo">
-  					<a href="http://js.cytoscape.org/">
-  						<img src="{{ url_for('static',filename='images/cytoscape-logo-white.png') }}" alt="cyto-logo" width="35" height="40">Cytoscape.js
-  					</a>
-  				</div>
-  			</div>
-  			<div class="col-sm-4">
-  				<div class="section">Contact</div>
-  					<i style="color:white; margin-right:10px;" class="fas fa-envelope"></i>juan-carlos.gonzalez@bioquant.uni-heidelberg.de
-  			</div>
-  		</div>
-  		<!-- <hr style="padding:0;">
-  		<div><i>University of Heidelberg, 2018</i></div> -->
-  	</div>
-  </div>
-
-</body>
+	</body>
 </html>

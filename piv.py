@@ -171,9 +171,17 @@ def parse_mutation_input(input_text, input_prots, input2uni, org_map,
 
     return mutations, input_prots, input2uni, org_map
 
-def identify_protein(cursor, id_map, protein_id, org):
+def get_uni_id_map(cursor, sql_table, org):
+    idmap = {}
+    cursor.execute("SELECT id, uniprot_id FROM "+sql_table+
+                    " WHERE (organism=\'"+org+"\');")
+    for row in cursor.fetchall():
+        idmap[row[0]] = row[1]
+    return idmap
+
+def identify_protein(cursor, sql_table, protein_id, org):
     if org:
-        cursor.execute("SELECT uniprot_id FROM "+id_map+
+        cursor.execute("SELECT uniprot_id FROM "+sql_table+
                        " WHERE (id = \'"+protein_id+"\' AND organism = \'"+org+"\');")
         results = cursor.fetchone()
         if results:
@@ -181,13 +189,30 @@ def identify_protein(cursor, id_map, protein_id, org):
         else:
             return None, None
     else:
-        cursor.execute("SELECT uniprot_id, organism FROM "+id_map+
+        cursor.execute("SELECT uniprot_id, organism FROM "+sql_table+
                        " WHERE (id = \'"+protein_id+"\');")
         results = cursor.fetchall()
         if results and len(results) == 1:
             return results[0], results[1]
         else:
             return None, None
+
+def get_additional_interactors(protein_data, n_ints):
+    interactors = defaultdict(list)
+
+    for uni_id, data in protein_data.items():
+        if n_ints == "all":
+            interactors[uni_id] = data["sorted_ints"]
+        else:
+            n = 0
+            for uni_id_2 in data["sorted_ints"]:
+                if uni_id_2 not in protein_data:
+                    interactors[uni_id].append(uni_id_2)
+                    n += 1
+                    if n == int(n_ints):
+                        break
+
+    return interactors
 
 def get_protein_data_sql(cursor, sql_table, uni_id):
     cursor.execute("SELECT uniprot_acc, gene, description, length, biogrid_id,"+
@@ -254,28 +279,21 @@ def get_ptms_sql(cursor, sql_table, uni_ac):
 
     return data
 
-def get_uni_feats_sql(cursor, sql_table, uni_ac):
+def get_uni_feats_sql(cursor, sql_table, uni_ac, uniprot_features):
     data = defaultdict(lambda: defaultdict(list))
-    for role in ["VARIANT"]:
-        cursor.execute("SELECT type, start_pos, end_pos, note"+
-                    " FROM "+sql_table+
-                    " WHERE (uniprot_acc=\'"+uni_ac+"\' AND type=\'"+role+"\');");
-        for row in cursor.fetchall():
-            try:
-                var, info = re.search("(.+)\((.+)\)", row[3]).group(1, 2)
-            except:
-                var, info = re.search("(.+)", row[3]).group(1), ""
-
-            if len([x for x in ["cancer","melanoma","carcinoma"] if x in info])==0:
-                dis = re.findall("in ([A-Z]+)", info)
-                if len(dis)>0:
-                    var = var.replace(" ","")
-                    start = int(row[1])
-                    end = int(row[2])
-                    data[row[0]][(start,end)].append({
-                        "var": var,
-                        "info": info
-                    })
+    roles = ", ".join(["\'"+x+"\'" for x in uniprot_features])
+    cursor.execute("SELECT type, start_pos, end_pos, info_1, info_2"+
+                " FROM "+sql_table+
+                " WHERE (uniprot_acc=\'"+uni_ac+"\' AND type IN ("+roles+"));");
+    for row in cursor.fetchall():
+        role = row[0]
+        start = int(row[1])
+        end = int(row[2])
+        info_1, info_2 = row[3:]
+        data[role][(start, end)].append({
+                    "info_1": info_1,
+                    "info_2": info_2
+                })
     return data
 
 def get_cosmic_mutations_sql(cursor, sql_table, uni_ac, min_sample_size=1):
@@ -354,6 +372,16 @@ def get_interprets_sql(cursor, sql_table, id_a, id_b):
 
     return data
 
+def get_all_association_scores(cursor, sql_table, orgs):
+    orgs = ["\'"+org+"\'" for org in orgs]
+    data = {}
+    cursor.execute("SELECT acc_a, acc_b, p_val, lo FROM "+sql_table+
+                   " WHERE organism IN ("+", ".join(orgs)+");")
+    for row in cursor.fetchall():
+        data[(row[0], row[1])] = (row[2:])
+
+    return data
+
 def format_none(string):
     if string==None:
         return ""
@@ -409,99 +437,65 @@ def calculate_overlap(start, end, mask):
     return overlap
 ###
 
-def hasNumbers(inputString):
-    return any(char.isdigit() for char in inputString)
+# def parse_blast(blastout_file, mask, data_dict,
+#                 max_ol=0.25, max_cov=0.9):
+#     prots = set()
+#     sp, tr = defaultdict(list), defaultdict(list)
+#     with open_file(blastout_file) as f:
+#         for line in f:
+#             if line[0]!="#":
+#                 t = line.rstrip().split("\t")
+#                 query = t[0]
+#                 dc, acc, uni_id = t[1].split("|")
+#                 prots.add(query)
+#                 if dc=="sp":
+#                     sp[query].append({ "acc": uni_id,
+#                                   "ide": float(t[2]),
+#                                   "e-val": float(t[10]),
+#                                   "q-start": int(t[6]),
+#                                   "q-end": int(t[7])
+#                                   })
+#                 elif dc=="tr":
+#                     tr[query].append({ "acc": uni_id,
+#                                   "ide": float(t[2]),
+#                                   "e-val": float(t[10]),
+#                                   "q-start": int(t[6]),
+#                                   "q-end": int(t[7])
+#                                   })
 
-# def get_unique_uni_id(protein, uni_ids):
-#
-#     for uni_id in sorted(list(uni_ids), reverse=True):
-#         if protein in uni_id:
-#             break
-#
-#     return uni_id
+#     for prot in prots:
+#         mask_cov = 0
+#         final = []
+#         for hit in sp[prot]+tr[prot]:
+#             ol = calculate_overlap(hit["q-start"], hit["q-end"], mask[prot])
+#             if ol < max_ol:
+#                 mask[prot] = fill_mask(hit["q-start"], hit["q-end"], mask[prot])
+#                 final.append(hit)
+#             mask_cov = mask[prot].count("1")/float(len(mask[prot]))
+#             if mask_cov >= max_cov:
+#                 break
+#         for hit in sorted(final, key=lambda i: i["q-start"]):
+#             l = str(hit["q-start"])+"-"+str(hit["q-end"])+"|"
+#             l += hit["acc"]+"|"+"("+"{:1.0e}".format(hit["e-val"])+", "+str(hit["ide"])+"%)"
+#             data_dict[prot]["blast"].append(l)
+#     return data_dict
 
-# def function(input_text, prot_dict):
-#     for line in input_text.split("\n"):
-
-#         ## Make proteins UniProtID centric
-#         if line.strip() and line[0] != "#":
-
-def get_additional_interactors(protein_data, n_ints):
-    interactors = defaultdict(list)
-
-    for uni_id, data in protein_data.items():
-        if n_ints == "all":
-            interactors[uni_id] = data["sorted_ints"]
-        else:
-            n = 0
-            for uni_id_2 in data["sorted_ints"]:
-                if uni_id_2 not in protein_data:
-                    interactors[uni_id].append(uni_id_2)
-                    n += 1
-                    if n == int(n_ints):
-                        break
-
-    return interactors
-    
-def parse_blast(blastout_file, mask, data_dict,
-                max_ol=0.25, max_cov=0.9):
-    prots = set()
-    sp, tr = defaultdict(list), defaultdict(list)
-    with open_file(blastout_file) as f:
-        for line in f:
-            if line[0]!="#":
-                t = line.rstrip().split("\t")
-                query = t[0]
-                dc, acc, uni_id = t[1].split("|")
-                prots.add(query)
-                if dc=="sp":
-                    sp[query].append({ "acc": uni_id,
-                                  "ide": float(t[2]),
-                                  "e-val": float(t[10]),
-                                  "q-start": int(t[6]),
-                                  "q-end": int(t[7])
-                                  })
-                elif dc=="tr":
-                    tr[query].append({ "acc": uni_id,
-                                  "ide": float(t[2]),
-                                  "e-val": float(t[10]),
-                                  "q-start": int(t[6]),
-                                  "q-end": int(t[7])
-                                  })
-
-    for prot in prots:
-        mask_cov = 0
-        final = []
-        for hit in sp[prot]+tr[prot]:
-            ol = calculate_overlap(hit["q-start"], hit["q-end"], mask[prot])
-            if ol < max_ol:
-                mask[prot] = fill_mask(hit["q-start"], hit["q-end"], mask[prot])
-                final.append(hit)
-            mask_cov = mask[prot].count("1")/float(len(mask[prot]))
-            if mask_cov >= max_cov:
-                break
-        for hit in sorted(final, key=lambda i: i["q-start"]):
-            l = str(hit["q-start"])+"-"+str(hit["q-end"])+"|"
-            l += hit["acc"]+"|"+"("+"{:1.0e}".format(hit["e-val"])+", "+str(hit["ide"])+"%)"
-            data_dict[prot]["blast"].append(l)
-    return data_dict
-
-def parse_pfamscan(pfam_file, data_dict):
-    # pfams = defaultdict(lambda: defaultdict(set) )
-    with open_file(pfam_file) as f:
-        for line in f:
-            if line[0] != "#" and line.strip():
-                t = line.rstrip().split()
-                query = t[0]
-                start, end = int(t[3]), int(t[4])
-                pfam_ac, pfam_name = t[5].split(".")[0], t[6]
-                e_val = float(t[12])
-                data_dict[query]["pfams"].append({"acc": pfam_ac,
-                                                  "start": int(start),
-                                                  "end": int(end),
-                                                  "e-val": float(e_val)
-                                                 })
-    return data_dict
+# def parse_pfamscan(pfam_file, data_dict):
+#     # pfams = defaultdict(lambda: defaultdict(set) )
+#     with open_file(pfam_file) as f:
+#         for line in f:
+#             if line[0] != "#" and line.strip():
+#                 t = line.rstrip().split()
+#                 query = t[0]
+#                 start, end = int(t[3]), int(t[4])
+#                 pfam_ac, pfam_name = t[5].split(".")[0], t[6]
+#                 e_val = float(t[12])
+#                 data_dict[query]["pfams"].append({"acc": pfam_ac,
+#                                                   "start": int(start),
+#                                                   "end": int(end),
+#                                                   "e-val": float(e_val)
+#                                                  })
+#     return data_dict
 
 # def find_all_slims(fasta_file, data_dict, ide, elm_info, 
 #                     fpm2_script = "fpm2.pl"):
@@ -565,17 +559,6 @@ def extract_linear_motifs(lm_hits_file, data_dict, max_overlap=2, max_eval=1):
                 else:
                     data_dict[label][group] = defaultdict(list)
     return data_dict
-
-def calculate_overlap(start, end, mask):
-    sub_mask = mask[start-1:end]
-    overlap = sub_mask.count("1") / float(len(sub_mask))
-    return overlap
-
-def fill_mask(start, end, mask):
-    length = end - start + 1
-    for i in range(start-1, end):
-        mask[i] = "1"
-    return mask
 
 def get_sorted_lists(d):
     keys, vals = [], []
@@ -651,10 +634,10 @@ def get_stats(columns, lines, p):
         v = len(int_types[k])
         if k == "iELM::DOM":
             continue
-        int_types_k.append(str(names[k]))
+        int_types_k.append(str(names.get(k, "")))
         int_types_series.append({
                                 "value": v,
-                                "itemStyle": {"color": colors[k]}
+                                "itemStyle": {"color": colors.get(k,"")}
                                 })
 
     int_types_number = dict_from_set_len(int_types)
@@ -729,6 +712,9 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
          ADDITIONAL_INTERACTORS=0, ONLY_INT_PAIRS=True,
          CMD_LINE=False, RUN_IPRETS=True):
 
+    error = False
+    param = {} # Parameters to print in JSON file
+
     try:
         add_n_ints = int(ADDITIONAL_INTERACTORS)
     except:
@@ -749,9 +735,6 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     # }
     # if SP!="any":
 
-    error = False
-    param = {} # Parameters to print in JSON file
-
     ## DATA: Set PSQL tables
     ID_MAP_TABLE       = "id_mapping"
     PROTEIN_DATA_TABLE = "protein_data"
@@ -762,10 +745,11 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     PTM_TABLE          = "ptms"
     ELM_CLASSES_TABLE  = "elm_classes"
     COSMIC_TABLE       = "cosmic_genome_screens"
-    PPI_DATA           = "ppi_db"
+    PPI_TABLE          = "ppi_db"
     DDI_TABLE          = "ddi_db"
     ELM_DOM_TABLE      = "elm_int_dom"
     DMI_3DID_TABLE     = "dmi_3did"
+    ASSOC_TABLE        = "ass_scores"
     IPRETS_TABLE       = "interprets_pdb2019"
     conn = psycopg2.connect(database=PSQL_DB, 
                             user=PSQL_USER)
@@ -778,6 +762,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     # if SP != "any":
         # if os.path.isfile(BLASTDB_DIR+"uniprot_"+SP+".pin"):
         #     BLASTDB_UNI = BLASTDB_DIR+"uniprot_"+SP
+    uniprot_features = ["VARIANT", "MUTAGEN", "METAL", "BINDING", "REGION"]
 
     ### Create Job directory
     if CUSTOM_ID:
@@ -791,6 +776,9 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
         except OSError:
             print_log(IDE,
                       "Creation of the directory {} failed".format(OUTPUT_DIR))
+
+    print_log(IDE, "RUNNING NEW JOB")
+    print_log(IDE, "Orgainsm is {}. Using PSQL db: {}".format(ORG, PSQL_DB))
 
     # if not os.path.exists(TEMP_DIR):
     #     st = "[{}]".format(datetime.datetime.now())
@@ -809,7 +797,9 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
         table_file = "interaction_table_"+IDE+".tsv.gz"
     stats_file      = "req_parameters_"+IDE+".json"
 
-    print_log(IDE, "Running PIV")
+    
+
+    idmap = get_uni_id_map(cursor, ID_MAP_TABLE , ORG)
 
     ### Parse protein input
     (input_prots, input_seqs,
@@ -843,7 +833,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     uni_feats, cosmic_muts = {}, {}
     for uni_id in input_prots:
         protein_data[uni_id] = get_protein_data_sql(cursor, PROTEIN_DATA_TABLE, uni_id)
-    
+   
     ### Get additional interaction partners
     if (add_n_ints == "all" or add_n_ints > 0):
         ad_interactors = get_additional_interactors(protein_data, add_n_ints)
@@ -872,16 +862,18 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     ddi = get_DDI_sql(cursor, DDI_TABLE)
     dmi_elm = get_ELM_dom_sql(cursor, ELM_DOM_TABLE)
     lm3did_info, dmi_3did = get_3did_dmi(cursor, DMI_3DID_TABLE)
+    assoc_pairs = {}
+    # assoc_pairs = get_all_association_scores(cursor, ASSOC_TABLE, set(org_map.values()) )
+
 
     for uni_id in all_proteins:
         uni_ac = protein_data[uni_id]["uni_ac"]
         pfam_matches[uni_id] = get_pfam_matches_sql(cursor, PFAM_MATCHES_TABLE, uni_ac)        
         lms[uni_id] = get_lm_hits_sql(cursor, LM_HITS_TABLE, uni_ac)
         ptms[uni_id] = get_ptms_sql(cursor, PTM_TABLE, uni_ac)
-        uni_feats[uni_id] = get_uni_feats_sql(cursor, UNI_FEAT_TABLE, uni_ac)
+        uni_feats[uni_id] = get_uni_feats_sql(cursor, UNI_FEAT_TABLE, uni_ac, uniprot_features)
         if org_map[uni_id] == "HUMAN":
                     cosmic_muts[uni_id] = get_cosmic_mutations_sql(cursor, COSMIC_TABLE, uni_ac)
-
 
     #### PUT THIS IN A DIFFERENT SCRIPT
     ### 4. If sequence(s) in input -> compute data:
@@ -1019,10 +1011,11 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     graph_ele, columns, lines, no_int_prots = int2graph.main(
             all_proteins, protein_pairs, input_seqs, input_muts, org_map,
             conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts,
-            PPI_DATA, ddi, dmi_elm, dmi_3did, pfam_info, elm_info, iprets_hits,
+            PPI_TABLE, ASSOC_TABLE, assoc_pairs, ddi, dmi_elm, dmi_3did, pfam_info, 
+            elm_info, iprets_hits, idmap,
             fasta_data, fasta_link, fasta_iprets,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
-    
+
     conn.close()
 
     if len(no_int_prots) > 0:
@@ -1095,9 +1088,14 @@ if __name__ == "__main__":
     if args["log"]:
         sys.stdout = open(args["log"], 'w')
 
+    if args["species"]=="HUMAN":
+            db = "mechnetor_human"
+    else:
+        db = "mechnetor_all"
+
     main(INPUT_1=prots, INPUT_2=muts, ORG=args["species"],
          ADDITIONAL_INTERACTORS=args["add_ints"],
-         CUSTOM_ID=args["job_id"],
+         CUSTOM_ID=args["job_id"], PSQL_DB=db,
          MAKE_NETWORK=True, TABLE_FORMAT="json", CMD_LINE=True,
          RUN_IPRETS=False)
 

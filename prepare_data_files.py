@@ -5,7 +5,7 @@ import os.path
 from collections import defaultdict
 from Bio import SwissProt, SeqIO
 import find_all_slims
-# import pandas as pd
+import pandas as pd
 # import run_interprets
 
 def open_file(input_file, mode="rt"):
@@ -65,6 +65,16 @@ def read_pfam_dat(pfam_dat_file):
             pfam_types[t[0]] = t[1]
     return pfam_names, pfam_accs, pfam_types
 
+def get_uniprot_diseases(uni_file):
+    with open_file(uni_file) as f:
+        dic = {}
+        for i, line in enumerate(f):
+            t = line.rstrip().split("\t")
+            if i > 0:
+                dis_id, name, acr, des = t
+                dic[acr] = name+" ("+acr+")"
+    return dic
+
 def extract_protein_data_from_uniprot_text(uniprot_file):
     """Extracts information from a UniProt text file.
     Requires Bio::SwissProt module
@@ -76,7 +86,6 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
     uni_ac_seqs, masks = {}, {}
     modres = defaultdict(lambda: defaultdict(dict))
     uni_features = defaultdict(lambda: defaultdict(list))
-    region = defaultdict(list)
     pdb2uni = defaultdict(set)
     reviewed = set()
     previous_data_class = ""
@@ -133,10 +142,12 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
         uni_ac_seqs[main_uni_ac] = record.sequence
 
         for key in [uni_id, main_uni_ac]+main_genes:
+            key = key.upper()
             if uni_id not in primary_id_map[key]:
                 primary_id_map[key].append(uni_id)
 
         for key in uni_acs[1:]+genes[1:]:
+            key = key.upper()
             if uni_id not in secondary_id_map[key]:
                 secondary_id_map[key].append(uni_id)
         
@@ -166,24 +177,18 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
                     modres[main_uni_ac][end]["Phosphorylation"] = ["UniProt"]
                 elif "acetyl" in info:
                     modres[main_uni_ac][end]["Acetylation"] = ["UniProt"]
-                # else:
-                #     modres[main_uni_ac]["other"][str(end)+"-"+res] = info
 
-            elif feat.type in ["VARIANT", "MUTAGEN", "METAL", "BINDING"]:
+            elif feat.type in ["VARIANT", "MUTAGEN", "METAL", "BINDING", "REGION"]:
                 evidence = feat.qualifiers.get("evidence", "")
                 note = feat.qualifiers.get("note", "")
                 ide = feat.id
                 if not feat.id:
                     ide = "-"
-                uni_features[main_uni_ac][feat.type].append( (start, end, ide, evidence, note) )
+                if start == "0":
+                    start = "1"
+                if start != end and start.isdigit() and end.isdigit():
+                    uni_features[main_uni_ac][feat.type].append( (start, end, ide, evidence, note) )
 
-        #     elif feat[0]=="REGION":
-        #         region[uni_ac].append(
-        #             {"start": start,
-        #              "end": end,
-        #              "info": info
-        #             }
-        #         )
     for key in secondary_id_map:
         for uni_id in secondary_id_map[key]:
             if uni_id not in primary_id_map[key]:
@@ -191,15 +196,50 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
 
     return data, primary_id_map, uni_ac_seqs, modres, uni_features #, region
 
-def create_uni_features_table(outfile, uni_feats):
+def create_uni_features_table(outfile, uni_feats, uni_dis_names):
     with open_file(outfile, "wt") as out:
-        vals = ["#Uni_Ac", "Type", "Id", "Start", "End", "Note", "Evidence"]
+        vals = ["#Uni_Ac", "Type", "Id", "Start", "End", "Info-1", "Info-2", "Evidence"]
         out.write("\t".join(vals)+"\n")
         for uni_ac in uni_feats:
             for feat_type in uni_feats[uni_ac]:
                 for feat in uni_feats[uni_ac][feat_type]:
                     (start, end, feat_id, evidence, note) = feat
-                    vals = [uni_ac, feat_type, feat_id, start, end, note, evidence]
+                    var, info = note, "-"
+
+                    ## Keep only human genetic disease variants
+                    if feat_type=="VARIANT":
+                        try:
+                            var, info = re.search("([^\(]+)\((.+)\)", note).group(1, 2)
+                        except:
+                            var, info = re.search("(.+)", note).group(1), ""
+                        
+                        parsed_info = []
+                        dis = 0
+                        for annot in info.split("; "):
+                            if [y for y in ["dbSNP","cancer","melanoma","carcinoma, somatic"] if y in annot]:
+                                continue
+                            new_annot = []
+                            for word in annot.split():
+                                if word in uni_dis_names:
+                                    new_word = uni_dis_names[word]
+                                    dis += 1
+                                else:
+                                    new_word = word
+                                new_annot.append(new_word)
+
+                            new_annot = " ".join(new_annot)
+                            parsed_info.append(new_annot)
+
+                        if not parsed_info or dis==0:
+                            continue
+                        info = ";".join(parsed_info)
+                        var = var.replace(" ","")
+
+                    elif feat_type == "MUTAGEN":
+                        var, info = note.split(": ")[0], note.split(": ")[1:]
+                        info = ": ".join(info)
+
+                    vals = [uni_ac, feat_type, feat_id, start, end, var, info, evidence]
                     out.write("\t".join(vals)+"\n")
     return
 
@@ -408,11 +448,12 @@ def merge_pfam_files(full_file, matches_file, pfamscan_file):
                 if line.strip() and line[0]!="#":
                     out.write(line)
 
-        with open_file(pfamscan_file, "rt") as f:
-            for line in f:
-                if line.strip() and line[0]!="#":
-                    t = line.rstrip().split()
-                    out.write( "\t".join(t[:5]+[t[5].split(".")[0]]+t[6:-2]+t[-1:])+"\n")
+        if os.path.isfile(pfamscan_file):
+            with open_file(pfamscan_file, "rt") as f:
+                for line in f:
+                    if line.strip() and line[0]!="#":
+                        t = line.rstrip().split()
+                        out.write( "\t".join(t[:5]+[t[5].split(".")[0]]+t[6:-2]+t[-1:])+"\n")
     return
 
 def create_ddi_database(pfam_names, pfam_int_file, db3did_file, out_file):
@@ -623,32 +664,35 @@ def edit_interprets_raw_file(raw_file, rev_file, uni_map, uni_seqs, prot_data):
             elif len(t) == 24:
                 ### They are sorted: uniac_a < uniac_b
                 ac_a, ac_b = t[0], t[8]
-                id_a, id_b = uni_map[ac_a][0], uni_map[ac_b][0]
-                ac_a, ac_b = prot_data[id_a]["ac"], prot_data[id_b]["ac"]
-                start_a, end_a = int(t[4]), int(t[5])
-                start_b, end_b = int(t[12]), int(t[13])
-                len_a = len(uni_seqs[ac_a])
-                len_b = len(uni_seqs[ac_b])
-                if start_a > len_a:
-                    continue
-                elif end_a > len_a:
-                    end_a = len_a
-                if start_b > len_b:
-                    continue
-                elif end_b > len_b:
-                    end_b = len_b
-                info_a = [ac_a]+t[1:5]+[str(end_a)]+t[6:8] 
-                info_b = [ac_b]+t[9:13]+[str(end_b)]+t[14:16] 
-                scores = t[16:]
-                z = float(t[-4])
-                if id_a <= id_b:
-                    hits[(id_a, id_b)][z].append({
-                        "info_a": info_a, "info_b": info_b, "scores": scores                
-                        })
-                else:
-                    hits[(id_b, id_a)][z].append({
-                        "info_a": info_b, "info_b": info_a, "scores": scores                
-                        })
+                try:
+                    id_a, id_b = uni_map[ac_a][0], uni_map[ac_b][0]
+                    ac_a, ac_b = prot_data[id_a]["ac"], prot_data[id_b]["ac"]
+                    start_a, end_a = int(t[4]), int(t[5])
+                    start_b, end_b = int(t[12]), int(t[13])
+                    len_a = len(uni_seqs[ac_a])
+                    len_b = len(uni_seqs[ac_b])
+                    if start_a > len_a:
+                        continue
+                    elif end_a > len_a:
+                        end_a = len_a
+                    if start_b > len_b:
+                        continue
+                    elif end_b > len_b:
+                        end_b = len_b
+                    info_a = [ac_a]+t[1:5]+[str(end_a)]+t[6:8] 
+                    info_b = [ac_b]+t[9:13]+[str(end_b)]+t[14:16] 
+                    scores = t[16:]
+                    z = float(t[-4])
+                    if id_a <= id_b:
+                        hits[(id_a, id_b)][z].append({
+                            "info_a": info_a, "info_b": info_b, "scores": scores                
+                            })
+                    else:
+                        hits[(id_b, id_a)][z].append({
+                            "info_a": info_b, "info_b": info_a, "scores": scores                
+                            })
+                except:
+                    pass
 
     mask, mask2 = {}, {}
     final = defaultdict(list)
@@ -699,6 +743,17 @@ def calculate_overlap(start, end, mask):
     sub_mask = mask[start-1:end]
     overlap = sub_mask.count("1") / float(len(sub_mask))
     return overlap
+
+def edit_assoc_file(old_file, new_file, org):
+    with open_file(new_file, "wt") as out:
+        with open_file(old_file, "rt") as f:
+            for i, line in enumerate(f):
+                t = line.rstrip().split("\t")
+                if i == 0:
+                    out.write("\t".join(t+["Organism"])+"\n")
+                else:
+                    out.write("\t".join(t+[org])+"\n")
+    return
 #################################################
 
 def merge_gene_names(genes):
@@ -723,10 +778,6 @@ def merge_gene_names(genes):
             var.append(v)
 
     return pattern+"("+",".join(var)+")"
-
-
-
-
 
 def compare_ints(t, gene1, gene2, ints):
     s1, e1 = int(t[4]), int(t[5])
@@ -1203,16 +1254,17 @@ def main( SP="Hsa",
     ELM_INSTANCES_FILE   = COM_DIR+"elm_"+ELM_VERSION+"_instances.tsv"
     ELM_DOM_FILE         = COM_DIR+"elm_"+ELM_VERSION+"_int_domains_reviewed.tsv"
     ELM_DOM_EDIT_FILE    = COM_DIR+"elm_"+ELM_VERSION+"_int_domains_final.tsv"
-
     ### 3did
     FLAT_3DID_FILE       = COM_DIR+"3did_flat_"+DB3DID_VERSION+".gz"
     DMI_3DID_FILE        = COM_DIR+"3did_dmi_flat_"+DB3DID_VERSION+".gz"
     EDITED_DMI_3DID_FILE = COM_DIR+"3did_dmi_flat_edited_"+DB3DID_VERSION+".tsv.gz"
     ### DDI database = Pfam + 3did DDI's
     DDI_FILE             = COM_DIR+"DDI_db.tsv.gz"
+    
     PDB2UNIPROT_FILE     = COM_DIR+"pdb_chain_uniprot_2020-11.tsv.gz"
     BIOGRID_FILE         = COM_DIR+"BIOGRID-ALL-"+BIOGRID_VERSION+".tab3.gz"
     UNI2BIO_FILE         = COM_DIR+"UniProt_to_BioGRID_"+BIOGRID_VERSION+".tab.txt"
+    UNI_DISEASE_FILE     = COM_DIR+"diseases-all.tab.gz"
 
     ## Species files:
     UNI_TEXT_FILE     = SP_DIR+"uniprot_"+UNI_VERSION+"_proteome_"+SP+".txt.gz"
@@ -1230,13 +1282,14 @@ def main( SP="Hsa",
     UNI_FEAT_FILE     = SP_DIR+"uniprot_"+UNI_VERSION+"_features_"+SP+".tsv.gz"
     IPRETS_RAW_FILE   = SP_DIR+"interprets_raw_results_"+SP+".txt.gz"
     IPRETS_REV_FILE   = SP_DIR+"interprets_reviewed_results_"+SP+".txt.gz"
+    ASSOC_PROB_FILE   = SP_DIR+"prot_ele_association_prob_"+SP+".tsv.gz"
+    NEW_ASSOC_PROB_FILE = SP_DIR+"prot_ele_association_prob_edited_"+SP+".tsv.gz"      
     ####---------updated til here
 
 
-    ASSOC_PROB_FILE   = SP_DIR+"prot_ele_association_prob_"+SP+".tsv.gz"    
-    HIPPIE_FILE       = SP_DIR+"hippie_v2-2.tsv.gz" # Hsa
-    HIPPIE_MAP_FILE   = SP_DIR+"hippie_v2-2_uniprot_mapping_table.tsv.gz" # Hsa
-    PSP_FILE          = SP_DIR+"PSP_ptms_"+PSP_VERSION+"_"+SP+".tsv.gz" # Only Hsa and Mmu
+    # HIPPIE_FILE       = SP_DIR+"hippie_v2-2.tsv.gz" # Hsa
+    # HIPPIE_MAP_FILE   = SP_DIR+"hippie_v2-2_uniprot_mapping_table.tsv.gz" # Hsa
+    # PSP_FILE          = SP_DIR+"PSP_ptms_"+PSP_VERSION+"_"+SP+".tsv.gz" # Only Hsa and Mmu
 
 
     ### CHECK existence/make required common data files
@@ -1283,12 +1336,26 @@ def main( SP="Hsa",
         print_status(EDITED_DMI_3DID_FILE, "created")
 
     check_file_exists(UNI2BIO_FILE)
-   
+    
     ## ORGANISM-specific:
     for f in [UNI_TEXT_FILE, UNI_FASTA_FILE, PFAM_MATCHES_FILE]:#, BIOGRID_FILE]:
         check_file_exists(f)
-    
+
+   
     prot_data, uni_id_map, uni_seqs, modres, uni_feats = extract_protein_data_from_uniprot_text(UNI_TEXT_FILE)
+    if os.path.isfile(ID_MAP_FILE):
+        print_status(ID_MAP_FILE, "exists")
+    else:
+        create_id_map_table(ID_MAP_FILE, uni_id_map, org)
+        print_status(ID_MAP_FILE, "created")
+    sys.exit()
+    if os.path.isfile(UNI_FEAT_FILE):
+        print_status(UNI_FEAT_FILE, "exists")
+    else:
+        uni_dis_names = get_uniprot_diseases(UNI_DISEASE_FILE)
+        create_uni_features_table(UNI_FEAT_FILE, uni_feats, uni_dis_names)
+        print_status(UNI_FEAT_FILE, "created")
+
     prot_data = add_uniprot_biogrid_mapping(UNI2BIO_FILE, uni_id_map, prot_data)
     bio2uni = get_bio_2_uni_mapping(prot_data)
 
@@ -1302,11 +1369,6 @@ def main( SP="Hsa",
         create_ppi_database(PPI_FILE, biogrid_ppi, interaction_info)
         print_status(PPI_FILE, "created")
 
-    if os.path.isfile(ID_MAP_FILE):
-        print_status(ID_MAP_FILE, "exists")
-    else:
-        create_id_map_table(ID_MAP_FILE, uni_id_map, org)
-        print_status(ID_MAP_FILE, "created")
 
     if os.path.isfile(PROT_DATA_FILE):
         print_status(PROT_DATA_FILE, "exists")
@@ -1315,11 +1377,6 @@ def main( SP="Hsa",
         create_protein_data_table(PROT_DATA_FILE, prot_data, org)
         print_status(PROT_DATA_FILE, "created")
     
-    if os.path.isfile(UNI_FEAT_FILE):
-        print_status(UNI_FEAT_FILE, "exists")
-    else:
-        create_uni_features_table(UNI_FEAT_FILE, uni_feats)
-        print_status(UNI_FEAT_FILE, "created")
 
     if os.path.isfile(PTM_SQL_FILE):
         print_status(PTM_SQL_FILE, "exists")
@@ -1332,9 +1389,10 @@ def main( SP="Hsa",
     if os.path.isfile(PFAMSCAN_FILE):
         print_status(PFAMSCAN_FILE, "exists")
     else:
-        pfam_matches = extract_pfam_doms(PFAM_MATCHES_FILE)
-        run_pfamscan(PFAMSCAN_FILE, uni_seqs, pfam_matches)
-        print_status(PFAMSCAN_FILE, "created")
+        pass
+        # pfam_matches = extract_pfam_doms(PFAM_MATCHES_FILE)
+        # run_pfamscan(PFAMSCAN_FILE, uni_seqs, pfam_matches)
+        # print_status(PFAMSCAN_FILE, "created")
 
     # Check for Complete Pfam file (matches+pfamscan)
     if os.path.isfile(PFAM_FULL_FILE):
@@ -1362,13 +1420,13 @@ def main( SP="Hsa",
         print_status(LM_3DID_HITS_FILE, "created")
 
     # pfam_matches = extract_pfam_doms(PFAM_FULL_FILE)
-    # elm_tp, elm_fp = extract_elm_instances(ELM_INSTANCES_FILE, elm_map, uni_seqs.keys())
-    # elm_hits = extract_slim_hits(ELM_HITS_FILE, elm_tp, elm_fp)
+    elm_tp, elm_fp = extract_elm_instances(ELM_INSTANCES_FILE, elm_map, uni_seqs.keys())
+    elm_hits = extract_slim_hits(ELM_HITS_FILE, elm_tp, elm_fp)
 
     # Extract 3DID_LM hits
-    # pdb2uni = get_pdb2uniprot_map(PDB2UNIPROT_FILE, uni_seqs.keys())
-    # tp = get_3did_dmi_instances(lm_3did, pdb2uni, uni_seqs)
-    # lm3d_hits = extract_slim_hits(LM_3DID_HITS_FILE, tp, {})
+    pdb2uni = get_pdb2uniprot_map(PDB2UNIPROT_FILE, uni_seqs.keys())
+    tp = get_3did_dmi_instances(lm_3did, pdb2uni, uni_seqs)
+    lm3d_hits = extract_slim_hits(LM_3DID_HITS_FILE, tp, {})
 
     if os.path.isfile(LM_HITS_SQL_FILE):
         print_status(LM_HITS_SQL_FILE, "exists")
@@ -1393,6 +1451,11 @@ def main( SP="Hsa",
         edit_interprets_raw_file(IPRETS_RAW_FILE, IPRETS_REV_FILE, uni_id_map, uni_seqs, prot_data)  
         print_status(IPRETS_REV_FILE, "created")
    
+    if check_file_exists(ASSOC_PROB_FILE):
+        edit_assoc_file(ASSOC_PROB_FILE, NEW_ASSOC_PROB_FILE, org)
+    else:
+        check_file_exists(ASSOC_PROB_FILE)
+
     sys.exit()
     
 
