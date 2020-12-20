@@ -232,7 +232,7 @@ def add_custom_mutations(nodes, id_n, prot_id, uni_ac, prot_len,
                 },
                 "position": {
                     "x": ini_pos[0] + float(pos) - prot_center - 0.5,
-                    "y": ini_pos[1]
+                    "y": ini_pos[1] - 4
                 }
             })
 
@@ -871,7 +871,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                 }
             })
 
-            row = ["PROT::PROT", "", "","", "", "", "", biogrid_ints, "BioGRID"]
+            row = ["Protein-Protein", "", "","", "", "", "", biogrid_ints, "BioGRID"]
             rows.append(row_main+row)
             n_ints[id_a] += 1
             n_ints[id_b] += 1
@@ -965,7 +965,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                         domB += " ("+str(j)+")"
                     
                     if ddi_info:
-                        row = ["DOM::DOM",
+                        row = ["Domain-Domain",
                                 domA, "-".join(id_coords[source]),
                                 "; ".join(id_muts[source]),
                                 domB, "-".join(id_coords[target]),
@@ -974,12 +974,12 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                         rows.append(row_main+row)
 
                     if lo != "-":
-                        row = ["iDOM::iDOM",
+                        row = ["Domain-Domain",
                                 domA, "-".join(id_coords[source]),
                                 "; ".join(id_muts[source]),
                                 domB, "-".join(id_coords[target]),
                                 "; ".join(id_muts[target]),
-                                str(lo), "Association Method"]
+                                str(lo), "Inferred Association Method"]
                         rows.append(row_main+row)
 
                     n_ints[id_a]+=1
@@ -1012,7 +1012,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                 accept_motif = True
                                 edge_role = "ELM_interaction" #"iELM_interaction",
                                 edge_ds = "ELM" #Predicted
-                                int_type = "ELM::DOM" #"iELM::DOM"
+                                int_type = "Domain-Motif" #"iELM::DOM"
                             elif inferred_elmdom_ints and lo > 0:
                                 accept_motif = True
                                 edge_role = "iELM_interaction",
@@ -1103,7 +1103,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                         eleA += " ("+str(i)+")"
                                     if len(id_dict[id2][pfam_acc]) > 1:
                                         eleB += " ("+str(j)+")"
-                                    row = ["LM::DOM",
+                                    row = ["Domain-Motif",
                                             eleA, "-".join(id_coords[source]),
                                             "; ".join(id_muts[source]),
                                             eleB, "-".join(id_coords[target]),
@@ -1188,10 +1188,10 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                 }
             })
             
-            row = [ "InterPreTS",
+            row = [ "Tertiary Structure Prediction",
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
-                   pvalue, "InterPreTS prediction"]
+                   pvalue, "InterPreTS"]
             rows.append(row_main+row)
             n_ints[id1] += 1
             n_ints[id2] += 1

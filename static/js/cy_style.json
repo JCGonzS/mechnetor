@@ -451,9 +451,10 @@
 	{
 		"selector": "node[role='mod_acet']",
 		"style": {
-			"shape": "rectangle",
-			"height": "8px",
-			"width": "2px",
+			"shape": "polygon",
+			"shape-polygon-points": "0.2, -0.6, 0, -0.6, 0, 1, 0, -0.6, -0.2, -0.6, -0.2, -1, 0.2, -1",
+			"height": "10px",
+			"width": "10px",
 			"background-color": "#008000"
 		}
 	},

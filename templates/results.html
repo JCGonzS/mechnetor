@@ -101,10 +101,10 @@
         }
       }
       // When the user clicks on the button, scroll to the top of the document
-      function topFunction() {
+      $("#goToTop").click(function() {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
-      }
+      });
 
     });
   </script>
@@ -141,7 +141,7 @@
                               <input type="checkbox" id="coord" checked="checked">
                               <span class="checkmark"></span>
                             </label><br> -->
-              <label class="container">Protein Boxes
+              <label class="container" style="margin-top: 10px;">Protein Boxes
                 <input type="checkbox" id="toggle_box" checked="checked">
                 <span class="checkmark"></span>
               </label>
@@ -387,6 +387,10 @@
                 <i class="fas fa-check-square" style="font-size:x-large;"></i>
                 <b>Toggle</b> on or off the different protein elements and interactions using the toolbox on the left.
               </li>
+              <li>
+                <i class="fas fa-camera" style="font-size:x-large;"></i>
+                <b>Download</b> as snapshot of the network view at any moment as a PNG or SVG image.
+              </li>
             </ul>
           </div>
         </div>
@@ -486,7 +490,7 @@
       	</table>
       </div>
       
-      <button onclick="topFunction()" id="goToTop"><i class="fas fa-level-up-alt"></i></button>
+      <button id="goToTop"><i class="fas fa-level-up-alt"></i></button>
     </div>
 
     {% include "footer.html" %}

@@ -116,19 +116,55 @@
 						look for interactions between them. Users can provide their input in
 						different ways but always using <b>gene names</b>,
 						<b>UniProt accessions</b> or <b>UniProt identifiers</b>.
+						<br /><br />
+						You can input a <b>list of proteins</b> (one protein per line) and
+						it will look for interactions between every possible protein pair.
+						If you want to restric it to particular pairs, then enter a
+						<b>list of protein pairs</b> (two proteins in the same line
+						space-separated). <br />
+						Using the slider below, you can automatically add
+						<b>a number of known interactors</b> per each protein. These are
+						always retrieved in order of the amount of evidence according to the
+						PPI database. This option makes possible simple queries of a
+						<b>single protein</b> and few of its most common interactors.
+						<br /><br />
+						You can input any number of
+						<b>protein mutations or modifications</b> (always one per line),
+						following the specified format. Mutations will be mapped to their
+						corresponding positions within the protein but they are not
+						neccessary to run a job. At the same time, any protein in the
+						mutation input box will be added to the network, thus it's not
+						neccessary to enter it on both boxes.
 					</p>
 
+					<!-- <ul>
+						<li>Input a list of proteins</li>
+						<img src="{{ url_for('static',filename='images/inputs1.png') }}"
+						width="150" height="150"
+						style="margin:auto;"
+						>
+						<li>Tea</li>
+						<li>Milk</li>
+					  </ul>  -->
+
+					<div class="sub-header">Output</div>
 					<p>
-						A graph will be created with your gene and a number of known
-						interactors. This method is useful when you don't know the
-						interactors of your gene of interest, or you want to explore putable
-						effects of mutations on any interaction.<br />
-						It is triggered by entering a single gene name/identifier in the
-						input box. Select the maximum number of interactors that will be
-						displayed with the "Limit the number of proteins" slider.<br />
-						Interactors for your gene are determined through BioGRID and sorted
-						according to the evidence (# of publications where they've been
-						reported).
+						<strong>Mechnetor</strong> creates a mechanistic network with the
+						proteins and variants you provided, with proteins and their different functional
+						elements arranged linearly, and variants displayed on them.
+						This network is highly interactive and the user is encouraged to manually explore 
+						their results using the mouse controls and several toggle buttons and sliders (see 
+						the Quick Guide). 
+						<br><br>
+						The current network view can be exported as an image (JPG, PNG) or vector
+						graphics (SVG) at any time.
+						<br><br>
+						The different interaction evidence displayed in the network (domain-domain interactions, 
+						domain-motif interactions, interacting regions from annotation, predicted interaction interfaces)
+						is also contained in a browsable list, that can also be downloaded in different formats. 
+						<br><br>
+						The results page can be bookmarked and accessed later. Results will be kept for 
+						at least 6 months
 					</p>
 
 					<br /><br />

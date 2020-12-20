@@ -24,7 +24,7 @@ $(document).ready(function() {
 	}
 
 	$("#all_intrs").click(function() {
-		var input = document.getElementById('add_intrs');
+		var input = document.getElementById('add_n_interactors');
 		if (this.checked) {
 			input.disabled = true;
 		} else {
@@ -39,7 +39,9 @@ CBFA2T3
 ID3
 PRKAR2A
 HIF1A`);
-    $("#muts_input").val(`CBFA2T3/D105G
+	$("#muts_input").val(`CBFA2T3/D105G
+CBFA2T3/N495D
+CBFA2T3/A490P
 TCF3/N554K
 TCF3/N555D
 TCF3/N555T
@@ -66,47 +68,28 @@ ID3/Q81STOP
 ID3/Q81H
 ID3/V82A
 ID3/Q100STOP`);
-	  $("#add_intrs").val(0);
+	  $("#add_n_interactors").val(0);
 	  $("#species").val("HUMAN");
   });
 
 	$("#ex2").click(function () {
-		$("#prots_input").val(`SMARCA4
-SMARCA2
-WWOX
-DPF2
-SMARCB1
-SMARCC1
-SMARCC2
-SMARCE1
-ARID1B
-ARID1A
-SMARCD1
-RB1
-CBX5
-ACTL6A
+		$("#prots_input").val(`ARID1A
 SIN3A
+RB1
 HDAC2
-TP53
-POLR2A
-SMARCD3
-TAT`);
-		$("#muts_input").val(`SMARCA4/T308M
-SMARCA4/V1404I
-SMARCA4/V1552I`);
-		$("#add_intrs").val(0);
+ACTL6A
+`);
+		$("#muts_input").val("");
+		$("#add_n_interactors").val(0);
 		$("#species").val("HUMAN");
 	});
 
 	$("#ex3").click(function () {
-		$("#prots_input").val(`SORBS3
-PAK1
-CBL
-SYP
-DLG5
-WASL`);
+		$("#prots_input").val(`TP53
+TIN1
+`);
 		$("#muts_input").val("");
-		$("#add_intrs").val(0);
+		$("#add_n_interactors").val(2);
 		$("#species").val("HUMAN");
 //  		$('#query_lmd2').val(`
 // #AC(a)	ID(a)	GN(a)	AC(b)	ID(b)	GN(b)	Type	F(a):F(b)	start	end
@@ -174,7 +157,7 @@ TIN_DROME`);
 // ABL1
 // 		`);
 // 		$("#muts_input").val("");
-// 		$("#add_intrs").val(0);
+// 		$("#add_n_interactors").val(0);
 // 		$("#species").val("HUMAN");
 // 	});
 

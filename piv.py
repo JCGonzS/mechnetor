@@ -8,7 +8,7 @@ JC Gonzalez Sanchez, 2020
 import os, sys, re, itertools, psycopg2
 import gzip, json, csv, random, string, datetime, argparse
 from collections import defaultdict
-import int2graph, find_all_slims, run_interprets
+from . import int2graph, find_all_slims, run_interprets
 # from flask import render_template, url_for
 # from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
@@ -712,7 +712,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
          ADDITIONAL_INTERACTORS=0, ONLY_INT_PAIRS=True,
          CMD_LINE=False, RUN_IPRETS=True):
 
-    error = False
+    error = None
     param = {} # Parameters to print in JSON file
 
     try:
@@ -819,6 +819,8 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
         protein_pairs = list(itertools.combinations(input_prots, 2))
     
     if input_prots:
+        if len(input_prots) >= 20:
+            return 2
         print_log(IDE, "The input contains {} proteins and {} pairs".format(
                         len(input_prots), len(protein_pairs)))
         if not_found:
@@ -827,7 +829,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
                  "; ".join(not_found)))
     else:
         print_log(IDE, "ERROR: no valid proteins found in input!")
-        return True
+        return 1
     
     protein_data, pfam_matches, lms, ptms = {}, {}, {}, {}
     uni_feats, cosmic_muts = {}, {}
@@ -848,6 +850,8 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
                     protein_pairs.append( sorted([uni_id, uni_id_2]) )
         
         all_proteins = set(input_prots) | extra_prots
+        if len(all_proteins) >= 20:
+            return 2
         if not ONLY_INT_PAIRS:
             protein_pairs = list(itertools.combinations(all_proteins, 2))
         

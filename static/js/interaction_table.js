@@ -29,12 +29,12 @@ $(document).ready(function(){
 			// 		return "<div class='text-wrap width-300'>" + data + "</div>";
 			// 		}
 			// },
-			//hides column
-			// {
-			// 	targets: [-2],
-			// 	"visible": false,
-			// 	"searchable": false
-			// }
+			// hides column
+			{
+				targets: [-2],
+				"visible": false,
+				"searchable": false
+			}
 		],
 		"initComplete": function(settings){
 			$('#interaction-table thead th, #interaction-table tfoot th').each(function () {

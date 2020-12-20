@@ -15,7 +15,8 @@ sys.stdout = open(log_file, 'a')
 # Jinja Templates
 index_template = "index.html"
 help_template = "features.html"
-error_template = "input_error.html"
+error1_template = "input_error.html"
+error2_template = "toobig_error.html"
 results_template = "results.html"
 
 def print_log(job_id, msg):
@@ -122,7 +123,10 @@ def run_job(job_id):
             # print "except error"
         #     return render_template(error_template)
         if error:
-            return render_template(error_template)
+            if error==1:
+                return render_template(error1_template)
+            elif error==2:
+                return render_template(error2_template)
     else:
         print_log(job_id, "Files exist")
 
