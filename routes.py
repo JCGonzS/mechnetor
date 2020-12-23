@@ -4,7 +4,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 from importlib.machinery import SourceFileLoader
 from piv2_app import app 
-from . import piv
+from . import mechnetor
 
 main_dir = "/var/www/flask_apps/piv2/piv2_app/"
 data_dir = main_dir+"static/data/"
@@ -74,6 +74,7 @@ def output():
 
         job_id = get_unique_random_identifier(output_dir)
         job_dir = output_dir+"job_"+job_id+"/"
+        print_log(job_id, "New Job {}".format(job_id))
         try:
             os.mkdir(job_dir)
         except OSError:
@@ -104,7 +105,7 @@ def run_job(job_id):
         else:
             db = "mechnetor_all"
         # try:
-        error = piv.main(
+        error = mechnetor.main(
                         INPUT_1=d["prots_input"],
                         INPUT_2=d["muts_input"],
                         ORG=d["sps"],
