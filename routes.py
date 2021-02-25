@@ -14,6 +14,7 @@ sys.stdout = open(log_file, 'a')
 
 # Jinja Templates
 index_template = "index.html"
+maintenance_template = "maintenance_index.html"
 help_template = "features.html"
 error1_template = "input_error.html"
 error2_template = "toobig_error.html"
@@ -41,14 +42,18 @@ def get_stats_for_charts(stats_file):
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template(index_template)
+    maintenance = False
+    if maintenance:
+        return render_template(maintenance_template)
+    else:
+        return render_template(index_template)
 
 @app.route("/help")
 def help():
 	return render_template(help_template)
 
-@line_profile
 @app.route("/output", methods = ["POST", "GET"])
+# @line_profile
 def output():
     if request.method == "POST":
         input_d = {}
@@ -87,6 +92,7 @@ def output():
         return redirect(url_for("run_job", job_id=job_id))
 
 @app.route('/job/<job_id>', methods=['GET', 'POST'])
+# @line_profile
 def run_job(job_id):
     job_dir = output_dir+"job_"+job_id+"/"
     graph_json = "graph_elements_"+job_id+".json"
@@ -101,9 +107,9 @@ def run_job(job_id):
             d = json.load(f)
 
         if d["sps"]=="HUMAN":
-            db = "mechnetor_human"
+            db = "piv_human"
         else:
-            db = "mechnetor_all"
+            db = "piv_all"
         # try:
         error = mechnetor.main(
                         INPUT_1=d["prots_input"],
@@ -115,7 +121,7 @@ def run_job(job_id):
                         CUSTOM_ID=job_id,
                         DATA_DIR=data_dir,
                         BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
-                        PSQL_USER="bq_jgonzalez", PSQL_DB="piv",
+                        PSQL_USER="bq_jgonzalez", PSQL_DB=db,
                         MAKE_NETWORK=d["make_graph"],
                         HIDE_NO_INT=d["hide"],
                         TABLE_FORMAT="json"

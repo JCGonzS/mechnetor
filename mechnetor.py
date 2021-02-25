@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """ PIV main script
 
 JC Gonzalez Sanchez, 2020
@@ -8,9 +6,9 @@ JC Gonzalez Sanchez, 2020
 import os, sys, re, itertools, psycopg2
 import gzip, json, csv, random, string, datetime, argparse
 from collections import defaultdict
-from . import int2graph, find_all_slims, run_interprets
-# from flask import render_template, url_for
-# from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+from flask import render_template, url_for
+from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+import int2graph, find_all_slims, run_interprets
 
 def open_file(input_file, mode="rt"):
     """ Open file Zipped or not
@@ -66,15 +64,15 @@ def get_elm_info(cursor, table_name):
 def get_3did_dmi(cursor, table_name):
     info = {}
     dmi = defaultdict(dict)
-    cursor.execute("SELECT motif, domain_acc, regex, pdb_number "+
+    cursor.execute("SELECT motif, regex, domain_acc, domain_name, pdb_number "+
                     "FROM "+table_name+";")
     for row in cursor.fetchall():
-        info["3DID:"+row[0].upper()] = {
+        info[row[0].upper()] = {
             "ide": row[0],
-            "regex": row[2],
-            "prob": "-"
+            "regex": row[1],
+            "domain": row[3]+" ("+row[2]+")"
         }
-        dmi[(row[0].upper(), row[1])] = row[3]
+        dmi[(row[0].upper(), row[2])] = row[4]
     return info, dmi
 
 def parse_protein_input(input_text, main_org, cursor, id_map):
@@ -85,6 +83,9 @@ def parse_protein_input(input_text, main_org, cursor, id_map):
     custom_pairs = []
     org_map = {}
     flag = 0
+
+    if main_org == "HUMAN":
+        main_org = None
 
     for line in input_text.split("\n"):
         
@@ -97,8 +98,8 @@ def parse_protein_input(input_text, main_org, cursor, id_map):
                 flag = 1
                 header = str(line.rstrip().split()[0].split(">")[1])
                 header = header.replace("/","-")
-                if org:
-                    org_map[header] = org
+                if main_org:
+                    org_map[header] = main_org
             
             elif (flag == 1 and len(line.split()) == 1
             and not re.search("\d",line)):
@@ -148,6 +149,9 @@ def parse_mutation_input(input_text, input_prots, input2uni, org_map,
                          main_org, cursor, id_map):
     mutations = defaultdict(lambda: defaultdict(set))
 
+    if main_org == "HUMAN":
+        main_org = None
+
     for line in input_text.split("\n"):
         if line.strip() and line[0] != "#":
             try:
@@ -173,29 +177,27 @@ def parse_mutation_input(input_text, input_prots, input2uni, org_map,
 
 def get_uni_id_map(cursor, sql_table, org):
     idmap = {}
-    cursor.execute("SELECT id, uniprot_id FROM "+sql_table+
-                    " WHERE (organism=\'"+org+"\');")
+    if org=="HUMAN":
+        cursor.execute("SELECT protein_id, uniprot_id FROM "+sql_table+";")
+    else:
+        cursor.execute("SELECT protein_id, uniprot_id FROM "+sql_table+
+                        " WHERE (organism=\'"+org+"\');")
     for row in cursor.fetchall():
         idmap[row[0]] = row[1]
     return idmap
 
 def identify_protein(cursor, sql_table, protein_id, org):
     if org:
-        cursor.execute("SELECT uniprot_id FROM "+sql_table+
-                       " WHERE (id = \'"+protein_id+"\' AND organism = \'"+org+"\');")
-        results = cursor.fetchone()
-        if results:
-            return results[0], org
-        else:
-            return None, None
+        cursor.execute("SELECT uniprot_id, organism FROM "+sql_table+
+                       " WHERE (protein_id = \'"+protein_id+"\' AND organism = \'"+org+"\');")
     else:
         cursor.execute("SELECT uniprot_id, organism FROM "+sql_table+
-                       " WHERE (id = \'"+protein_id+"\');")
-        results = cursor.fetchall()
-        if results and len(results) == 1:
-            return results[0], results[1]
-        else:
-            return None, None
+                       " WHERE (protein_id = \'"+protein_id+"\');")
+    results = cursor.fetchone()
+    if results:
+        return results[0], results[1]
+    else:
+        return None, None
 
 def get_additional_interactors(protein_data, n_ints):
     interactors = defaultdict(list)
@@ -216,7 +218,7 @@ def get_additional_interactors(protein_data, n_ints):
 
 def get_protein_data_sql(cursor, sql_table, uni_id):
     cursor.execute("SELECT uniprot_acc, gene, description, length, biogrid_id,"+
-                    " sorted_ints, sequence"+
+                    " sorted_ints, sequence, organism"+
                     " FROM "+sql_table+
                     " WHERE (uniprot_id = \'"+uni_id+"\');")
     row = cursor.fetchone()
@@ -233,7 +235,8 @@ def get_protein_data_sql(cursor, sql_table, uni_id):
         "length":       int(row[3]),
         "biogrid_ids":  bioids,
         "sorted_ints":  ints,
-        "seq":          row[6]
+        "seq":          row[6],
+        "org":          row[7]
     }
     return data
 
@@ -282,18 +285,23 @@ def get_ptms_sql(cursor, sql_table, uni_ac):
 def get_uni_feats_sql(cursor, sql_table, uni_ac, uniprot_features):
     data = defaultdict(lambda: defaultdict(list))
     roles = ", ".join(["\'"+x+"\'" for x in uniprot_features])
-    cursor.execute("SELECT type, start_pos, end_pos, info_1, info_2"+
+    cursor.execute("SELECT type, start_pos, end_pos, change, note"+
                 " FROM "+sql_table+
                 " WHERE (uniprot_acc=\'"+uni_ac+"\' AND type IN ("+roles+"));");
     for row in cursor.fetchall():
         role = row[0]
         start = int(row[1])
         end = int(row[2])
-        info_1, info_2 = row[3:]
-        data[role][(start, end)].append({
-                    "info_1": info_1,
-                    "info_2": info_2
-                })
+        change, note = row[3:]
+        if change:
+            data[role][(start, end)].append({
+                        "change": change,
+                        "note": note
+                    })
+        else:
+            data[role][(start, end)].append({
+                        "note": note
+                    })
     return data
 
 def get_cosmic_mutations_sql(cursor, sql_table, uni_ac, min_sample_size=1):
@@ -497,43 +505,6 @@ def calculate_overlap(start, end, mask):
 #                                                  })
 #     return data_dict
 
-# def find_all_slims(fasta_file, data_dict, ide, elm_info, 
-#                     fpm2_script = "fpm2.pl"):
-
-#     tmp_file = "lm_search_"+ide+".txt"
-
-#     for elm_acc in elm_info:
-#         elm_ide = elm_info[elm_acc]["ide"]
-#         elm_regex = elm_info[elm_acc]["regex"]
-#         elm_prob = elm_info[elm_acc]["prob"]
-
-#         mode = "cat"
-#         if ".gz" in fasta_file:
-#             mode = "zcat"
-#         com = "{} {} | perl {} \"{}\" -m 1 > {}".format(mode, fasta_file, fpm2_script, elm_regex, tmp_file)
-#         os.system( com )
-
-#         with open_file(tmp_file) as f:
-#             for line2 in f:
-#                 if line2[0]==">":
-#                     label = line2.split()[0].split("/")[0].replace(">","")
-#                     start, end = line2.split()[0].split("/")[1].split("-")
-#                     gene = "-"
-#                     if "GN=" in line.split("/")[1]:
-#                         gene = re.search("GN=([^\s]+)", line.split("/")[1]).group(1)
-#                 else:
-#                     seq = line2.rstrip()
-#                     if "elms" in data_dict[label]:
-#                         data_dict[label]["elms"][elm_acc].append(
-#                                                     {"start" : int(start),
-#                                                      "end" :   int(end),
-#                                                      "seq" :   seq
-#                                                      })
-#                     else:
-#                         data_dict[label]["elms"]=defaultdict(list)
-#     # os.unlink(tmp_file)
-#     return data_dict
-
 def extract_linear_motifs(lm_hits_file, data_dict, max_overlap=2, max_eval=1):
 
     with open_file(lm_hits_file) as f:
@@ -702,7 +673,7 @@ def print_stats_summary(stats_file):
     # #         line.append(per)
     #     print "\t".join(line)
 
-# @line_profile
+@line_profile
 def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN", 
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
          DATA_DIR="static/data/",
@@ -736,25 +707,27 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     # if SP!="any":
 
     ## DATA: Set PSQL tables
-    ID_MAP_TABLE       = "id_mapping"
+    PFAM_DATA_TABLE    = "pfam_a_data"
+    DDI_TABLE          = "domain_domain_ints"
+    ELM_CLASSES_TABLE  = "elm_classes"
+    ELM_DOM_TABLE      = "elm_domain_ints"
+    DMI_3DID_TABLE     = "domain_3did_motif_ints"
+    COSMIC_TABLE       = "cosmic_genome_screens"
+
+    ID_MAP_TABLE       = "protein_id_mapping"
     PROTEIN_DATA_TABLE = "protein_data"
     UNI_FEAT_TABLE     = "uniprot_features"
-    PFAM_DATA_TABLE    = "pfam_a_data"
     PFAM_MATCHES_TABLE = "pfam_a_matches"  
-    LM_HITS_TABLE      = "lm_hits"             
+    LM_MATCHES_TABLE   = "linear_motifs_matches"             
     PTM_TABLE          = "ptms"
-    ELM_CLASSES_TABLE  = "elm_classes"
-    COSMIC_TABLE       = "cosmic_genome_screens"
-    PPI_TABLE          = "ppi_db"
-    DDI_TABLE          = "ddi_db"
-    ELM_DOM_TABLE      = "elm_int_dom"
-    DMI_3DID_TABLE     = "dmi_3did"
-    ASSOC_TABLE        = "ass_scores"
+    PPI_TABLE          = "protein_protein_ints"
+    ASSOC_TABLE        = "association_scores"
     IPRETS_TABLE       = "interprets_pdb2019"
+
     conn = psycopg2.connect(database=PSQL_DB, 
                             user=PSQL_USER)
     cursor = conn.cursor()
-
+    
     BLASTPGP_PATH = "blastpgp"
     PSIBLAST_PATH = "psiblast"
     BLASTDB_PDB   = BLASTDB_DIR+"pdbaa_2019"#"pdbseq"
@@ -762,7 +735,8 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     # if SP != "any":
         # if os.path.isfile(BLASTDB_DIR+"uniprot_"+SP+".pin"):
         #     BLASTDB_UNI = BLASTDB_DIR+"uniprot_"+SP
-    uniprot_features = ["VARIANT", "MUTAGEN", "METAL", "BINDING", "REGION"]
+    uniprot_features = ["VARIANT", "MUTAGEN", "METAL", "BINDING", "DNA_BIND", "REGION",
+                        "TRANSMEM", "DISULFID"]
 
     ### Create Job directory
     if CUSTOM_ID:
@@ -797,7 +771,6 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
         table_file = "interaction_table_"+IDE+".tsv.gz"
     stats_file      = "req_parameters_"+IDE+".json"
 
-    
 
     idmap = get_uni_id_map(cursor, ID_MAP_TABLE , ORG)
 
@@ -811,7 +784,9 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     (input_muts, input_prots, input2uni, 
         org_map) = parse_mutation_input(INPUT_2, input_prots, input2uni, org_map,
                                         ORG, cursor, ID_MAP_TABLE)
-    
+
+    labels = dict(map(reversed, input2uni.items()))
+
     all_proteins = set(input_prots)
     if custom_pairs:
         protein_pairs = custom_pairs
@@ -843,9 +818,9 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
         for uni_id in ad_interactors:
             for uni_id_2 in ad_interactors[uni_id]:
                 extra_prots.add(uni_id_2)
-                org_map[uni_id_2] = org_map[uni_id]
                 if uni_id_2 not in protein_data:
                     protein_data[uni_id_2] = get_protein_data_sql(cursor, PROTEIN_DATA_TABLE, uni_id_2)
+                org_map[uni_id_2] = protein_data[uni_id_2]["org"]
                 if ONLY_INT_PAIRS:
                     protein_pairs.append( sorted([uni_id, uni_id_2]) )
         
@@ -862,8 +837,8 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
 
     ## Load data
     pfam_info = get_pfam_info(cursor, PFAM_DATA_TABLE)
-    elm_info = get_elm_info(cursor, ELM_CLASSES_TABLE)
     ddi = get_DDI_sql(cursor, DDI_TABLE)
+    elm_info = get_elm_info(cursor, ELM_CLASSES_TABLE)
     dmi_elm = get_ELM_dom_sql(cursor, ELM_DOM_TABLE)
     lm3did_info, dmi_3did = get_3did_dmi(cursor, DMI_3DID_TABLE)
     assoc_pairs = {}
@@ -873,12 +848,12 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     for uni_id in all_proteins:
         uni_ac = protein_data[uni_id]["uni_ac"]
         pfam_matches[uni_id] = get_pfam_matches_sql(cursor, PFAM_MATCHES_TABLE, uni_ac)        
-        lms[uni_id] = get_lm_hits_sql(cursor, LM_HITS_TABLE, uni_ac)
+        lms[uni_id] = get_lm_hits_sql(cursor, LM_MATCHES_TABLE, uni_ac)
         ptms[uni_id] = get_ptms_sql(cursor, PTM_TABLE, uni_ac)
         uni_feats[uni_id] = get_uni_feats_sql(cursor, UNI_FEAT_TABLE, uni_ac, uniprot_features)
         if org_map[uni_id] == "HUMAN":
                     cosmic_muts[uni_id] = get_cosmic_mutations_sql(cursor, COSMIC_TABLE, uni_ac)
-
+    
     #### PUT THIS IN A DIFFERENT SCRIPT
     ### 4. If sequence(s) in input -> compute data:
     fasta_data = defaultdict(lambda: defaultdict(list))
@@ -979,44 +954,46 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
             run_pairs.append((uni_id_a, uni_id_b))
             for uni_id in (uni_id_a, uni_id_b):
                 run_seqs[uni_id] = protein_data[uni_id]["seq"]
-    
-    if run_pairs:
-        print_log(IDE, "Running InterPrets for {} pairs".format(len(run_pairs)))
-        new_hits = run_interprets.main( run_seqs, OUTPUT_DIR, iprets_file, IDE, org_map,
-                        these_pairs=run_pairs,
-                        mode="blastpgp", blastpgp=BLASTPGP_PATH, psiblast=PSIBLAST_PATH, 
-                        blastdb=BLASTDB_PDB, data_dir=DATA_DIR, print_output=False)
-        
-        final_hits = review_interprets_hits(new_hits, protein_data)
+    try: 
+        if run_pairs:
+            print_log(IDE, "Running InterPrets for {} pairs".format(len(run_pairs)))
+            new_hits = run_interprets.main( run_seqs, OUTPUT_DIR, iprets_file, IDE, org_map,
+                            these_pairs=run_pairs,
+                            mode="blastpgp", blastpgp=BLASTPGP_PATH, psiblast=PSIBLAST_PATH, 
+                            blastdb=BLASTDB_PDB, data_dir=DATA_DIR, print_output=False)
+            
+            final_hits = review_interprets_hits(new_hits, protein_data)
 
-        for pair in run_pairs:
-            (id_a, id_b) = pair
-            ac_a, ac_b = protein_data[id_a]["uni_ac"], protein_data[id_b]["uni_ac"]
-            if pair in final_hits:
-                for hit in final_hits[pair]:
-                    vals = ["\'"+x+"\'" for x in [id_a, ac_a]+hit["info_a"]+[id_b, ac_b]+hit["info_b"]+hit["scores"] ]
-                    cursor.execute("INSERT INTO "+IPRETS_TABLE+" VALUES ("+", ".join(vals)+");")
+            for pair in run_pairs:
+                (id_a, id_b) = pair
+                ac_a, ac_b = protein_data[id_a]["uni_ac"], protein_data[id_b]["uni_ac"]
+                if pair in final_hits:
+                    for hit in final_hits[pair]:
+                        vals = ["\'"+x+"\'" for x in [id_a, ac_a]+hit["info_a"]+[id_b, ac_b]+hit["info_b"]+hit["scores"] ]
+                        cursor.execute("INSERT INTO "+IPRETS_TABLE+" VALUES ("+", ".join(vals)+");")
+                        conn.commit()
+
+                        iprets_hits[pair].append({
+                            "a": hit["info_a"],
+                            "b": hit["info_b"],
+                            "z": float(hit["scores"][-4]),
+                            "p": float(hit["scores"][-3])
+                        })
+                else:
+                    vals = ["\'"+x+"\'" for x in [id_a, ac_a, id_b, ac_b] ]
+                    cursor.execute("INSERT INTO "+IPRETS_TABLE+
+                                " (uniprot_id_a, uniprot_ac_a, uniprot_id_b, uniprot_ac_b)"+
+                                " VALUES ("+", ".join(vals)+");")
                     conn.commit()
-
-                    iprets_hits[pair].append({
-                        "a": hit["info_a"],
-                        "b": hit["info_b"],
-                        "z": float(hit["scores"][-4]),
-                        "p": float(hit["scores"][-3])
-                    })
-            else:
-                vals = ["\'"+x+"\'" for x in [id_a, ac_a, id_b, ac_b] ]
-                cursor.execute("INSERT INTO "+IPRETS_TABLE+
-                               " (uniprot_id_a, uniprot_ac_a, uniprot_id_b, uniprot_ac_b)"+
-                               " VALUES ("+", ".join(vals)+");")
-                conn.commit()
-  
+    except:
+        pass 
+    
     ### 6. Run int2graph
     graph_ele, columns, lines, no_int_prots = int2graph.main(
-            all_proteins, protein_pairs, input_seqs, input_muts, org_map,
+            all_proteins, protein_pairs, input_seqs, input_muts, org_map, labels,
             conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts,
             PPI_TABLE, ASSOC_TABLE, assoc_pairs, ddi, dmi_elm, dmi_3did, pfam_info, 
-            elm_info, iprets_hits, idmap,
+            elm_info, lm3did_info, iprets_hits, idmap,
             fasta_data, fasta_link, fasta_iprets,
             make_network=MAKE_NETWORK, hide_no_int=HIDE_NO_INT)
 
@@ -1093,8 +1070,10 @@ if __name__ == "__main__":
         sys.stdout = open(args["log"], 'w')
 
     if args["species"]=="HUMAN":
+            # db = "piv_human"
             db = "mechnetor_human"
     else:
+        # db = "piv_all"
         db = "mechnetor_all"
 
     main(INPUT_1=prots, INPUT_2=muts, ORG=args["species"],

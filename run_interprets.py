@@ -97,10 +97,10 @@ def main(input_seqs, output_dir, i2sum_file, ide, org_map,
     psiblast="psiblast",
     blastpgp="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/blastpgp",
     blastmat="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/blast-2.2.23/data",
-    blastdb="/net/home.isilon/ds-russell/blastdb/pdbseq",
+    blastdb="/net/home.isilon/ds-russell/blastdb/pdbaa_2019",
     muscle="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/muscle -quiet",
     i2="/net/home.isilon/ag-russell/install/CentOS-7.3.1611-x86_64/bin/interprets",
-    i2_opts=" -rand 100 -show_muts -mode 4 -q",
+    i2_opts=" -rand 500 -show_muts -mode 4 -q",
     data_dir="static/data/"
     ):
     os.environ["I2DIR"] = "/net/home.isilon/ag-russell/code/interprets/data"

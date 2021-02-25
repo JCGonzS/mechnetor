@@ -11,15 +11,17 @@ def create_psql_database(conn, cursor, table_name, columns, drop=False, index=No
 
     if exists and drop:
         cursor.execute("DROP TABLE "+table_name+";")
-        print("Database", table_name, "dropped")
+        print("Database \'"+table_name+"\' dropped")
         exists = None
    
     if not exists:
         ## Create Database
         cursor.execute( "CREATE TABLE "+table_name+"("+columns+");" )
-        print("Database",table_name,"created")
+        print("Database \'"+table_name+"\' created")
         if index:
-            cursor.execute(index)
+            for idx in index:
+                cursor.execute(idx)
+                print("Index created for \'"+table_name+"\'")
         conn.commit()
     return
 
@@ -70,111 +72,6 @@ def print_table_max_lengths(table_file, sep="\t"):
                 max_val = val
         print(col,"\t", max_len, "\t", max_val)
 
-def get_elm_info(cursor, table_name):
-    data = {}
-    cursor.execute("SELECT Accession, Identifier, Name, Description, Regex, Probability "+
-                   "FROM "+table_name+";")
-    for row in cursor.fetchall():
-        data[row[0]] = {
-            "ide":   row[1],
-            "name":  row[2],
-            "des":   row[3],
-            "regex": row[4],
-            "prob":  row[5]
-            }
-    return data
-
-def get_ddi(cursor, table_name):
-    data = {}
-    cursor.execute("SELECT pfam_acc_a, pfam_acc_b, source, pdbs "+
-                    "FROM "+table_name+";") 
-    for row in cursor.fetchall():
-        pfam_a, pfam_b, source = row[0], row[1], row[2]
-        pdbs   = [x for x in str(row[3]).split(";") if x!=""]
-        # if pfam_a in all_pfams and pfam_b in all_pfams:
-        data[(pfam_a, pfam_b)] = {"dbs":source, "pdbs": pdbs}
-        data[(pfam_b, pfam_a)] = {"dbs":source, "pdbs": pdbs}
-    return data
-
-def get_ddi_2(cursor, table_name, a, b):
-    a = "\'"+a+"\'"
-    b = "\'"+b+"\'"
-    cursor.execute("SELECT pfam_acc_a, pfam_acc_b, source, pdbs "+
-                    "FROM "+table_name+
-                    " WHERE pfam_acc_pair = ("+a+", "+b+")"
-                    " OR pfam_acc_pair = ("+b+", "+a+");")
-    row = cursor.fetchone()
-    pdbs = [x for x in str(row[3]).split(";") if x!=""]
-    data = {"dbs": row[2], "pdbs": pdbs}
-    return data
-
-def get_3did_dmi(cursor, table_name):
-    data = {}
-    cursor.execute("SELECT motif, domain_acc, regex, pdb_number "+
-                    "FROM "+table_name+";")
-    for row in cursor.fetchall():
-        data[(row[0].upper(), row[1])] = (row[2], row[3])
-    return data
-
-def get_pfam_info(cursor, table_name):
-    data = {}
-    cursor.execute("SELECT accession, type, identifier, description "+
-                   "FROM "+table_name+";")
-    for row in cursor.fetchall():
-        data[row[0]] = {
-            "type": row[1],
-            "ide":  row[2],
-            "des":  row[3]
-        }
-    return data
-
-def get_elm_dom(cursor, table_name):
-    data = defaultdict(list)
-    cursor.execute(
-        "SELECT elm_id, domain_ids, present_in_taxon, not_present_in_taxon, elm_containing_genes, "+
-        "dom_containing_genes_hsa, dom_containing_genes, phosphosites, observations, other_elm_required "+
-        "FROM "+table_name+";")
-
-    for row in cursor.fetchall():
-        elm = row[0].upper()
-        doms = string2list_fix(row[1].upper())
-        for dom in doms:
-            data[(elm, dom)].append( {
-                "in_taxon"        : string2list_fix(row[2]),
-                "not_in_taxon"    : string2list_fix(row[3]),
-                "elm_genes"       : string2list_fix(row[4]),
-                "human_dom_genes" : string2list_fix(row[5]),
-                "dom_genes"       : string2list_fix(row[6]),
-                "phos"            : string2list_fix(row[7]),
-                "obs"             : format_none(row[8]),
-                "req_elms"        : string2list_fix(row[9])
-            })
-
-    return data
-
-def format_none(string):
-    if string==None:
-        return ""
-    else:
-        return string
-
-def string2list_fix(string):
-    return [str(x) for x in str(string).upper().replace(" ","").split(",") if x!="" and x!="NONE"]
-
-def get_PPI(cursor, table_name, acc_a, acc_b):
-    #TRY WITH CONSTRAINT KEY TO COMPARE SPEED
-    acc_a = "\'"+acc_a+"\'"
-    acc_b = "\'"+acc_b+"\'"
-    cursor.execute("SELECT interaction_id FROM "+table_name+
-                    " WHERE (interactor_a = "+acc_a+" AND interactor_b = "+acc_b+")"+
-                    " OR (interactor_a = "+acc_b+" AND interactor_b = "+acc_a+");")
-    ints = []
-    for row in cursor.fetchall():
-        ints.append(row[0])
-
-    return ints
-
-
 ## Connect to PSQL (needs DB)
 db = sys.argv[1]
 conn = psycopg2.connect(database=db, 
@@ -183,17 +80,17 @@ cursor = conn.cursor()
 
 com_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/data/common/"
 sp_dir = "/net/home.isilon/ag-russell/bq_jgonzalez/int2mech/data/species/"
-if db=="mechnetor_all":
-    sps = ["Ath","Cel","Dme","Dre","Mmu","Sce"]
-elif db=="mechnetor_human":
-    sps = ["Hsa"]
+if "all" in db:
+    sps = ["Ath","Cel","Dme","Dre","Mmu","Sce","Xtr"]
+elif "human" in db:
+    sps = ["Hsa", "SARS2"]
 drop = True
 
 ###########################################
 ## MAKE SURE ALL TSV FILES HAVE A HEADER ##
 ###########################################
 
-# ## Pfam Data
+# ### Pfam Data
 # import_file = com_dir+"Pfam-A_r33-1.hmm.tsv.gz"
 # table_name = "pfam_a_data"
 # columns = '''
@@ -205,7 +102,23 @@ drop = True
 # create_psql_database(conn, cursor, table_name, columns, drop=drop)
 # populate_psql_database(conn, cursor, table_name, import_file)
 
-# ## ELM CLASSES
+
+# ### DDI DATABASE
+# import_file = com_dir+"DDI_db.tsv.gz"
+# table_name = "domain_domain_ints"
+# columns = '''
+# pfam_acc_a  VARCHAR(10) NOT NULL,
+# pfam_ide_a  VARCHAR(20) NOT NULL,
+# pfam_acc_b  VARCHAR(10) NOT NULL,
+# pfam_ide_b  VARCHAR(20) NOT NULL,
+# source      VARCHAR(20) NOT NULL,
+# pdbs        TEXT,
+# CONSTRAINT  domain_domain_ints_pfam_acc_pair_pkey PRIMARY KEY (pfam_acc_a, pfam_acc_b)'''
+# create_psql_database(conn, cursor, table_name, columns, drop=drop)
+# populate_psql_database(conn, cursor, table_name, import_file)
+
+
+# ### ELM CLASSES
 # import_file = com_dir+"elm_Mar2020_classes.tsv"
 # table_name = "elm_classes"
 # columns = '''
@@ -220,9 +133,10 @@ drop = True
 # create_psql_database(conn, cursor, table_name, columns, drop=drop)
 # populate_psql_database(conn, cursor, table_name, import_file)
 
-## ELM Interaction Domains
+
+# ### ELM Interaction Domains
 # import_file = com_dir+"elm_Mar2020_int_domains_final.tsv"
-# table_name = "elm_int_dom"
+# table_name = "elm_domain_ints"
 # columns = '''
 # elm_ac                      TEXT    NOT NULL,
 # elm_id                      TEXT    NOT NULL,
@@ -242,23 +156,9 @@ drop = True
 # populate_psql_database(conn, cursor, table_name, import_file)
 
 
-# ## DDI DATABASE
-# import_file = com_dir+"DDI_db.tsv.gz"
-# table_name = "ddi_db"
-# columns = '''
-# pfam_acc_a  VARCHAR(10) NOT NULL,
-# pfam_ide_a  VARCHAR(20) NOT NULL,
-# pfam_acc_b  VARCHAR(10) NOT NULL,
-# pfam_ide_b  VARCHAR(20) NOT NULL,
-# source      VARCHAR(20) NOT NULL,
-# pdbs        TEXT,
-# CONSTRAINT  pfam_acc_pair PRIMARY KEY (pfam_acc_a,pfam_acc_b)'''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
-# populate_psql_database(conn, cursor, table_name, import_file)
-
-# ## 3did DMI
+# ### 3did DMI
 # import_file = com_dir+"3did_dmi_flat_edited_2020-01.tsv.gz"
-# table_name = "dmi_3did"
+# table_name = "domain_3did_motif_ints"
 # columns = '''
 # motif       TEXT    PRIMARY KEY NOT NULL,
 # regex       TEXT                NOT NULL,
@@ -269,7 +169,8 @@ drop = True
 # create_psql_database(conn, cursor, table_name, columns, drop=drop)
 # populate_psql_database(conn, cursor, table_name, import_file)
 
-# ## COSMIC mutations
+
+# ### COSMIC mutations
 # import_file = com_dir+"Cosmicv87_GenomeScreens_parsed.tsv.gz"
 # table_name = "cosmic_genome_screens"
 # columns = '''
@@ -281,93 +182,123 @@ drop = True
 # sample_num      INT         NOT NULL,
 # cancer_types    TEXT        NOT NULL 
 # '''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
+# indices = [
+#     "CREATE INDEX cosmic_genomes_screens_uniprot_acc_idx ON "+table_name+" (uniprot_acc);"]
+# create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 # populate_psql_database(conn, cursor, table_name, import_file)
 
 
-# # ######## ORGANISM-specific ##############
+# ######## ORGANISM-specific ##############
 
-## ID MAPPING DATA
-table_name = "id_mapping"
+### ID MAPPING DATA
+table_name = "protein_id_mapping"
 columns = '''
-id          TEXT    NOT NULL,
-uniprot_id  TEXT    NOT NULL,
-uniprot_ids TEXT    NOT NULL,
-organism    TEXT    NOT NULL,
-CONSTRAINT  id_and_org PRIMARY KEY (id, organism)
+protein_id   TEXT    NOT NULL,
+uniprot_id   TEXT    NOT NULL,
+uniprot_ids  TEXT    NOT NULL,
+organism     TEXT    NOT NULL,
+CONSTRAINT  protein_id_mapping_protein_id_organism_pkey PRIMARY KEY (protein_id, organism)
 '''
-create_psql_database(conn, cursor, table_name, columns, drop=drop)
+indices = [
+    "CREATE INDEX protein_id_mapping_organism_idx ON "+table_name+" (organism);",
+    "CREATE INDEX protein_id_mapping_protein_id_idx ON "+table_name+" (protein_id);"]
+create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 base_file = "id2uniprot_mapping_table_2020-05_SPS.tsv.gz"
 for sp in sps:
     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
     populate_psql_database(conn, cursor, table_name, import_file)
 
-# ## Protein Data
-# table_name = "protein_data"
-# columns = '''
-# uniprot_id  TEXT        PRIMARY KEY,
-# uniprot_acc VARCHAR(15) NOT NULL,
-# gene        TEXT        NOT NULL,
-# description TEXT        NOT NULL,
-# data_class  VARCHAR(15) NOT NULL,
-# organism    TEXT        NOT NULL,
-# length      INT         NOT NULL,
-# sequence    TEXT        NOT NULL,
-# biogrid_id  TEXT,
-# sorted_ints TEXT
-# '''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
-# base_file = "protein_data_SPS.tsv.gz"
-# for sp in sps:
-#     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
-#     populate_psql_database(conn, cursor, table_name, import_file)
 
-# ### UniProt Features
-# table_name = "uniprot_features"
-# columns = '''
-# uniprot_acc VARCHAR(15) NOT NULL,
-# type        VARCHAR(15) NOT NULL,
-# id          TEXT,
-# start_pos   INT         NOT NULL,
-# end_pos     INT         NOT NULL,
-# info_1      TEXT,
-# info_2      TEXT,
-# evidence    TEXT
-# '''
-# index = "CREATE INDEX idx_main ON uniprot_features (uniprot_acc, type);"
-# create_psql_database(conn, cursor, table_name, columns, drop=drop, index=index)
-# base_file = "uniprot_2020-05_features_SPS.tsv.gz"
-# for sp in sps:
-#     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
-#     populate_psql_database(conn, cursor, table_name, import_file)
+### Protein Data
+table_name = "protein_data"
+columns = '''
+uniprot_id  TEXT        PRIMARY KEY,
+uniprot_acc TEXT        NOT NULL,
+gene        TEXT        NOT NULL,
+description TEXT        NOT NULL,
+data_class  VARCHAR(15) NOT NULL,
+organism    TEXT        NOT NULL,
+length      INT         NOT NULL,
+sequence    TEXT        NOT NULL,
+biogrid_id  TEXT,
+sorted_ints TEXT
+'''
+create_psql_database(conn, cursor, table_name, columns, drop=drop)
+base_file = "protein_data_SPS.tsv.gz"
+for sp in sps:
+    import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
+    populate_psql_database(conn, cursor, table_name, import_file)
 
 
-# ## PFAM matches
-# table_name = "pfam_a_matches"
-# columns = '''
-# uniprot_acc VARCHAR(15) NOT NULL,
-# ali_start   INT         NOT NULL,
-# ali_end     INT         NOT NULL,
-# env_start   INT         NOT NULL,
-# env_end     INT         NOT NULL,
-# hmm_ac      VARCHAR(10) NOT NULL,
-# hmm_name    TEXT        NOT NULL,
-# type        VARCHAR(15) NOT NULL,
-# hmm_start   INT         NOT NULL,
-# hmm_end     INT         NOT NULL,
-# hmm_len     INT         NOT NULL,
-# bit_score   REAL        NOT NULL,
-# e_value     VARCHAR(15) NOT NULL,
-# clan        VARCHAR(15) NOT NULL,
-# CONSTRAINT Pfam_Match UNIQUE(uniprot_acc, env_start, env_end, hmm_ac)
-# '''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
-# base_file = "Pfam-A_r33-1_matches_full_SPS.tsv.gz"
-# for sp in sps:
-#     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
-#     populate_psql_database(conn, cursor, table_name, import_file)
+## UniProt Features
+table_name = "uniprot_features"
+columns = '''
+uniprot_acc TEXT        NOT NULL,
+type        VARCHAR(15) NOT NULL,
+id          TEXT,
+start_pos   INT         NOT NULL,
+end_pos     INT         NOT NULL,
+change      TEXT,
+note        TEXT,
+evidence    TEXT
+'''
+indices = ["CREATE INDEX uniprot_features_uniprot_acc_type_idx ON "+table_name+" (uniprot_acc, type);"]
+create_psql_database(conn, cursor, table_name, columns, drop=drop, index=indices)
+base_file = "uniprot_2020-05_features_SPS.tsv.gz"
+for sp in sps:
+    import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
+    populate_psql_database(conn, cursor, table_name, import_file)
 
-# ### PTMS
+
+### PFAM matches
+table_name = "pfam_a_matches"
+columns = '''
+uniprot_acc TEXT        NOT NULL,
+ali_start   INT         NOT NULL,
+ali_end     INT         NOT NULL,
+env_start   INT         NOT NULL,
+env_end     INT         NOT NULL,
+hmm_ac      VARCHAR(10) NOT NULL,
+hmm_name    TEXT        NOT NULL,
+type        VARCHAR(15) NOT NULL,
+hmm_start   INT         NOT NULL,
+hmm_end     INT         NOT NULL,
+hmm_len     INT         NOT NULL,
+bit_score   REAL        NOT NULL,
+e_value     VARCHAR(15) NOT NULL,
+clan        VARCHAR(15) NOT NULL,
+CONSTRAINT pfam_a_matches_match_idx UNIQUE(uniprot_acc, env_start, env_end, hmm_ac)
+'''
+indices = [
+    "CREATE INDEX pfam_a_matches_uniprot_acc_idx ON "+table_name+" (uniprot_acc);"]
+create_psql_database(conn, cursor, table_name, columns, drop=drop, index=indices)
+base_file = "Pfam-A_r33-1_matches_full_SPS.tsv.gz"
+for sp in sps:
+    import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
+    populate_psql_database(conn, cursor, table_name, import_file)
+
+
+### LINEAR MOTIFS
+table_name = "linear_motifs_matches"
+columns = '''
+uniprot_acc TEXT  NOT NULL,
+motif       TEXT  NOT NULL,
+source      TEXT  NOT NULL,
+motif_start INT   NOT NULL,
+motif_end   INT   NOT NULL,
+sequence    TEXT  NOT NULL,
+status      TEXT
+'''
+indices = ["CREATE INDEX linear_motifs_matches_uniprot_acc_idx ON "+table_name+" (uniprot_acc);",
+           "CREATE INDEX linear_motifs_matches_uniprot_acc_source_idx ON "+table_name+" (uniprot_acc, source);"]
+create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
+base_file = "all_lm_hits_SQL_SPS.tsv.gz"
+for sp in sps:
+    import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
+    populate_psql_database(conn, cursor, table_name, import_file)
+
+
+# ## PTMS
 # table_name = "ptms"
 # columns = '''
 # uniprot_acc VARCHAR(15) NOT NULL,
@@ -376,50 +307,34 @@ for sp in sps:
 # ptm         VARCHAR(30) NOT NULL,
 # sources     VARCHAR(30) NOT NULL
 # '''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
+# indices = ["CREATE INDEX ptms_uniprot_acc_idx ON "+table_name+" (uniprot_acc);"]
+# create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 # base_file = "ptms_SQL_SPS.tsv.gz"
 # for sp in sps:
 #     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
 #     populate_psql_database(conn, cursor, table_name, import_file)
 
 
-# ### LINEAR MOTIFS
-# table_name = "lm_hits"
-# columns = '''
-# uniprot_acc TEXT  NOT NULL,
-# motif       TEXT  NOT NULL,
-# source      TEXT  NOT NULL,
-# motif_start INT   NOT NULL,
-# motif_end   INT   NOT NULL,
-# sequence    TEXT  NOT NULL,
-# status      TEXT
-# '''
-# create_psql_database(conn, cursor, table_name, columns, drop=drop)
-# base_file = "all_lm_hits_SQL_SPS.tsv.gz"
-# for sp in sps:
-#     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
-#     populate_psql_database(conn, cursor, table_name, import_file)
-
-
-# ## PPI db (all SPs)
-# table_name = "ppi_db"
+# ### PPI db
+# table_name = "protein_protein_ints"
 # columns = '''
 # interaction_id  VARCHAR(25) PRIMARY KEY,
-# interactor_a    VARCHAR(25) NOT NULL,
-# interactor_b    VARCHAR(25) NOT NULL,
+# protein_a       VARCHAR(25) NOT NULL,
+# protein_b       VARCHAR(25) NOT NULL,
 # throughput      VARCHAR(10) NOT NULL,
 # pubmed          TEXT        NOT NULL
 # '''
-# index = "CREATE INDEX ppi_main_idx ON "+table_name+" (interactor_a, interactor_b);"
-# create_psql_database(conn, cursor, table_name, columns, index=index, drop=drop)
+# indices = [
+#     "CREATE INDEX protein_protein_ints_protein_a_protein_b_idx ON "+table_name+" (protein_a, protein_b);"]
+# create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 # base_file = "ppi_db_SPS.tsv.gz"
 # for sp in sps:
 #     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
 #     populate_psql_database(conn, cursor, table_name, import_file)
 
 
-# ## Association Scores
-# table_name = "ass_scores"
+# ### Association Scores
+# table_name = "association_scores"
 # columns = '''
 # type    TEXT        NOT NULL,
 # acc_a   TEXT        NOT NULL,
@@ -438,14 +353,16 @@ for sp in sps:
 # lo      REAL        NOT NULL,
 # organism VARCHAR(10) NOT NULL
 # '''
-# index = "CREATE INDEX assoc_main_idx ON "+table_name+" (acc_a, acc_b, organism);"
-# create_psql_database(conn, cursor, table_name, columns, index=index, drop=drop)
+# indices = [
+#     "CREATE INDEX association_scores_acc_a_acc_b_organism_idx ON "+table_name+" (acc_a, acc_b, organism);"]
+# create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 # base_file = "prot_ele_association_prob_edited_SPS.tsv.gz"
 # for sp in sps:
 #     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)
 #     populate_psql_database(conn, cursor, table_name, import_file)
 
-# ### InterPreTS
+
+### InterPreTS
 # table_name = "interprets_pdb2019"
 # columns = '''
 # uniprot_id_a    TEXT        NOT NULL,
@@ -475,8 +392,9 @@ for sp in sps:
 # not_sure1       REAL,
 # not_sure2       REAL
 # '''
-# index = "CREATE INDEX interprets_2019_main_idx ON "+table_name+" (uniprot_ac_a, uniprot_ac_b);"
-# create_psql_database(conn, cursor, table_name, columns, index=index, drop=drop)
+# indices = [
+#     "CREATE INDEX interprets_pdb2019_uniprot_id_a_uniprot_id_b_idx ON "+table_name+" (uniprot_id_a, uniprot_id_b);"]
+# create_psql_database(conn, cursor, table_name, columns, index=indices, drop=drop)
 # base_file = "interprets_reviewed_results_SPS.txt.gz"
 # for sp in sps:
 #     import_file = sp_dir+sp+"/"+base_file.replace("SPS", sp)

@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
 import sys, re, os
 import math, random, copy, pprint, json
 import gzip, itertools
 from collections import defaultdict
-# from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
 
 def get_layout_positions(proteins):
     """Creates x/y coordinates of proteins to be displayed
@@ -53,7 +51,19 @@ def merge_gene_names(genes):
 
         return pattern+"("+",".join(var)+")"
 
-def add_protein_main(prot_nodes, seq_nodes, id_n, id_dict, uni_id, data, ini_pos):
+def add_protein_main(prot_nodes, seq_nodes, id_n, id_dict, uni_id, labels, data, ini_pos):
+
+    organism = { 
+        "ARATH": "Arabidopsis thaliana",
+        "CAEEL": "Caenorhabditis elegans",
+        "DANRE": "Danio rerio",
+        "DROME": "Drosophila melanogaster",
+        "HUMAN": "Homo sapiens",
+        "MOUSE": "Mus musculus",
+        "XENTR": "Xenopus tropicalis",
+        "YEAST": "Saccharomyces cerevisiae",
+        "SARS2": "SARS-CoV-2",
+    }
 
     id_n += 1
     prot_id = copy.deepcopy(id_n)
@@ -62,17 +72,20 @@ def add_protein_main(prot_nodes, seq_nodes, id_n, id_dict, uni_id, data, ini_pos
     gene_name = data["genes"][0]
     if len(data["genes"]) > 1:
         gene_name += "(& more)"
+    label = labels.get(uni_id, gene_name)
     prot_nodes.append({
         "group": "nodes",
         "data": {
             "id": prot_id,
             "role": "protein_main",
-            "label": gene_name,
+            "label": label,
+            "gene": gene_name,
             "uni_ac": data["uni_ac"],
             "biogrid_id": data["biogrid_ids"].split(", ")[0],
             "des": data["description"],
             "length": data["length"],
             "protein": uni_id,
+            "org": organism[data["org"]],
             "display": "element"
         }
     })
@@ -252,12 +265,13 @@ def get_PPI_sql(cursor, sql_table, bios_a, bios_b):
     for bio_a in bios_a:
         for bio_b in bios_b:
             a, b = sorted([bio_a, bio_b])
-            cursor.execute("SELECT interaction_id, throughput"+
-                            " FROM "+sql_table+ 
-                            " WHERE (interactor_a=\'"+a+"\' AND interactor_b=\'"+b+"\');")
-                          
-            for row in cursor.fetchall():
-                data[row[1]].add(row[0])
+            if a and b:
+                cursor.execute("SELECT interaction_id, throughput"+
+                                " FROM "+sql_table+ 
+                                " WHERE (protein_a=\'"+a+"\' AND protein_b=\'"+b+"\');")
+                            
+                for row in cursor.fetchall():
+                    data[row[1]].add(row[0])
     return data
 
 def check_gene_match(target_gene, gene_list, sps_tax):
@@ -432,7 +446,7 @@ def add_elm_node(nodes, id_n, id_dict, id_coords, id_muts, uni_id,
     return nodes, id_n, id_dict, id_coords, id_muts
 
 def add_lm_node(nodes, id_n, id_dict, id_coords, id_muts, uni_id,
-                 prot_center, ini_pos, lm_acc, lm_hits, mutations):
+                prot_center, ini_pos, lm_acc, lm_hits, lm_info, mutations):
 
     if lm_acc not in id_dict[uni_id]:
 
@@ -453,10 +467,11 @@ def add_lm_node(nodes, id_n, id_dict, id_coords, id_muts, uni_id,
                     "protein": uni_id,
                     "role": "3dlm",
                     "label": lm_acc,
-                    "acc": lm_acc,
+                    "regex": lm_info["regex"],
                     "start": hit_start,
                     "end": hit_end,
                     "seq": hit_seq,
+                    "int_dom": lm_info["domain"],
                     "length": str(hit_length)+"px",
                     "status": hit_status
                 },
@@ -510,7 +525,7 @@ def color_nodes(nodes, palette=""):
     counter = 0
     for node in nodes:
         role = node["data"]["role"]
-        if role in ["domain", "elm"]:
+        if role in ["domain", "elm", "3dlm"]:
             label = node["data"]["label"]
             if label not in color_map:
                 if palette != "" and counter < len(custom_colors):
@@ -520,8 +535,8 @@ def color_nodes(nodes, palette=""):
                     color_map[label] = get_random_color(color_map.values())
 
             node["data"]["color"] = color_map[label]
-            # if role == "domain":
-            #     node["data"]["color-bg"] = "white magenta"# + color_map[label]
+            if role == "domain":
+                node["data"]["colorgrad"] = "white "+color_map[label]+" "+color_map[label]+" white"
     return nodes
 
 def color_from_zvalue(z_score):
@@ -547,45 +562,82 @@ def hide_proteins_without_interactions(protein_nodes, n_ints):
             no_int_prots.append(node["data"]["label"])
     return protein_nodes, no_int_prots
 
-def add_uni_features(nodes, id_n, prot_id, prot_center, ini_pos,
+def add_uni_features(uni_roles, nodes, id_n, prot_id, prot_center, ini_pos,
                      uni_feats, idmap):
 
     feat_ints, feat_info = {}, {}
-    uni_roles = {"VARIANT": "uni_var",
-                 "MUTAGEN": "uni_mtg",
-                 "METAL": "uni_metal",
-                 "BINDING": "uni_binding",
-                 "REGION": "uni_region"}
+    
     for feat_type in uni_feats:
+        flag, search_ints = False, False
+        if feat_type in ["VARIANT", "MUTAGEN"]:
+            flag = True
+        if feat_type in ["BINDING", "REGION", "MUTAGEN", "VARIANT"]:
+            search_ints = True
 
         for (start, end) in uni_feats[feat_type]:
-            length = end - start
-            if length <= 1:
+            # print(start, end, feat_type)
+
+            if feat_type == "DISULFID":
+                edge_ids = []
+                edge_label = []
+                for (pos1, pos2) in [(start, end), (end, start)]:
+                    id_n += 1
+                    nodes.append({
+                        "group": "nodes",
+                        "data": {
+                            "id": id_n,
+                            "parent": prot_id,
+                            "role": uni_roles[feat_type],
+                            "label": "Cys-"+str(pos1),
+                            "bond": "Cys-"+str(pos2)
+                        },
+                        "position": {
+                            "x": ini_pos[0] + pos1 - prot_center,
+                            "y": ini_pos[1]
+                        }
+                    })
+                    edge_ids.append(id_n)
+                    edge_label.append("Cys-"+str(pos1))
+
+                id_n += 1
+                edges.append({
+                    "group": "edges",
+                    "data": {
+                        "role": uni_roles[feat_type]+"_interaction",
+                        "id": id_n,
+                        "source": edge_ids[0],
+                        "target": edge_ids[1],
+                        "label": "<->".join(edge_label),
+                        "ds": "UniProt"
+                    }
+                })
+
+                continue
+
+            if start == end:
                 coords = str(end)
                 width = 2
             else:
                 coords = str(start)+"-"+str(end)
-                width = length
+                width = end - start + 1
             
             try:
-                bind = set()
-                changes = defaultdict(set)
-                for feat in uni_feats[feat_type][(start, end)]:
-                    if feat_type in ["METAL", "BINDING", "REGION"]:
-                        bind.add(feat["info_1"])
-                    elif feat_type in ["VARIANT", "MUTAGEN"]:                    
-                        changes[feat["info_2"]].add( coords+feat["info_1"] )
-        
-            
-                if feat_type in ["METAL", "BINDING"]:
-                    label = coords+" "+"; ".join(bind)
-                    all_info = bind
-                elif feat_type in ["VARIANT", "MUTAGEN"]:
-                    label = []
-                    all_info = changes.keys()
-                    for annot in changes:
-                        label.append( "; ".join(changes[annot])+": "+annot )
-                    label = "; ".join(label)
+
+                if flag: 
+                    changes = defaultdict(set)
+                    for feat in uni_feats[feat_type][(start, end)]:
+                        changes[feat["note"]].add( coords+" "+feat["change"].replace("->","→") )
+                    
+                    label = "\n".join(["; ".join(changes[note])+":\n"+note for note in changes])
+                    all_notes = changes.keys()    
+                
+                else:
+                    if feat_type == "DNA_BIND":
+                        notes = set(["DNA binding\n"+feat["note"] for feat in uni_feats[feat_type][(start, end)]])
+                    else:
+                        notes = set([feat["note"] for feat in uni_feats[feat_type][(start, end)]])
+                    label = coords+":\n"+"; ".join(notes)
+                    all_notes = notes
 
                 id_n += 1
                 nodes.append({
@@ -601,19 +653,20 @@ def add_uni_features(nodes, id_n, prot_id, prot_center, ini_pos,
     
                     },
                     "position": {
-                        "x": ini_pos[0] + start+(float(length)/2) - prot_center - 0.5,
+                        "x": ini_pos[0] + start+(float(width)/2) - prot_center - 0.5,
                         "y": ini_pos[1]
                     }
                 })
                 
-                if feat_type in ["BINDING", "REGION", "MUTAGEN", "VARIANT"]:
-                    feat_ints[id_n] = parse_uni_interactors(all_info, idmap)
+                if search_ints:
+                    feat_ints[id_n] = parse_uni_interactors(all_notes, idmap)
                     if feat_ints[id_n]:
                         feat_info[id_n] = (feat_type, coords)
             except:
                 pass
 
     return nodes, id_n, feat_ints, feat_info
+
 
 def parse_uni_interactors(all_info, idmap):
     feat_ints = defaultdict(list)
@@ -706,11 +759,11 @@ def get_pair_association_from_MongoDB(data, dic, acc_a, acc_b,
     return p_value, log_odds, dic
 
 
-# @line_profile
-def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
+@line_profile
+def main(target_prots, protein_pairs, input_seqs, mutations, org_map, labels,
         conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts, 
         ppi_table, assoc_table, assoc_pairs, ddi, dmi_elm, dmi_3did, 
-        pfam_info, elm_info, iprets_hits, idmap,
+        pfam_info, elm_info, lm3did_info, iprets_hits, idmap,
         fasta_data, fasta_link, fasta_iprets,
         make_network=True, hide_no_int=True, inferred_elmdom_ints=False):
     nw = make_network
@@ -721,10 +774,14 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
     uni_feat_ints, uni_feat_info = {}, {}
 
     uni_roles = {"VARIANT": "uni_var",
-                 "MUTAGEN": "uni_mtg",
-                 "METAL": "uni_metal",
-                 "BINDING": "uni_binding",
-                 "REGION": "uni_region"}
+                "MUTAGEN": "uni_mtg",
+                "METAL": "uni_metal",
+                "BINDING": "uni_binding",
+                "DNA_BIND": "uni_dnabind",
+                "REGION": "uni_region",
+                "TRANSMEM": "uni_transmem",
+                "DISULFID": "uni_disulfid"
+                }
     org_tax = {
         "ARATH" : ["Eukaryota", "Plantae", "Viridiplantae", "ARATH", "Ath"],
         "CAEEL" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Nematoda", "CAEEL", "Cel"],
@@ -735,7 +792,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
         "YEAST" : ["Eukaryota", "Opisthokonta", "Fungi", "YEAST", "Sce"],
         "XENLA" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Amphibia", "XENLA", "Xla"],
         "XENTR" : ["Eukaryota", "Opisthokonta", "Metazoa", "Bilateria", "Chordata", "Vertebrata", "Amphibia", "XENTR", "Xtr"],
-        "SARS-CoV-2" : ["Eukaryota", "Opisthokonta", "Metazoa", "Chordata", "Vertebrata", "Mammalia", "Hsa","Viridae", "Virus"]
+        "SARS2" : ["Eukaryota", "Opisthokonta", "Metazoa", "Chordata", "Vertebrata", "Mammalia", "Hsa","Viridae", "Virus", "SARS2"]
     }
     for org in org_tax:
         org_tax[org] = [x.upper() for x in org_tax[org]]
@@ -743,6 +800,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
     ini_pos = get_layout_positions(target_prots | set(input_seqs.keys()))
     p_center = {}
     protein_nodes, seq_nodes, region_nodes, position_nodes = [], [], [], []
+    global edges
     edges = []
 
     cursor = conn.cursor()
@@ -754,7 +812,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
 
         (protein_nodes, seq_nodes, id_n, id_dict, 
             prot_id) = add_protein_main(protein_nodes, seq_nodes, id_n, id_dict,
-                                        uni_id, protein_data[uni_id], ini_pos[uni_id])
+                                        uni_id, labels, protein_data[uni_id], ini_pos[uni_id])
         
         (region_nodes, id_n, id_dict, id_coords, id_muts,
             pfams[uni_id]) = add_domains(region_nodes, id_n, id_dict, 
@@ -767,8 +825,9 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                      ini_pos[uni_id], ptms[uni_id])
         
         (nodes, id_n, uni_feat_ints[uni_id],
-            uni_feat_info[uni_id]) = add_uni_features(position_nodes, id_n, prot_id, prot_center, 
-                                                    ini_pos[uni_id], uni_feats[uni_id], idmap)
+            uni_feat_info[uni_id]) = add_uni_features(uni_roles, position_nodes, id_n, prot_id, 
+                                                      prot_center, ini_pos[uni_id], uni_feats[uni_id], 
+                                                      idmap)
 
         position_nodes, id_n = add_custom_mutations(
                                     position_nodes, id_n, 
@@ -834,7 +893,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
         ac_a = protein_data[id_a]["uni_ac"]
         ac_b = protein_data[id_b]["uni_ac"]
         sps = list(set([org_map[idx] for idx in [id_a, id_b] if idx in org_map]))
-   
+
         # if len(sps) == 1:
         #     ppi_data = CLIENT[sps[0]]["ppi_db"]
         #     ass_prob_data = CLIENT[sps[0]]["association_probabilities"]
@@ -843,17 +902,17 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
         #     ppi_data = None
         #     ass_prob_data = None
         #     iprets_data = None
-
-        row_main = [id_a, gene_a[:20], ac_a, id_b, gene_b[:20], ac_b]
-
+        row_main = {}
+        row_main[(id_a, id_b)] = [id_a, gene_a[:20], ac_a, id_b, gene_b[:20], ac_b]
+        row_main[(id_b, id_a)] = [id_b, gene_b[:20], ac_b, id_a, gene_a[:20], ac_a]
         biogrid_ints = 0
 
         ### Protein-Protein interaction
-        if len(sps) == 1:
-            bio_ids_a = protein_data[id_a]["biogrid_ids"].split(", ")
-            bio_ids_b = protein_data[id_b]["biogrid_ids"].split(", ")
-            evidence = get_PPI_sql(cursor, ppi_table, bio_ids_a, bio_ids_b)
-            biogrid_ints = len(list(evidence["Low"]) + list(evidence["High"]))
+        # if len(sps) == 1:
+        bio_ids_a = protein_data[id_a]["biogrid_ids"].split(", ")
+        bio_ids_b = protein_data[id_b]["biogrid_ids"].split(", ")
+        evidence = get_PPI_sql(cursor, ppi_table, bio_ids_a, bio_ids_b)
+        biogrid_ints = len(list(evidence["Low"]) + list(evidence["High"]))
     
         if biogrid_ints > 0:
             id_n += 1
@@ -872,9 +931,9 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
             })
 
             row = ["Protein-Protein", "", "","", "", "", "", biogrid_ints, "BioGRID"]
-            rows.append(row_main+row)
-            n_ints[id_a] += 1
-            n_ints[id_b] += 1
+            rows.append(row_main[(id_a, id_b)]+row)
+            # n_ints[id_a] += 1
+            # n_ints[id_b] += 1
 
         ### UniProt Features interactions
         for (id1, id2) in itertools.permutations([id_a, id_b], 2):
@@ -900,10 +959,10 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                     row = ["UniProt "+feat_type,
                             "Region "+coords, coords, "",
                             "", "", "", label, "UniProt"]
-                    rows.append(row_main+row)
+                    rows.append(row_main[(id1, id2)]+row)
 
-                    n_ints[id_a] += 1
-                    n_ints[id_b] += 1
+                    n_ints[id1] += 1
+                    n_ints[id2] += 1
  
         ### Domain-Domain Interactions
         for (pfam_a, pfam_b) in itertools.product(sorted(list(pfams[id_a])), sorted(list(pfams[id_b]))):
@@ -914,9 +973,9 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
             a, b = sorted([pfam_a, pfam_b])
             scores = assoc_pairs.get((a, b))
             if not scores:
-                assoc_pairs[(a,b)] = get_association_scores_sql(cursor, assoc_table, a, b, sps[0],
-                                                                n_min=4, lo_min=2.0)
-                scores = assoc_pairs[(a,b)]
+                scores = get_association_scores_sql(cursor, assoc_table, a, b, sps[0],
+                                                    n_min=4, lo_min=2.0)
+                assoc_pairs[(a,b)] = scores
 
             if scores=="not found":
                 continue
@@ -971,7 +1030,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                 domB, "-".join(id_coords[target]),
                                 "; ".join(id_muts[target]),
                                 pdbs, ddi_info["dbs"]]
-                        rows.append(row_main+row)
+                        rows.append(row_main[(id_a, id_b)]+row)
 
                     if lo != "-":
                         row = ["Domain-Domain",
@@ -980,7 +1039,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                 domB, "-".join(id_coords[target]),
                                 "; ".join(id_muts[target]),
                                 str(lo), "Inferred Association Method"]
-                        rows.append(row_main+row)
+                        rows.append(row_main[(id_a, id_b)]+row)
 
                     n_ints[id_a]+=1
                     n_ints[id_b]+=1
@@ -1004,10 +1063,20 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                         phos_positons[id1], set(input_seqs.keys()))
                         accept_motif = False
                         if reviewed or inferred_elmdom_ints:
-                            p_value, lo = 0, 0
-                            # p_value, lo, ass_dict = get_pair_association_from_MongoDB(
-                            #                     ass_prob_data, ass_dict, elm_acc, pfam_acc,
-                            #                     n_min=4, obs_min=5, lo_min=2.0)
+
+                            ## Probabilities & association
+                            a, b = sorted([pfam_acc, elm_acc])
+                            scores = assoc_pairs.get((a, b))
+                            if not scores:
+                                scores = get_association_scores_sql(cursor, assoc_table, a, b, sps[0],
+                                                                    n_min=0, lo_min=0)
+                                assoc_pairs[(a,b)] = scores
+
+                            if scores=="not found":
+                                p_value, lo = 0, 0
+                            else:
+                                p_value, lo = scores
+
                             if reviewed:
                                 accept_motif = True
                                 edge_role = "ELM_interaction" #"iELM_interaction",
@@ -1020,6 +1089,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                 int_type = "iELM::DOM"
 
                         if accept_motif:
+
                             (region_nodes, id_n, id_dict, id_coords,
                             id_muts) = add_elm_node(region_nodes, id_n, id_dict,
                                                     id_coords, id_muts,
@@ -1050,13 +1120,14 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                         elmA += " ("+str(i)+")"
                                     if len(id_dict[id2][pfam_acc]) > 1:
                                         domB += " ("+str(j)+")"
+
                                     row = [ int_type,
                                             elmA, "-".join(id_coords[source]),
                                             "; ".join(id_muts[source]),
                                             domB, "-".join(id_coords[target]),
                                             "; ".join(id_muts[target]),
                                             "", "ELM"]
-                                    rows.append(row_main+row)
+                                    rows.append(row_main[(id1, id2)]+row)
                                     n_ints[id1] += 1
                                     n_ints[id2] += 1
                                     mech_ints[id1] += 1
@@ -1067,18 +1138,27 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                         dmi_info = dmi_3did.get((lm_acc.upper(), pfam_acc), False)
                         lm_hits = lms[id1][lm_acc]
                         if dmi_info:
-                            p_value, lo = 0, 0
-                            ## Probabilities & association
-                            # p_value, lo, ass_dict = get_pair_association_from_MongoDB(
-                            #                     ass_prob_data, ass_dict, lm_acc, pfam_acc,
-                            #                     n_min=4, obs_min=5, lo_min=2.0)
 
+                             ## Probabilities & association
+                            a, b = sorted([pfam_acc, elm_acc])
+                            scores = assoc_pairs.get((a, b))
+                            if not scores:
+                                scores = get_association_scores_sql(cursor, assoc_table, a, b, sps[0],
+                                                                    n_min=0, lo_min=0)
+                                assoc_pairs[(a,b)] = scores
+
+                            if scores=="not found":
+                                p_value, lo = 0, 0
+                            else:
+                                p_value, lo = scores
+                            
                             (region_nodes, id_n, id_dict, id_coords,
                             id_muts) = add_lm_node(region_nodes, id_n, id_dict,
                                                     id_coords, id_muts,
                                                     id1, p_center[id1],
                                                     ini_pos[id1], lm_acc,
-                                                    lm_hits, mutations)
+                                                    lm_hits, lm3did_info[lm_acc.upper()],
+                                                    mutations)
                    
                             ## Make edges
                             for i, source in enumerate(id_dict[id1][lm_acc], 1):
@@ -1092,6 +1172,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                                 "target": target,
                                                 "role": "DMI_interaction",
                                                 "ds": "3did",
+                                                "pdbs": dmi_info,
                                                 "lo": lo,
                                                 "p_val": p_value
                                                 }
@@ -1109,7 +1190,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                                             eleB, "-".join(id_coords[target]),
                                             "; ".join(id_muts[target]),
                                             "", "3did"]
-                                    rows.append(row_main+row)
+                                    rows.append(row_main[(id1, id2)]+row)
                                     n_ints[id1]+=1
                                     n_ints[id2]+=1
                                     mech_ints[id1]+=1
@@ -1130,11 +1211,11 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
             pdb_b, eval_b, pcid_b, start_b, end_b, pdb_start_b, pdb_end_b = hit["b"]
             z, pvalue = hit["z"], hit["p"]
 
-            label_a = pdb_a+":"+str(start_a)+"-"+str(end_a)
-            label_b = pdb_b+":"+str(start_b)+"-"+str(end_b)
+            label_a = pdb_a+"\n"+str(start_a)+"-"+str(end_a)
+            label_b = pdb_b+"\n"+str(start_b)+"-"+str(end_b)
             eval_avg = (float(eval_a)+float(eval_b)) / 2
             eval_diff = abs(float(eval_a)-float(eval_b))
-            color = color_from_zvalue(z)
+            # color = color_from_zvalue(z)
 
             ## Add homology region node 
             for x in [ (id_a, label_a, pdb_a, pdb_start_a, pdb_end_a, start_a, end_a, eval_a, pcid_a),
@@ -1157,7 +1238,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                         "length": str(length)+"px",
                         "eval": "{:1.0e}".format(float(e_val)),
                         "pcid": pcid,
-                        "color": color,
+                        # "color": color,
                         "protein": uni_id
                     },
                     "position": {
@@ -1182,9 +1263,9 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                     "target": target,
                     "role": "INT_interaction",
                     "pdb": pdb_a.split("|")[1],
-                    "color": color,
+                    # "color": color,
                     "z-score": z,
-                    "p-value": pvalue
+                    "p_val": pvalue
                 }
             })
             
@@ -1192,7 +1273,7 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
                    label_a, str(start_a)+"-"+str(end_a), "; ".join(id_muts[source]),
                    label_b, str(start_b)+"-"+str(end_b), "; ".join(id_muts[target]),
                    pvalue, "InterPreTS"]
-            rows.append(row_main+row)
+            rows.append(row_main[(id_a, id_b)]+row)
             n_ints[id1] += 1
             n_ints[id2] += 1
             mech_ints[id1] += 1
@@ -1208,5 +1289,5 @@ def main(target_prots, protein_pairs, input_seqs, mutations, org_map,
         ## Color domain & LMs nodes
         region_nodes = color_nodes(region_nodes) #, palette="custom1")
         graph_elements = protein_nodes+seq_nodes+region_nodes+position_nodes+edges
-
+    print(edges)
     return graph_elements, columns, rows, no_int_prots

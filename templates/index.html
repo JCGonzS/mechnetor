@@ -3,11 +3,11 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Mechnetor</title>
+		<title>Mechnetor: Mechanistic Networks Explorer</title>
 		<link
 			rel="shortcut icon"
 			type="image/x-icon"
-			href="static/images/mechnetor.ico"
+			href="static/images/favicon.ico.png"
 		/>
 
 		<link
@@ -55,6 +55,7 @@
 			type="text/javascript"
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"
 		></script>
+
 	</head>
 
 	<body>
@@ -70,6 +71,9 @@
 
 				<div class="intro-container">
 					<div>
+						<!-- <p style="background-color: lightcoral;">
+							This is a test version.  Please use: <a href="http://mechnetor.russelllab.org"> mechnetor.russelllab.org</a> 
+						</p> -->
 						<p>
 							<strong>Mechnetor</strong> lets you explore protein mechanism
 							enabling a better understanding of the functional context of
@@ -77,7 +81,7 @@
 						</p>
 						<p>
 							You can enter lists of interacting protein pairs and/or lists of
-							protein mutations or modifications. Because this is a user-driven
+							protein variants or modifications. Because this is a user-driven
 							exploratory tool, we do not recommend submitting more than 10
 							proteins at once.
 						</p>
@@ -107,11 +111,11 @@
 									<input id="name" name="query_name" placeholder="Name your query" type="text">
 								</div>
 							</div> -->
-								<div style="color: #2c2c2c">
+								<div class="section-title">
 									<h3><strong>Submit your query</strong></h3>
 									<hr />
 								</div>
-
+					
 								<div class="form-group row align-items-center">
 									<div class="col-sm">
 										<label for="prots_input"><b>Proteins</b></label>
@@ -146,7 +150,7 @@
 
 									<div class="col-sm">
 										<label for="muts_input"
-											><b>Mutations/Modifications</b></label
+											><b>Variants/Modifications</b></label
 										>
 										<br />
 										<textarea
@@ -207,37 +211,41 @@
 											<option value="YEAST">
 												Yeast (Saccharomyces cerevisiae [S288C], TaxId: 559292)
 											</option>
+											<option value="HUMAN">
+												SARS-CoV-2 (2019-nCoV, TaxId: 2697049)
+											</option>
 										</select>
 									</div>
 								</div>
 
 								<div class="form-group row align-items-center">
 									<div class="col-sm">
-										<label for="add_n_interactors"
-											>Add additional interactors per protein:
-										</label>
 										<input
-											type="number"
-											id="add_n_interactors"
-											name="add_n_interactors"
-											value="0"
-											min="0"
-											max="10"
+										type="number"
+										id="add_n_interactors"
+										name="add_n_interactors"
+										value="0"
+										min="0"
+										max="10"
+										style="width: 50px;"
 										/>
+										<label for="add_n_interactors">
+											Additional interactors per protein
+										</label>
 										<!-- <label for="all_interactors"> or show all</label>
-										<input
+											<input
 											type="checkbox"
 											id="all_interactors"
 											name="all_interactors"
-										/> -->
+											/> -->
+										<i class="fas fa-question-circle help-icon""
+										data-title="Adds a number of known interactors per each input protein to the final network.
+													These proteins are obtained in order of the amount of experimental evidence supporting the interaction 
+													(from highest to lowest)."></i> 
 									</div>
-								</div>
+								</div>	
 								<div class="form-group row align-items-center">
 									<div class="col-sm">
-										<label for="only_int_pairs"
-											>Show interactions only between protein and its
-											interactors</label
-										>
 										<input
 											type="checkbox"
 											id="only_int_pairs"
@@ -245,13 +253,19 @@
 											value="true"
 											checked
 										/>
+										<label for="only_int_pairs">
+											Show interactions only between protein and its
+											interactors 
+										</label>
+										<i class="fas fa-question-circle help-icon"
+										data-title="If additional interactors are included (option above),
+										            Mechnetor won't look for interactions among these additional proteins. 
+													It will look only between input proteins and their imported set of known interactors.
+													This can save a lot of time if you are only interested in studying particular proteins."></i> 
 									</div>
 								</div>
 								<div class="form-group row align-items-center">
 									<div class="col-sm">
-										<label for="hide_no_int"
-											>Hide proteins without interactions</label
-										>
 										<input
 											type="checkbox"
 											id="hide_no_int"
@@ -259,6 +273,12 @@
 											value="true"
 											checked
 										/>
+										<label for="hide_no_int">
+											Hide proteins without any interaction mechanisms 
+										</label>
+										<i class="fas fa-question-circle help-icon"
+										data-title="The resulting network will hide proteins for which no mechanistic connection to any other could be found.
+										This reduces the workload of the initial network view. Hidden proteins can be later manually toggled on."></i> 
 									</div>
 								</div>
 

@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mechnetor</title>
+  <title>Mechnetor Results</title>
   <link
     rel="shortcut icon"
     type="image/x-icon"
-    href="static/images/mechnetor.ico"
+    href="../static/images/favicon.ico.png"
   />
   <base target="_blank">
   <!--
@@ -58,61 +58,11 @@
   <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/stat_charts.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){
-
-      /// Modal (Help pop-up)
-      var modal = document.getElementById("help-modal");
-      // When the user clicks the button, open the modal
-      $("#help-btn").click(function() {
-        modal.style.display = "block";
-      });
-      // When the user clicks on (x), close the modal
-      $("#help-modal-close").click(function() {
-        modal.style.display = "none";
-      });
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
-      
-      var bookmark = document.getElementById("bookmark-msg")
-      $("#bookmark-close").click(function() {
-        bookmark.style.display = "none";
-      });
-
-      /// Download button
-      $("#dl-content").hide();
-      $("#dl-btn").click(function(){
-        $("#dl-content").toggle();
-      });
-
-
-      /// Go-to-Top Button
-      // When the user scrolls down 20px from the top of the document, show the button
-      window.onscroll = function() {scrollFunction()};
-      function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-          $("#goToTop").show()
-        } else {
-          $("#goToTop").hide()
-        }
-      }
-      // When the user clicks on the button, scroll to the top of the document
-      $("#goToTop").click(function() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-      });
-
-    });
-  </script>
-  <script type="text/javascript">
-      /// Import files
-      var graph_json = "{{ url_for('static',filename=graph_json) }}";
-      var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
-      var ints_json ="{{ url_for('static',filename=ints_json) }}";
+  <script type="text/javascript">    
+    /// Import files
+    var graph_json = "{{ url_for('static',filename=graph_json) }}";
+    var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
+    var ints_json ="{{ url_for('static',filename=ints_json) }}";
   </script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}" async></script>
@@ -126,182 +76,195 @@
     {% include "header.html" %}
 
     <div class="content" >
-      
-      <div class="alert alert-info" id="bookmark-msg">
-        Remember! Bookmark this page if you want to access your results later. 
-        <span id='bookmark-close' style="cursor: pointer;"><strong> Got it</strong></span>
-      </div>
 
       <div class="network-container">
         <div class="control-panel">
 
-          <div>
-            <fieldset>
-                            <!-- <label class="container">Coord
-                              <input type="checkbox" id="coord" checked="checked">
-                              <span class="checkmark"></span>
-                            </label><br> -->
-              <label class="container" style="margin-top: 10px;">Protein Boxes
-                <input type="checkbox" id="toggle_box" checked="checked">
+          <button type="button" class="collap-section" id="prot-eles-button">
+            Protein Elements
+            <!-- <label class="container" style="display:inline;left: 10px;"> all
+              <input type="checkbox" id="toggle_all_ele">
+              <span class="checkmark"></span>
+            </label> -->
+          </button>
+          
+          <div class="collap-content">
+            <label class="container" title="Show/hide boxes around proteins">
+              Protein Boxes
+              <input type="checkbox" id="toggle_box" checked="checked">
+              <span class="checkmark"></span>
+            </label><br>
+            
+            <label class="container" 
+            title="Show/hide protein domains.&#013;Source: Pfam">
+              Domains
+              <input type="checkbox" id="toggle_doms" checked="checked">
+              <span class="checkmark"></span>
+            </label></br>
+          
+            <label class="container"
+            title="Show/hide protein linear motifs.&#013;Source: ELM, 3did">
+            Linear Motifs
+            <input type="checkbox" id="toggle_elms">
+            <span class="checkmark"></span>
+            </label></br>
+            <div id="elm_confirmed_container" style="float: right; display: none;">
+              <label class="container"
+              title="Show only confirmed motif instances">
+                [Only confirmed]
+                <input type="checkbox" id="toggle_confirmed_elms">
                 <span class="checkmark"></span>
-              </label>
-            </fieldset>
+              </label></br>
+            </div>
+            <hr>
+            
+          </div>
+        
+        
+          <button type="button" class="collap-section">
+            Protein Interactions
+            <!-- <label class="container" style="display:inline;left: 10px;"> all
+              <input type="checkbox" id="toggle_all_int">
+              <span class="checkmark"></span>
+            </label> -->
+          </button>
+          
+          <div class="collap-content">
+            <label class="container"
+            title="Binary protein interactions supported by experimental evidence.&#013;Source: BioGRID">
+            Protein-Protein
+            <input type="checkbox" id="toggle_pp_int" checked="checked">
+            <span class="checkmark">
+            </label></br>
+            <label class="container"
+            title="Interactions between domains derived from 3D structures.&#013;Source: 3did, Pfam"> 
+              Domain-Domain
+              <input type="checkbox" id="toggle_dom_int">
+              <span class="checkmark">
+            </label></br>
+            <label class="container"
+            title="Interactions between domains inferred by co-occurrence.&#013;The log-odds (LO) indicate the strength of the domain association.&#013;Use the slider to increase or decrease the threshold.">
+              Domain-Domain (inferred)
+              <input type="checkbox" id="toggle_idom_int">
+              <span class="checkmark">
+            </label>
+            <div class="slidecontainer" id="lo_slider_container">
+              LO >= <b><span id="lo_value"></span></b>
+              <input type="range" min="2" max="10" value="2" class="slider" id="lo_slider" disabled>
+            </div>
+            <!-- <div class="slidecontainer">
+              <p>P-value cut-off: P-val <= <b><span id="pval_value"></span></b></p>
+              <input type="range" min="0" max="1" value="1" step="0.0001" class="slider" id="pval_slider">
+            </div> -->
+
+            <label class="container">Domain-LM (ELM)
+              <input type="checkbox" id="toggle_elmdom_int">
+              <span class="checkmark">
+            </label></br>
+            <label class="container">Domain-LM (3did)
+              <input type="checkbox" id="toggle_dmi3d_int">
+              <span class="checkmark">
+            </label></br>
+            <div id="confirmed_dmi3d_container" style="float: right; display: none;">
+              <label class="container">[Only confirmed]
+                <input type="checkbox" id="confirmed_dmi3d_toggle">
+                <span class="checkmark"></span>
+              </label></br>
+            </div>
+            <!-- <label class="container"><div style="color:##ff4d4d;"> ELM-Domain (inferred)
+              <input type="checkbox" id="toggle_elmdom_pred_int">
+              <span class="checkmark"></div>
+            </label></br> -->
+            <!-- <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="toggle_lmd2_int">
+              <label class="form-check-label" for="toggle_lmd2_int"> LM(pred)-Protein (LMD2)</label>
+            </div>
+            </br> -->
+            <label class="container"
+            title="Interacting protein regions predicted with InterPreTS&#013;(http://www.russelllab.org/cgi-bin/tools/interprets.pl/)">
+              3D structure predictions
+              <input type="checkbox" id="toggle_prets_int">
+              <span class="checkmark">
+            </label title=>
+            P-value <=<input type="number" id="pval_cutoff" min=0 max=1 value="0.75" step="0.0001">
+            
+            <hr>
+
+          </div>
+    
+          <button type="button" class="collap-section">
+            UniProt features <br> and interactions
+          </button>
+
+          <div class="collap-content">
+            <label class="container"><div>Region
+              <input type="checkbox" id="toggle_uni_regions">
+              <span class="checkmark"></div>
+            </label></br>
+            <label class="container"><div>Binding sites
+              <input type="checkbox" id="toggle_uni_binding">
+              <span class="checkmark"></div>
+              </label></br>
+            <label class="container"><div>Metal binding
+              <input type="checkbox" id="toggle_uni_metal">
+              <span class="checkmark"></div>
+            </label></br>
+            <label class="container"><div>DNA binding
+              <input type="checkbox" id="toggle_uni_dnabind">
+              <span class="checkmark"></div>
+            </label>
+            <label class="container"><div>Mutagenesis
+              <input type="checkbox" id="toggle_uni_mutagen">
+              <span class="checkmark"></div>
+            </label></br>
+            <label class="container"><div>Transmembrane
+              <input type="checkbox" id="toggle_uni_transmem">
+              <span class="checkmark"></div>
+            </label></br>
+            <label class="container"><div>Disulfide bonds
+              <input type="checkbox" id="toggle_uni_disulfid">
+              <span class="checkmark"></div>
+            </label></br>
+            <hr>
+          </div>
+          
+          <button type="button" class="collap-section">
+            Modifications
+            <!-- <label class="container" style="display:inline;left: 10px;"> all
+              <input type="checkbox" id="toggle_all_mod">
+              <span class="checkmark"></span>
+            </label> -->
+          </button>
+          
+          <div class="collap-content">
+            
+            <label class="container">Phosphorylations
+              <input type="checkbox" id="toggle_phos">
+              <span class="checkmark">
+            </label></br>
+            <label class="container">Acetylations
+              <input type="checkbox" id="toggle_acet">
+              <span class="checkmark">
+            </label>
           </div>
 
-          <hr>
-
-          <div>
-            <fieldset>
-              <div>
-                <span style="font-size: 14px; font-weight: bold;">Regions</span>
-                <label class="container" style="display:inline;left: 10px;"> all
-                  <input type="checkbox" id="toggle_all_ele">
-                  <span class="checkmark"></span>
-                </label>
-              </div><br>
-
-              <label class="container">Domains
-                <input type="checkbox" id="toggle_doms" checked="checked">
-                <span class="checkmark"></span>
-              </label></br>
-              <label class="container">Linear Motifs
-                <input type="checkbox" id="toggle_elms">
-                <span class="checkmark"></span>
-              </label></br>
-              <div id="elm_confirmed_container" style="float: right; display: none;">
-                <label class="container">[Only confirmed]
-                  <input type="checkbox" id="toggle_confirmed_elms">
-                  <span class="checkmark"></span>
-                </label></br>
-              </div>
-              <label class="container">3D-structure template
-                <input type="checkbox" id="toggle_iprets">
-                <span class="checkmark"></span>
-              </label>
-            </fieldset>
-          </div>
-
-          <hr>
-
-          <div>
-            <fieldset>
-              <div>
-                <span style="font-size: 14px; font-weight: bold;">Interactions</span>
-                <label class="container" style="display:inline;left: 10px;"> all
-                  <input type="checkbox" id="toggle_all_int">
-                  <span class="checkmark"></span>
-                </label>
-              </div><br>
-              <label class="container">Protein-Protein
-                <input type="checkbox" id="toggle_pp_int" checked="checked">
-                <span class="checkmark">
-              </label></br>
-              <label class="container"> Domain-Domain
-                <input type="checkbox" id="toggle_dom_int">
-                <span class="checkmark">
-              </label></br>
-              <label class="container">Domain-Domain (inferred)
-                <input type="checkbox" id="toggle_idom_int">
-                <span class="checkmark">
-              </label>
-              <div class="slidecontainer" id="lo_slider_container">
-                LO >= <b><span id="lo_value"></span></b>
-                <input type="range" min="2" max="10" value="2" class="slider" id="lo_slider" disabled>
-              </div>
-              <!-- <div class="slidecontainer">
-                <p>P-value cut-off: P-val <= <b><span id="pval_value"></span></b></p>
-                <input type="range" min="0" max="1" value="1" step="0.0001" class="slider" id="pval_slider">
-              </div> -->
-
-              <label class="container">Domain-LM (ELM)
-                <input type="checkbox" id="toggle_elmdom_int">
-                <span class="checkmark">
-              </label></br>
-              <label class="container">Domain-LM (3did)
-                <input type="checkbox" id="toggle_dmi3d_int">
-                <span class="checkmark">
-              </label></br>
-              <div id="confirmed_dmi3d_container" style="float: right; display: none;">
-                <label class="container">[Only confirmed]
-                  <input type="checkbox" id="confirmed_dmi3d_toggle">
-                  <span class="checkmark"></span>
-                </label></br>
-              </div>
-              <!-- <label class="container"><div style="color:##ff4d4d;"> ELM-Domain (inferred)
-                <input type="checkbox" id="toggle_elmdom_pred_int">
-                <span class="checkmark"></div>
-              </label></br> -->
-              <!-- <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="toggle_lmd2_int">
-                <label class="form-check-label" for="toggle_lmd2_int"> LM(pred)-Protein (LMD2)</label>
-              </div>
-              </br> -->
-              <label class="container">InterPreTS
-                <input type="checkbox" id="toggle_prets_int">
-                <span class="checkmark">
-              </label>
-              P-val <=<input type="number" id="pval_cutoff" min=0 max=1 value="0.75" step="0.0001">
-            </fieldset>
-          </div>
-
-          <hr>
-
-          <div>
-            <fieldset>
-              <div>
-                <span style="font-size: 14px; font-weight: bold;">Modifications</span>
-                <label class="container" style="display:inline;left: 10px;"> all
-                  <input type="checkbox" id="toggle_all_mod">
-                  <span class="checkmark"></span>
-                </label>
-              </div><br>
-
-              <label class="container">User-input mutations
-                <input type="checkbox" id="toggle_input_mut">
-                <span class="checkmark">
-              </label></br>
-              <label class="container">Human cancer mutations
-                <input type="checkbox" id="toggle_cosmic_mut">
-                <span class="checkmark">
-              </label></br>
-              Sample >=<input type="number" id="sample_min" min=1 max=1000 value="2" step="1">
-              <label class="container">Phosphorylations
-                <input type="checkbox" id="toggle_phos">
-                <span class="checkmark">
-              </label></br>
-              <label class="container">Acetylations
-                <input type="checkbox" id="toggle_acet">
-                <span class="checkmark">
-              </label>
-            </fieldset>
-          </div>
-          <hr>
-          <div>
-            <fieldset>
-              <div>
-                <span style="font-size: 14px; font-weight: bold;">UniProt features</span>
-              </div><br>
-              <label class="container"><div>UniProt REGION
-                <input type="checkbox" id="toggle_uni_regions">
-                <span class="checkmark"></div>
-              </label></br>
-              <label class="container"><div>UniProt VARIANT
-                <input type="checkbox" id="toggle_uni_variants">
-                <span class="checkmark"></div>
-              </label></br>
-              <label class="container"><div>UniProt MUTAGEN
-                <input type="checkbox" id="toggle_uni_mutagen">
-                <span class="checkmark"></div>
-              </label></br>
-              <label class="container"><div>UniProt BINDING
-                <input type="checkbox" id="toggle_uni_binding">
-                <span class="checkmark"></div>
-              </label></br>
-              <label class="container"><div>UniProt METAL
-                <input type="checkbox" id="toggle_uni_metal">
-                <span class="checkmark"></div>
-              </label>
-            </fieldset>
+          <button type="button" class="collap-section">
+            Variants
+          </button>
+          <div class="collap-content">
+            <label class="container">User-input
+              <input type="checkbox" id="toggle_input_mut">
+              <span class="checkmark">
+            </label></br>
+            <label class="container">Human cancer
+              <input type="checkbox" id="toggle_cosmic_mut">
+              <span class="checkmark">
+            </label></br>
+            Sample >=<input type="number" id="sample_min" min=1 max=1000 value="2" step="1">
+            <label class="container"><div>Genetic diseases
+              <input type="checkbox" id="toggle_uni_variants">
+              <span class="checkmark"></div>
+            </label></br>
           </div>
         </div>
 
@@ -323,13 +286,22 @@
             <button class="my-btn" id="reset" title="Reload graph">
               <i class="fa fa-sync"></i>
             </button>
+
           </div>
-          
-          <!-- <div class="help-widget">
-            <button class="my-btn" id="help-btn" title="Help">
-              <i class="far fa-question-circle"></i>
+
+          <div class="dl-widget">
+            <div id="dl-content"> 
+              <!-- <i class="far fa-file-image" style="font-size: 20px; vertical-align: middle;"></i> -->
+              <span style="font-weight: 500;"> Take snapshot as:   </span>
+              <!-- <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button> -->
+              <button class="dl-btn-pic" id="dl_jpg"><i class="far fa-file-image"></i> JPG </button>
+              <button class="dl-btn-pic" id="dl_png"><i class="far fa-file-image"></i> PNG </button>
+              <button class="dl-btn-pic" id="dl_svg"><i class="far fa-file-image"></i> SVG </button>
+            </div>
+            <button class="my-btn dl-btn-off" id="dl-btn">
+              <i class="fas fa-camera"></i>
             </button>
-          </div> -->
+          </div>
 
           <div class="zoom-widget">
             <div class="zoom-widget-row">
@@ -344,20 +316,21 @@
             </div>
           </div>
 
-          <div class="dl-widget">
-            <button class="my-btn" id="dl-btn">
-              <!-- <i class="fas fa-save"></i> -->
-              <i class="fas fa-camera"></i>
-            </button>
-            <div id="dl-content"> 
-              <!-- <i class="far fa-file-image" style="font-size: 20px; vertical-align: middle;"></i> -->
-              <span style="font-weight: 500;"> Download snapshot as:   </span>
-              <!-- <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button> -->
-              <button class="dl-btn-pic" id="dl_jpg"><i class="far fa-file-image"></i> JPG </button>
-              <button class="dl-btn-pic" id="dl_png"><i class="far fa-file-image"></i> PNG </button>
-              <button class="dl-btn-pic" id="dl_svg"><i class="far fa-file-image"></i> SVG </button>
-            </div>
+          {% if no_int_prots|length > 0 %}
+          <div class="miss-widget">
+            No mechanism found for:
+            <ul class="comma-list">
+            {% for prot in no_int_prots %}
+              <li>
+                <button class="miss-btn" onclick=showProt("{{ prot }}") title="Show/hide protein">
+                  <b>{{ prot }}</b>
+                </button>
+              </li>
+            {% endfor %}
+            </ul>
           </div>
+          {% endif %}
+
         </div>
 
         <div class="modal" id="help-modal">
@@ -397,6 +370,12 @@
 
       </div>
 
+      <br>
+      <div class="alert alert-info" id="bookmark-msg">
+        Remember! Bookmark this page if you want to access your results later. 
+        <span id='bookmark-close' style="cursor: pointer;"><strong> Got it</strong></span>
+      </div>
+
       <div class="extra-info-container">
 
         {% if not_found|length > 0 %}
@@ -405,17 +384,6 @@
             <ul class="comma-list">
             {% for prot in not_found %}
               <li><b>{{ prot }}</b></li>
-            {% endfor %}
-            </ul>
-          </div>
-        {% endif %}
-
-        {% if no_int_prots|length > 0 %}
-          <div style="padding-top:5px;">
-            No interactions found for:
-            <ul class="comma-list">
-            {% for prot in no_int_prots %}
-              <li><button class="txt-btn" onclick=showProt("{{ prot }}") title="Click to toggle protein"><b>{{ prot }}</b></button></li>
             {% endfor %}
             </ul>
           </div>
@@ -465,7 +433,7 @@
 
       <br>-->
 
-      <div class="section-header"><i class="fas fa-list"></i> Interaction Evidence List</div>
+      <div class="section-header"><i class="fas fa-list"></i> Interaction Evidence Table</div>
       <div class="interaction-table-container">
         <!-- <table id="interaction-table" style="width:98% !important; table-layout:fixed;"> -->
         <table id="interaction-table" class="table table-striped table-bordered">
@@ -497,7 +465,9 @@
 
   </div>
 
+  <script>
 
+  </script>
 
 </body>
 </html>

@@ -6,7 +6,7 @@ from collections import defaultdict
 from Bio import SwissProt, SeqIO
 import find_all_slims
 import pandas as pd
-# import run_interprets
+import run_interprets
 
 def open_file(input_file, mode="rt"):
     """ Open file Zipped or not
@@ -86,8 +86,7 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
     uni_ac_seqs, masks = {}, {}
     modres = defaultdict(lambda: defaultdict(dict))
     uni_features = defaultdict(lambda: defaultdict(list))
-    pdb2uni = defaultdict(set)
-    reviewed = set()
+    uni_chains = {}
     previous_data_class = ""
     s=set()
     for record in SwissProt.parse(open_file(uniprot_file)):
@@ -129,6 +128,8 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
             else:
                 main_gene = genes[0]
 
+        chains = []
+        length = len(record.sequence)
         main_uni_ac = uni_acs[0].upper()
         data[uni_id] = {
             "gn": main_gene,
@@ -136,6 +137,7 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
             "des": re.search("Name: Full=([^;|{]+)", record.description).group(1),
             "dc": record.data_class,
             "seq": record.sequence,
+            "length": len(record.sequence),
             "biogrid_id": set(),
             "sorted_ints": []
         }
@@ -178,57 +180,79 @@ def extract_protein_data_from_uniprot_text(uniprot_file):
                 elif "acetyl" in info:
                     modres[main_uni_ac][end]["Acetylation"] = ["UniProt"]
 
-            elif feat.type in ["VARIANT", "MUTAGEN", "METAL", "BINDING", "REGION"]:
+            elif feat.type in ["VARIANT", "MUTAGEN", "METAL", "BINDING", "REGION", "DNA_BIND", 
+                                "TRANSMEM", "TOPO_DOM", "DISULFID"]:
                 evidence = feat.qualifiers.get("evidence", "")
                 note = feat.qualifiers.get("note", "")
                 ide = feat.id
                 if not feat.id:
                     ide = "-"
-                if start == "0":
-                    start = "1"
-                if start != end and start.isdigit() and end.isdigit():
-                    uni_features[main_uni_ac][feat.type].append( (start, end, ide, evidence, note) )
+                if start.isdigit() and end.isdigit():
+                    start = int(start) + 1
+                    end = int(end)
+                    uni_features[main_uni_ac][feat.type].append( (start, end, ide, note, evidence) )
+                    # print(main_uni_ac, feat.type, start, end, ide, note, "\t", evidence)
+
+            elif feat.type == "CHAIN":
+                if start=="0" and end==str(length):
+                    continue
+                note = feat.qualifiers.get("note", "")
+                evidence = feat.qualifiers.get("evidence", "")
+                ide = feat.id
+                if not feat.id:
+                    ide = "-"
+                try:
+                    # seq = record.sequence[int(start):int(end)]
+                    start = int(start) + 1
+                    end = int(end)
+                    chains.append( (start, end, ide, note, evidence) )
+                except:
+                    pass
+
+        if len(chains)>1:
+            uni_features[main_uni_ac]["CHAIN"] = chains
 
     for key in secondary_id_map:
         for uni_id in secondary_id_map[key]:
             if uni_id not in primary_id_map[key]:
                 primary_id_map[key].append(uni_id) 
 
-    return data, primary_id_map, uni_ac_seqs, modres, uni_features #, region
+    # print(s)
+    return data, primary_id_map, uni_ac_seqs, modres, uni_features
 
 def create_uni_features_table(outfile, uni_feats, uni_dis_names):
     with open_file(outfile, "wt") as out:
-        vals = ["#Uni_Ac", "Type", "Id", "Start", "End", "Info-1", "Info-2", "Evidence"]
+        vals = ["#Uni_Ac", "Type", "Id", "Start", "End", "Change", "Note", "Evidence"]
         out.write("\t".join(vals)+"\n")
         for uni_ac in uni_feats:
             for feat_type in uni_feats[uni_ac]:
                 for feat in uni_feats[uni_ac][feat_type]:
-                    (start, end, feat_id, evidence, note) = feat
-                    var, info = note, "-"
+                    (start, end, feat_id, note, evidence) = feat
+                    var, info = "", note
 
                     ## Keep only human genetic disease variants
                     if feat_type=="VARIANT":
                         try:
                             var, info = re.search("([^\(]+)\((.+)\)", note).group(1, 2)
                         except:
-                            var, info = re.search("(.+)", note).group(1), ""
-                        
+                            # var, info = re.search("(.+)", note).group(1), ""
+                            var, info = note, ""
+
                         parsed_info = []
                         dis = 0
                         for annot in info.split("; "):
-                            if [y for y in ["dbSNP","cancer","melanoma","carcinoma, somatic"] if y in annot]:
+                            if [y for y in ["dbSNP","cancer","melanoma","carcinoma","somatic"] if y in annot]:
                                 continue
+
                             new_annot = []
                             for word in annot.split():
                                 if word in uni_dis_names:
-                                    new_word = uni_dis_names[word]
                                     dis += 1
+                                    new_annot.append(uni_dis_names[word])
                                 else:
-                                    new_word = word
-                                new_annot.append(new_word)
+                                    new_annot.append(word)
 
-                            new_annot = " ".join(new_annot)
-                            parsed_info.append(new_annot)
+                            parsed_info.append( " ".join(new_annot) )
 
                         if not parsed_info or dis==0:
                             continue
@@ -239,7 +263,7 @@ def create_uni_features_table(outfile, uni_feats, uni_dis_names):
                         var, info = note.split(": ")[0], note.split(": ")[1:]
                         info = ": ".join(info)
 
-                    vals = [uni_ac, feat_type, feat_id, start, end, var, info, evidence]
+                    vals = [uni_ac, feat_type, feat_id, str(start), str(end), var, info, evidence]
                     out.write("\t".join(vals)+"\n")
     return
 
@@ -280,7 +304,7 @@ def extract_biogrid_interactions(biogrid_file, bio2uni):
                 interaction_id = t[0]
                 bio_id_a, bio_id_b = t[3], t[4]
                 pubmed, throughput = t[14], t[17].replace(" Throughput","")
-                # org_a, org_b = t[-2], t[1]
+                org_a, org_b = t[-2], t[-1]
                 # uni_acs_a, uni_acs_b = t[23].split("|"), t[26].split("|")
     
                 if bio_id_a in bio2uni and bio_id_b in bio2uni:
@@ -333,7 +357,7 @@ def create_protein_data_table(outfile_name, protein_data, org):
 
     with open_file(outfile_name, "wt") as out:
         cols = ["Uni_Id", "Uni_Ac", "Gene", "Description", "Data_Class", 
-                "Organism", "Seq_Length", "Sequence", "Biogrid IDs"]
+                "Organism", "Seq_Length", "Sequence", "Biogrid IDs", "Int Sorted"]
         out.write("\t".join(cols)+"\n")
 
         for uni_id in protein_data:
@@ -370,7 +394,6 @@ def extract_pfam_doms(pfam_file, max_eval=999):
     """Pfam-A matches in species proteome. File downloaded from PFAM.
     """
     pfams = defaultdict(lambda: defaultdict(set) )
-    pfams_temp = defaultdict(lambda: defaultdict(set) )
 
     with open_file(pfam_file) as f:
         for line in f:
@@ -586,7 +609,10 @@ def extract_slim_hits(hits_file, tp, fp):
             if line[0] != "#" and line.strip():
                 t = line.rstrip().split("\t")
                 lm_name, lm_ac = t[0], t[1]
-                uni_ac, uni_id = t[2].split("|")[1:]
+                try:
+                    uni_ac, uni_id = t[2].split("|")[1:]
+                except:
+                    uni_ac = t[2]
                 start, end = int(t[4]), int(t[5])
                 prob_score = t[6] # elm probability
                 seq = t[-1]
@@ -1151,34 +1177,83 @@ def create_prob_file(out_file, total_proteins, total_interactions,
                         str(ratio), str(log2)]
                 out.write("\t".join(cols)+"\n")
 
-def create_interprets_file(outfile, ppi, prot_dict, iprets_dir):
+def create_interprets_file(outfile, ppi, prot_data, org_map, 
+                            iprets_dir, data_dir, blastdb):
 
-    with open_file(outfile, "w") as out:
+    with open_file(outfile, "wt") as out:
         cols = ["#Gene1","PDB1","Blast-E1","Blast-PCID1","qstart1","qend1",
                 "pdbstart1","pdbend1","Gene2","PDB2","Blast-E2","Blast-PCID2",
                 "qstart2","qend2","pdbstart2","pdbend2","i2-raw","rand",
                 "rand-mean","rand-sd","Z","p-value","not-sure1","not-sure2"]
         out.write("\t".join(cols)+"\n")
 
-    for a in sorted(ppi):
-        input_seqs = {}
-        input_seqs[a] = prot_dict["seq"][a]
-        pairs = []
-        for b in sorted(ppi[a]):
-            pairs.append((a,b))
-            input_seqs[b] = prot_dict["seq"][b]
+        for a in sorted(ppi):
+            input_seqs = {}
+            input_seqs[a] = prot_data[a]["seq"]
+            pairs = []
 
-        ide = ''.join(random.choice(string.ascii_uppercase +
-                        string.ascii_lowercase + string.digits) for _ in range(8))
-        print( "Running InterPrets for {} and {} partners: {}".format(a,
-                                        str(len(ppi[a])), ";".join(ppi[a])) )
-        try:
-            run_interprets.main(input_seqs, iprets_dir, outfile, ide,
-                                these_pairs=pairs, fasta_as_input=False,
-                                verbose=False)
-        except:
-            print("InterPreTS failed")
-        print( "[IntePreTs finished for {} protein pairs]".format(len(pairs)) )
+            for b in sorted(ppi[a]):
+                pairs = [(a,b)]
+                input_seqs[b] = prot_data[b]["seq"]
+                
+                ide = ''.join(random.choice(string.ascii_uppercase +
+                                string.ascii_lowercase + string.digits) for _ in range(8))
+
+                hits = []
+                print("Running InterPrets for:", pairs[0])
+                try:
+                    hits = run_interprets.main(input_seqs, iprets_dir, outfile, ide, org_map,
+                                        these_pairs=pairs, mode="blastpgp", blastdb=blastdb,
+                                        verbose=False, data_dir=data_dir, print_output=False)
+                    print( "[IntePreTs finished for {} protein pairs]".format(len(pairs)) )
+                except:
+                    print("InterPreTS failed")
+                    continue
+
+                if hits:
+                    final_hits = review_interprets_hits(hits, prot_data)
+                    for pair in pairs:
+                        (id_a, id_b) = pair
+                        ac_a, ac_b = prot_data[id_a]["ac"], prot_data[id_b]["ac"]
+                        for hit in final_hits[pair]:
+                            vals = [id_a, ac_a]+hit["info_a"]+[id_b, ac_b]+hit["info_b"]+hit["scores"]
+                            out.write("\t".join(vals)+"\n")
+    return
+
+def review_interprets_hits(new_hits, protein_data):
+    mask, mask2 = {}, {}
+    final_hits = defaultdict(list)
+    for pair in new_hits:
+        (id_a, id_b) = pair
+        len_a, len_b = protein_data[id_a]["length"], protein_data[id_b]["length"]
+        for z in sorted(new_hits[pair], reverse=True):
+            for hit in new_hits[pair][z]:
+                if pair not in final_hits:
+                    final_hits[pair].append(hit)
+                else:
+                    start_a, end_a = int(hit["info_a"][3]), int(hit["info_a"][4])
+                    start_b, end_b = int(hit["info_b"][3]), int(hit["info_b"][4])
+        
+                    mask[id_a] = ["0"]*len_a
+                    mask[id_b] = ["0"]*len_b
+                    mask2[id_a] = fill_mask(start_a, end_a, ["0"]*len_a)
+                    mask2[id_b] = fill_mask(start_b, end_b, ["0"]*len_b)
+                    
+                    for fhit in final_hits[pair]:
+                        fstart_a, fend_a = int(fhit["info_a"][3]), int(fhit["info_a"][4])
+                        fstart_b, fend_b = int(fhit["info_b"][3]), int(fhit["info_b"][4])
+                        mask[id_a] = fill_mask(fstart_a, fend_a, mask[id_a])
+                        mask[id_b] = fill_mask(fstart_b, fend_b,mask[id_b])
+                        ov2_a = calculate_overlap(fstart_a, fend_a, mask2[id_a])
+                        ov2_b = calculate_overlap(fstart_b, fend_b, mask2[id_b])
+                        if ov2_a>=0.75 and ov2_b>=0.75:
+                            break
+                    else:      
+                        ov_a = calculate_overlap(start_a, end_a, mask[id_a])
+                        ov_b = calculate_overlap(start_b, end_b, mask[id_b])
+                        if ov_a<0.75 and ov_b<0.75:
+                            final_hits[pair].append(hit)
+    return final_hits
 
 def merge_protein_elements(*argv):
     eles = defaultdict(set)
@@ -1217,19 +1292,23 @@ def main( SP="Hsa",
           force_iprets=False
         ):
 
-    organisms = {
-    "Ath": ["ARATH", "3702", "Arabidopsis thaliana"],
-    "Cel": ["CAEEL", "6239"],
-    "Dme": ["DROME", "7227"],
-    "Dre": ["DANRE", "7955"],
-    "Hsa": ["HUMAN", "9606", "Homo sapiens"],
-    "HUMAN": ["HUMAN", "9606", "Homo sapiens"],
-    "Mmu": ["MOUSE", "10090"],
-    "Sce": ["YEAST", "559292", "Saccharomyces cerevisiae"],
-    "Xla": ["XENLA", "8355"],
-    "Xtr": ["XENTR", "8364"]
-    }
-    org = organisms[SP][0]
+    check=False
+    if SP=="check":
+        check = True
+    else:
+        organisms = {
+        "Ath": ["ARATH", "3702", "Arabidopsis thaliana"],
+        "Cel": ["CAEEL", "6239"],
+        "Dme": ["DROME", "7227"],
+        "Dre": ["DANRE", "7955"],
+        "Hsa": ["HUMAN", "9606", "Homo sapiens"],
+        "HUMAN": ["HUMAN", "9606", "Homo sapiens"],
+        "Mmu": ["MOUSE", "10090"],
+        "Sce": ["YEAST", "559292", "Saccharomyces cerevisiae"],
+        "Xla": ["XENLA", "8355"],
+        "Xtr": ["XENTR", "8364"]
+        }
+        org = organisms[SP][0]
 
     ### DEFINE required data files
     COM_DIR         = DATA_DIR+"common/"
@@ -1283,7 +1362,8 @@ def main( SP="Hsa",
     IPRETS_RAW_FILE   = SP_DIR+"interprets_raw_results_"+SP+".txt.gz"
     IPRETS_REV_FILE   = SP_DIR+"interprets_reviewed_results_"+SP+".txt.gz"
     ASSOC_PROB_FILE   = SP_DIR+"prot_ele_association_prob_"+SP+".tsv.gz"
-    NEW_ASSOC_PROB_FILE = SP_DIR+"prot_ele_association_prob_edited_"+SP+".tsv.gz"      
+    NEW_ASSOC_PROB_FILE = SP_DIR+"prot_ele_association_prob_edited_"+SP+".tsv.gz"    
+
     ####---------updated til here
 
 
@@ -1304,7 +1384,7 @@ def main( SP="Hsa",
     # elm classes & domain-ints
     check_file_exists(ELM_CLASSES_FILE)
     elm_map, elm_classes = parse_elm_classes(ELM_CLASSES_FILE)
-   
+  
     check_file_exists(ELM_INSTANCES_FILE)
 
     if os.path.isfile(ELM_DOM_EDIT_FILE):
@@ -1337,18 +1417,20 @@ def main( SP="Hsa",
 
     check_file_exists(UNI2BIO_FILE)
     
+    if check:
+        sys.exit()
+
     ## ORGANISM-specific:
     for f in [UNI_TEXT_FILE, UNI_FASTA_FILE, PFAM_MATCHES_FILE]:#, BIOGRID_FILE]:
         check_file_exists(f)
 
-   
     prot_data, uni_id_map, uni_seqs, modres, uni_feats = extract_protein_data_from_uniprot_text(UNI_TEXT_FILE)
+    
     if os.path.isfile(ID_MAP_FILE):
         print_status(ID_MAP_FILE, "exists")
     else:
         create_id_map_table(ID_MAP_FILE, uni_id_map, org)
         print_status(ID_MAP_FILE, "created")
-    sys.exit()
     if os.path.isfile(UNI_FEAT_FILE):
         print_status(UNI_FEAT_FILE, "exists")
     else:
@@ -1356,12 +1438,14 @@ def main( SP="Hsa",
         create_uni_features_table(UNI_FEAT_FILE, uni_feats, uni_dis_names)
         print_status(UNI_FEAT_FILE, "created")
 
+    sys.exit()
+
     prot_data = add_uniprot_biogrid_mapping(UNI2BIO_FILE, uni_id_map, prot_data)
     bio2uni = get_bio_2_uni_mapping(prot_data)
 
     # Get PP interaction from BioGRID file
     biogrid_ppi, biogrid_ppi_all, interaction_info = extract_biogrid_interactions(BIOGRID_FILE, bio2uni)    
-    
+
     ### Create PPI database (only BioGRID now)
     if os.path.isfile(PPI_FILE):
         print_status(PPI_FILE, "exists")

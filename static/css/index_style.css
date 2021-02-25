@@ -27,20 +27,27 @@
 }
 
 .intro-container{
-  max-width: 80%;
+  max-width: 85%;
   margin: auto;
-  padding: 10px;
-  /* background-color:  #fef9e7 ; */
+  padding: 20px;
+  box-shadow: 0 0px 2px rgba(0,0,0,0.1);
+  background-color: #FFF;
   font-size: large;
   margin-bottom: 10px;
   display: flex;
 }
 
 .main-container{
-  max-width: 80%;
+  max-width: 85%;
   margin: auto;
   background-color: #FFF;
+  box-shadow: 0 0px 2px rgba(0,0,0,0.1);
   padding: 10px;
+}
+
+.section-title{
+  color: #2c2c2c;
+  
 }
 
 textarea {
@@ -162,4 +169,41 @@ button:hover {
   padding: 0 10px;
 }
 
+.help-icon{
+  color: #E44445;
+  font-size: 15px;
+  position: relative ;
+  position: relative;
+  display: inline-block;
+  margin-top: 20px
+}
 
+[data-title]:hover:after {
+  opacity: 1;
+  transition: all 0.1s ease 0.2s;
+  visibility: visible;
+}
+
+[data-title]:after {
+  content: attr(data-title);
+  position: absolute;
+  background-color: #faf0f0;
+  border: 1px solid #888;
+  box-shadow: 1px 1px 3px #222222;
+  padding: 5px 5px 5px 5px;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 100;
+  color: black;
+  line-height: 150%;
+  bottom: -1.6em;
+  left: 100%;
+  white-space: wrap;
+  width: 400px;
+  opacity: 1;
+  z-index: 99999;
+  visibility: hidden;
+}
+[data-title] {
+  position: relative;
+}
