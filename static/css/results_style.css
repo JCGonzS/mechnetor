@@ -1,3 +1,5 @@
+/* * {box-sizing: border-box} */
+
 .collap-section {
   font-size: 14px; 
   font-weight: bold;
@@ -21,7 +23,7 @@
   color: white;
   font-weight: bold;
   float: right;
-  margin-right: 5px;
+  padding-right: 5px;
 }
 .collap-active:after {
   content: "\2212"; /* Unicode character for "minus" sign (-) */
@@ -42,7 +44,6 @@
   height: 82vh;
   width: 98vw;
   box-shadow: 0 0px 2px rgba(0,0,0,0.1);
-  /* position: absolute; top: 0; right: 0; bottom: 0; left: 0; */
 }
 
 .control-panel {
@@ -73,10 +74,9 @@
 
 .network {
   flex-grow: 2;
-  /* height: 600px; */
+  position: relative;
   background-color: white;
   /* border: 1px solid #ccc; */
-  position: relative;
 }
 
 #cy {
@@ -214,15 +214,13 @@
 }
 
 .interaction-table-container {
-  width: 100% !important;
+  width: 98vw !important;
   margin-top: 15px;  
-  margin-right: auto;
-  margin-left: auto;
   background-color: #FFF;
   overflow-x: auto;
 }
 #interaction-table {
-  width: 100% !important;
+  width: 98vw !important;
   overflow-x: auto;
 } 
 
