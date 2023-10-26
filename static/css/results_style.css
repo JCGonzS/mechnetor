@@ -1,14 +1,57 @@
+/* * {box-sizing: border-box} */
+
+.collap-section {
+  font-size: 14px; 
+  font-weight: bold;
+  background-color: #2c2c2c;
+   /* #5F6A6A; */
+  padding: 10px 0px 10px 8px;
+  color: #FFF;
+  width: 100%;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 0.5px solid #FFF;
+}
+.collap-active, .collap-section:hover{
+  background-color: #e44445;
+  /* #2c2c2c; */
+}
+.collap-section:after {
+  content: '\002B'; /* Unicode character for "plus" sign (+) */
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  padding-right: 5px;
+}
+.collap-active:after {
+  content: "\2212"; /* Unicode character for "minus" sign (-) */
+}
+
+.collap-content {
+  padding-left: 8px;
+  padding-top: 5px;
+  overflow: hidden;
+  display:none;
+  /* max-height: 0;
+  transition: max-height 0.2s ease-out; */
+}
+
+
 .network-container {
   display: flex; 
+  height: 82vh;
+  width: 98vw;
+  box-shadow: 0 0px 2px rgba(0,0,0,0.1);
 }
 
 .control-panel {
   width: 20em;
-  height: 600px;
   overflow: auto;
-  background-color: #ccc;
-  /* border: 1px solid #ccc; */
-  padding-left: 5px;
+  overflow-x: auto;
+  background-color: #fff;
+  border-right: 1px solid #ccc;
   padding-bottom: 10px;
   text-align: left;
   font-size: 12px;
@@ -31,10 +74,9 @@
 
 .network {
   flex-grow: 2;
-  height: 600px;
+  position: relative;
   background-color: white;
   /* border: 1px solid #ccc; */
-  position: relative; 
 }
 
 #cy {
@@ -53,6 +95,7 @@
   font-size: 20px;
   background: none;
   color: #2c2c2c;
+  cursor: pointer;
 }
 .my-btn:hover {
   color: #e44445;
@@ -65,12 +108,6 @@
   margin-left: 5px;
 }
 
-.help-widget {
-  position: relative;
-  float: right;
-  margin-top: 5px;
-  margin-right: 5px;
-}
 
 .zoom-widget {
   position: relative;
@@ -83,22 +120,48 @@
 }
 
 .dl-widget {
-  position: relative;
+  position: absolute;
   display: inline-block;
-  margin-top: 430px;
-  margin-left: 5px;
+  /* margin-top: 20px; */
+  /* margin-left: 5px; */
+  right: 1px;
+  background-color: #FFF;
 }
+
 #dl-content {
-  display: inline-block;
+  display: none;
 }
+
+.dl-btn-off {
+  color: #2c2c2c;
+}
+.dl-btn-off:hover {
+  color: #e44445;
+}
+.dl-btn-on {
+  color: #e44445;
+}
+.dl-btn-on:hover {
+  color: #2c2c2c;
+}
+
 .dl-btn-pic {
   border: none;
   border-radius: 3px;
   background-color: #CCC;
   padding: 3px;
+  cursor: pointer;
 }
 .dl-btn-pic:hover {
-  background-color: #dfb4b5;
+  background-color: #e44445;
+  color: #fff;
+}
+
+
+.miss-widget {
+  position: absolute;
+  padding-left: 2px;
+  bottom: 1px;
 }
 
 #help-btn {
@@ -126,40 +189,38 @@
   background-color: #fefefe;
   margin: auto;
   padding-top: 5px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   border: 1px solid #888;
-  width: 70%;
+  width: 80%;
 }
 .modal-close {
-  color: #2c2c2c;
+  color: #FFF;
   font-size: 28px;
   font-weight: bold;
   text-align: right;
 }
 .modal-close:hover,
 .modal-close:focus {
-  color: #e44445;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
 }
 
 .extra-info-container {
   margin-top: 5px;
-  padding-left: 17em; 
+  padding-left: 5px; 
   font-size: 16px;
 }
 
 .interaction-table-container {
-  width: 100% !important;
+  width: 98vw !important;
   margin-top: 15px;  
-  margin-right: auto;
-  margin-left: auto;
   background-color: #FFF;
   overflow-x: auto;
 }
 #interaction-table {
-  width: 100% !important;
+  width: 98vw !important;
   overflow-x: auto;
 } 
 
@@ -237,18 +298,20 @@ input[type=number] {
     left: 0;
     height: 15px;
     width: 15px;
+    border: 0.5px solid #2c2c2c;
     background-color: white;
 }
 .container:hover{
   font-weight: bold;
+  color: #e44445;
 }
 /* On mouse-over, add a grey background color */
 .container:hover input ~ .checkmark {
-    background-color: #555555;
+  background-color: #e44445;
 }
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
-    background-color: #555555;
+    background-color: #e44445;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -290,50 +353,78 @@ input[type=number] {
 span.tip {
   line-height: 23px;
 }
-span.tipProt {
-  color: #17A589;
-  float: left;
-  width: 70px;
-}
-span.tipPfam {
-  color: #074987;
+span .tipgen {
   float: left;
   width: 80px;
 }
+
+span.tipProt {
+  float: left;
+  width: 70px;
+}
+span.tipProt, .prot {
+  color: #17A589;
+}
+
+span.tipPfam {
+  float: left;
+  width: 80px;
+}
+span.tipPfam, .pfam {
+  color: #074987;
+}
+
 span.tipELM {
-  color: #7f7c7b;
   float: left;
   width: 90px;
 }
+span.tipELM, .ELM {
+  color: #7f7c7b;
+}
+
 span.tipInP {
-  color: #7b241c;
   float: left;
   width: 140px;
 }
+span.tipInP, .InP {
+  color: #e44445;
+}
+
 span.tipCos {
   color: #28446f;
   float: left;
   width: 110px;
 }
-span.tipBioG {
+span.tipPPI {
+  float: left;
+  width: 130px;
+}
+span.tipPPI, .PPI {
+  color: #17A589;
+}
+
+span.tipDDI {
+  float: left;
+  width: 130px;
+}
+span.tipDDI, .DDI {
   color: #33a1c2;
+}
+
+span.tipiDDI {
   float: left;
   width: 130px;
 }
-span.tip3did {
-  color: #16a085;
-  float: left;
-  width: 130px;
-}
-span.tipIdom {
+span.tipiDDI, .iDDI {
   color: #d4ac0d;
+}
+
+span.tipELMint {
   float: left;
   width: 130px;
 }
-span.tipELMint {
-  color: #b95db9;
-  float: left;
-  width: 130px;
+span.tipELMint, .ELMint {
+  color: #884EA0;
 }
 
 span.pos {
@@ -367,53 +458,33 @@ span.neg {
   color: lightgrey;
 }
 
-
-.GenButton {
-  background-color: #ccc;
-  border: 1px solid #555555;
-  color: #555555;
+.edit-btn {
+  background-color: white; /* Green */
+  color: #2c2c2c;
+  border: 1px solid #2c2c2c;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
   font-size: 14px;
-  /*font-family: Arial, Helvetica, sans-serif;*/
-  padding: 6px;
-  border-radius: 10px;
+  margin: 4px 2px;
+  transition-duration: 0.2s;
   cursor: pointer;
 }
-.GenButton:hover{
-  color: #fff;
-  background-color: #555555;
+.edit-btn:hover {
+  background-color: #2c2c2c;
+  color: white;
+} 
+
+.slidecontainer{
+  padding-left: 4px;
 }
-#coord:focus, #lock:focus{
-  color: #000;
-  background-color: #fff;
-}
-
-.ptmButton {
-  background-color: #ccc;
-  border: 1px solid #555555;
-  color: #555555;
-  font-size: 14px;
-  /*font-family: Arial, Helvetica, sans-serif;*/
-  padding: 6px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.ptmButton:hover, .ptmButton:focus {
-  color: #fff;
-  background-color: #555555;
-}
-
-
-
-
-
-
-
 
 .slider {
   -webkit-appearance: none;
-  width: 100%;
-  height: 25px;
-  background: #FFF;
+  border-radius: 4px;
+  height: 10px;
+  background: #ccc;
   outline: none;
   opacity: 0.7;
   -webkit-transition: .2s;
@@ -427,19 +498,18 @@ span.neg {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #555555;
+  width: 15px;
+  height: 15px;
+  background: #2c2c2c;
   cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: #555555;
+  width: 15px;
+  height: 15px;
+  background: #2c2c2c;
   cursor: pointer;
 }
-
 
 
 .echart {
@@ -470,4 +540,47 @@ span.neg {
 #goToTop:hover {
   color: #fff;
   background-color: #555555;
+}
+
+li {
+  font-size: 20px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+  padding-left: 5px;
+}
+
+.comma-list{
+  display: inline;
+  list-style: none;
+  padding: 0px
+}
+.comma-list li {
+  display: inline;
+}
+/* .comma-list li::after {
+  content: ", ";
+}
+.comma-list li:last-child::after {
+    content: "";
+} */
+
+.miss-btn {
+  border: 1px solid #2c2c2c;
+  border-radius: 3px;
+  color: #fff;
+  background-color: #4d4b4a;
+  font-size: 16px;
+  /*padding: 10px 15px;*/
+  cursor: pointer;
+  display: inline-block;
+}
+.miss-btn:hover {
+  background-color: #e44445;
+}
+
+.miss-btn-on {
+  background-color: #e44445;
+}
+.miss-btn-on:hover {
+  background-color: #4d4b4a;
 }

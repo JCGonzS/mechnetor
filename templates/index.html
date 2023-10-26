@@ -1,173 +1,360 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Protein Interaction Visualization</title>
-	<link rel="shortcut icon" type="image/x-icon" href="static/images/piv_icon.ico">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Mechnetor: Mechanistic Networks Explorer</title>
+		<link
+			rel="shortcut icon"
+			type="image/x-icon"
+			href="static/images/favicon.ico.png"
+		/>
 
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Staatliches|Lato|Source+Sans+Pro:400,600">
-	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index_style.css') }}"/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css?family=Staatliches|Lato|Audiowide|Source+Sans+Pro:400,600"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+			integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+			integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static',filename='css/common.css') }}"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static',filename='css/index_style.css') }}"
+		/>
 
-	<script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static',filename='js/index.js') }}"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"></script>
-</head>
+		<script
+			type="text/javascript"
+			src="{{ url_for('static',filename='js/jquery-3.3.1.js') }}"
+		></script>
+		<script
+			type="text/javascript"
+			src="{{ url_for('static',filename='js/index.js') }}"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"
+		></script>
 
-<body>
-	
-	<div class="grid-container">
+	</head>
 
-		{% include "header.html" %}
+	<body>
+		<div class="grid-container">
+			{% include "header.html" %}
 
-		<div class="content">
-
-			<div id="loading_msg">Your job is running...</div><br>
-			<div class="loader"></div>
-
-			<!-- <div class="container">
-				<div id="intro">
-					<h6><b>What PIV can do:</b></h6>
-					<ul>
-						<li>Create an interactive network with your protein(s) of interest and their known interactors.</li>
-						<li>Visualize diverse interaction data.</li>
-						<li>Map mutations and protein modifications.</li>
-					</ul>
+			<div class="content">
+				<div id="loading_msg">
+					<p>Your job is running...</p>
 				</div>
-			</div> -->
-			<!-- <br> -->
+				<br />
+				<div class="loader"></div>
 
-			<div class="main-container">
-				<div class="form-group row align-items-center">
-					<div class="col-sm-9">
-						<form name="myForm" action="/output" method="post" novalidate="novalidate">
+				<div class="intro-container">
+					<div>
+						<!-- <p style="background-color: lightcoral;">
+							This is a test version.  Please use: <a href="http://mechnetor.russelllab.org"> mechnetor.russelllab.org</a> 
+						</p> -->
+						<p>
+							<strong>Mechnetor</strong> lets you explore protein mechanism
+							enabling a better understanding of the functional context of
+							genetic variants.
+						</p>
+						<p>
+							You can enter lists of interacting protein pairs and/or lists of
+							protein variants or modifications. Because this is a user-driven
+							exploratory tool, we do not recommend submitting more than 10
+							proteins at once.
+						</p>
+					</div>
+					<img
+						src="{{ url_for('static',filename='images/sample-01.png') }}"
+						width="300"
+						height="300"
+						style="
+							-webkit-box-shadow: 3px 2px 12px 2px rgba(0, 0, 0, 0.38);
+							box-shadow: 3px 2px 12px 2px rgba(0, 0, 0, 0.38);
+						"
+					/>
+				</div>
 
-							<!-- <div class="form-group row">
+				<div class="main-container">
+					<div class="form-group row align-items-center">
+						<div class="col-sm-9">
+							<form
+								name="myForm"
+								action="/output"
+								method="post"
+								novalidate="novalidate"
+							>
+								<!-- <div class="form-group row">
 								<div class="col-sm">
 									<input id="name" name="query_name" placeholder="Name your query" type="text">
 								</div>
 							</div> -->
-
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
-									<label for="prots_input"><b>Proteins</b></label>
-									<br>
-									<textarea id="prots_input" name="prots_input" aria-required="true" required=""
-										placeholder="Enter a list of interacting proteins"></textarea>
-									<br>
-									<label for="prots_input_file">Or select a file:</label>
-									<input type="file" id="prots_input_file">
-									<br>
-									<button type="button" class="button1"	id="prots_input_upload" onclick="uploadInput('prots_input')">Upload</button>
-									<button type="button" class="button1" onclick="resetInput('prots_input')">
-										<i class="fas fa-backspace"></i>
-									</button>
+								<div class="section-title">
+									<h3><strong>Submit your query</strong></h3>
+									<hr />
 								</div>
-
-								<div class="col-sm">
-									<label for="muts_input"><b>Mutations (optional)</b></label>
-									<br>
-									<textarea id="muts_input" name="muts_input" aria-required="true"
-										placeholder="Enter a list of protein mutations"></textarea>
-									<br>
-									<label for="muts_input_file">Or select a file:</label>
-									<input type="file" id="muts_input_file">
-									<br>
-									<button type="button" class="button1" id="muts_input_upload" onclick="uploadInput('muts_input')">Upload</button>
-									<button type="button" class="button1" onclick="resetInput('muts_input')">
-										<i class="fas fa-backspace"></i>
-									</button>
-								</div>
-							</div>
-
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
-									<label for="species">Organism:</label>
-									<!-- <input type="text" list="species"> -->
-									<select name="species" id="species">
-											<option value="any">Automatic/More than one</option>
-											<option value="HUMAN" selected>Human (Homo sapiens, TaxId: 9606)</option>
-											<option value="MOUSE">Mouse (Mus musculus, TaxId: 10090)</option>
-											<option value="DROME">Fruit Fly (Drosophila melanogaster, TaxId: 7227)</option>
-											<option value="ARATH">Arabidopsis (Arabidopsis thaliana, TaxId: 3702)</option>
-											<option value="CAEEL">Worm (Caenorhabditis elegans, TaxId: 6239)</option>
-											<option value="DANRE">Zebrafish (Danio rerio, TaxId: 7955)</option>
-											<option value="XENTR">Frog (Xenopus tropicalis, TaxId: 8364)</option>
-											<option value="YEAST">Yeast (Saccharomyces cerevisiae [S288C], TaxId: 559292)</option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
-									<label for="hide_no_int">Hide proteins with no interactions</label>
-									<input type="checkbox" id="hide_no_int" name="hide_no_int" value="true" checked>
-								</div>
-							</div>
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
-									<label for="add_n_interactors">Add additional interactors per protein: </label>
-									<input type="number" id="add_n_interactors" name="add_n_interactors" value="0">
-									<label for="all_interactors"> or show all</label>
-									<input type="checkbox" id="all_interactors" name="all_interactors">
-									<label for="only_int_pairs">Show interactions only between protein and its interactors</label>
-									<input type="checkbox" id="only_int_pairs" name="only_int_pairs" value="true" checked>
-								</div>
-							</div>
-
-							<div class="form-group row align-items-center">
-								<div class="col-sm">
-									<div>
-										<hr>
-										Examples:
-										<button class="button1 ex_button" type="button" id="ex1">1</button>
-										<button class="button1 ex_button" type="button" id="ex2">2</button>
-										<button class="button1 ex_button" type="button" id="ex3">3</button>
-										<button class="button1 ex_button" type="button" id="ex4">4</button>
-										<button class="button1 ex_button" type="button" id="ex5">5</button>
+					
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<label for="prots_input"><b>Proteins</b></label>
+										<br />
+										<textarea
+											id="prots_input"
+											name="prots_input"
+											aria-required="true"
+											required=""
+											placeholder="Enter a list of interacting proteins using UniProt Ids, accessions or gene names. E.g.&#x0a;TP53&#x0a;MDM2_HUMAN&#x0a;P21675"
+										></textarea>
+										<br />
+										<label for="prots_input_file">Or select a file:</label>
+										<input type="file" id="prots_input_file" />
+										<br />
+										<button
+											type="button"
+											class="button1"
+											id="prots_input_upload"
+											onclick="uploadInput('prots_input')"
+										>
+											Upload
+										</button>
+										<button
+											type="button"
+											class="button1"
+											onclick="resetInput('prots_input')"
+										>
+											<i class="far fa-trash-alt"></i>
+										</button>
 									</div>
-									<div>
-										<button type="submit" class="button1 button2" id="submit-button" onclick="loading();">Submit</button>
-										<button type="reset" class="button1 button2" id="reset-button">Reset</button>
+
+									<div class="col-sm">
+										<label for="muts_input"
+											><b>Variants/Modifications</b></label
+										>
+										<br />
+										<textarea
+											id="muts_input"
+											name="muts_input"
+											aria-required="true"
+											placeholder="Enter a list of protein mutations.&#x0a;Q02556/R404fs&#x0a;P16885/P236L&#x0a;P05771/G425V"
+										></textarea>
+										<br />
+										<label for="muts_input_file">Or select a file:</label>
+										<input type="file" id="muts_input_file" />
+										<br />
+										<button
+											type="button"
+											class="button1"
+											id="muts_input_upload"
+											onclick="uploadInput('muts_input')"
+										>
+											Upload
+										</button>
+										<button
+											type="button"
+											class="button1"
+											onclick="resetInput('muts_input')"
+										>
+											<i class="far fa-trash-alt"></i>
+										</button>
 									</div>
 								</div>
-							</div>
-						</form>
-			    	</div>
-		   		</div>
+
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<label for="species">Organism:</label>
+										<!-- <input type="text" list="species"> -->
+										<select name="species" id="species">
+											<!-- <option value="any">Automatic/More than one</option> -->
+											<option value="HUMAN" selected>
+												Human (Homo sapiens, TaxId: 9606)
+											</option>
+											<option value="MOUSE">
+												Mouse (Mus musculus, TaxId: 10090)
+											</option>
+											<option value="DROME">
+												Fruit Fly (Drosophila melanogaster, TaxId: 7227)
+											</option>
+											<option value="ARATH">
+												Arabidopsis (Arabidopsis thaliana, TaxId: 3702)
+											</option>
+											<option value="CAEEL">
+												Worm (Caenorhabditis elegans, TaxId: 6239)
+											</option>
+											<option value="DANRE">
+												Zebrafish (Danio rerio, TaxId: 7955)
+											</option>
+											<option value="XENTR">
+												Frog (Xenopus tropicalis, TaxId: 8364)
+											</option>
+											<option value="YEAST">
+												Yeast (Saccharomyces cerevisiae [S288C], TaxId: 559292)
+											</option>
+											<option value="HUMAN">
+												SARS-CoV-2 (2019-nCoV, TaxId: 2697049)
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<input
+										type="number"
+										id="add_n_interactors"
+										name="add_n_interactors"
+										value="0"
+										min="0"
+										max="10"
+										style="width: 50px;"
+										/>
+										<label for="add_n_interactors">
+											Additional interactors per protein
+										</label>
+										<!-- <label for="all_interactors"> or show all</label>
+											<input
+											type="checkbox"
+											id="all_interactors"
+											name="all_interactors"
+											/> -->
+										<i class="fas fa-question-circle help-icon""
+										data-title="Adds a number of known interactors per each input protein to the final network.
+													These proteins are obtained in order of the amount of experimental evidence supporting the interaction 
+													(from highest to lowest)."></i> 
+									</div>
+								</div>	
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<input
+											type="checkbox"
+											id="only_int_pairs"
+											name="only_int_pairs"
+											value="true"
+											checked
+										/>
+										<label for="only_int_pairs">
+											Show interactions only between protein and its
+											interactors 
+										</label>
+										<i class="fas fa-question-circle help-icon"
+										data-title="If additional interactors are included (option above),
+										            Mechnetor won't look for interactions among these additional proteins. 
+													It will look only between input proteins and their imported set of known interactors.
+													This can save a lot of time if you are only interested in studying particular proteins."></i> 
+									</div>
+								</div>
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<input
+											type="checkbox"
+											id="hide_no_int"
+											name="hide_no_int"
+											value="true"
+											checked
+										/>
+										<label for="hide_no_int">
+											Hide proteins without any interaction mechanisms 
+										</label>
+										<i class="fas fa-question-circle help-icon"
+										data-title="The resulting network will hide proteins for which no mechanistic connection to any other could be found.
+										This reduces the workload of the initial network view. Hidden proteins can be later manually toggled on."></i> 
+									</div>
+								</div>
+
+								<div class="form-group row align-items-center">
+									<div class="col-sm">
+										<div>
+											<hr />
+											Examples:
+											<button class="button1 ex_button" type="button" id="ex1">
+												1
+											</button>
+											<button class="button1 ex_button" type="button" id="ex2">
+												2
+											</button>
+											<button class="button1 ex_button" type="button" id="ex3">
+												3
+											</button>
+											<button class="button1 ex_button" type="button" id="ex4">
+												4
+											</button>
+											<!-- <button class="button1 ex_button" type="button" id="ex5">
+												5
+											</button> -->
+										</div>
+										<div>
+											<button
+												type="submit"
+												class="button1 button2"
+												id="submit-button"
+												onclick="loading();"
+											>
+												Submit
+											</button>
+											<button
+												type="reset"
+												class="button1 button2"
+												id="reset-button"
+											>
+												Reset
+											</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
+
+			{% include "footer.html" %}
 		</div>
 
-		{% include "footer.html" %}
-	
-	</div>
-
-	<script>
-		function loading(){
-			document.body.scrollTop = 0;
-     		document.documentElement.scrollTop = 0;
-			$("#loading_msg").show();
-			$(".loader").show();
-			$(".main-container").hide();
-		}
-		function uploadInput(id) {
-			var fileInput = document.querySelector('#'+id+'_file');
-			var textFromFile = "";
-			var file = fileInput.files[0];
-			var reader = new FileReader();
-			reader.onload = function(e) {
-				textFromFile = e.target.result;
-				document.getElementById(id).value = textFromFile;
+		<script>
+			function loading() {
+				document.body.scrollTop = 0;
+				document.documentElement.scrollTop = 0;
+				$("#loading_msg").show();
+				$(".loader").show();
+				$(".main-container").hide();
+				$(".intro-container").hide();
 			}
-			reader.readAsText(file);
-		};
+			function uploadInput(id) {
+				var fileInput = document.querySelector("#" + id + "_file");
+				var textFromFile = "";
+				var file = fileInput.files[0];
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					textFromFile = e.target.result;
+					document.getElementById(id).value = textFromFile;
+				};
+				reader.readAsText(file);
+			}
 
-		function resetInput(id) {
-			document.getElementById(id).value="";
-		}
-	</script>
-</body>
+			function resetInput(id) {
+				document.getElementById(id).value = "";
+			}
+		</script>
+	</body>
 </html>

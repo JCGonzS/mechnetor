@@ -1,8 +1,8 @@
 examples/*
 data/common
 data/species
-static/data/common
-static/data/species
+static/data/
+static/data/
 static/output
 static/examples
 static/images

@@ -1,5 +1,59 @@
 "use strict";
 
+
+// Show/Hide proteins without interactions
+function showProt(label) {
+  var node = cy.$("node[role='protein_main'][label='"+label+"']");
+  var display = node.style("display");
+  if (display=="none"){
+	node.style("display", "element");
+	cy.center(node);
+  } else {
+	node.style("display", "none");
+  }
+};
+
+function removeThisEle(id) {
+  var node = cy.$("node[id='"+id+"']");
+  cy.remove(node);
+};
+
+function removeAllinProt(label, protein) {
+  var node = cy.$("node[label='"+label+"'][protein='"+protein+"']");
+  cy.remove(node);
+};
+
+function removeAll(label) {
+  var node = cy.$("node[label='"+label+"']");
+  cy.remove(node);
+};
+
+function changeLabel(t, id){
+  var node = cy.$("node[id='"+id+"']");
+  var label = t.value;
+  node.style("label", label);
+}
+function toggle_nodes(element, node_description) {
+	var nodes = cy.$(node_description);
+	if (element.checked) {
+		nodes.style("display", "element");
+	} else {
+		nodes.style("display", "none");
+	}
+};
+
+function toggle_nodes_and_connectedEdges(element, node_description) {
+	var nodes = cy.$(node_description);
+	var edges = nodes.connectedEdges();
+	if (element.checked) {
+		nodes.style("display", "element");
+		edges.style("display", "element");
+	} else {
+		nodes.style("display", "none");
+		edges.style("display", "none");
+	}
+};
+
 // function makeEchart3() {
 // 	var chart3 = echarts.init(document.getElementById('chart3'));
 // 	var dom_sets = new Map();
@@ -78,19 +132,86 @@
 
 $(document).ready(function(){
 
-	function toggle_nodes(element, node_description) {
-		var nodes = cy.$(node_description);
-		if (element.checked) {
-			nodes.style("display", "element");
-		} else {
-			nodes.style("display", "none");
+	/// Modal (Help pop-up)
+	var modal = document.getElementById("help-modal");
+	// When the user clicks the button, open the modal
+	$("#help-btn").click(function() {
+		modal.style.display = "block";
+	});
+	// When the user clicks on (x), close the modal
+	$("#help-modal-close").click(function() {
+		modal.style.display = "none";
+	});
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
 		}
-	};
+	}
 	
-	function toggle_nodes_and_connectedEdges(element, node_description) {
+	var bookmark = document.getElementById("bookmark-msg");
+		$("#bookmark-close").click(function() {
+		bookmark.style.display = "none";
+	});
+
+	/// Download button
+	// $("#dl-content").hide();
+	$("#dl-btn").click(function(){
+	if ( this.className == "my-btn dl-btn-off" ) {
+		this.className = "my-btn dl-btn-on";
+		$("#dl-content").css("display", "inline-block");
+	} else {
+		this.className = "my-btn dl-btn-off";
+		$("#dl-content").css("display", "none");
+	}
+	});
+
+	/// Go-to-Top Button
+	// When the user scrolls down 20px from the top of the document, show the button
+	window.onscroll = function() {scrollFunction()};
+	function scrollFunction() {
+	if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+		$("#goToTop").show()
+	} else {
+		$("#goToTop").hide()
+	}
+	}
+	// When the user clicks on the button, scroll to the top of the document
+	$("#goToTop").click(function() {
+		document.body.scrollTop = 0;
+		document.documentElement.scrollTop = 0;
+	});
+	
+	$(".miss-btn").on("click", function(e){
+	if (e.currentTarget.className == "miss-btn miss-btn-on") {
+		e.currentTarget.className = "miss-btn";
+	} else {
+		e.currentTarget.className = "miss-btn miss-btn-on";
+	}
+	});
+
+	var coll = document.getElementsByClassName("collap-section");
+	var i;
+	for (i = 0; i < coll.length; i++) {
+		coll[i].addEventListener("click", function() {
+			this.classList.toggle("collap-active");
+			var content = this.nextElementSibling;
+			if (content.style.display === "block") {
+			content.style.display = "none";
+			} else {
+			content.style.display = "block";
+			} 
+		});
+	}
+	
+	$("#prot-eles-button").click();
+
+
+
+	function toggle_nodes_and_connectedEdges2(node_description) {
 		var nodes = cy.$(node_description);
 		var edges = nodes.connectedEdges();
-		if (element.checked) {
+		if (this.checked) {
 			nodes.style("display", "element");
 			edges.style("display", "element");
 		} else {
@@ -99,17 +220,17 @@ $(document).ready(function(){
 		}
 	};
 	
-	// Show/Hide proteins without interactions
-	function showProt(label) {
-		var node = cy.$("node[role='protein_main'][label='"+label+"']");
-		var display = node.style("display");
-		if (display=="none"){
-			node.style("display", "element");
-			// cy.center(node);
-		} else {
-			node.style("display", "none");
-		}
-	};
+	// // Show/Hide proteins without interactions
+	// function showProt(label) {
+	// 	var node = cy.$("node[role='protein_main'][label='"+label+"']");
+	// 	var display = node.style("display");
+	// 	if (display=="none"){
+	// 		node.style("display", "element");
+	// 		// cy.center(node);
+	// 	} else {
+	// 		node.style("display", "none");
+	// 	}
+	// };
 	
 	function toggle_int_above_pval(role) {
 		var pval = document.getElementById("pval_cutoff").value;
@@ -121,6 +242,8 @@ $(document).ready(function(){
 		cy.$("node[role='mod_cosmic'][tot_count>="+min_count+"]").style("display", "element");
 		cy.$("node[role='mod_cosmic'][tot_count<"+min_count+"]").style("display", "none");
 	}
+
+
 
 	// Save original positions of all graph elements
 	cy.nodes().forEach(function(n){
@@ -165,6 +288,15 @@ $(document).ready(function(){
 			fit: { eles: node, padding: 100}
 		})
 	});
+
+	// FEATURE: Double-Tap on any edge to fit connected nodes
+	cy.on("doubleTap", "edge", function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		  cy.animate({
+			fit: { eles: nodes, padding: 100}
+		})
+	});
   
 	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
 	cy.on("render zoom", function(event) {
@@ -187,7 +319,6 @@ $(document).ready(function(){
 			"node[role='protein_main']", function(event) {
 		var node = event.target;
 		node.toggleClass("hl");
-		node.connectedEdges().toggleClass("hl");
 		node.neighborhood().toggleClass("hl2");
 		if (event.type=="tapdragover"){
 			cy.autoungrabify(false);
@@ -195,9 +326,17 @@ $(document).ready(function(){
 			cy.autoungrabify(true);
 		}
 		});
+	
+	cy.on("tapdragover tapdragout", "node[role='domain']", function(event) {
+		var node = event.target;
+		node.toggleClass("hl");
+		if( $("#toggle_dom_int").prop('checked') || $("#toggle_idom_int").prop('checked') ){
+			node.openNeighborhood().toggleClass("hl2");
+		}
+	});
 
 	cy.on("tapdragover tapdragout",
-			"node[role='domain'], node[role='elm'], node[role='3dlm'], "+
+			"node[role='elm'], node[role='3dlm'], "+
 			"node[role='iprets'], node[role ^='uni'], node[role ^='mod']", function(event) {
 		var node = event.target;
 		node.toggleClass("hl");
@@ -242,8 +381,8 @@ $(document).ready(function(){
 		["#toggle_elms", "#toggle_confirmed_elms", "#toggle_iprets", "#toggle_dom_int",
 		 "#toggle_idom_int", "#toggle_elmdom_int", "#toggle_elmdom_pred_int",
 		 "#toggle_prets_int", "#toggle_phos", "#toggle_acet", "#toggle_uni_regions",
-		 "#toggle_uni_variants", "#toggle_uni_mutagen", "#toggle_input_mut",
-		 "#toggle_cosmic_mut"].forEach(function(ele) {
+		 "#toggle_uni_variants", "#toggle_uni_mutagen", "#toggle_uni_binding", "#toggle_uni_dnabind",
+		 "#toggle_uni_metal", "#toggle_uni_transmem", "#toggle_uni_disulfid", "#toggle_input_mut", "#toggle_cosmic_mut"].forEach(function(ele) {
 			$(ele).prop("checked", false);
 		});
 
@@ -318,8 +457,7 @@ $(document).ready(function(){
 	$("#toggle_box").click(function(){
 		var eles = cy.$("node[role='protein_main']");
     	var eles2 = cy.$("node[role='protein_main']:selected");
-    	var checked = document.getElementById("toggle_box").checked;
-		if (checked) {
+		if ( $("#toggle_box").prop("checked") ) {
 			eles.style("border-opacity", "1");
 		} else {
 			eles.style("border-opacity", "0");
@@ -329,15 +467,12 @@ $(document).ready(function(){
 
  	// BUTTON: Toggle ALL protein elements
 	$("#toggle_all_ele").change(function(){
-		var checked = document.getElementById("toggle_all_ele").checked;
-		if (checked) {
+		if ( $("#toggle_all_ele").prop("checked") ) {
 			$("#toggle_doms").prop("checked", true).change();
 			$("#toggle_elms").prop("checked", true).change();
-			$("#toggle_iprets").prop("checked", true).change();
 		} else {
 			$("#toggle_doms").prop("checked", false).change();
 			$("#toggle_elms").prop("checked", false).change();
-			$("#toggle_iprets").prop("checked", false).change();
 		}
 	});
 
@@ -528,14 +663,18 @@ $(document).ready(function(){
  	});
 
 	// BUTTON: Toggle InterPreTS interactions
-	$("#toggle_prets_int").change(function(){
-		var edges = cy.$("edge[role='INT_interaction']");
-		var checked = document.getElementById("toggle_prets_int").checked;
-		if (checked) {
+	$("#toggle_prets_int").change(function(){	
+		if ( $("#toggle_prets_int").prop("checked") ) {
+			var pval = document.getElementById("pval_cutoff").value;
+			var edges = cy.$("edge[role='INT_interaction'][p_val<="+pval+"]");
+			var nodes = edges.connectedNodes();
 			edges.style("display", "element");
-			$("#toggle_iprets").prop("checked", true).change();
+			nodes.style("display", "element");
 		} else {
+			var edges = cy.$("edge[role='INT_interaction']");
+			var nodes = cy.$("node[role='iprets']");
 			edges.style("display", "none");
+			nodes.style("display", "none");
 		}
 	});
 
@@ -575,19 +714,30 @@ $(document).ready(function(){
 		toggle_nodes(this, "node[role='mod_acet']");
 	});
 
-	// BUTTON: Toggle UniProt Regions
+	// BUTTON: Toggle UniProt Features
 	$("#toggle_uni_regions").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_region']");
 	});
-
-	// BUTTON: Toggle UniProt Variants
 	$("#toggle_uni_variants").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_var']");
 	});
-
-	// BUTTON: Toggle UniProt Mutagenesis
 	$("#toggle_uni_mutagen").change(function(){
 		toggle_nodes_and_connectedEdges(this, "node[role='uni_mtg']");
+	});
+	$("#toggle_uni_binding").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_binding']");
+	});
+	$("#toggle_uni_dnabind").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_dnabind']");
+	});
+	$("#toggle_uni_metal").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_metal']");
+	});
+	$("#toggle_uni_transmem").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_transmem']");
+	});
+	$("#toggle_uni_disulfid").change(function(){
+		toggle_nodes_and_connectedEdges(this, "node[role='uni_disulfid']");
 	});
 
 	// SLIDERS
@@ -616,41 +766,87 @@ $(document).ready(function(){
 
 	var cutoffPval = document.getElementById("pval_cutoff");
 	cutoffPval.oninput = function() {
-		if (document.getElementById("toggle_dom_int").checked) {
+		if ( $("#toggle_dom_int").prop("checked") ) {
 			cy.$("edge[role='DOM_interaction'][p_val<="+this.value+"]").style("display", "element");
 			cy.$("edge[role='DOM_interaction'][p_val>"+this.value+"]").style("display", "none");
 		}
-		if (document.getElementById("toggle_idom_int").checked) {
+		if ( $("#toggle_idom_int").prop("checked") ) {
 			cy.$("edge[role='iDOM_interaction'][p_val<="+this.value+"]").style("display", "element");
 			cy.$("edge[role='iDOM_interaction'][p_val>"+this.value+"]").style("display", "none");
 		}
-		if (document.getElementById("toggle_elmdom_int").checked) {
+		if ( $("#toggle_elmdom_int").prop("checked") ) {
 			cy.$("edge[role='ELM_interaction'][p_val<="+this.value+"]").style("display", "element");
 			cy.$("edge[role='ELM_interaction'][p_val>"+this.value+"]").style("display", "none");
 		}
+		if ( $("#toggle_prets_int").prop("checked") ) {
+			var edges1 = cy.$("edge[role='INT_interaction'][p_val<="+this.value+"]");
+			var nodes1 = edges1.connectedNodes();
+			edges1.style("display", "element");
+			nodes1.style("display", "element");
+			var edges2 = cy.$("edge[role='INT_interaction'][p_val>"+this.value+"]");
+			var nodes2 = edges2.connectedNodes();
+			edges2.style("display", "none");
+			nodes2.style("display", "none");
+		}
 	}
-
-
-	function removeThisEle(id) {
-		var node = cy.$("node[id='"+id+"']");
-		cy.remove(node);
-	};
-	
-	function removeAllinProt(label, protein) {
-		var node = cy.$("node[label='"+label+"'][protein='"+protein+"']");
-		cy.remove(node);
-	};
-	
-	function removeAll(label) {
-		var node = cy.$("node[label='"+label+"']");
-		cy.remove(node);
-	};
 
 	// QTIPs on node/edge click
 	// cy.nodes().on("tap", function( event ){
+
+	function remove_ele(ele){
+		return "<div class='col-sm-4 text-center'>\n"+
+					"<button class='edit-btn' onclick=removeThisEle(\""+ele+"\") "+
+					"title='Remove this particular element from network'>\n"+
+						"Remove\n"+
+					"</button>\n"+
+				"</div>\n";
+	};
+	function remove_allprot(label, prot){
+		return	"<div class='col-sm-4 text-center'>\n"+
+					"<button class='edit-btn' onclick=removeAllinProt(\""+label+"\",\""+prot+"\") "+
+					"title='Remove all nodes of this class within this protein'>\n"+
+						"Remove all in this protein\n"+
+					"</button>\n"+
+				"</div>\n";
+	};
+	function remove_allnet(label){
+		return "<div class='col-sm-4 text-center'>\n"+
+					"<button class='edit-btn' onclick=removeAll(\""+label+"\") "+
+					"title='Remove all nodes of this class from the whole network'>\n"+
+						"Remove all in network\n"+
+					"</button>\n"+
+				"</div>\n";
+	};
+	function select_label(id, uni_id, uni_ac, gene){
+		return "<label for='label_selection'>Change node label: </label>\n"+
+			   "<select name='label_selection' id='sel-label' "+
+			   "onchange='changeLabel(this, "+id+")'>\n"+
+					"<option value='"+uni_id+"'>\n"+
+						uni_id+"\n"+
+					"</option>\n"+
+					"<option value='"+uni_ac+"'>\n"+
+						uni_ac+"\n"+
+					"</option>\n"+
+					"<option value='"+gene+"'>\n"+
+						gene+"\n"+
+					"</option>\n"+
+				"</select>";
+	};
+
+	var uni_names = {
+				"uni_var": "Variant",
+				"uni_mtg": "Mutagenesis",
+				"uni_metal": "Metal Binding",
+				"uni_binding": "Binding Site",
+				"uni_dnabind": "DNA Binding" ,
+				"uni_region": "Region",
+				"uni_transmem": "Transmembrane region",
+				"uni_disulfid": "Disulfide bond"};
+
 	cy.on("click", "node[role='protein_main']", function(event) {
 		var node = event.target;
 		var role = node.data("role");
+		var id = node.data("id");
 		if("blast" in node.data()){
 			var label = node.data("label");
 			var length = node.data("length");
@@ -674,23 +870,35 @@ $(document).ready(function(){
 							"<a href='"+link+"' target='_blank'_>" +
 							length+" AA <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
 							blast_hits+
-							"</span>";
+							"</span>"
 		} else {
-			var gene = node.data("label");
+			var gene = node.data("gene");
 			var des = node.data("des");
-			var acc = node.data("protein");
+			var uni_id = node.data("protein")
+			var uni_ac = node.data("uni_ac");
+			var uni_prot = uni_ac+" ("+uni_id+")";
 			var length = node.data("length");
-			var qtip_content = "<span class='tip'>"+
-							"<span class='tipProt'>Gene</span> | <b>"+gene+"</b><br>" +
-							"<span class='tipProt'>Protein</span> | <b>"+des+"</b><br>" +
-							"<span class='tipProt'>Accession</span> | " +
-							"<a href='https://www.uniprot.org/uniprot/"+acc+"'>" +
-							acc+" <i class='fas fa-external-link-alt fa-xs'></i>" +
-							"</a><br>" +
-							"<span class='tipProt'>Length</span> | "+
-							"<a href='https://www.uniprot.org/uniprot/"+acc+".fasta'>" +
-							length+" AA <i class='fas fa-external-link-alt fa-xs'></i>"+
-							"</span>";
+			var org = node.data("org");
+			var qtip_content = "<span class='tip'>\n"+
+									"<span class='tipProt'>UniProtKB</span> | " +
+										"<a href='https://www.uniprot.org/uniprot/"+uni_ac+"'>" +
+										uni_prot+" <i class='fas fa-external-link-alt fa-xs'></i>" +
+										"</a><br>\n" +
+									"<span class='tipProt'>Gene</span> | <b>"+gene+"</b><br>\n" +
+									"<span class='tipProt'>Protein</span> | <b>"+des+"</b><br>\n" +
+									"<span class='tipProt'>Length</span> | "+
+										"<a href='https://www.uniprot.org/uniprot/"+uni_ac+".fasta'>" +
+										length+" AA <i class='fas fa-external-link-alt fa-xs'></i></a><br>\n"+
+									"<span class='tipProt'>Organism</span> | <i>"+org+"</i><br>\n" +	
+								"</span><hr>\n"+
+								"<div class='col'>\n"+
+									"<div class='row' style='display:block; vertical-align: middle; line-height: 25px;'>"+
+										select_label(id, uni_id, uni_ac, gene)+
+									"</div>\n"+
+									"<div class='row'>\n"+
+										remove_ele(id)+
+									"</div>\n"+
+								"</div>";
 		}
 		node.qtip({
 			content: qtip_content,
@@ -712,6 +920,7 @@ $(document).ready(function(){
 
 	cy.on("click", "node[role='domain']", function(event) {
 		var node = event.target;
+		var id = node.data("id");
 		var name = node.data("label");
 		var acc = node.data("acc");
 		var tp = node.data("type");
@@ -720,19 +929,22 @@ $(document).ready(function(){
 		var end = node.data("end");
 		var prot = node.data("protein");
 		var e_val = Number.parseFloat(node.data("e_val")).toExponential(2);
-		var qtip_content = "<span class='tip' style='color: #074987;'>" +
-							"<b>Source: <a href='https://pfam.xfam.org'>Pfam</a></b>" +
-							"</span><br>" +
-							"<span class='tip'>" +
-								"<span class='tipPfam'>Family</span> | " +
+		var qtip_content = "<span class='tip pfam'>\n"+
+							"<b>Protein Domain</b> (<a href='https://pfam.xfam.org'>Pfam</a>)"+
+							"</span><br>\n"+
+							"<span class='tip'>\n"+
+								"<span class='tipPfam'>Identifier</span> | " +
 									"<b><i>"+name+"</i></b> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
-								"<span class='tipPfam'>Type</span> | <b>"+tp+"</b><br>"+
+								"<span class='tipPfam'>Type</span> | "+tp+"<br>"+
 								"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>"+
-								"<span class='tipPfam'>Start - End</span> | " +
+								"<span class='tipPfam'>Positions</span> | " +
 									"<b>"+start+"</b> - <b>"+end+"</b>" +
 									" (<a href='https://pfam.xfam.org/protein/"+prot+"'>"+prot+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>"+
 								"<span class='tipPfam'>E-value</span> | "+e_val+
-							"</span>";
+							"</span><hr>\n"+
+							"<div class='row'>\n"+
+								remove_ele(id)+
+							"</div>";
 		node.qtip({
 			content: qtip_content,
 			position: {
@@ -798,8 +1010,8 @@ $(document).ready(function(){
 			pos += 1;
 		});
 
-		var qtip_content = 	"<span class='tip' style='color: #7f7c7b;'>\n" +
-								"<b>Source: <a href='https://elm.eu.org'>ELM</a></b>\n" +
+		var qtip_content = 	"<span class='tip ELM'>\n" +
+								"<b>Protein Motif</b> (<a href='https://elm.eu.org'>ELM</a>)\n" +
 							"</span><br>\n" +
 							"<span class='tip'>\n"+
 								"<span class='tipELM'>Identifier</span> | "+
@@ -816,26 +1028,60 @@ $(document).ready(function(){
 									" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>\n"+
 								"<span class='tipELM'>Status</span> | "+status+"<br>"+
 								"<span class='tipELM'>Observations</span> | "+phos+"<br>"+
-							"</span><br>\n"+
-
+							"</span><hr>\n"+
 							"<div class='row'>\n"+
-								"<div class='col-sm-4 text-center'>\n"+
-									"<button class='txt-btn' onclick=removeThisEle(\""+id+"\") >\n"+
-										"Remove\n"+
-									"</button>\n"+
-								"</div>\n"+
-								"<div class='col-sm-4 text-center'>\n"+
-									"<button class='txt-btn' onclick=removeAllinProt(\""+label+"\",\""+prot+"\") >\n"+
-										"Remove all in this protein\n"+
-									"</button>\n"+
-								"</div>\n"+
-								"<div class='col-sm-4 text-center'>\n"+
-									"<button class='txt-btn' onclick=removeAll(\""+label+"\") >\n"+
-										"Remove all in network\n"+
-									"</button>\n"+
-								"</div>\n"+
+								remove_ele(id)+
+								remove_allprot(label, prot)+
+								remove_allnet(label)+
 							"</div>";
 
+		node.qtip({
+			content: qtip_content,
+			position: {
+				my: "top center",
+				at: "bottom center"
+			},
+			style: {
+				classes: "qtip-bootstrap",
+				tip: {
+					width: 20,
+					height: 10
+				}
+			}
+		});
+	});
+
+	cy.on("click","node[role='3dlm']", function(event) {
+		var node 	= event.target;
+		var id 		= node.data("id");
+		var acc 	= node.data("label");
+		var regex 	= node.data("regex");
+		var start 	= node.data("start");
+		var end 	= node.data("end");
+		var seq 	= node.data("seq");
+		var dom 	= node.data("int_dom");
+		var prot 	= node.data("protein");
+		var status	= node.data("status");
+		var qtip_content = 	"<span class='tip' style='color: #7f7c7b;'>\n" +
+								"<b>Source: <a href='https://3did.irbbarcelona.org'>3did</a></b>\n" +
+							"</span><br>\n" +
+							"<span class='tip'>\n"+
+								"<span class='tipELM'>Identifier</span> | "+
+									"<a href='https://3did.irbbarcelona.org/dispatch.php?type=motif&value="+acc+"'>"+
+											"<span style='color: #11249b;'>"+acc+
+											"</span> <i class='fas fa-external-link-alt fa-xs'></i>"+
+									"</a><br>\n"+
+									"<span class='tipELM'>Int. domain</span> | "+dom+"<br>\n"+
+								"<span class='tipELM'>Regex</span> | "+regex+"<br>\n"+
+								"<span class='tipELM'>Subsequence</span> | " +
+									"<b>"+start+"</b> - <i>"+seq+"</i> - <b>"+end+"</b><br>\n"+
+								"<span class='tipELM'>Status</span> | "+status+"<br>\n"+
+							"</span>\n"+
+							"<div class='row'>\n"+
+								remove_ele(id)+
+								remove_allprot(label, prot)+
+								remove_allnet(label)+
+							"</div>";
 		node.qtip({
 			content: qtip_content,
 			position: {
@@ -863,7 +1109,7 @@ $(document).ready(function(){
 		var pdb_end = node.data("pdb_end");
 		var ev = node.data("eval");
 		var pcid = node.data("pcid");
-		var qtip_content = "<span class='tip' style='color: #7b241c;'>" +
+		var qtip_content = "<span class='tip InP'>" +
 							"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
 							"</span><br>" +
 							"<span class='tip'>"+
@@ -936,6 +1182,50 @@ $(document).ready(function(){
 
 	});
 
+	cy.on("click","node[role^='uni_']", function(event) {
+		var node = event.target;
+		var id = node.data("id");
+		var role = node.data("role");
+		var label = node.data("label");
+		var start = node.data("start");
+		var end = node.data("end");
+		var pos = start+"-"+end;
+		if (start == end) {
+			pos = start;
+		}
+		if (role=="uni_disulfid"){
+			pos = label.split("-")[1];
+			label = label + "<->" + node.data("bond");
+		}
+		var color = node.style("background-color");
+		var prot = node.parent().style("label");
+		var qtip_content = "<span class='tip' style='color:"+color+"'>\n" +
+							"<b>"+uni_names[role]+" (UniProt)</b>\n" +
+							"</span><br>\n" +
+							"<span class='tip'>\n"+
+								"<span class='tipgen' style='color:"+color+"'>Protein</span> | " +prot+"<br>\n"+
+								"<span class='tipgen' style='color:"+color+"'>Position(s)</span> | "+pos+"<br>\n"+
+								"<span class='tipgen' style='color:"+color+"'>Description</span> | "+label+
+							"</span>"+
+							"<div class='row'>\n"+
+								remove_ele(id)+
+							"</div>";;
+		node.qtip({
+			content: qtip_content,
+			position: {
+				my: "top center",
+				at: "bottom center"
+			},
+			style: {
+				classes: "qtip-bootstrap",
+				tip: {
+					width: 20,
+					height: 10
+				}
+			}
+		});
+	});
+
 	cy.on("click","edge[role='prot_prot_interaction']", function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
@@ -972,18 +1262,19 @@ $(document).ready(function(){
 				high_link = high_link.concat(" ...");
 			}
 		}
-		var qtip_content = "<span class='tip' style='color: #33a1c2;'>" +
-								"Source: <a href='https://thebiogrid.org/'><b>BioGRID</b></a></b>" +
+		var qtip_content = "<span class='tip PPI'>" +
+								"<b>Protein-Protein Interaction</b>"+
 							"</span><br>" +
 							"<span class='tip'>"+
-								"<span class='tipBioG'>Interacting Proteins</span> | "+
+								"<span class='tipPPI'>Interacting Proteins</span> | "+
 								"<a href='https://thebiogrid.org/"+bioids[0]+"'><b>"+genes[0]+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a> - "+
 								"<a href='https://thebiogrid.org/"+bioids[1]+"'><b>"+genes[1]+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a>"+
 								"<br>"+
-								"<span class='tipBioG'>LT evidence</span> | "+
+								"<span class='tipPPI'>LT evidence</span> | "+
 								"<b>"+low_len+"</b><span style='font-size:12px;'>"+low_link+"</span><br>"+
-								"<span class='tipBioG'>HT evidence</span> | "+
-								"<b>"+high_len+"</b><span style='font-size:12px;'>"+high_link+"</span>"+
+								"<span class='tipPPI'>HT evidence</span> | "+
+								"<b>"+high_len+"</b><span style='font-size:12px;'>"+high_link+"</span><br>"+
+								"<span class='tipPPI'>Data Source</span> | "+"BioGRID"+
 							"</span><br>";
 
 		edge.qtip({
@@ -1019,27 +1310,27 @@ $(document).ready(function(){
 		var pdb_n = edge.data("pdb_n");
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
 
-		var qtip_content = 	"<span class='tip' style='color: #16a085;'>" +
+		var qtip_content = 	"<span class='tip DDI'>" +
 								"<b>Domain-Domain Interaction</b>" +
 							"</span><br>" +
 							"<span class='tip'>"+
-								"<span class='tip3did'>Interacting Domains</span> | "+				 		
+								"<span class='tipDDI'>Interacting Domains</span> | "+				 		
 									doms.join(" - ")+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tip3did'>Interacting Proteins</span> | "+prots.join(" - ")+
+								"<span class='tipDDI'>Interacting Proteins</span> | "+prots.join(" - ")+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tip3did'>Sources</span> | "+ds+
+								"<span class='tipDDI'>Sources</span> | "+ds+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tip3did'># PDB structures</span> | "+
+								"<span class='tipDDI'># PDB structures</span> | "+
 								"<a href='https://3did.irbbarcelona.org/dispatch.php?type=interaction&type1=domain&type2=domain&value1="+pfams[0]+"&value2="+pfams[1]+"'>"+
 									pdb_n+" <i class='fas fa-external-link-alt fa-xs'></i>"+
 								"</a>"+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tip3did'>Interaction P-value</span> | "+p_val+
+								"<span class='tipDDI'>Interaction P-value</span> | "+p_val+
 							"</span>";
 		edge.qtip({
 			content: qtip_content,
@@ -1071,20 +1362,20 @@ $(document).ready(function(){
 		var ds = edge.data("ds");
 		var lo = Number(edge.data("lo")).toFixed(2);
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
-		var qtip_content = 	"<span class='tip' style='color: #d4ac0d;'>" +
+		var qtip_content = 	"<span class='tip iDDI'>" +
 								"<b>Inferred Domain-Domain ("+ds+")</b>" +
 							"</span><br>" +
 							"<span class='tip'>"+
-								"<span class='tipIdom'>Interacting Domains</span> | "+doms.join(" - ")+
+								"<span class='tipiDDI'>Interacting Domains</span> | "+doms.join(" - ")+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tipIdom'>Interacting Proteins</span> | "+prots.join(" - ")+
+								"<span class='tipiDDI'>Interacting Proteins</span> | "+prots.join(" - ")+
 							"</span><br>" +
 							"<span class='tip'>"+
-								"<span class='tipIdom'>Association Score</span> | "+lo+
+								"<span class='tipiDDI'>Association Score (LO)</span> | "+lo+
 							"</span><br>"+
 							"<span class='tip'>"+
-								"<span class='tipIdom'>Interaction P-value</span> | "+p_val+
+								"<span class='tipiDDI'>Interaction P-value</span> | "+p_val+
 							"</span>";
 		edge.qtip({
 			content: qtip_content,
@@ -1109,14 +1400,14 @@ $(document).ready(function(){
 		var pfams = [];
 		var prots = [];
 		nodes.forEach(function(node) {
-			pfams.push(node.data("label"));
-			doms.push("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
-			prots.push(node.parent().data("label"));
+			pfams.unshift(node.data("label"));
+			doms.unshift("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
+			prots.unshift(node.parent().data("label"));
 		});
 		var ds = edge.data("ds");
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
-		var qtip_content = 	"<span class='tip' style='color: #b95db9;'>" +
-								"Source: <a href='http://elm.eu.org/downloads.html#interactions'><b>ELM</b> (interactions)</a></b>" +
+		var qtip_content = 	"<span class='tip ELMint'>" +
+								"<b>Domain-Motif Interaction</b> (<a href='http://elm.eu.org/downloads.html#interactions'>ELM</a>)" +
 							"</span><br>" +
 							"<span class='tip'>"+
 								"<span class='tipELMint'>Interacting Elements</span> | "+
@@ -1145,16 +1436,28 @@ $(document).ready(function(){
 	cy.on("click","edge[role='INT_interaction']", function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
-		var pdb = edge.data("pdb").split("|")[1];
+		var pdb = edge.data("pdb");
 		var z = edge.data("z-score");
-		var pval = edge.data("p-value");
+		var pval = Number.parseFloat(edge.data("p_val")).toExponential(2);
 		var chains = [];
 		var prots = [];
+		var alis = [];
 		nodes.forEach(function(node) {
-			chains.push(node.data("pdb").split("|")[2]);
-			prots.push(node.parent().data("label"));
+			var chain = node.data("pdb").split("|")[2];
+			var prot = node.parent().data("label");
+			var uni_ac = node.parent().data("uni_ac");
+			var start = node.data("start");
+			var end = node.data("end");
+			var pdb_start = node.data("pdb_start");
+			var pdb_end = node.data("pdb_end");
+			var ev = node.data("eval");
+			var pcid = node.data("pcid");
+			var ali = uni_ac+"/"+start+"-"+end+", "+pdb+"|"+chain+"/"+pdb_start+"-"+pdb_end+", e-val=<i>"+ev+"</i>, id=<i>"+pcid+"%</i>";
+			chains.push(chain);
+			prots.push(prot);
+			alis.push(ali);
 		});
-		var qtip_content = 	"<span class='tip' style='color: #7b241c;'>" +
+		var qtip_content = 	"<span class='tip InP'>" +
 								"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
 							"</span><br>" +
 							"<span class='tip'>"+
@@ -1162,9 +1465,12 @@ $(document).ready(function(){
 								"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
 								"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
 								"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+								"<span class='tipInP'>Alignment Protein A</span> | "+alis[0]+"<br>"+
+								"<span class='tipInP'>Alignment Protein B</span> | "+alis[1]+"<br>"+
 								"<span class='tipInP'>Z-score</span> | "+z+"<br>"+
 								"<span class='tipInP'>P-value</span> | "+pval+
 							"</span>";
+		
 		edge.qtip({
 			content: qtip_content,
 			position: {
@@ -1180,4 +1486,5 @@ $(document).ready(function(){
 			}
 		});
 	});
+
 });
