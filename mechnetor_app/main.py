@@ -1,60 +1,43 @@
-import sys, os, time, string, random, datetime, json
+import sys
+import os
+import json
 from flask import Flask, render_template, request, url_for, redirect, jsonify
-from flask_debugtoolbar import DebugToolbarExtension
-from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-from importlib.machinery import SourceFileLoader
-from piv2_app import app 
-from . import mechnetor
 
-main_dir = "/var/www/flask_apps/piv2/piv2_app/"
-data_dir = main_dir+"static/data/"
-output_dir = main_dir+"static/jobs/"
-log_file = main_dir+"static/jobs/log.txt"
-sys.stdout = open(log_file, 'a')
+from mechnetor_app import app
+from mechnetor_app.lib.utils import print_log, get_unique_random_identifier
+from mechnetor_app.config import get_paths, get_templates
+from mechnetor_app import mechnetor
 
-# Jinja Templates
-index_template = "index.html"
-maintenance_template = "maintenance_index.html"
-help_template = "features.html"
-error1_template = "input_error.html"
-error2_template = "toobig_error.html"
-results_template = "results.html"
 
-def print_log(job_id, msg):
-    st = "[{}]".format(datetime.datetime.now())+" [JOB ID: "+job_id+"]"
-    print(st, msg)
+path = get_paths()
+template = get_templates()
+sys.stdout = open(path["log"], 'a')
+print_log("test", "testing")
 
-def get_unique_random_identifier(output_dir):
-    flag = 0
-    while flag == 0:
-        ide = ''.join(random.choice(
-                string.ascii_uppercase + string.ascii_lowercase + string.digits
-                ) for _ in range(8))
-        if not os.path.exists(output_dir+"job_"+ide+"/"):
-            flag = 1
-    return ide
 
 def get_stats_for_charts(stats_file):
     with open(stats_file, "r") as f:
         d = json.load(f)
-    return (d["table_columns"], d["not_found"], d["no_int_prots"])
+    return d["table_columns"], d["not_found"], d["no_int_prots"]
+
 
 @app.route("/")
 @app.route("/index")
-def index():
+def load_index():
     maintenance = False
     if maintenance:
-        return render_template(maintenance_template)
+        return render_template(template["maintenance"])
     else:
-        return render_template(index_template)
+        return render_template(template["index"])
+
 
 @app.route("/help")
-def help():
-	return render_template(help_template)
+def load_help():
+    return render_template(template["help"])
 
-@app.route("/output", methods = ["POST", "GET"])
-# @line_profile
-def output():
+
+@app.route("/output", methods=["POST", "GET"])
+def load_output():
     if request.method == "POST":
         input_d = {}
         # input_d["query_name"] = request.form["query_name"]
@@ -77,8 +60,8 @@ def output():
         if request.form.get("only_int_pairs"):
             input_d["only"] = True   
 
-        job_id = get_unique_random_identifier(output_dir)
-        job_dir = output_dir+"job_"+job_id+"/"
+        job_id = get_unique_random_identifier(path["jobs"])
+        job_dir = path["jobs"]+"job_"+job_id+"/"
         print_log(job_id, "New Job {}".format(job_id))
         try:
             os.mkdir(job_dir)
@@ -91,10 +74,10 @@ def output():
 
         return redirect(url_for("run_job", job_id=job_id))
 
+
 @app.route('/job/<job_id>', methods=['GET', 'POST'])
-# @line_profile
 def run_job(job_id):
-    job_dir = output_dir+"job_"+job_id+"/"
+    job_dir = path["jobs"]+"job_"+job_id+"/"
     graph_json = "graph_elements_"+job_id+".json"
     table_file = "interaction_table_"+job_id+".json"
     stats_file = "req_parameters_"+job_id+".json"
@@ -117,9 +100,9 @@ def run_job(job_id):
                         ORG=d["sps"],
                         ADDITIONAL_INTERACTORS=d["add_interactors"],
                         ONLY_INT_PAIRS=d["only"],
-                        MAIN_OUTPUT_DIR=output_dir,
+                        MAIN_OUTPUT_DIR=path["jobs"],
                         CUSTOM_ID=job_id,
-                        DATA_DIR=data_dir,
+                        DATA_DIR=path["data"],
                         BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",
                         PSQL_USER="bq_jgonzalez", PSQL_DB=db,
                         MAKE_NETWORK=d["make_graph"],
@@ -130,20 +113,23 @@ def run_job(job_id):
             # print "except error"
         #     return render_template(error_template)
         if error:
-            if error==1:
-                return render_template(error1_template)
-            elif error==2:
-                return render_template(error2_template)
+            if error == 1:
+                return render_template(template["error1"])
+            elif error == 2:
+                return render_template(template["error2"])
     else:
         print_log(job_id, "Files exist")
 
     # Read stats file
     (table_columns, not_found, no_int_prots) = get_stats_for_charts(job_dir+stats_file)
-    return render_template(results_template,
-                       graph_json="jobs/"+"job_"+job_id+"/"+graph_json,
-                       ints_json="jobs/"+"job_"+job_id+"/"+table_file,
-                       stats_json="jobs/"+"job_"+job_id+"/"+stats_file,
-                       not_found=not_found,
-                       no_int_prots=no_int_prots,
-                       table_columns=table_columns
-                       )
+
+    return render_template(
+        template["results"],
+        graph_json="jobs/"+"job_"+job_id+"/"+graph_json,
+        ints_json="jobs/"+"job_"+job_id+"/"+table_file,
+        stats_json="jobs/"+"job_"+job_id+"/"+stats_file,
+        not_found=not_found,
+        no_int_prots=no_int_prots,
+        table_columns=table_columns
+    )
+

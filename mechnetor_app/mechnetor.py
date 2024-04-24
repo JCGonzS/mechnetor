@@ -1,39 +1,17 @@
-""" PIV main script
-
-JC Gonzalez Sanchez, 2020
-"""
-
-import os, sys, re, itertools, psycopg2
-import gzip, json, csv, random, string, datetime, argparse
+import os
+import sys
+import re
+import itertools
+import psycopg2
+import json
+import csv
+import argparse
 from collections import defaultdict
-from flask import render_template, url_for
-from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
-import int2graph, find_all_slims, run_interprets
 
-def open_file(input_file, mode="rt"):
-    """ Open file Zipped or not
-    """
+from mechnetor_app.lib.utils import print_log, open_file, get_unique_random_identifier
+import mechnetor_app.graph.int2graph as int2graph
+from . import find_all_slims, run_interprets
 
-    if re.search(".gz$", input_file):
-        infile = gzip.open(input_file, mode)
-    else:
-        infile = open(input_file, mode)
-    return infile
-
-def print_log(ide, msg):
-    st = "[{}]".format(datetime.datetime.now())+" [JOB ID: "+ide+"]"
-    print(st, msg)
-
-def get_unique_random_identifier(output_dir):
-    flag = 0
-    while flag == 0:
-        ide = ''.join(random.choice(
-                string.ascii_uppercase + string.ascii_lowercase + string.digits
-                ) for _ in range(8))
-        outfile = output_dir+"interaction_table_"+ide+".tsv"
-        if not os.path.isfile(outfile):
-          flag = 1
-    return ide
 
 def get_pfam_info(cursor, table_name):
     data = {}
@@ -46,6 +24,7 @@ def get_pfam_info(cursor, table_name):
             "des":  row[3]
         }
     return data
+
 
 def get_elm_info(cursor, table_name):
     data = {}
@@ -61,6 +40,7 @@ def get_elm_info(cursor, table_name):
             }
     return data
 
+
 def get_3did_dmi(cursor, table_name):
     info = {}
     dmi = defaultdict(dict)
@@ -74,6 +54,7 @@ def get_3did_dmi(cursor, table_name):
         }
         dmi[(row[0].upper(), row[2])] = row[4]
     return info, dmi
+
 
 def parse_protein_input(input_text, main_org, cursor, id_map):
     input_prots = set()
@@ -145,6 +126,7 @@ def parse_protein_input(input_text, main_org, cursor, id_map):
 
     return input_prots, input_seqs, custom_pairs, list(not_found), org_map, input2uni
 
+
 def parse_mutation_input(input_text, input_prots, input2uni, org_map,
                          main_org, cursor, id_map):
     mutations = defaultdict(lambda: defaultdict(set))
@@ -175,6 +157,7 @@ def parse_mutation_input(input_text, input_prots, input2uni, org_map,
 
     return mutations, input_prots, input2uni, org_map
 
+
 def get_uni_id_map(cursor, sql_table, org):
     idmap = {}
     if org=="HUMAN":
@@ -185,6 +168,7 @@ def get_uni_id_map(cursor, sql_table, org):
     for row in cursor.fetchall():
         idmap[row[0]] = row[1]
     return idmap
+
 
 def identify_protein(cursor, sql_table, protein_id, org):
     if org:
@@ -198,6 +182,7 @@ def identify_protein(cursor, sql_table, protein_id, org):
         return results[0], results[1]
     else:
         return None, None
+
 
 def get_additional_interactors(protein_data, n_ints):
     interactors = defaultdict(list)
@@ -215,6 +200,7 @@ def get_additional_interactors(protein_data, n_ints):
                         break
 
     return interactors
+
 
 def get_protein_data_sql(cursor, sql_table, uni_id):
     cursor.execute("SELECT uniprot_acc, gene, description, length, biogrid_id,"+
@@ -240,6 +226,7 @@ def get_protein_data_sql(cursor, sql_table, uni_id):
     }
     return data
 
+
 def get_pfam_matches_sql(cursor, sql_table, uni_ac):
     matches = []
     cursor.execute("SELECT env_start, env_end, hmm_ac, e_value"+
@@ -253,6 +240,7 @@ def get_pfam_matches_sql(cursor, sql_table, uni_ac):
             "e-value": float(row[3])
         })
     return matches
+
 
 def get_lm_hits_sql(cursor, sql_table, uni_ac):
     data = defaultdict(list)
@@ -269,6 +257,7 @@ def get_lm_hits_sql(cursor, sql_table, uni_ac):
         })
     return data
 
+
 def get_ptms_sql(cursor, sql_table, uni_ac):
     data = defaultdict(list)
     cursor.execute("SELECT position, residue, ptm"+
@@ -281,6 +270,7 @@ def get_ptms_sql(cursor, sql_table, uni_ac):
         })
 
     return data
+
 
 def get_uni_feats_sql(cursor, sql_table, uni_ac, uniprot_features):
     data = defaultdict(lambda: defaultdict(list))
@@ -304,6 +294,7 @@ def get_uni_feats_sql(cursor, sql_table, uni_ac, uniprot_features):
                     })
     return data
 
+
 def get_cosmic_mutations_sql(cursor, sql_table, uni_ac, min_sample_size=1):
     data = defaultdict(list)
     cursor.execute("SELECT cosmic_id, cds_mut, aa_mut, sample_num, cancer_types"+
@@ -321,6 +312,7 @@ def get_cosmic_mutations_sql(cursor, sql_table, uni_ac, min_sample_size=1):
             })
     return data  
 
+
 def get_DDI_sql(cursor, sql_table):
     data = {}
     cursor.execute("SELECT Pfam_Acc_A, Pfam_Acc_B, Source, PDBs "+
@@ -333,6 +325,7 @@ def get_DDI_sql(cursor, sql_table):
         data[(pfam_a, pfam_b)] = {"dbs":source, "pdbs": pdbs}
         data[(pfam_b, pfam_a)] = {"dbs":source, "pdbs": pdbs}
     return data
+
 
 def get_ELM_dom_sql(cursor, sql_table):
     data = defaultdict(list)
@@ -357,6 +350,7 @@ def get_ELM_dom_sql(cursor, sql_table):
             })
     return data
 
+
 def get_interprets_sql(cursor, sql_table, id_a, id_b):
     data = []
 
@@ -380,6 +374,7 @@ def get_interprets_sql(cursor, sql_table, id_a, id_b):
 
     return data
 
+
 def get_all_association_scores(cursor, sql_table, orgs):
     orgs = ["\'"+org+"\'" for org in orgs]
     data = {}
@@ -390,14 +385,17 @@ def get_all_association_scores(cursor, sql_table, orgs):
 
     return data
 
+
 def format_none(string):
     if string==None:
         return ""
     else:
         return string
 
+
 def string2list_fix(string):
     return [str(x) for x in str(string).upper().replace(" ","").split(",") if x!="" and x!="NONE"]
+
 
 def review_interprets_hits(new_hits, protein_data):
     mask, mask2 = {}, {}
@@ -434,10 +432,12 @@ def review_interprets_hits(new_hits, protein_data):
                             final_hits[pair].append(hit)
     return final_hits
 
+
 def fill_mask(start, end, mask):
     for i in range(start-1, end):
         mask[i] = "1"
     return mask
+
 
 def calculate_overlap(start, end, mask):
     sub_mask = mask[start-1:end]
@@ -505,6 +505,7 @@ def calculate_overlap(start, end, mask):
 #                                                  })
 #     return data_dict
 
+
 def extract_linear_motifs(lm_hits_file, data_dict, max_overlap=2, max_eval=1):
 
     with open_file(lm_hits_file) as f:
@@ -531,19 +532,22 @@ def extract_linear_motifs(lm_hits_file, data_dict, max_overlap=2, max_eval=1):
                     data_dict[label][group] = defaultdict(list)
     return data_dict
 
+
 def get_sorted_lists(d):
     keys, vals = [], []
     for k in sorted(d, key=lambda k: len(d[k])):
         v = len(d[k])
         keys.append(k)
         vals.append(v)
-    return keys, vals
+    return keys,
+
 
 def dict_from_set_len(d):
     new_d = {}
     for k in d:
         new_d[k] = len(d[k])
     return new_d
+
 
 def get_stats(columns, lines, p):
     colors = {
@@ -633,12 +637,15 @@ def get_stats(columns, lines, p):
 
     return p
 
+
 def print_sorted_dict(d):
     for k in sorted(d, key=d.get, reverse=True):
         print(k+"\t"+str(d[k]))
 
+
 def percentage(n, tot):
     return "{:3.1f}".format(float(n)/tot*100)
+
 
 def print_stats_summary(stats_file):
     with open(stats_file, "r") as f:
@@ -673,8 +680,8 @@ def print_stats_summary(stats_file):
     # #         line.append(per)
     #     print "\t".join(line)
 
-@line_profile
-def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN", 
+
+def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
          MAIN_OUTPUT_DIR="", CUSTOM_ID=False,
          DATA_DIR="static/data/",
          BLASTDB_DIR="/net/home.isilon/ds-russell/blastdb/",

@@ -1,8 +1,10 @@
-import sys, re, os
-import math, random, copy, pprint, json
-import gzip, itertools
+import re
+import itertools
+import math
+import random
+import copy
 from collections import defaultdict
-from flask_debugtoolbar_lineprofilerpanel.profile import line_profile
+
 
 def get_layout_positions(proteins):
     """Creates x/y coordinates of proteins to be displayed
@@ -759,7 +761,6 @@ def get_pair_association_from_MongoDB(data, dic, acc_a, acc_b,
     return p_value, log_odds, dic
 
 
-@line_profile
 def main(target_prots, protein_pairs, input_seqs, mutations, org_map, labels,
         conn, protein_data, pfam_matches, lms, ptms, uni_feats, cosmic_muts, 
         ppi_table, assoc_table, assoc_pairs, ddi, dmi_elm, dmi_3did, 
