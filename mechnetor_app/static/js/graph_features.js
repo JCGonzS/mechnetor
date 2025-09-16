@@ -1,6 +1,7 @@
 "use strict";
 
 
+
 // Show/Hide proteins without interactions
 function showProt(label) {
   var node = cy.$("node[role='protein_main'][label='"+label+"']");
@@ -170,11 +171,11 @@ $(document).ready(function(){
 	// When the user scrolls down 20px from the top of the document, show the button
 	window.onscroll = function() {scrollFunction()};
 	function scrollFunction() {
-	if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-		$("#goToTop").show()
-	} else {
-		$("#goToTop").hide()
-	}
+		if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+			$("#goToTop").show()
+		} else {
+			$("#goToTop").hide()
+		}
 	}
 	// When the user clicks on the button, scroll to the top of the document
 	$("#goToTop").click(function() {
@@ -207,30 +208,6 @@ $(document).ready(function(){
 	$("#prot-eles-button").click();
 
 
-
-	function toggle_nodes_and_connectedEdges2(node_description) {
-		var nodes = cy.$(node_description);
-		var edges = nodes.connectedEdges();
-		if (this.checked) {
-			nodes.style("display", "element");
-			edges.style("display", "element");
-		} else {
-			nodes.style("display", "none");
-			edges.style("display", "none");
-		}
-	};
-	
-	// // Show/Hide proteins without interactions
-	// function showProt(label) {
-	// 	var node = cy.$("node[role='protein_main'][label='"+label+"']");
-	// 	var display = node.style("display");
-	// 	if (display=="none"){
-	// 		node.style("display", "element");
-	// 		// cy.center(node);
-	// 	} else {
-	// 		node.style("display", "none");
-	// 	}
-	// };
 	
 	function toggle_int_above_pval(role) {
 		var pval = document.getElementById("pval_cutoff").value;
@@ -244,7 +221,6 @@ $(document).ready(function(){
 	}
 
 
-
 	// Save original positions of all graph elements
 	cy.nodes().forEach(function(n){
 		var pos = n.position();
@@ -255,13 +231,37 @@ $(document).ready(function(){
 	});
 
 	// Set initial zoom-dependent size for protein labels
-	var node = cy.$("node[role='protein_main']");
-	var dim = 16/cy.zoom();
-	var maxDim = Math.max(dim,30);
-	node.style({"font-size": maxDim,
-							"text-outline-width": maxDim/10,
-							"border-width": maxDim/18,
-							"text-margin-y": maxDim/-2.5
+	function set_zoom_dependent_labels() {
+		var dim = 16/cy.zoom();
+		var maxDim = Math.max(dim,30);
+		var nodes = cy.$("node[role='protein_main']");
+		nodes.style({"font-size": maxDim,
+								"text-outline-width": maxDim/10,
+								"border-width": maxDim/18,
+								"text-margin-y": maxDim/-2.5
+		});
+		var nodes = cy.$("node[role ^='uni'], edge[role^='uni_']");
+		nodes.style({"font-size": (maxDim/2)+2});
+		// var nodes = cy.$("node[role='domain']");
+		// 	nodes.style({"font-size": maxDim/2,
+		// 				"text-margin-y": maxDim/-5
+		// var nodes = cy.$("node[role='elm'], node[role='3dlm']");
+		// nodes.style({"font-size": (maxDim/2)-3,
+		// 			// "text-margin-y": maxDim/-2
+		// });			
+		// var nodes = cy.$("node[role='elm'].hl, node[role='elm'].hl2, node[role='elm']:selected, "+
+		// 				"node[role='3dlm'].hl, node[role='3dlm'].hl2, node[role='3dlm']:selected"); 
+		// nodes.style({"font-size": (maxDim/2.5)-1});	
+
+	};
+
+	set_zoom_dependent_labels();
+	
+	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
+	cy.on("render zoom", function(event) {
+		// console.log(cy.zoom());
+		set_zoom_dependent_labels();
+	
 	});
 
 	// Create double-Tap event
@@ -298,20 +298,7 @@ $(document).ready(function(){
 		})
 	});
   
-	// FEATURE: Some nodes & edges' sizes will vary with zoom levels
-	cy.on("render zoom", function(event) {
-		var node = cy.$("node[role='protein_main']");
-		var dim = 16/cy.zoom();
-		var maxDim = Math.max(dim,30);
-		node.style({"font-size": maxDim,
-					"text-outline-width": maxDim/10,
-					"border-width": maxDim/18,
-					"text-margin-y": maxDim/-2.5
-		});
-	  // if (cy.zoom() <= 0.5){
-	  // 	node.style("visibility", "hidden")
-	  // }
-	});
+
 
 	// MOUSEOVER/MOUSEOUT changes
 	cy.autoungrabify(true);
@@ -508,15 +495,32 @@ $(document).ready(function(){
 			edges.style("display", "none");
 			$("#elm_confirmed_container").hide();
 			$("#toggle_confirmed_elms").prop("checked", false);
+			$("#toggle_motifs_in_doms").prop("checked", false)
 			$("#toggle_elmdom_int").prop("checked", false);
 			$("#toggle_elmdom_pred_int").prop("checked", false);
 		}
 	});
 	
 	$("#toggle_confirmed_elms").change(function(){
-		var nodes = cy.$("node[role='elm'][status!='TP']");
+		var nodes = cy.$("node[role='elm'][status!='TP']", "node[role='3dlm'][status!='TP']");
 		var edges = nodes.connectedEdges();
 		var checked = document.getElementById("toggle_confirmed_elms").checked;
+		var checked2 = document.getElementById("toggle_elmdom_int").checked;
+		if (checked) {
+			nodes.style("display", "none");
+			edges.style("display", "none");
+		} else {
+			nodes.style("display", "element");
+			if (checked2) {
+				edges.style("display", "element")
+			}
+		}
+	});
+
+	$("#toggle_motifs_in_doms").change(function(){
+		var nodes = cy.$("node[role='elm'][in_dom='y']");
+		var edges = nodes.connectedEdges();
+		var checked = document.getElementById("toggle_motifs_in_doms").checked;
 		var checked2 = document.getElementById("toggle_elmdom_int").checked;
 		if (checked) {
 			nodes.style("display", "none");
@@ -611,6 +615,7 @@ $(document).ready(function(){
 	$("#toggle_elmdom_int").change(function(){
 		var edges = cy.$("edge[role='ELM_interaction']");
 		var checked = document.getElementById("toggle_elmdom_int").checked;
+		var checked2 = document.getElementById("toggle_motifs_in_doms").checked;
 		if (checked) {
 			toggle_int_above_pval("ELM_interaction");
 			$("#toggle_elms").prop("checked", true).change();
@@ -712,6 +717,9 @@ $(document).ready(function(){
 	});
 	$("#toggle_acet").change(function(){
 		toggle_nodes(this, "node[role='mod_acet']");
+	});
+	$("#toggle_glyc").change(function(){
+		toggle_nodes(this, "node[role='mod_glyc']");
 	});
 
 	// BUTTON: Toggle UniProt Features
@@ -929,12 +937,13 @@ $(document).ready(function(){
 		var end = node.data("end");
 		var prot = node.data("protein");
 		var e_val = Number.parseFloat(node.data("e_val")).toExponential(2);
+		var color = node.data("color");
 		var qtip_content = "<span class='tip pfam'>\n"+
 							"<b>Protein Domain</b> (<a href='https://pfam.xfam.org'>Pfam</a>)"+
 							"</span><br>\n"+
 							"<span class='tip'>\n"+
 								"<span class='tipPfam'>Identifier</span> | " +
-									"<b><i>"+name+"</i></b> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
+									"<span style='color:"+node.data("color")+"'><b>"+name+"</b></span> (<a href='https://pfam.xfam.org/family/"+acc+"'>"+acc+" <i class='fas fa-external-link-alt fa-xs'></i></a>)<br>" +
 								"<span class='tipPfam'>Type</span> | "+tp+"<br>"+
 								"<span class='tipPfam'>Description</span> | <b>"+des+"</b><br>"+
 								"<span class='tipPfam'>Positions</span> | " +
@@ -1016,7 +1025,7 @@ $(document).ready(function(){
 							"<span class='tip'>\n"+
 								"<span class='tipELM'>Identifier</span> | "+
 									"<a href='http://elm.eu.org/elms/"+label+"'>"+
-											"<span style='color: #11249b;'>"+label+
+											"<span style='color:"+node.data("color")+"'><b>"+label+"</b>"+
 											"</span> <i class='fas fa-external-link-alt fa-xs'></i>"+
 									"</a><br>\n"+
 								"<span class='tipELM'>Accession</span> | "+acc+"<br>\n"+
@@ -1054,7 +1063,7 @@ $(document).ready(function(){
 	cy.on("click","node[role='3dlm']", function(event) {
 		var node 	= event.target;
 		var id 		= node.data("id");
-		var acc 	= node.data("label");
+		var label	= node.data("label");
 		var regex 	= node.data("regex");
 		var start 	= node.data("start");
 		var end 	= node.data("end");
@@ -1063,12 +1072,12 @@ $(document).ready(function(){
 		var prot 	= node.data("protein");
 		var status	= node.data("status");
 		var qtip_content = 	"<span class='tip' style='color: #7f7c7b;'>\n" +
-								"<b>Source: <a href='https://3did.irbbarcelona.org'>3did</a></b>\n" +
+								"<b>Protein Motif</b> (<a href='https://3did.irbbarcelona.org'>3did</a>)\n" +
 							"</span><br>\n" +
 							"<span class='tip'>\n"+
 								"<span class='tipELM'>Identifier</span> | "+
-									"<a href='https://3did.irbbarcelona.org/dispatch.php?type=motif&value="+acc+"'>"+
-											"<span style='color: #11249b;'>"+acc+
+									"<a href='https://3did.irbbarcelona.org/dispatch.php?type=motif&value="+label+"'>"+
+											"<span style='color:"+node.data("color")+"'><b>"+label+"</b>"+
 											"</span> <i class='fas fa-external-link-alt fa-xs'></i>"+
 									"</a><br>\n"+
 									"<span class='tipELM'>Int. domain</span> | "+dom+"<br>\n"+
@@ -1076,7 +1085,7 @@ $(document).ready(function(){
 								"<span class='tipELM'>Subsequence</span> | " +
 									"<b>"+start+"</b> - <i>"+seq+"</i> - <b>"+end+"</b><br>\n"+
 								"<span class='tipELM'>Status</span> | "+status+"<br>\n"+
-							"</span>\n"+
+							"</span><hr>\n"+
 							"<div class='row'>\n"+
 								remove_ele(id)+
 								remove_allprot(label, prot)+
@@ -1110,7 +1119,7 @@ $(document).ready(function(){
 		var ev = node.data("eval");
 		var pcid = node.data("pcid");
 		var qtip_content = "<span class='tip InP'>" +
-							"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
+							"<b>Predicted Interacting Region</b> (<a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a>)" +
 							"</span><br>" +
 							"<span class='tip'>"+
 								"<span class='tipInP'>PDB Template ID</span> | " +
@@ -1200,13 +1209,11 @@ $(document).ready(function(){
 		var color = node.style("background-color");
 		var prot = node.parent().style("label");
 		var qtip_content = "<span class='tip' style='color:"+color+"'>\n" +
-							"<b>"+uni_names[role]+" (UniProt)</b>\n" +
+							"<b>"+uni_names[role]+"</b> (UniProt)\n" +
 							"</span><br>\n" +
-							"<span class='tip'>\n"+
-								"<span class='tipgen' style='color:"+color+"'>Protein</span> | " +prot+"<br>\n"+
-								"<span class='tipgen' style='color:"+color+"'>Position(s)</span> | "+pos+"<br>\n"+
-								"<span class='tipgen' style='color:"+color+"'>Description</span> | "+label+
-							"</span>"+
+							"<span class='tipGen' style='color:"+color+"'>Protein</span> | " +prot+"<br>\n"+
+							"<span class='tipGen' style='color:"+color+"'>Position(s)</span> | "+pos+"<br>\n"+
+							"<span class='tipGen' style='color:"+color+"'>Description</span> | "+label+"\n"+
 							"<div class='row'>\n"+
 								remove_ele(id)+
 							"</div>";;
@@ -1246,10 +1253,11 @@ $(document).ready(function(){
 			low_links.push("<a href='https://thebiogrid.org/interaction/"+link+"'>"+link+" <i class='fas fa-external-link-alt fa-xs'></i></a>");
 		});
 		if (low_links.length > 0){
-			low_link = " eg. ".concat(low_links.join(", "));
+			low_link = " (eg. ".concat(low_links.join(", "));
 			if (low_len > 3){
 				low_link = low_link.concat(" ...");
 			}
+			low_link += ")";
 		}
 		var high_links = [];
 		var high_link = ""
@@ -1257,13 +1265,15 @@ $(document).ready(function(){
 			high_links.push("<a href='https://thebiogrid.org/interaction/"+link+"'>"+link+" <i class='fas fa-external-link-alt fa-xs'></i></a>");
 		});
 		if (high_links.length > 0){
-			high_link = " eg. ".concat(high_links.join(", "));
+			high_link = " (eg. ".concat(high_links.join(", "));
 			if (high_len > 3){
 				high_link = high_link.concat(" ...");
 			}
+			high_link += ")";
 		}
-		var qtip_content = "<span class='tip PPI'>" +
-								"<b>Protein-Protein Interaction</b>"+
+		var qtip_content = "<span class='tiphead tip PPI'"+
+							"title='Protein interaction supported by experimental evidence'>" +
+								"<b>Protein-Protein Interaction</b> <i class='fas fa-info-circle'></i>"+
 							"</span><br>" +
 							"<span class='tip'>"+
 								"<span class='tipPPI'>Interacting Proteins</span> | "+
@@ -1310,28 +1320,18 @@ $(document).ready(function(){
 		var pdb_n = edge.data("pdb_n");
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
 
-		var qtip_content = 	"<span class='tip DDI'>" +
-								"<b>Domain-Domain Interaction</b>" +
+		var qtip_content = 	"<span class='tiphead tip DDI'"+
+							"title='Domain interaction inferred from 3D structures directly or through homology'>" +
+								"<b>Domain-Domain Interaction</b> (inferred from 3D structures) <i class='fas fa-info-circle'></i>" +
 							"</span><br>" +
-							"<span class='tip'>"+
-								"<span class='tipDDI'>Interacting Domains</span> | "+				 		
-									doms.join(" - ")+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipDDI'>Interacting Proteins</span> | "+prots.join(" - ")+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipDDI'>Sources</span> | "+ds+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipDDI'># PDB structures</span> | "+
-								"<a href='https://3did.irbbarcelona.org/dispatch.php?type=interaction&type1=domain&type2=domain&value1="+pfams[0]+"&value2="+pfams[1]+"'>"+
-									pdb_n+" <i class='fas fa-external-link-alt fa-xs'></i>"+
-								"</a>"+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipDDI'>Interaction P-value</span> | "+p_val+
-							"</span>";
+							"<span class='tipDDI tip'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+							"<span class='tipDDI tip'>Interacting Domains</span> | "+doms.join(" - ")+"<br>"+
+							"<span class='tipDDI tip'>Sources</span> | "+ds+"<br>"+
+							"<span class='tipDDI tip'># PDB structures</span> | "+
+							"<a href='https://3did.irbbarcelona.org/dispatch.php?type=interaction&type1=domain&type2=domain&value1="+pfams[0]+"&value2="+pfams[1]+"'>"+
+								pdb_n+" <i class='fas fa-external-link-alt fa-xs'></i>"+
+							"</a>"+"<br>"+
+							"<span class='tipDDI tip'>Interaction P-value</span> | "+p_val;
 		edge.qtip({
 			content: qtip_content,
 			position: {
@@ -1356,27 +1356,22 @@ $(document).ready(function(){
 		var prots = [];
 		nodes.forEach(function(node) {
 			pfams.push(node.data("label"));
-			doms.push("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
+			doms.push("<span style='color: "+node.data("color")+";'>"+
+							"<b>"+node.data("label")+"</b></span>"
+							+" (<a href='https://pfam.xfam.org/family/"+node.data("acc")+"'>"+node.data("acc")+" <i class='fas fa-external-link-alt fa-xs'></i></a>)")
 			prots.push(node.parent().data("label"));
 		});
 		var ds = edge.data("ds");
 		var lo = Number(edge.data("lo")).toFixed(2);
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
-		var qtip_content = 	"<span class='tip iDDI'>" +
-								"<b>Inferred Domain-Domain ("+ds+")</b>" +
+		var qtip_content = 	"<span class='tiphead tip iDDI'"+
+							"title='Domain interaction inferred by significant co-occurrence of the domain pair in interacting proteins, using the method describe by Sprinzak & Margalit (2001). &#013;The log-odds (LO) indicate the strength of the domain association.'>" +
+								"<b>Domain-Domain Interaction</b> (inferred by domain co-occurrence) <i class='fas fa-info-circle'></i>" +
 							"</span><br>" +
-							"<span class='tip'>"+
-								"<span class='tipiDDI'>Interacting Domains</span> | "+doms.join(" - ")+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipiDDI'>Interacting Proteins</span> | "+prots.join(" - ")+
-							"</span><br>" +
-							"<span class='tip'>"+
-								"<span class='tipiDDI'>Association Score (LO)</span> | "+lo+
-							"</span><br>"+
-							"<span class='tip'>"+
-								"<span class='tipiDDI'>Interaction P-value</span> | "+p_val+
-							"</span>";
+							"<span class='tipiDDI tip'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+							"<span class='tipiDDI tip'>Interacting Domains</span> | "+doms.join(" - ")+"<br>"+
+							"<span class='tipiDDI tip'>Association Score (LO)</span> | "+lo+"<br>"+
+							"<span class='tipiDDI tip'>Interaction P-value</span> | "+p_val;
 		edge.qtip({
 			content: qtip_content,
 			position: {
@@ -1396,27 +1391,74 @@ $(document).ready(function(){
 	cy.on("click","edge[role='ELM_interaction']", function(event) {
 		var edge = event.target;
 		var nodes = edge.connectedNodes();
-		var doms = [];
-		var pfams = [];
 		var prots = [];
 		nodes.forEach(function(node) {
-			pfams.unshift(node.data("label"));
-			doms.unshift("<span style='color: "+node.data("color")+";'><b>"+node.data("label")+"</b></span>");
 			prots.unshift(node.parent().data("label"));
 		});
+		var dom = nodes[1].parent().data("label")+" / <span style='color: "+nodes[1].data("color")+";'>"+
+				  "<b>"+nodes[1].data("label")+"</b></span>"+
+	  			  " (<a href='https://pfam.xfam.org/family/"+nodes[1].data("acc")+"'>"+
+		   			nodes[1].data("acc")+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+				  " / "+nodes[1].data("start")+"-"+nodes[1].data("end");
+		var elm = nodes[0].parent().data("label")+" / <span style='color: "+nodes[0].data("color")+";'>"+
+				  "<b>"+nodes[0].data("label")+"</b></span>"+
+	  			  " (<a href='http://elm.eu.org/elms/"+nodes[0].data("acc")+"'>"+
+		   			nodes[0].data("acc")+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+				  " / "+nodes[0].data("start")+"-"+nodes[0].data("end");	
 		var ds = edge.data("ds");
 		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
-		var qtip_content = 	"<span class='tip ELMint'>" +
-								"<b>Domain-Motif Interaction</b> (<a href='http://elm.eu.org/downloads.html#interactions'>ELM</a>)" +
+		var qtip_content = 	"<span class='tiphead tip ELMint'"+
+							"title='Interaction between linear motif and their binding domain, obtained from annotated ELM motif class'>" +
+								"<b>Domain-Motif Interaction</b> (from <a href='http://elm.eu.org/downloads.html#interactions'>ELM</a> annotation) <i class='fas fa-info-circle'></i>" +
 							"</span><br>" +
-							"<span class='tip'>"+
-								"<span class='tipELMint'>Interacting Elements</span> | "+
-									doms.join(" - ")+
-								"</span><br>"+
-							"<span class='tipELMint'>Interacting Proteins</span> | "+prots.join(" - ")+
-							"</span><br>"+
-							"<span class='tipELMint'>Interaction P-value</span> | "+p_val+
-							"</span>";
+							"<span class='tipELMint tip'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+							"<span class='tipELMint tip'>Domain </span> | "+ dom +"<br>"+
+							"<span class='tipELMint tip'>Motif </span> | "+ elm +"<br>"+
+							"<span class='tipELMint tip'>Interaction P-value</span> | "+p_val;
+		edge.qtip({
+			content: qtip_content,
+			position: {
+				my: "top center",
+				at: "bottom center"
+			},
+			style: {
+				classes: "qtip-bootstrap",
+				tip: {
+					width: 20,
+					height: 10
+				}
+			}
+		});
+	});
+
+	cy.on("click","edge[role='DMI_interaction']", function(event) {
+		var edge = event.target;
+		var nodes = edge.connectedNodes();
+		var prots = [];
+		nodes.forEach(function(node) {
+			prots.unshift(node.parent().data("label"));
+		});
+		
+		var dom = nodes[1].parent().data("label")+" / <span style='color: "+nodes[1].data("color")+";'>"+
+					"<b>"+nodes[1].data("label")+"</b></span>"+
+					" (<a href='https://pfam.xfam.org/family/"+nodes[1].data("acc")+"'>"+
+						nodes[1].data("acc")+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+					" / "+nodes[1].data("start")+"-"+nodes[1].data("end");
+		var elm = nodes[0].parent().data("label")+" / <span style='color: "+nodes[0].data("color")+";'>"+
+				"<b>"+nodes[0].data("label")+"</b></span>"+
+				" (<a href='https://3did.irbbarcelona.org/dispatch.php?type=motif&value="+nodes[0].data("label")+"'>"+
+					nodes[0].data("label")+" <i class='fas fa-external-link-alt fa-xs'></i></a>)"+
+				" / "+nodes[0].data("start")+"-"+nodes[0].data("end");	
+		var ds = edge.data("ds");
+		var p_val = Number.parseFloat(edge.data("p_val")).toExponential(2);
+		var qtip_content = 	"<span class='tiphead tip DMI'"+
+							"title='Interaction between linear motif and their binding domain, inferred from 3D structures (3did).'>" +
+								"<b>Domain-Motif Interaction</b> (inferred from 3D structures) <i class='fas fa-info-circle'></i>" +
+							"</span><br>" +
+							"<span class='tipDMI tip'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+							"<span class='tipDMI tip'>Domain </span> | "+ dom +"<br>"+
+							"<span class='tipDMI tip'>Motif </span> | "+ elm +"<br>"+
+							"<span class='tipDMI tip'>Interaction P-value</span> | "+p_val;
 		edge.qtip({
 			content: qtip_content,
 			position: {
@@ -1452,24 +1494,22 @@ $(document).ready(function(){
 			var pdb_end = node.data("pdb_end");
 			var ev = node.data("eval");
 			var pcid = node.data("pcid");
-			var ali = uni_ac+"/"+start+"-"+end+", "+pdb+"|"+chain+"/"+pdb_start+"-"+pdb_end+", e-val=<i>"+ev+"</i>, id=<i>"+pcid+"%</i>";
+			var ali = "<b>"+uni_ac+"</b>/"+start+"-"+end+", "+pdb+"|"+chain+"/"+pdb_start+"-"+pdb_end+", e-val=<i>"+ev+"</i>, id=<i>"+pcid+"%</i>";
 			chains.push(chain);
 			prots.push(prot);
 			alis.push(ali);
 		});
-		var qtip_content = 	"<span class='tip InP'>" +
-								"<b>Predicted with <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS</a></b>" +
+		var qtip_content = 	"<span class='tiphead tip InP'>" +
+								"<b>Predicted Interaction through 3D Structure</b> (using <a href='http://www.russelllab.org/cgi-bin/tools/interprets.pl/interprets.pl'>InterPreTS <i class='fas fa-external-link-alt fa-xs'></i></a>) <i class='fas fa-info-circle'></i>" +
 							"</span><br>" +
-							"<span class='tip'>"+
-								"<span class='tipInP'>PDB Template ID</span> |  "+
-								"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
-								"<span class='tipInP'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
-								"<span class='tipInP'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
-								"<span class='tipInP'>Alignment Protein A</span> | "+alis[0]+"<br>"+
-								"<span class='tipInP'>Alignment Protein B</span> | "+alis[1]+"<br>"+
-								"<span class='tipInP'>Z-score</span> | "+z+"<br>"+
-								"<span class='tipInP'>P-value</span> | "+pval+
-							"</span>";
+							"<span class='tipInP'>PDB Template ID</span> |  "+
+							"<a href='https://www.rcsb.org/structure/"+pdb+"'><b>"+pdb+"</b> <i class='fas fa-external-link-alt fa-xs'></i></a><br>"+
+							"<span class='tipInP tip'>PDB Template Chains</span> | "+chains.join(" - ")+"<br>"+
+							"<span class='tipInP tip'>Interacting Proteins</span> | "+prots.join(" - ")+"<br>"+
+							"<span class='tipInP tip'>Alignment Protein A</span> | "+alis[0]+"<br>"+
+							"<span class='tipInP tip'>Alignment Protein B</span> | "+alis[1]+"<br>"+
+							"<span class='tipInP tip'>Z-score</span> | "+z+"<br>"+
+							"<span class='tipInP tip'>P-value</span> | "+pval;
 		
 		edge.qtip({
 			content: qtip_content,

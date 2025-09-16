@@ -31,7 +31,7 @@
 		<link
 			rel="stylesheet"
 			type="text/css"
-			href="{{ url_for('static',filename='css/common.css') }}"
+			href="{{ url_for('static',filename='css/common.css') }}?v=b3bae01ae7edceff2c15cdafaa8df76d"
 		/>
 		<link
 			rel="stylesheet"
@@ -62,11 +62,6 @@
 			{% include "header.html" %}
 
 			<div class="content">
-				<div id="loading_msg">
-					<p>Your job is running...</p>
-				</div>
-				<br />
-				<div class="loader"></div>
 
 				<div style="margin: auto;">
 					<img
@@ -86,30 +81,5 @@
 			{% include "footer.html" %}
 		</div>
 
-		<script>
-			function loading() {
-				document.body.scrollTop = 0;
-				document.documentElement.scrollTop = 0;
-				$("#loading_msg").show();
-				$(".loader").show();
-				$(".main-container").hide();
-				$(".intro-container").hide();
-			}
-			function uploadInput(id) {
-				var fileInput = document.querySelector("#" + id + "_file");
-				var textFromFile = "";
-				var file = fileInput.files[0];
-				var reader = new FileReader();
-				reader.onload = function (e) {
-					textFromFile = e.target.result;
-					document.getElementById(id).value = textFromFile;
-				};
-				reader.readAsText(file);
-			}
-
-			function resetInput(id) {
-				document.getElementById(id).value = "";
-			}
-		</script>
 	</body>
 </html>

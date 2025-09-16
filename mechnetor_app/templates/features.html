@@ -30,7 +30,7 @@
 		<link
 			rel="stylesheet"
 			type="text/css"
-			href="{{ url_for('static',filename='css/common.css') }}"
+			href="{{ url_for('static',filename='css/common.css') }}?v=b3bae01ae7edceff2c15cdafaa8df76d"
 		/>
 		<script
 			type="text/javascript"
@@ -46,23 +46,54 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.js"
 		></script>
 
+		<script>
+			// var _paq = window._paq = window._paq || [];
+			// 	/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+			// 	_paq.push(['trackPageView']);
+			// 	_paq.push(['enableLinkTracking']);
+			// 	(function() {
+			// 		var u="https://tr-denbi.embl.de/heimdall/";
+			// 		_paq.push(['setTrackerUrl', u+'matomo.php']);
+			// 		_paq.push(['setSiteId', '36']);
+			// 		var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+			// 		g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+			// })();
+
+			$(document).ready(function(){
+				$("tr:odd").css({
+					"background-color":"#F9F9F9"});
+				});
+		</script>
+
 		<style>
+			.content {
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+			}
 			.main-header {
 				margin-top: 10px;
 			}
 			.sub-header {
-				border-bottom: 1px solid #000;
+				border-bottom: 1px solid #d6d6d6;
 				padding-bottom: 2px;
 				font-size: large;
 				font-weight: bold;
 				margin-bottom: 5px;
 			}
 			.main-container {
-				max-width: 60%;
+				width: 950px;
 				margin: auto;
 				background-color: #fff;
-				padding: 10px;
-				border: 1px solid #ccc;
+				padding: 20px;
+				border: 1px solid #d6d6d6;
+				border-radius: 4px;
+			}
+			.free {
+				width: auto;
+				padding: 2px;
+				text-align: center;
+				background-color: lightgoldenrodyellow;
+				font-style: italic;
+				font-weight: bold;
 			}
 			table {
 				width: 400px;
@@ -109,6 +140,17 @@
 						graphics (SVG) at any time, providing beautiful figures suitable for
 						publication.
 					</p>
+					<p class="free">
+						Mechnetor is free and open to all users and there is no login requirement.
+					</p><br>
+
+					For more details, check out:<br>
+					<p style="padding-left:25px">
+						<a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8262711/'>
+							Mechnetor: a web server for exploring protein mechanism and the functional context of genetic variants</a><br>
+							González-Sánchez J.C., Ibrahim M.F.R., Leist I.C., Weise K.R. and Russell R.B<br>
+							<i>Nucleic Acid Research</i>, Jul 2;49(W1):W366-W374 (2021)
+					</p><br>
 
 					<div class="sub-header">Input</div>
 					<p>
@@ -146,25 +188,26 @@
 						<li>Tea</li>
 						<li>Milk</li>
 					  </ul>  -->
-
+					<br>
 					<div class="sub-header">Output</div>
 					<p>
 						<strong>Mechnetor</strong> creates a mechanistic network with the
 						proteins and variants you provided, with proteins and their different functional
 						elements arranged linearly, and variants displayed on them.
-						This network is highly interactive and the user is encouraged to manually explore 
-						their results using the mouse controls and several toggle buttons and sliders (see 
-						the Quick Guide). 
+						This network is highly interactive and the user is encouraged to manually explore
+						their results using the mouse controls and several toggle buttons and sliders (see
+						the Quick Guide).
+						The initial protein positions within the network are arbitrary. You can drag them around as it suits you better.
 						<br><br>
-						The current network view can be exported as an image (JPG, PNG) or vector
-						graphics (SVG) at any time.
+						<i class="fas fa-camera"></i> The current network view can be exported as an image (<b>JPG</b>, <b>PNG</b>) or vector
+						graphics (<b>SVG</b>) at any time.
 						<br><br>
-						The different interaction evidence displayed in the network (domain-domain interactions, 
+						The different interaction evidence displayed in the network (domain-domain interactions,
 						domain-motif interactions, interacting regions from annotation, predicted interaction interfaces)
-						is also contained in a browsable list, that can also be downloaded in different formats. 
+						is also contained in a browsable list, that can also be downloaded in different formats.
 						<br><br>
-						The results page can be bookmarked and accessed later. Results will be kept for 
-						at least 6 months
+						The results page can be bookmarked and accessed later. Results will be kept for
+						at least 6 months.
 					</p>
 
 					<br /><br />

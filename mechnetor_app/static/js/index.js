@@ -1,5 +1,5 @@
-$(document).ready(function() {
-
+$(document).ready(function(){
+	
 	// validate input form on keyup and submit
 	$("#form").validate({
 		rules: {
@@ -19,10 +19,6 @@ $(document).ready(function() {
 		}
 	});
 
-	function resetInput(id) {
-		document.getElementById(id).value="";
-	}
-
 	$("#all_intrs").click(function() {
 		var input = document.getElementById('add_n_interactors');
 		if (this.checked) {
@@ -32,9 +28,9 @@ $(document).ready(function() {
 		}
 	});
 
-	// Examples
+// Examples
 	$("#ex1").click(function () {
-    $("#prots_input").val(`TCF3
+	$("#prots_input").val(`TCF3
 CBFA2T3
 ID3
 PRKAR2A
@@ -68,29 +64,29 @@ ID3/Q81STOP
 ID3/Q81H
 ID3/V82A
 ID3/Q100STOP`);
-	  $("#add_n_interactors").val(0);
-	  $("#species").val("HUMAN");
-  });
+	$("#add_n_interactors").val(0);
+	$("#species").val("HUMAN");
+});
 
-	$("#ex2").click(function () {
-		$("#prots_input").val(`ARID1A
+$("#ex2").click(function () {
+	$("#prots_input").val(`ARID1A
 SIN3A
 RB1
 HDAC2
 ACTL6A
 `);
-		$("#muts_input").val("");
-		$("#add_n_interactors").val(0);
-		$("#species").val("HUMAN");
-	});
+	$("#muts_input").val(" ");
+	$("#add_n_interactors").val(0);
+	$("#species").val("HUMAN");
+});
 
-	$("#ex3").click(function () {
-		$("#prots_input").val(`TP53
+$("#ex3").click(function () {
+	$("#prots_input").val(`TP53
 TIN1
 `);
-		$("#muts_input").val("");
-		$("#add_n_interactors").val(2);
-		$("#species").val("HUMAN");
+	$("#muts_input").val(" ");
+	$("#add_n_interactors").val(2);
+	$("#species").val("HUMAN");
 //  		$('#query_lmd2').val(`
 // #AC(a)	ID(a)	GN(a)	AC(b)	ID(b)	GN(b)	Type	F(a):F(b)	start	end
 // O60504	VINEX_HUMAN	SORBS3	P08247	UniProt_ID	SYP	LMD2	PPxxPx[KR]	236	242
@@ -112,14 +108,14 @@ TIN1
 // O60504	VINEX_HUMAN	SORBS3	O00401	UniProt_ID	WASL	LMD2	ExEDD	489	493`);
 	});
 
-	$("#ex4").click(function() {
-		$("#prots_input").val(`#Drosophila's homeoproteins
+$("#ex4").click(function() {
+	$("#prots_input").val(`#Drosophila's homeoproteins
 EXD_DROME
 UBX_DROME
 TIN_DROME`);
-		$("#muts").val(" ");
-		$("#max_prots").val(0);
-		$("#species").val("DROME");
+	$("#muts_input").val(" ");
+	$("#max_prots").val(0);
+	$("#species").val("DROME");
 	});
 
 // 	$("#ex5").click(function() {
@@ -160,6 +156,5 @@ TIN_DROME`);
 // 		$("#add_n_interactors").val(0);
 // 		$("#species").val("HUMAN");
 // 	});
-
-
 });
+

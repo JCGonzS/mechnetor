@@ -267,6 +267,8 @@ table.dataTable td {
  * Control feature layout
  */
 .dataTables_wrapper {
+  width: 98% !important;
+  overflow-x: auto;
   position: relative;
   clear: both;
   *zoom: 1;

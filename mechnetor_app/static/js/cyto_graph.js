@@ -102,11 +102,11 @@ var json_style = [
 			"border-width": "1px",
 			"border-color": "data(color)",
 			"label": "data(label)",
-			"font-size": "10px",
 			"font-weight": "bold",
-			"min-zoomed-font-size": "15px",
+			"font-size": "15px",
+			"min-zoomed-font-size": "13px",
 			"text-valign": "bottom",
-			"text-margin-y": "-5px",
+			"text-margin-y": "-8px",
 			"text-wrap": "wrap",
 			"text-max-width": "data(length)",
 			"color": "#2C2C2C",
@@ -124,7 +124,9 @@ var json_style = [
 			"border-width": "2px",
 			"label": function(ele){ return ele.data("label")+"\n"+ele.data("start")+"-"+ele.data("end"); },
       		"text-wrap": "wrap",
-			"font-size": "15px",
+			"font-size": "17px",
+			// "color": "#FFF",
+			// "text-outline-color": "#2C2C2C",
 			"text-outline-width": "2px",
 			"min-zoomed-font-size": "5px"
 		}
@@ -139,6 +141,7 @@ var json_style = [
 			"z-index": "999"
 		}
 	},
+
 	{
 		"selector": "node[role='elm'], node[role='3dlm']",
 		"style": {
@@ -149,8 +152,8 @@ var json_style = [
 			"border-width": "1px",
 			"border-color": "data(color)",
 			"label": "data(label)",
-			"font-size": "8px",
-			"min-zoomed-font-size": "17px",
+			"font-size": "12px",
+			"min-zoomed-font-size": "15px",
 			"text-valign": "bottom",
 			"color": "#2C2C2C",
 			"events": "yes",
@@ -166,7 +169,7 @@ var json_style = [
 			"background-color": "data(color)",
       		"label": function(ele){ return ele.data("label")+"\n"+ele.data("start")+"-"+ele.data("end"); },
       		"text-wrap": "wrap",
-			"font-size": "12px",
+			"font-size": "14px",
 			"font-weight": "bold",
       		"text-outline-width": "1px",
      		"text-outline-color": "#FFF",
@@ -184,8 +187,8 @@ var json_style = [
 			"width": "data(length)",
 			"background-opacity": "0.5",
 			"border-color": "#000",
-			"font-size": "10px",
-			"min-zoomed-font-size": "15px",
+			"font-size": "15px",
+			// "min-zoomed-font-size": "15px",
 			"text-background-opacity": "1",
 			"text-background-color": "#FFF",
 			"text-background-shape": "rectangle",
@@ -207,7 +210,6 @@ var json_style = [
 			"height": "25px",
 			"background-opacity": "1",
 			"border-style": "dashed",
-			"label": "data(label)",
 			"overlay-padding": "3px",
 			"overlay-opacity": "0.3",
 			"z-index": "1000"
@@ -224,6 +226,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_region'].hl, node[role='uni_region'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#EC7063",
 			"overlay-color": "#EC7063"
 		}
@@ -238,6 +241,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_var'].hl, node[role='uni_var'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#28B463",
 			"overlay-color": "#28B463"
 		}
@@ -252,6 +256,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_mtg'].hl, node[role='uni_mtg'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#9B59B6",
 			"overlay-color": "#9B59B6"
 		}
@@ -266,6 +271,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_binding'].hl, node[role='uni_binding'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#5499c7",
 			"overlay-color": "#5499c7"
 		}
@@ -280,6 +286,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_dnabind'].hl, node[role='uni_dnabind'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#d844a9",
 			"overlay-color": "#d844a9"
 		}
@@ -294,6 +301,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_metal'].hl, node[role='uni_metal'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#4c4c50",
 			"overlay-color": "#4c4c50"
 		}
@@ -309,6 +317,7 @@ var json_style = [
 	{
 		"selector": "node[role='uni_transmem'].hl, node[role='uni_transmem'].hl2",
 		"style": {
+			"label": "data(label)",
 			"background-color": "#648c33",
 			"overlay-color": "#648c33"
 		}
@@ -323,7 +332,15 @@ var json_style = [
 		}
 	},
 	{
-		"selector": "node[role='uni_disulfid'].hl, node[role='uni_disulfid'].hl2",
+		"selector": "node[role='uni_disulfid'].hl",
+		"style": {
+			"label": "data(label)",
+			"background-color": "#f4d03f",
+			"overlay-color": " #f4d03f "
+		}
+	},
+	{
+		"selector": "node[role='uni_disulfid'].hl2",
 		"style": {
 			"background-color": "#f4d03f",
 			"overlay-color": " #f4d03f "
@@ -382,7 +399,7 @@ var json_style = [
 			"border-color": "#000",
 			"color": "#2C2C2C",
 			"font-size": "8px",
-			"min-zoomed-font-size": "14px",
+			"min-zoomed-font-size": "18px",
 			"text-wrap": "wrap",
 			"text-max-width": "75px",
 			"text-margin-y": "-2px",
@@ -402,8 +419,11 @@ var json_style = [
 	{
 		"selector": "node[role ^='mod'].hl",
 		"style": {
+			"font-size": "13px",
 			"overlay-padding": "2px",
 			"overlay-opacity": "0.3",
+			"text-border-style": "dashed",
+			"text-border-width": "0.5px",
 			"z-index": "1000"
 		}
 	},
@@ -416,6 +436,7 @@ var json_style = [
 			"width": "3px",
 			"border-width": "0.8px",
 			"border-color": "#28446F",
+			"label": "data(aa_mut)",
 			"background-color": "#2389AF"
 		}
 	},
@@ -426,16 +447,17 @@ var json_style = [
 			"shape-polygon-points": "-1, -1, 1, -1, 0, 1",
 			"height": "function(){ return data(height)+3; }",
 			"width": "4px",
+			"text-border-color": "#28446F",
 			"border-width": "0.5px",
 			"border-color": "#000",
 			"background-color": "#2389AF",
-			"label": "data(aa_mut)",
 			"overlay-color": "#2389AF"
 		}
 	},
 	{
 		"selector": "node[role='mod_input']",
 		"style": {
+			"label": "data(label)",
 			"shape": "polygon",
 			"shape-polygon-points": "-1, -1, 1, -1, 0, 0.4",
 			"height": "14px",
@@ -448,8 +470,8 @@ var json_style = [
 		"style": {
 			"height": "16px",
 			"width": "4px",
+			"text-border-color": "#971031",
 			"background-color": "#971031",
-			"label": "data(label)",
 			"overlay-color": "#FF0000"
 		}
 	},
@@ -460,6 +482,7 @@ var json_style = [
 			"shape-polygon-points": "0.2, -0.6, 0, -0.6, 0, 1, 0, -0.6, -0.2, -0.6, -0.2, -1, 0.2, -1",
 			"height": "10px",
 			"width": "10px",
+			"label": "data(label)",
 			"background-color": "#FFFF00"
 		}
 	},
@@ -467,8 +490,8 @@ var json_style = [
 		"selector": "node[role='mod_phos'].hl",
 		"style": {
 			"height": "12px",
+			"text-border-color": "#FFB533",
 			"background-color": "#FFB533",
-			"label": "data(label)",
 			"overlay-color": "#FFFF00"
 		}
 	},
@@ -479,6 +502,7 @@ var json_style = [
 			"shape-polygon-points": "0.2, -0.6, 0, -0.6, 0, 1, 0, -0.6, -0.2, -0.6, -0.2, -1, 0.2, -1",
 			"height": "10px",
 			"width": "10px",
+			"label": "data(label)",
 			"background-color": "#008000"
 		}
 	},
@@ -486,9 +510,29 @@ var json_style = [
 		"selector": "node[role='mod_acet'].hl",
 		"style": {
 			"height": "12px",
+			"text-border-color": "#10972B",
 			"background-color": "#10972B",
-			"label": "data(label)",
 			"overlay-color": "#008000"
+		}
+	},
+	{
+		"selector": "node[role='mod_glyc']",
+		"style": {
+			"shape": "polygon",
+			"shape-polygon-points": "0.2, -0.6, 0, -0.6, 0, 1, 0, -0.6, -0.2, -0.6, -0.2, -1, 0.2, -1",
+			"height": "10px",
+			"width": "10px",
+			"label": "data(label)",
+			"background-color": "#e67e22"
+		}
+	},
+	{
+		"selector": "node[role='mod_glyc'].hl",
+		"style": {
+			"height": "12px",
+			"text-border-color": "#af601a",
+			"background-color": "#af601a",
+			"overlay-color": "#e67e22"
 		}
 	},
 	{
@@ -543,7 +587,6 @@ var json_style = [
 		"selector": "edge[role^='uni_']",
 		"style": {
 			"width": "4px",
-			"curve-style": "bezier",
 			"line-color": "#000",
 			"line-style": "solid",
 			"target-arrow-shape": "triangle",
@@ -560,8 +603,8 @@ var json_style = [
 			"opacity": "1",
 			"overlay-opacity": "0.2",
 			"label": "data(label)",
-			"font-size": "10px",
-			"min-zoomed-font-size": "15px",
+			"font-size": "15px",
+			// "min-zoomed-font-size": "15px",
 			"text-background-opacity": "1",
 			"text-background-color": "#FFF",
 			"text-background-shape": "rectangle",
@@ -589,6 +632,16 @@ var json_style = [
 		"selector": "edge[role='uni_mtg_interaction']",
 		"style": {
 			"overlay-color": "#9B59B6"
+		}
+	},
+	{
+		"selector": "edge[role='uni_disulfid_interaction']",
+		"style": {
+			"width": "2px",
+			"source-arrow-shape": "none",
+			"target-arrow-shape": "none",
+			"curve-style": "unbundled-bezier",
+			"overlay-color": "#f4d03f"
 		}
 	},
 	{
@@ -748,7 +801,7 @@ document.addEventListener("DOMContentLoaded", function() {
     wheelSensitivity: 0.3,
     // pixelRatio: 1,
     hideEdgesOnViewport: true, // These 2 options could be used only if network is big enough
-    textureOnViewport: true
+    // textureOnViewport: true
 	});
 
   cy.fit( cy.$("node:visible") );

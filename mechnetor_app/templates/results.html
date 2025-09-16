@@ -16,15 +16,15 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/pace_atom.css') }}">
   -->
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Merriweather:300,400|Audiowide|Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil|Staatliches|Roboto:400|Nunito:wght@300;400;700|Audiowide|Lato">
   <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/>
   <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/jquery.dataTables.css') }}"/> -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"/>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/results_style.css') }}"/>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}"/>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/common.css') }}?v=b3bae01ae7edceff2c15cdafaa8df76d"/>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/results_style.css') }}?v=682dd619a5fdbdfa15db6a458d28dbd2"/>
 
   <link rel="stylesheet" type="text/css" href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css/>
   <link rel="stylesheet" type="text/css" href=https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css/>
@@ -35,6 +35,7 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.9.4/cytoscape.min.js" integrity="sha256-yvhiWj8VRHJV4JL+RmFcz3U2E2tu0bdjJ175tlvhSnE=" crossorigin="anonymous"></script>
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.1/cytoscape.min.js"></script> -->
   <script type="text/javascript" src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.7.1/cytoscape-qtip.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js" integrity="sha256-FPJJt8nA+xL4RU6/gsriA8p8xAeLGatoyTjldvQKGdE=" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js" integrity="sha256-VwkT6wiZwXUbi2b4BOR1i5hw43XMzVsP88kpesvRYfU=" crossorigin="anonymous"></script>
@@ -54,18 +55,30 @@
   <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/graph_features.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/stat_charts.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/graph_features.js') }}?v=3a6d41c782599fa0d45b06c29b75f4b6"></script>
+  <!-- <script type="text/javascript" src="{{ url_for('static',filename='js/echarts.min.js') }}"></script> -->
+  <!-- <script type="text/javascript" src="{{ url_for('static',filename='js/stat_charts.js') }}"></script> -->
   <script type="text/javascript" src="{{ url_for('static',filename='js/cytoscape-svg.js') }}"></script>
   <script type="text/javascript">    
     /// Import files
     var graph_json = "{{ url_for('static',filename=graph_json) }}";
     var style_json = "{{ url_for('static',filename='js/cy_style.json') }}";
     var ints_json ="{{ url_for('static',filename=ints_json) }}";
+
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="https://tr-denbi.embl.de/heimdall/";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '36']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
   </script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}" async></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/cyto_graph.js') }}?v=7a756b1f1cbe008592b17dfe2376dc27"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/interaction_table.js') }}?v=61f545ab8292486a44323689c35d5362" async></script>
   
 </head>
 
@@ -89,8 +102,9 @@
           </button>
           
           <div class="collap-content">
-            <label class="container" title="Show/hide boxes around proteins">
-              Protein Boxes
+            <label class="container" 
+            title="Show/hide boxes around proteins. These are just a visual aid and have no other meaning.">
+              Bounding Boxes
               <input type="checkbox" id="toggle_box" checked="checked">
               <span class="checkmark"></span>
             </label><br>
@@ -104,7 +118,7 @@
           
             <label class="container"
             title="Show/hide protein linear motifs.&#013;Source: ELM, 3did">
-            Linear Motifs
+            Motifs
             <input type="checkbox" id="toggle_elms">
             <span class="checkmark"></span>
             </label></br>
@@ -115,9 +129,13 @@
                 <input type="checkbox" id="toggle_confirmed_elms">
                 <span class="checkmark"></span>
               </label></br>
-            </div>
-            <hr>
-            
+              <label class="container"
+              title="Allow motifs inside domains">
+                [Only outside domains]
+                <input type="checkbox" id="toggle_motifs_in_doms">
+                <span class="checkmark"></span>
+              </label></br>
+            </div>            
           </div>
         
         
@@ -137,14 +155,14 @@
             <span class="checkmark">
             </label></br>
             <label class="container"
-            title="Interactions between domains derived from 3D structures.&#013;Source: 3did, Pfam"> 
-              Domain-Domain
+            title="Domain interactions inferred from 3D structures directly or through homology.&#013;Source: 3did, Pfam"> 
+              Domain-Domain (3D structure)
               <input type="checkbox" id="toggle_dom_int">
               <span class="checkmark">
             </label></br>
             <label class="container"
-            title="Interactions between domains inferred by co-occurrence.&#013;The log-odds (LO) indicate the strength of the domain association.&#013;Use the slider to increase or decrease the threshold.">
-              Domain-Domain (inferred)
+            title="Domain interactions inferred by significant co-occurrence of domain pairs in known interacting proteins. This 'association method' is described in Sprinzak and Margalit (2001). &#013;The log-odds (LO) indicate the strength of the domain association.&#013;Use the slider to increase or decrease the threshold.">
+              Domain-Domain (Co-occurrence)
               <input type="checkbox" id="toggle_idom_int">
               <span class="checkmark">
             </label>
@@ -157,11 +175,15 @@
               <input type="range" min="0" max="1" value="1" step="0.0001" class="slider" id="pval_slider">
             </div> -->
 
-            <label class="container">Domain-LM (ELM)
+            <label class="container"
+            title="Interactions between linear motifs and their binding domains, obtained from annotated motif classes.&#013;Source: ELM (Eukaryotic Linear Motif resource).">
+              Domain-Motif (Annotation)
               <input type="checkbox" id="toggle_elmdom_int">
               <span class="checkmark">
             </label></br>
-            <label class="container">Domain-LM (3did)
+            <label class="container"
+            title="Interactions between linear motifs and their binding domains, inferred from 3D structures.&#013;Source: 3did">
+              Domain-Motif (3D structure)
               <input type="checkbox" id="toggle_dmi3d_int">
               <span class="checkmark">
             </label></br>
@@ -186,10 +208,9 @@
               <input type="checkbox" id="toggle_prets_int">
               <span class="checkmark">
             </label title=>
-            P-value <=<input type="number" id="pval_cutoff" min=0 max=1 value="0.75" step="0.0001">
-            
-            <hr>
-
+            <div>
+              P-value <=<input type="number" id="pval_cutoff" min=0 max=1 value="0.75" step="0.0001">
+            </div>
           </div>
     
           <button type="button" class="collap-section">
@@ -225,7 +246,6 @@
               <input type="checkbox" id="toggle_uni_disulfid">
               <span class="checkmark"></div>
             </label></br>
-            <hr>
           </div>
           
           <button type="button" class="collap-section">
@@ -244,6 +264,10 @@
             </label></br>
             <label class="container">Acetylations
               <input type="checkbox" id="toggle_acet">
+              <span class="checkmark">
+            </label></br>
+            <label class="container">Glycosylations
+              <input type="checkbox" id="toggle_glyc">
               <span class="checkmark">
             </label>
           </div>
@@ -292,14 +316,23 @@
           <div class="dl-widget">
             <div id="dl-content"> 
               <!-- <i class="far fa-file-image" style="font-size: 20px; vertical-align: middle;"></i> -->
-              <span style="font-weight: 500;"> Take snapshot as:   </span>
               <!-- <button class="btn" id="dl_json"><i class="fas fa-file-alt"></i> JSON </button> -->
-              <button class="dl-btn-pic" id="dl_jpg"><i class="far fa-file-image"></i> JPG </button>
-              <button class="dl-btn-pic" id="dl_png"><i class="far fa-file-image"></i> PNG </button>
-              <button class="dl-btn-pic" id="dl_svg"><i class="far fa-file-image"></i> SVG </button>
+              <button class="dl-btn-pic" id="dl_jpg" 
+              title="Take a snapshot of the current network view as JPG">
+                <i class="fas fa-camera"></i> JPG 
+              </button>
+              <button class="dl-btn-pic" id="dl_png"
+              title="Take a snapshot of the current network view as JPG">
+                <i class="fas fa-camera"></i> PNG
+              </button>
+              <button class="dl-btn-pic" id="dl_svg"
+              title="Download complete network as a vector graphic">
+                <i class="fas fa-file-download"></i> SVG
+              </button>
             </div>
             <button class="my-btn dl-btn-off" id="dl-btn">
-              <i class="fas fa-camera"></i>
+              
+              <i class="fas fa-download"></i>
             </button>
           </div>
 
@@ -373,7 +406,7 @@
       <br>
       <div class="alert alert-info" id="bookmark-msg">
         Remember! Bookmark this page if you want to access your results later. 
-        <span id='bookmark-close' style="cursor: pointer;"><strong> Got it</strong></span>
+        <span id='bookmark-close' style="cursor: pointer;"><strong> (Dismiss)</strong></span>
       </div>
 
       <div class="extra-info-container">
