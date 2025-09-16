@@ -1,5 +1,4 @@
 import os
-import sys
 from dotenv import dotenv_values
 
 

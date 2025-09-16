@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import itertools
-import psycopg2
+import psycopg
 import json
 import csv
 import argparse
@@ -731,7 +731,7 @@ def main(INPUT_1=None, INPUT_2=None, ORG="HUMAN",
     ASSOC_TABLE        = "association_scores"
     IPRETS_TABLE       = "interprets_pdb2019"
 
-    conn = psycopg2.connect(database=PSQL_DB, 
+    conn = psycopg.connect(database=PSQL_DB, 
                             user=PSQL_USER)
     cursor = conn.cursor()
     

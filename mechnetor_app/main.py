@@ -2,12 +2,11 @@ import sys
 import os
 import json
 from flask import Flask, render_template, request, url_for, redirect, jsonify
-
-from mechnetor_app import app
 from mechnetor_app.lib.utils import print_log, get_unique_random_identifier
 from mechnetor_app.config import get_paths, get_templates
 from mechnetor_app import mechnetor
 
+app = Flask(__name__)
 
 path = get_paths()
 template = get_templates()
@@ -133,3 +132,5 @@ def run_job(job_id):
         table_columns=table_columns
     )
 
+if __name__ == '__main__':
+    app.run(debug=True)
