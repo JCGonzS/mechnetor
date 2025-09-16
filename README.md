@@ -1,5 +1,7 @@
 <img src="mechnetor_app/static/images/mechnetor_logo.png" height="100">
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 Mechnetor lets you quickly explore and visualize integrated protein mechanism data, enabling a better 
 understanding of the functional context of genetic variants.
 
