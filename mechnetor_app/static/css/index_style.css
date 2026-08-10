@@ -1,0 +1,365 @@
+* {box-sizing: border-box}
+
+/* .content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+} */
+
+.load-container {
+  display:none;
+  min-height: 700px;
+  margin: auto;
+}
+
+#loading_msg {
+  margin: auto;
+  text-align: center;
+}
+.loader {
+  margin: auto;
+  border: 16px solid #FFF;
+  border-radius: 50%;
+  border-top: 16px solid #e44445;
+  border-bottom: 16px solid #e44445;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.intro-container {
+  width: 950px;
+  /* height: 557px; */
+  margin: auto;
+}
+
+.intro-content{
+  display: flex;
+  /* height: 512px; */
+  height: 450px;
+  /* max-width: 85%; */
+  margin: auto;
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+}
+
+.intro-header{
+  font-size: 25px;
+  padding-bottom: 5px;
+}
+.intro-paragraph{
+  width: 30%;
+  height: 100%;
+  padding: 20px;
+  font-size: 14px;
+  background-color: #2c2c2c;
+  color: white;
+  border-radius: 4px 0px 0px 4px;
+}
+
+/* Slideshow container */
+.intro-slideshow {
+  width: 70%;
+  height: 100%;
+  position: relative;
+  background-color: white;
+  border-radius: 4px;
+}
+
+
+.mySlides {
+  display: none;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.slide-image {
+  vertical-align: middle;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 8px;
+  margin-top: -22px;
+  color: #2c2c2c !important;
+  font-weight: bold;
+  font-size: 24px;
+  transition: 0.6s ease;
+  border-radius: 0 4px 4px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  color: white !important;
+  background-color: #e44445
+}
+
+/* Caption text */
+.slide-text {
+  color: #2c2c2c;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+/* The dots/bullets/indicators */
+.dot-container {
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  /* background-color: #717171; */
+  background-color: #E44445;
+}
+
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .prev, .next,.text {font-size: 11px}
+}
+/* ////////// */
+
+.main-container {
+  width: 950px;
+  margin: auto;
+}
+
+.section-title {
+  /* text-align: center; */
+  /* color: #2c2c2c; */
+  padding-top: 10px;
+  color: #E44445;
+  font-weight: 600;
+}
+
+.form-container {
+  background-color: #FFF;
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+  margin: auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.boxes-container {
+  width: 90%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* .box-container {
+} */
+
+.extra-container {
+  width: 90%;
+  margin: auto;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.options-container {
+  padding-top: 5px;
+}
+
+.option {
+  line-height: 1;
+}
+
+.examples-container {
+  text-align: right;
+}
+
+.buttons-container {
+  width: 90%;
+  margin:auto;
+  text-align: right;
+}
+
+textarea {
+  width: 25em;
+  height: 150px;
+  resize:vertical;
+  overflow: auto;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  padding: 7px 7px;
+  /* font: 1em Helvetica, arial, sans-serif; */
+  /* font-style: oblique;
+  color: grey; */
+}
+textarea:focus {
+  border-color: #888;
+}
+
+label[for=prots_input], label[for=muts_input]{
+  font-size: 15px;
+}
+/* label[for=prots_input_file], label[for=muts_input_file], label[for=max_prots]{
+  font-size: 13px;
+} */
+label.error {
+  width: 303px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  padding:1px 20px 1px 20px;
+}
+
+input {
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+hr{
+  border-width: 1px;
+  border-color: #ccc;
+  width: 90%;
+}
+
+#max_prots {
+  width: 30px;
+}
+
+
+/* GROW EFFECT */
+/* button {
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+}
+button:hover {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+} */
+
+.button1 {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #C5C6C7;
+  border: none;
+  padding: 5px;
+  color: #2c2c2c;
+  font-size: 1em;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.button_light:hover {
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.5);
+}
+
+.ex_button {
+  width: 40px;
+  border: 1px solid transparent; 
+}
+.ex_button:hover{
+  background-color: #FFF;
+  color: #e44445;
+  border: 1px solid #e44445;
+}
+.ex_button:focus, .ex_button:active {
+  background-color: #FFF;
+  color: #e44445;
+  border: 1px solid #e44445;
+}
+
+.button_big {
+  width: 120px;
+  height: 40px;
+  background-color: #e44445;;
+  color: white;
+}
+.button_big:hover {
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.5);
+}
+
+.help-icon{
+  color: #E44445;
+  font-size: 15px;
+  position: relative ;
+  position: relative;
+  display: inline-block;
+  margin-top: 20px
+}
+
+[data-title]:hover:after {
+  opacity: 1;
+  transition: all 0.1s ease 0.2s;
+  visibility: visible;
+}
+
+[data-title]:after {
+  content: attr(data-title);
+  position: absolute;
+  background-color: #faf0f0;
+  border: 1px solid #888;
+  box-shadow: 1px 1px 3px #222222;
+  padding: 5px 5px 5px 5px;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 100;
+  color: black;
+  line-height: 150%;
+  bottom: -1.6em;
+  left: 100%;
+  white-space: wrap;
+  width: 400px;
+  opacity: 1;
+  z-index: 99999;
+  visibility: hidden;
+}
+[data-title] {
+  position: relative;
+}
